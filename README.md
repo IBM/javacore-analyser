@@ -19,6 +19,7 @@ This repository contains some example best practices for open source repositorie
 * [MAINTAINERS.md](MAINTAINERS.md)
 <!-- A Changelog allows you to track major changes and things that happen, https://github.com/github-changelog-generator/github-changelog-generator can help automate the process -->
 * [CHANGELOG.md](CHANGELOG.md)
+* [REQUIREMENTS.md](REQUIREMENTS.md)
 
 <!--
 > These are optional
