@@ -1,9 +1,5 @@
 # MAINTAINERS
 
-Mo McElaney - mmcelaney@us.ibm.com
-
-JJ Asghar - jja@ibm.com
-
-Joe Sepi - joesepi@ibm.com
-
-Brad Topol - btopol@us.ibm.com
+- Krzysztof Kazmierczyk <kazm@ibm.com>
+- Piotr Aniola <Piotr.Aniola@ibm.com>
+- Tadeusz Janasiewicz <t.janasiewicz@ibm.com>
