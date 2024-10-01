@@ -71,10 +71,8 @@ If you would like to see the detailed LICENSE click [here](LICENSE).
 ```
 ## Authors
 
-
-
 - Krzysztof Kazmierczyk <kazm@ibm.com>
 - Piotr Aniola <Piotr.Aniola@ibm.com>
 - Tadeusz Janasiewicz <t.janasiewicz@ibm.com>
 
-[issues]: https://github.com/IBM/repo-template/issues/new
+[issues]: https://github.com/IBM/javacore-analyser/issues/new
