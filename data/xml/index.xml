@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+
+<!--
+# Copyright IBM Corp. 2024 - 2024
+# SPDX-License-Identifier: Apache-2.0
+-->
+
+<?xml-stylesheet type="text/xsl" href="report.xsl"?>
+<!DOCTYPE doc [
+<!ENTITY otherFile SYSTEM "report.xml">
+]>
+<index>
+  &otherFile;
+</index>

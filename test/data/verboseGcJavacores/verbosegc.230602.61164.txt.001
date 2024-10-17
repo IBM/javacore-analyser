@@ -1,0 +1,75 @@
+<?xml version="1.0" ?>
+
+<verbosegc xmlns="http://www.ibm.com/j9/verbosegc" version="08b0594_CMPRSS">
+
+<initialized id="1" timestamp="2023-06-02T09:08:21.189">
+  <attribute name="gcPolicy" value="-Xgcpolicy:gencon" />
+  <attribute name="maxHeapSize" value="0x40000000" />
+  <attribute name="initialHeapSize" value="0x40000000" />
+  <attribute name="compressedRefs" value="true" />
+  <attribute name="compressedRefsDisplacement" value="0x0" />
+  <attribute name="compressedRefsShift" value="0x3" />
+  <attribute name="pageSize" value="0x1000" />
+  <attribute name="pageType" value="not used" />
+  <attribute name="requestedPageSize" value="0x1000" />
+  <attribute name="requestedPageType" value="not used" />
+  <attribute name="gcthreads" value="16" />
+  <attribute name="gcthreads Concurrent Mark" value="1" />
+  <attribute name="packetListSplit" value="2" />
+  <attribute name="cacheListSplit" value="2" />
+  <attribute name="splitFreeListSplitAmount" value="2" />
+  <attribute name="numaNodes" value="0" />
+  <system>
+    <attribute name="physicalMemory" value="34048368640" />
+    <attribute name="numCPUs" value="16" />
+    <attribute name="architecture" value="amd64" />
+    <attribute name="os" value="Windows 10" />
+    <attribute name="osVersion" value="10.0" />
+  </system>
+  <vmargs>
+    <vmarg name="-Xoptionsfile=C:\jazz\ELM702SR1GC_1\server\jre\bin\compressedrefs\options.default" />
+    <vmarg name="-Xlockword:mode=default,noLockword=java/lang/String,noLockword=java/util/MapEntry,noLockword=java/util/HashMap$Entry,noLockword..." />
+    <vmarg name="-Djava.lang.stringBuffer.growAggressively=false" />
+    <vmarg name="-XX:+OriginalJDK8HeapSizeCompatibilityMode" />
+    <vmarg name="-Xjcl:jclse29" />
+    <vmarg name="-Dcom.ibm.oti.vm.bootstrap.library.path=C:\jazz\ELM702SR1GC_1\server\jre\bin\compressedrefs;C:\jazz\ELM702SR1GC_1\server\jre\bi..." />
+    <vmarg name="-Dsun.boot.library.path=C:\jazz\ELM702SR1GC_1\server\jre\bin\compressedrefs;C:\jazz\ELM702SR1GC_1\server\jre\bin" />
+    <vmarg name="-Djava.library.path=C:\jazz\ELM702SR1GC_1\server\jre\bin\compressedrefs;C:\jazz\ELM702SR1GC_1\server\jre\bin;C:\windows\system3..." />
+    <vmarg name="-Djava.home=C:\jazz\ELM702SR1GC_1\server\jre" />
+    <vmarg name="-Djava.ext.dirs=C:\jazz\ELM702SR1GC_1\server\jre\lib\ext" />
+    <vmarg name="-Duser.dir=C:\jazz\ELM702SR1GC_1\server\liberty\servers\clm" />
+    <vmarg name="-Xquickstart" />
+    <vmarg name="-Xshareclasses:none" />
+    <vmarg name="-Xquickstart" />
+    <vmarg name="-Xshareclasses:none" />
+    <vmarg name="-Dconsole.encoding=Cp437" />
+    <vmarg name="-Djava.class.path=." />
+    <vmarg name="-Djava.awt.headless=true" />
+    <vmarg name="-DSQLSERVER_JDBC_DRIVER_FILE=C:\jazz\ELM702SR1GC_1\server\sqlserver\sqljdbc42.jar" />
+    <vmarg name="-DORACLE_JDBC_DRIVER_FILE=C:\jazz\ELM702SR1GC_1\server\oracle\ojdbc8.jar" />
+    <vmarg name="-DDB2I_JDBC=C:\jazz\ELM702SR1GC_1\server\db2i" />
+    <vmarg name="-DDB2Z_JDBC=C:\jazz\ELM702SR1GC_1\server\db2z" />
+    <vmarg name="-Dorg.eclipse.emf.ecore.plugin.EcorePlugin.doNotLoadResourcesPlugin=true" />
+    <vmarg name="-DJAZZ_HOME=file:///C%3a/jazz/ELM702~3/server/conf" />
+    <vmarg name="-Dcom.ibm.team.repository.tempDir=C:\Users\P40095~1\AppData\Local\Temp" />
+    <vmarg name="-Djazz.connector.sslEnabledProtocols=TLSv1,TLSv1.1,TLSv1.2" />
+    <vmarg name="-Djazz.connector.algorithm=IbmX509" />
+    <vmarg name="-Xmx1G" />
+    <vmarg name="-Xms1G" />
+    <vmarg name="-Xmn256m" />
+    <vmarg name="-Xgcpolicy:gencon" />
+    <vmarg name="-Xcompressedrefs" />
+    <vmarg name="-Xgc:preferredHeapBase=0x100000000" />
+    <vmarg name="-Dderby.locks.waitTimeout=1200" />
+    <vmarg name="-Dderby.locks.deadlockTimeout=1140" />
+    <vmarg name="-verbose:gc" />
+    <vmarg name="-Xverbosegclog:verbosegc.%y%m%d.%pid.txt,5,100000" />
+    <vmarg name="-Dlog4j2.configurationFile=file:///C%3a/jazz/ELM702~3/server/conf/startup_log4j2.xml" />
+    <vmarg name="-Djava.class.path=C:\jazz\ELM702SR1GC_1\server\liberty\wlp\bin\tools\ws-server.jar" />
+    <vmarg name="-Dsun.java.command=C:\jazz\ELM702SR1GC_1\server\liberty\wlp\bin\tools\ws-server.jar clm --status:start" />
+    <vmarg name="-Dsun.java.launcher=SUN_STANDARD" />
+  </vmargs>
+</initialized>
+
+</verbosegc>
+

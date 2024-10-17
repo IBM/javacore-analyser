@@ -1,0 +1,165 @@
+table.heading {
+    border: none;
+    width: 100%;
+}
+
+td.headingleft {
+    text-align:left;
+    border: none;
+}
+
+td.headingright {
+    text-align:right;
+    border: none;
+}
+
+table {
+    width: 95%;
+    text-align: center;
+    border-collapse: collapse;
+    table-layout: fixed;
+    border-radius: 10px
+}
+
+table, th, td {
+    border: 1px solid;
+}
+
+th {
+    color:black;
+    font-size:12pt;
+    border-color: black;
+    width: 10%;
+    position: sticky;
+    top: 0;
+}
+
+th.ninety {
+    width: 90%;
+}
+
+th.sixty {
+    width: 60%;
+}
+
+th.fifty {
+    width: 50%;
+}
+
+th.forty {
+    width: 40%;
+}
+
+th.thirty {
+    width: 30%;
+}
+
+th.ten {
+    width: 10%;
+}
+
+td {
+    text-align:right;
+    word-wrap:break-word;
+}
+
+.left {
+    text-align:left;
+}
+
+.right {
+    text-align:right;
+}
+
+.smaller {
+    font-size:smaller;
+}
+
+.stacktrace {
+  margin: 0;
+  padding-left: 5;
+  /*
+    To show the first n lines of stack trace in threads change the height using the pattern:
+    <font size> * <number of lines> by default it should be
+    15 * <number of lines>
+  */
+  height: 45px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+}
+.stacktrace.show-all{
+  margin: 0;
+  padding-left: 5;
+  height:auto;
+  overflow:visible;
+  text-overflow: none
+}
+.toggle_expand {
+  text-align: left;
+}
+
+.warning {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+  color: orange
+}
+
+/* Tooltip text */
+.warning .warningtooltip {
+  visibility: hidden;
+  width: 120px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+
+  /* Position the tooltip text - see examples below! */
+  position: absolute;
+  z-index: 1;
+}
+
+.searchbar {
+  position: fixed;
+  height: 30px;
+  width: 100%;
+  bottom: 0;
+  background-color: black;
+}
+
+.content {
+   padding-bottom: 30px
+}
+
+mark {
+  background: yellow;
+}
+
+mark.current {
+  background: orange;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.warning:hover .warningtooltip {
+  visibility: visible;
+}
+
+.hide {
+  display:none;
+}
+
+span.native {
+    color: #aaaaaa;
+    font-style: italic;
+}
+
+h3 {
+    margin: 10px;
+}
+
+div.margined {
+    margin: 10px;
+}
