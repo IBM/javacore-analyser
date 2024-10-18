@@ -7,31 +7,40 @@
 <!-- Not always needed, but a scope helps the user understand in a short sentance like below, why this repo exists -->
 ## Scope
 
-The tool analyzes Javacores and verbose gc logs and provides some reports like cpu/gc usage, blocked threads, some tips regarding the javacores
+The tool analyzes Javacores and verbose gc logs and provides some reports like cpu/gc usage, blocked threads, some tips regarding the javacores. The tool can process the following data:
+* Set of Javacores from the same run. Optionally you can add verbose.gc log file
+* Single Javacore
+
+  
 <!-- A more detailed Usage or detailed explaination of the repository here -->
-## Usage
+## Installation and usage
 
-This repository contains some example best practices for open source repositories:
+### Installation:
+The tool requires Python 3.9 or higher plus some packages - see more in [REQUIREMENTS.md](REQUIREMENTS.md). Despite it is not mandatory, it is recommended in Python to use virtual environment to manage packages.
 
-* [LICENSE](LICENSE)
-* [README.md](README.md)
-* [CONTRIBUTING.md](CONTRIBUTING.md)
-* [MAINTAINERS.md](MAINTAINERS.md)
-<!-- A Changelog allows you to track major changes and things that happen, https://github.com/github-changelog-generator/github-changelog-generator can help automate the process -->
-* [CHANGELOG.md](CHANGELOG.md)
-* [REQUIREMENTS.md](REQUIREMENTS.md)
+Steps:
+1. Download and unpack the tool.
+2. Create and activate Virtual Environment according to [Creating virtual environments](https://docs.python.org/3/tutorial/venv.html#creating-virtual-environments).
+3. Install all required pip packages. Navigate in command line to unpacked tool and type
+   `pip install -r requirements.txt`
 
-<!--
-> These are optional
--->
+### Running the tool:
+1. Activate your created virtual environment according to activate Virtual Environment according to [Creating virtual environments](https://docs.python.org/3/tutorial/venv.html#creating-virtual-environments)
+2. Navigate in command line to unpacked tool and run the following command:  
+  `python javacore_analyzer.py <input-data> <output-dir>`  
+Where `<input-data>` is one of the following:
+* The directory containing javacores and optionally verbose gc
+* Archive (7z, zip, tar.gz, tar.bz2) containint the same
+* List of the javacores separated by `'` character. Optionally you can add `--separator` option to define your own separator.
+You can type the following command to obtain the help:  
+`python javacore_analyzer.py --help`
+
 
 <!-- The following are OPTIONAL, but strongly suggested to have in your repository. -->
 <!--
 * [dco.yml](.github/dco.yml) - This enables DCO bot for you, please take a look https://github.com/probot/dco for more details.
 * [travis.yml](.travis.yml) - This is a example `.travis.yml`, please take a look https://docs.travis-ci.com/user/tutorial/ for more details.
 -->
-
-These may be copied into a new or existing project to make it easier for developers not on a project team to collaborate.
 
 <!-- A notes section is useful for anything that isn't covered in the Usage or Scope. Like what we have below. -->
 ## Notes
@@ -72,8 +81,19 @@ If you would like to see the detailed LICENSE click [here](LICENSE).
 ```
 ## Authors
 
-- Krzysztof Kazmierczyk <kazm@ibm.com>
-- Piotr Aniola <Piotr.Aniola@ibm.com>
-- Tadeusz Janasiewicz <t.janasiewicz@ibm.com>
+* Krzysztof Kazmierczyk <kazm@ibm.com>
+* Piotr Aniola <Piotr.Aniola@ibm.com>
+* Tadeusz Janasiewicz <t.janasiewicz@ibm.com>
 
 [issues]: https://github.com/IBM/javacore-analyser/issues/new
+
+## Another pages
+
+Another useful pages:
+* [LICENSE](LICENSE)
+* [README.md](README.md)
+* [CONTRIBUTING.md](CONTRIBUTING.md)
+* [MAINTAINERS.md](MAINTAINERS.md)
+<!-- A Changelog allows you to track major changes and things that happen, https://github.com/github-changelog-generator/github-changelog-generator can help automate the process -->
+* [CHANGELOG.md](CHANGELOG.md)
+* [REQUIREMENTS.md](REQUIREMENTS.md)
