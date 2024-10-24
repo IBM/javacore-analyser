@@ -11,6 +11,7 @@ import os.path
 import shutil
 import sys
 import tarfile
+import tempfile
 import traceback
 import zipfile
 
@@ -40,29 +41,32 @@ def create_file_logging(output_param):
     logging.getLogger().addHandler(file_handler)
 
 
-def extract_archive(input_param, output_param):
+def extract_archive(input_archive_filename, output_path):
     """
 
     Extract javacores from zip file to output_param/data
 
-    @param input_param: Javacores zip file
-    @param output_param: the location of the output of wait tool
+    @param input_archive_filename: Javacores zip file
+    @param output_path: the location of the output of wait tool
     @return: The location of extracted javacores (output_param/data)
     """
-    if input_param.endswith(".zip"):
+
+    assert isinstance(output_path, str)
+
+    if input_archive_filename.endswith(".zip"):
         logging.info("Processing zip file")
-        file = zipfile.ZipFile(input_param)
-    elif input_param.endswith("tar.gz") or input_param.endswith(".tgz"):
+        file = zipfile.ZipFile(input_archive_filename)
+    elif input_archive_filename.endswith("tar.gz") or input_archive_filename.endswith(".tgz"):
         logging.info("Processing tar gz file")
-        file = tarfile.open(input_param)
-    elif input_param.endswith("tar.bz2"):
-        file = tarfile.open(input_param)
+        file = tarfile.open(input_archive_filename)
+    elif input_archive_filename.endswith("tar.bz2"):
+        file = tarfile.open(input_archive_filename)
         logging.info("Processing bz2 file")
-    elif input_param.endswith(".lzma"):
-        file = tarfile.open(input_param)
+    elif input_archive_filename.endswith(".lzma"):
+        file = tarfile.open(input_archive_filename)
         logging.info("Processing lzma file")
-    elif input_param.endswith(".7z"):
-        file = py7zr.SevenZipFile(input_param)
+    elif input_archive_filename.endswith(".7z"):
+        file = py7zr.SevenZipFile(input_archive_filename)
         logging.info("Processing 7z file")
     else:
         logging.error("The format of file is not supported. "
@@ -70,15 +74,10 @@ def extract_archive(input_param, output_param):
                       "Cannot proceed. Exiting")
         exit(13)
 
-    path = os.path.abspath(input_param)
-    output_dir = output_param
-    output_javacore_dir = output_dir + os.sep + 'data' + os.sep
-    assert isinstance(output_dir, str)
-
-    file.extractall(path=output_javacore_dir)
+    file.extractall(path=output_path)
     file.close()
 
-    return output_javacore_dir
+    return output_path
 
 
 def main():
@@ -103,6 +102,10 @@ def main():
     output_param = args.output_param
     files_separator = args.separator
 
+    # Location when we store extracted archive or copied javacore files
+    javacores_temp_dir = tempfile.TemporaryDirectory()
+    javacores_temp_dir_name = javacores_temp_dir.name
+
     try:
         logging.info("Input parameter: " + input_param)
         logging.info("Report directory: " + output_param)
@@ -119,12 +122,12 @@ def main():
             files = input_param.split(files_separator)
             for file in files:
                 file = file.strip()
-                shutil.copy2(file, output_param + DATA_OUTPUT_SUBDIR)
-            path = output_param
+                shutil.copy2(file, javacores_temp_dir_name)
+            path = javacores_temp_dir_name
         elif os.path.isdir(input_param):
-            path = input_param
+            path = input_param # We do not want to copy the files to temp dir is an input is a dir
         elif os.path.isfile(input_param):
-            path = extract_archive(input_param, output_param)  # Extract archive to output dir
+            path = extract_archive(input_param, javacores_temp_dir_name)  # Extract archive to temp dir
         else:
             logging.error(
                 "The specified parameter " + input_param + " is not a file or a directory. Cannot process it. Exiting")
@@ -135,6 +138,8 @@ def main():
         logging.error("Processing was not successful. Correct the problem and try again. Exiting with error 13",
                       exc_info=True)
         exit(13)
+    finally:
+        javacores_temp_dir.cleanup()
 
 
 if __name__ == "__main__":
