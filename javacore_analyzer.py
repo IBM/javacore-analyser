@@ -41,32 +41,32 @@ def create_file_logging(output_param):
     logging.getLogger().addHandler(file_handler)
 
 
-def extract_archive(input_archife_filename, output_path):
+def extract_archive(input_archive_filename, output_path):
     """
 
     Extract javacores from zip file to output_param/data
 
-    @param input_archife_filename: Javacores zip file
+    @param input_archive_filename: Javacores zip file
     @param output_path: the location of the output of wait tool
     @return: The location of extracted javacores (output_param/data)
     """
 
     assert isinstance(output_path, str)
 
-    if input_archife_filename.endswith(".zip"):
+    if input_archive_filename.endswith(".zip"):
         logging.info("Processing zip file")
-        file = zipfile.ZipFile(input_archife_filename)
-    elif input_archife_filename.endswith("tar.gz") or input_archife_filename.endswith(".tgz"):
+        file = zipfile.ZipFile(input_archive_filename)
+    elif input_archive_filename.endswith("tar.gz") or input_archive_filename.endswith(".tgz"):
         logging.info("Processing tar gz file")
-        file = tarfile.open(input_archife_filename)
-    elif input_archife_filename.endswith("tar.bz2"):
-        file = tarfile.open(input_archife_filename)
+        file = tarfile.open(input_archive_filename)
+    elif input_archive_filename.endswith("tar.bz2"):
+        file = tarfile.open(input_archive_filename)
         logging.info("Processing bz2 file")
-    elif input_archife_filename.endswith(".lzma"):
-        file = tarfile.open(input_archife_filename)
+    elif input_archive_filename.endswith(".lzma"):
+        file = tarfile.open(input_archive_filename)
         logging.info("Processing lzma file")
-    elif input_archife_filename.endswith(".7z"):
-        file = py7zr.SevenZipFile(input_archife_filename)
+    elif input_archive_filename.endswith(".7z"):
+        file = py7zr.SevenZipFile(input_archive_filename)
         logging.info("Processing 7z file")
     else:
         logging.error("The format of file is not supported. "
