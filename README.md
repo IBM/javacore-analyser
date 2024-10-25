@@ -21,7 +21,7 @@ The tool requires Python 3.9 or higher plus some packages - see more in [REQUIRE
 Steps:
 1. Download and install Python. Usually the latest version is supported. Search for supported versions in 
 [REQUIREMENTS](REQUIREMENTS.md)
-2. Download and unpack the tool.
+2. [Download](https://github.com/IBM/javacore-analyser/releases) and unpack the tool.
 3. Create and activate Virtual Environment according to [Creating virtual environments](https://docs.python.org/3/tutorial/venv.html#creating-virtual-environments).
 4. Install all required pip packages. Navigate in command line to unpacked tool and type
    `pip install -r requirements.txt`
