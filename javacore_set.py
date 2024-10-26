@@ -103,7 +103,7 @@ class JavacoreSet:
                                            "data/xml/threads/thread",
                                            self.threads,
                                            "thread")
-        self.generate_htmls_from_xmls_xsls(temp_dir_name + "/report.xml",
+        self.generate_htmls_from_xmls_xsls(self.report_xml_file,
                                            temp_dir_name + "/threads",
                                            output_dir + "/threads", )
 
@@ -112,7 +112,7 @@ class JavacoreSet:
                                            "data/xml/javacores/javacore",
                                            self.javacores,
                                            "")
-        self.generate_htmls_from_xmls_xsls(temp_dir_name + "/report.xml",
+        self.generate_htmls_from_xmls_xsls(self.report_xml_file,
                                            temp_dir_name + "/javacores",
                                            output_dir + "/javacores", )
 
