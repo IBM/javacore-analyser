@@ -65,7 +65,18 @@ class JavacoreSet:
         self.tips = []
         self.gc_parser = VerboseGcParser()
 
-    def process_javacores_dir(input_path, output_path):
+    # Assisted by WCA@IBM
+    # Latest GenAI contribution: ibm/granite-8b-code-instruct
+    def process_javacores(input_path):
+        """
+        Processes Java core data and generates tips based on the analysis.
+
+        Args:
+            input_path (str): The path to the directory containing the Javacore data.
+
+        Returns:
+            JavacoreSet: A JavacoreSet object containing the analysis results.
+        """
         jset = JavacoreSet.create(input_path)
         jset.print_java_settings()
         jset.populate_snapshot_collections()
@@ -74,8 +85,17 @@ class JavacoreSet:
         jset.print_blockers()
         jset.print_thread_states()
         jset.generate_tips()
-        output_dir = output_path
-        jset.generate_report_files(output_dir)
+        return jset
+
+        jset = JavacoreSet.create(input_path)
+        jset.print_java_settings()
+        jset.populate_snapshot_collections()
+        jset.sort_snapshots()
+        # jset.find_top_blockers()
+        jset.print_blockers()
+        jset.print_thread_states()
+        jset.generate_tips()
+        return jset
 
 
     # Assisted by WCA@IBM
@@ -93,10 +113,20 @@ class JavacoreSet:
         temp_dir = tempfile.TemporaryDirectory()
         temp_dir_name = temp_dir.name
         logging.info("Created temp dir: " + temp_dir_name)
+        self.__create_output_files_structure(output_dir)
         self.__create_report_xml(temp_dir_name + "/report.xml")
         self.__generate_htmls_for_threads(output_dir, temp_dir_name)
         self.__generate_htmls_for_javacores(output_dir, temp_dir_name)
         self.__create_index_html(temp_dir_name, output_dir)
+
+    def __create_output_files_structure(self, output_dir):
+        if not os.path.isdir(output_dir):
+            os.mkdir(output_dir)
+        data_dir = output_dir + '/data'
+        if os.path.isdir(data_dir):
+            shutil.rmtree(data_dir, ignore_errors=True)
+        logging.info("Data dir: " + data_dir)
+        shutil.copytree("data", data_dir, dirs_exist_ok=True)
 
     def __generate_htmls_for_threads(self, output_dir, temp_dir_name):
         self.create_xml_xsl_for_collection(temp_dir_name + "/threads",

@@ -25,14 +25,7 @@ LOGGING_FORMAT = '%(asctime)s [%(levelname)s][%(filename)s:%(lineno)s] %(message
 
 SUPPORTED_ARCHIVES_FORMATS = {"zip", "gz", "tgz", "bz2", "lzma", "7z"}
 
-def create_output_files_structure(output_dir):
-    if not os.path.isdir(output_dir):
-        os.mkdir(output_dir)
-    data_dir = output_dir + '/data'
-    if os.path.isdir(data_dir):
-        shutil.rmtree(data_dir, ignore_errors=True)
-    logging.info("Data dir: " + data_dir)
-    shutil.copytree("data", data_dir, dirs_exist_ok=True)
+
 
 
 def create_file_logging(logging_file_dir):
@@ -119,7 +112,7 @@ def main():
         files = [input_param]
 
     try:
-        generate_javecore_set_data(files, output_param)
+        process_javacores_and_generate_report_data(files, output_param)
     except Exception as ex:
         traceback.print_exc(file=sys.stdout)
         logging.error("Processing was not successful. Correct the problem and try again. Exiting with error 13",
@@ -127,13 +120,24 @@ def main():
         exit(13)
 
 
-def generate_javecore_set_data(files, output_dir):
-    # Location when we store extracted archive or copied javacore files
+# Assisted by WCA@IBM
+# Latest GenAI contribution: ibm/granite-8b-code-instruct
+def generate_javecore_set_data(files):
+    """
+    Generate JavacoreSet data from given files.
+
+    Parameters:
+    - files (list): List of file paths to process. Can be directories or individual files.
+
+    Returns:
+    - JavacoreSet: Generated JavacoreSet object containing the processed data.
+    """
+
+    # Location when we store extracted archive or copied javacores files
     javacores_temp_dir = tempfile.TemporaryDirectory()
     # It is strange but sometimes the temp directory contains the content from previous run
     # javacores_temp_dir.cleanup()
     javacores_temp_dir_name = javacores_temp_dir.name
-    create_output_files_structure(output_dir)
     for file in files:
         # file = file.strip() # Remove leading or trailing space in file path
         if os.path.isdir(file):
@@ -145,8 +149,26 @@ def generate_javecore_set_data(files, output_dir):
                 extract_archive(file, javacores_temp_dir_name)  # Extract archive to temp dir
             else:
                 shutil.copy2(file, javacores_temp_dir_name)
-    JavacoreSet.process_javacores_dir(javacores_temp_dir_name, output_dir)
-    return javacores_temp_dir
+    return JavacoreSet.process_javacores(javacores_temp_dir_name)
+
+
+
+# Assisted by WCA@IBM
+# Latest GenAI contribution: ibm/granite-8b-code-instruct
+def process_javacores_and_generate_report_data(input_files, output_dir):
+    """
+    Processes Java core dump files and generates report data.
+
+    Parameters:
+    input_files (list): A list of paths to Java core dump files.
+    output_dir (str): The directory where the generated report data will be saved.
+
+    Returns:
+    None
+    """
+    javacore_set = generate_javecore_set_data(input_files)
+    javacore_set.generate_report_files(output_dir)
+
 
 
 if __name__ == "__main__":
