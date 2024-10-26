@@ -52,6 +52,7 @@ class JavacoreSet:
         self.verbose_gc_files = []
         self.threads = SnapshotCollectionCollection(Thread)
         self.stacks = SnapshotCollectionCollection(CodeSnapshotCollection)
+        self.report_xml_file = None
 
         self.doc = None
 
@@ -92,7 +93,7 @@ class JavacoreSet:
         temp_dir = tempfile.TemporaryDirectory()
         temp_dir_name = temp_dir.name
         logging.info("Created temp dir: " + temp_dir_name)
-        self.create_report_xml(temp_dir_name + "/report.xml")
+        self.__create_report_xml(temp_dir_name + "/report.xml")
         self.__generate_htmls_for_threads(output_dir, temp_dir_name)
         self.__generate_htmls_for_javacores(output_dir, temp_dir_name)
         self.__create_index_html(temp_dir_name, output_dir)
@@ -272,7 +273,7 @@ class JavacoreSet:
 
     # Assisted by WCA@IBM
     # Latest GenAI contribution: ibm/granite-8b-code-instruct
-    def create_report_xml(self, output_file):
+    def __create_report_xml(self, output_file):
         """
         Generate an XML report containing information about the Javacoreset data.
 
@@ -411,8 +412,26 @@ class JavacoreSet:
         self.doc.writexml(stream, indent="  ", addindent="  ", newl='\n', encoding="utf-8")
         stream.close()
         self.doc.unlink()
+        self.report_xml_file = output_file
 
         logging.info("Finished generating report xml")
+
+    # Assisted by WCA@IBM
+    # Latest GenAI contribution: ibm/granite-8b-code-instruct
+    def get_javacore_set_in_xml(self):
+        """
+        Returns the JavaCore set in the XML report file.
+
+        Parameters:
+        self (JavacoreSet): The instance of the javacore_set class.
+
+        Returns:
+        str: The JavaCore set in the XML format.
+        """
+        file = open(self.report_xml_file, "r")
+        content = file.read()
+        file.close()
+        return content
 
     @staticmethod
     def __create_index_html(input_dir, output_dir):
