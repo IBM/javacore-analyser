@@ -14,6 +14,7 @@ import tarfile
 import tempfile
 import traceback
 import zipfile
+from pathlib import Path
 
 import py7zr
 
@@ -34,8 +35,9 @@ def create_output_files_structure(output_dir):
     shutil.copytree("data", data_dir, dirs_exist_ok=True)
 
 
-def create_file_logging(output_param):
-    logging_file = output_param + "/wait2-debug.log"
+def create_file_logging(logging_file_dir):
+    logging_file = logging_file_dir + "/wait2-debug.log"
+    Path(logging_file_dir).mkdir(parents=True, exist_ok=True) # Sometimes the folder of logging might not exist
     file_handler = logging.FileHandler(logging_file, mode='w')
     file_handler.setLevel(logging.DEBUG)
     file_handler.setFormatter(logging.Formatter(LOGGING_FORMAT))
