@@ -65,27 +65,39 @@ class JavacoreSet:
         self.gc_parser = VerboseGcParser()
 
     def process_javacores_dir(input_path, output_path):
-        temp_dir = tempfile.TemporaryDirectory()
-        try:
-            jset = JavacoreSet.create(input_path)
-            jset.print_java_settings()
-            jset.populate_snapshot_collections()
-            jset.sort_snapshots()
-            # jset.find_top_blockers()
-            jset.print_blockers()
-            jset.print_thread_states()
-            jset.generate_tips()
-            output_dir = output_path
-            temp_dir_name = temp_dir.name
-            logging.info("Created temp dir: " + temp_dir_name)
-            jset.create_report_xml(temp_dir_name + "/report.xml")
-            jset.generate_htmls_for_threads(output_dir, temp_dir_name)
-            jset.generate_htmls_for_javacores(output_dir, temp_dir_name)
-            jset.create_index_html(temp_dir_name, output_dir)
-        finally:
-            temp_dir.cleanup()
+        jset = JavacoreSet.create(input_path)
+        jset.print_java_settings()
+        jset.populate_snapshot_collections()
+        jset.sort_snapshots()
+        # jset.find_top_blockers()
+        jset.print_blockers()
+        jset.print_thread_states()
+        jset.generate_tips()
+        output_dir = output_path
+        jset.generate_report_files(output_dir)
 
-    def generate_htmls_for_threads(self, output_dir, temp_dir_name):
+
+    # Assisted by WCA@IBM
+    # Latest GenAI contribution: ibm/granite-8b-code-instruct
+    def generate_report_files(self, output_dir):
+        """
+        Generate report files in HTML format.
+
+        Parameters:
+        - output_dir (str): The directory where the generated report files will be saved.
+
+        Returns:
+        - None
+        """
+        temp_dir = tempfile.TemporaryDirectory()
+        temp_dir_name = temp_dir.name
+        logging.info("Created temp dir: " + temp_dir_name)
+        self.create_report_xml(temp_dir_name + "/report.xml")
+        self.__generate_htmls_for_threads(output_dir, temp_dir_name)
+        self.__generate_htmls_for_javacores(output_dir, temp_dir_name)
+        self.__create_index_html(temp_dir_name, output_dir)
+
+    def __generate_htmls_for_threads(self, output_dir, temp_dir_name):
         self.create_xml_xsl_for_collection(temp_dir_name + "/threads",
                                            "data/xml/threads/thread",
                                            self.threads,
@@ -94,7 +106,7 @@ class JavacoreSet:
                                            temp_dir_name + "/threads",
                                            output_dir + "/threads", )
 
-    def generate_htmls_for_javacores(self, output_dir, temp_dir_name):
+    def __generate_htmls_for_javacores(self, output_dir, temp_dir_name):
         self.create_xml_xsl_for_collection(temp_dir_name + "/javacores",
                                            "data/xml/javacores/javacore",
                                            self.javacores,
@@ -258,8 +270,18 @@ class JavacoreSet:
             logging.debug(thread.name + "(id: " + str(thread.id) + "; hash: " + thread.get_hash() + ") " + \
             "states: " + thread.get_snapshot_states())
 
+    # Assisted by WCA@IBM
+    # Latest GenAI contribution: ibm/granite-8b-code-instruct
     def create_report_xml(self, output_file):
-        """ get all information an concatenate in an xml"""
+        """
+        Generate an XML report containing information about the Javacoreset data.
+
+        Parameters:
+        - output_file (str): The path and filename of the output XML file.
+
+        Returns:
+        None
+        """
 
         logging.info("Generating report xml")
 
@@ -393,7 +415,7 @@ class JavacoreSet:
         logging.info("Finished generating report xml")
 
     @staticmethod
-    def create_index_html(input_dir, output_dir):
+    def __create_index_html(input_dir, output_dir):
 
         # Copy index.xml and report.xsl to temp - for index.html we don't need to generate anything. Copying is enough.
         shutil.copy2("data/xml/index.xml", input_dir)
