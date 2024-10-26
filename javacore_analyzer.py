@@ -117,35 +117,34 @@ def main():
         files = [input_param]
 
     try:
-        # Location when we store extracted archive or copied javacore files
-        javacores_temp_dir = tempfile.TemporaryDirectory()
-        # It is strange but sometimes the temp directory contains the content from previous run
-        #javacores_temp_dir.cleanup()
-
-        javacores_temp_dir_name = javacores_temp_dir.name
-
-        create_output_files_structure(output_param)
-
-        for file in files:
-            #file = file.strip() # Remove leading or trailing space in file path
-            if os.path.isdir(file):
-                shutil.copytree(file, javacores_temp_dir_name, dirs_exist_ok=True)
-            else:
-                filename, extension = os.path.splitext(file)
-                extension = extension[1:] # trim trailing "."
-                if extension.lower() in SUPPORTED_ARCHIVES_FORMATS:
-                    extract_archive(input_param, javacores_temp_dir_name)  # Extract archive to temp dir
-                else:
-                    shutil.copy2(file, javacores_temp_dir_name)
-
-        JavacoreSet.process_javacores_dir(javacores_temp_dir_name, output_param)
+        generate_javecore_set_data(files, output_param)
     except Exception as ex:
         traceback.print_exc(file=sys.stdout)
         logging.error("Processing was not successful. Correct the problem and try again. Exiting with error 13",
                       exc_info=True)
         exit(13)
-    finally:
-        javacores_temp_dir.cleanup()
+
+
+def generate_javecore_set_data(files, output_dir):
+    # Location when we store extracted archive or copied javacore files
+    javacores_temp_dir = tempfile.TemporaryDirectory()
+    # It is strange but sometimes the temp directory contains the content from previous run
+    # javacores_temp_dir.cleanup()
+    javacores_temp_dir_name = javacores_temp_dir.name
+    create_output_files_structure(output_dir)
+    for file in files:
+        # file = file.strip() # Remove leading or trailing space in file path
+        if os.path.isdir(file):
+            shutil.copytree(file, javacores_temp_dir_name, dirs_exist_ok=True)
+        else:
+            filename, extension = os.path.splitext(file)
+            extension = extension[1:]  # trim trailing "."
+            if extension.lower() in SUPPORTED_ARCHIVES_FORMATS:
+                extract_archive(file, javacores_temp_dir_name)  # Extract archive to temp dir
+            else:
+                shutil.copy2(file, javacores_temp_dir_name)
+    JavacoreSet.process_javacores_dir(javacores_temp_dir_name, output_dir)
+    return javacores_temp_dir
 
 
 if __name__ == "__main__":
