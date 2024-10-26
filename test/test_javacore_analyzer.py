@@ -12,6 +12,7 @@ import unittest
 from unittest.mock import patch
 
 import javacore_analyzer
+from javacore import CorruptedJavacoreException
 
 
 def rm_tmp_dir():
@@ -38,12 +39,27 @@ class TestJavacoreAnalyzer(unittest.TestCase):
                                                ";test/data/javacores/javacore.20220606.114502.32888.0002.txt", "tmp"]
         self.twofilesargs_different_separator = ["javacore_analyzer",
                                                  "test/data/javacores/javacore.20220606.114458.32888.0001.txt"
-                                                 ":test/data/javacores/javacore.20220606.114502.32888.0002.txt", "tmp" ,
+                                                 ":test/data/javacores/javacore.20220606.114502.32888.0002.txt", "tmp",
                                                  "--separator", ":"]
         self.issue129 = ["javacore_analyzer", "test/data/issue129", "tmp"]
         self.expateerror = ["javacore_analyzer", "test/data/verboseGcJavacores", "tmp"]
         self.threadnameswithquotes = ["javacore_analyzer", "test/data/quotationMarks", "tmp"]
         rm_tmp_dir()
+
+    def test_api(self):
+        javacore_analyzer.process_javacores_and_generate_report_data(["test/data/archives/javacores.zip"], "tmp")
+        test_failed = False
+        try:
+            javacore_analyzer.process_javacores_and_generate_report_data(["test/data/archives/javacores-corrupted.zip"],
+                                                                         "tmp")
+        except CorruptedJavacoreException:
+            test_failed = True
+        self.assertTrue(test_failed, "Program on corrupted file should fail but finished successfully")
+        javacore_analyzer.process_javacores_and_generate_report_data(
+            ["test/data/javacores/javacore.20220606.114458.32888.0001.txt",
+             "test/data/javacores/javacore.20220606.114502.32888.0002.txt"], "tmp")
+        javacore_analyzer.process_javacores_and_generate_report_data(
+            ["test/data/javacores"], "tmp")
 
     def test_issue129(self):
         self.runMainWithParams(self.issue129)
@@ -140,9 +156,9 @@ class TestJavacoreAnalyzer(unittest.TestCase):
         self.assertTrue(os.path.exists("tmp/index.html"), "index.html not generated")
         self.assertTrue(os.path.getsize("tmp/index.html") > 0, "index.html file is empty")
         self.assertTrue(os.path.exists("tmp/threads"))
-        self.assertGreaterEqual(self.number_files_in_dir("tmp/threads"),1)
+        self.assertGreaterEqual(self.number_files_in_dir("tmp/threads"), 1)
         self.assertTrue(os.path.exists("tmp/javacores"))
-        self.assertGreaterEqual(self.number_files_in_dir("tmp/javacores"),1)
+        self.assertGreaterEqual(self.number_files_in_dir("tmp/javacores"), 1)
         self.assertTrue(os.path.isfile("tmp/wait2-debug.log"))
 
     @staticmethod
