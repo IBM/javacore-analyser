@@ -105,6 +105,9 @@ def main():
     logging.info("Input parameter: " + input_param)
     logging.info("Report directory: " + output_param)
 
+    # Needs to be created once output file structure is ready.
+    create_file_logging(output_param)
+
     # Check whether as input we got list of files or single file
     # Semicolon is separation mark for list of input files
     if files_separator in input_param or fnmatch.fnmatch(input_param, '*javacore*.txt'):
@@ -122,10 +125,6 @@ def main():
         javacores_temp_dir_name = javacores_temp_dir.name
 
         create_output_files_structure(output_param)
-
-        # Needs to be created once output file structure is ready.
-        create_file_logging(output_param)
-
 
         for file in files:
             #file = file.strip() # Remove leading or trailing space in file path
