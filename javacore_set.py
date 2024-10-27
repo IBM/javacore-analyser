@@ -160,8 +160,7 @@ class JavacoreSet:
         jset = JavacoreSet(path)
         jset.populate_files_list()
         if len(jset.files) < 1:
-            print("No javacores found. You need at least one javacore. Exiting with error 13")
-            exit(13)
+            raise RuntimeError("No javacores found. You need at least one javacore. Exiting with error 13")
         first_javacore = jset.get_one_javacore()
         jset.parse_common_data(first_javacore)
         jset.parse_javacores()

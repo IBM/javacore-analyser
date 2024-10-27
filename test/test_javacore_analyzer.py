@@ -54,12 +54,19 @@ class TestJavacoreAnalyzer(unittest.TestCase):
                                                                          "tmp")
         except CorruptedJavacoreException:
             test_failed = True
-        self.assertTrue(test_failed, "Program on corrupted file should fail but finished successfully")
+        self.assertTrue(test_failed, "API on corrupted file should fail but finished successfully")
         javacore_analyzer.process_javacores_and_generate_report_data(
             ["test/data/javacores/javacore.20220606.114458.32888.0001.txt",
              "test/data/javacores/javacore.20220606.114502.32888.0002.txt"], "tmp")
         javacore_analyzer.process_javacores_and_generate_report_data(
             ["test/data/javacores"], "tmp")
+
+        test_failed = False
+        try:
+            javacore_analyzer.process_javacores_and_generate_report_data([],"tmp")
+        except RuntimeError:
+            test_failed = True
+        self.assertTrue(test_failed, "API on missing javacores should fail but finished successfully")
 
     def test_issue129(self):
         self.runMainWithParams(self.issue129)
