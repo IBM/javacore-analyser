@@ -87,16 +87,6 @@ class JavacoreSet:
         jset.generate_tips()
         return jset
 
-        jset = JavacoreSet.create(input_path)
-        jset.print_java_settings()
-        jset.populate_snapshot_collections()
-        jset.sort_snapshots()
-        # jset.find_top_blockers()
-        jset.print_blockers()
-        jset.print_thread_states()
-        jset.generate_tips()
-        return jset
-
 
     # Assisted by WCA@IBM
     # Latest GenAI contribution: ibm/granite-8b-code-instruct
