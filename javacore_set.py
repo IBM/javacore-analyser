@@ -87,7 +87,6 @@ class JavacoreSet:
         jset.generate_tips()
         return jset
 
-
     # Assisted by WCA@IBM
     # Latest GenAI contribution: ibm/granite-8b-code-instruct
     def generate_report_files(self, output_dir):
@@ -288,7 +287,7 @@ class JavacoreSet:
         for thread in self.threads:
             logging.debug("max running states:" + str(thread.get_continuous_running_states()))
             logging.debug(thread.name + "(id: " + str(thread.id) + "; hash: " + thread.get_hash() + ") " + \
-            "states: " + thread.get_snapshot_states())
+                          "states: " + thread.get_snapshot_states())
 
     # Assisted by WCA@IBM
     # Latest GenAI contribution: ibm/granite-8b-code-instruct
