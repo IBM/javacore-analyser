@@ -5,16 +5,21 @@
 -->
 <html>
   <head>
-    <title>Upload Files</title>
+    <title>Javacore Analyser</title>
   </head>
   <body>
-    <h1>Upload Files</h1>
+    <h1>Javacore Analyser</h1>
+
+    <h2>Generate report:</h2>
     <form action="/upload" method="post" enctype="multipart/form-data">
       <input type="file" name="files" multiple>
       <input type="submit" value="Upload">
     </form>
+    <p>
+      NOTE: The report generation is expensive operation and might take even few minutes. Please be patient
+    </p>
 
-    <h1>List of the reports:</h1>
+    <h2>List of generated reports:</h2>
       <table>
         {% for report in reports %}
         <tr><td><a href="reports/{{ report }}/index.html">{{ report }}</a></td></tr>
