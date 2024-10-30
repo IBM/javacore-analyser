@@ -13,5 +13,12 @@
       <input type="file" name="files" multiple>
       <input type="submit" value="Upload">
     </form>
+
+    <h1>List of the reports:</h1>
+      <table>
+        {% for report in reports %}
+        <tr><td>{{ report }}</td></tr>
+        {% endfor %}
+      </table>
   </body>
 </html>

@@ -25,12 +25,14 @@ with app.app_context():
     logging.info("Python version: " + sys.version)
     logging.info("Preferred encoding: " + locale.getpreferredencoding())
     reports_dir = os.getenv("REPORTS_DIR", DEFAULT_REPORTS_DIR)
+    logging.info("Reports directory: " + reports_dir)
     logging_utils.create_file_logging(reports_dir)
 
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    reports = [Path(f).name for f in os.scandir(reports_dir) if f.is_dir()]
+    return render_template('index.html', reports=reports)
 
 
 @app.route('/reports/<path:path>')
