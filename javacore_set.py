@@ -447,10 +447,12 @@ class JavacoreSet:
         Returns:
         str: The JavaCore set in the XML format.
         """
-        file = open(self.report_xml_file, "r")
-        content = file.read()
-        file.close()
-        return content
+        try:
+            file = open(self.report_xml_file, "r")
+            content = file.read()
+            return content
+        finally:
+            file.close()
 
     @staticmethod
     def __create_index_html(input_dir, output_dir):
