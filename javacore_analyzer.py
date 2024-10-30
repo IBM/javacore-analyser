@@ -135,11 +135,9 @@ def generate_javecore_set_data(files):
 
     # Location when we store extracted archive or copied javacores files
     javacores_temp_dir = tempfile.TemporaryDirectory()
-    # It is strange but sometimes the temp directory contains the content from previous run
-    # javacores_temp_dir.cleanup()
+
     javacores_temp_dir_name = javacores_temp_dir.name
     for file in files:
-        # file = file.strip() # Remove leading or trailing space in file path
         if os.path.isdir(file):
             shutil.copytree(file, javacores_temp_dir_name, dirs_exist_ok=True)
         else:
