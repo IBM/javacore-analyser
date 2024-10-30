@@ -26,15 +26,14 @@ LOGGING_FORMAT = '%(asctime)s [%(levelname)s][%(filename)s:%(lineno)s] %(message
 SUPPORTED_ARCHIVES_FORMATS = {"zip", "gz", "tgz", "bz2", "lzma", "7z"}
 
 
-
-
 def create_file_logging(logging_file_dir):
     logging_file = logging_file_dir + "/wait2-debug.log"
-    Path(logging_file_dir).mkdir(parents=True, exist_ok=True) # Sometimes the folder of logging might not exist
+    Path(logging_file_dir).mkdir(parents=True, exist_ok=True)  # Sometimes the folder of logging might not exist
     file_handler = logging.FileHandler(logging_file, mode='w')
     file_handler.setLevel(logging.DEBUG)
     file_handler.setFormatter(logging.Formatter(LOGGING_FORMAT))
     logging.getLogger().addHandler(file_handler)
+
 
 def extract_archive(input_archive_filename, output_path):
     """
@@ -150,7 +149,6 @@ def generate_javecore_set_data(files):
     return JavacoreSet.process_javacores(javacores_temp_dir_name)
 
 
-
 # Assisted by WCA@IBM
 # Latest GenAI contribution: ibm/granite-8b-code-instruct
 def process_javacores_and_generate_report_data(input_files, output_dir):
@@ -166,7 +164,6 @@ def process_javacores_and_generate_report_data(input_files, output_dir):
     """
     javacore_set = generate_javecore_set_data(input_files)
     javacore_set.generate_report_files(output_dir)
-
 
 
 if __name__ == "__main__":
