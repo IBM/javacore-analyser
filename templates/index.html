@@ -22,7 +22,10 @@
     <h2>List of generated reports:</h2>
       <table>
         {% for report in reports %}
-        <tr><td><a href="reports/{{ report }}/index.html">{{ report }}</a></td></tr>
+        <tr>
+          <td><a href="reports/{{ report }}/index.html">{{ report }}</a></td>
+          <td><a href="zip/{{ report }}"> download </a></td>
+        </tr>
         {% endfor %}
       </table>
   </body>
