@@ -14,7 +14,7 @@ from pathlib import Path
 from flask import Flask, render_template, request, send_from_directory, redirect
 
 import javacore_analyzer
-from constants import DEFAULT_REPORTS_DIR
+from constants import DEFAULT_REPORTS_DIR, DEFAULT_PORT
 
 app = Flask(__name__)
 with app.app_context():
@@ -72,4 +72,4 @@ def upload_file():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=os.getenv("PORT", DEFAULT_PORT))
