@@ -17,7 +17,7 @@
     <h1>List of the reports:</h1>
       <table>
         {% for report in reports %}
-        <tr><td>{{ report }}</td></tr>
+        <tr><td><a href="reports/{{ report }}/index.html">{{ report }}</a></td></tr>
         {% endfor %}
       </table>
   </body>
