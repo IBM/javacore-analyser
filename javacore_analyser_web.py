@@ -4,6 +4,8 @@
 #
 import locale
 import logging
+
+import logging_utils
 import os
 import re
 import sys
@@ -18,16 +20,12 @@ from constants import DEFAULT_REPORTS_DIR, DEFAULT_PORT
 
 app = Flask(__name__)
 with app.app_context():
-    logging.getLogger().setLevel(logging.NOTSET)
-    console_handler = logging.StreamHandler(sys.stdout)
-    console_handler.setLevel(logging.INFO)
-    console_handler.setFormatter(logging.Formatter(javacore_analyzer.LOGGING_FORMAT))
-    logging.getLogger().addHandler(console_handler)
+    logging_utils.create_console_logging()
     logging.info("Javacore analyser")
     logging.info("Python version: " + sys.version)
     logging.info("Preferred encoding: " + locale.getpreferredencoding())
     reports_dir = os.getenv("REPORTS_DIR", DEFAULT_REPORTS_DIR)
-    javacore_analyzer.create_file_logging(reports_dir)
+    logging_utils.create_file_logging(reports_dir)
 
 
 @app.route('/')
@@ -68,7 +66,7 @@ def upload_file():
     report_output_dir = reports_dir + '/' + report_name
     javacore_analyzer.process_javacores_and_generate_report_data(input_files, report_output_dir)
 
-    return redirect(report_output_dir + "/index.html")
+    return redirect("/reports/" + report_name + "/index.html")
 
 
 if __name__ == '__main__':

@@ -7,6 +7,8 @@ import argparse
 import fnmatch
 import locale
 import logging
+
+import logging_utils
 import os.path
 import shutil
 import sys
@@ -14,25 +16,17 @@ import tarfile
 import tempfile
 import traceback
 import zipfile
-from pathlib import Path
 
 import py7zr
 
 from constants import DEFAULT_FILE_DELIMITER, DATA_OUTPUT_SUBDIR
 from javacore_set import JavacoreSet
 
-LOGGING_FORMAT = '%(asctime)s [%(levelname)s][%(filename)s:%(lineno)s] %(message)s'
 
 SUPPORTED_ARCHIVES_FORMATS = {"zip", "gz", "tgz", "bz2", "lzma", "7z"}
 
 
-def create_file_logging(logging_file_dir):
-    logging_file = logging_file_dir + "/wait2-debug.log"
-    Path(logging_file_dir).mkdir(parents=True, exist_ok=True)  # Sometimes the folder of logging might not exist
-    file_handler = logging.FileHandler(logging_file, mode='w')
-    file_handler.setLevel(logging.DEBUG)
-    file_handler.setFormatter(logging.Formatter(LOGGING_FORMAT))
-    logging.getLogger().addHandler(file_handler)
+
 
 
 def extract_archive(input_archive_filename, output_path):
@@ -75,11 +69,7 @@ def extract_archive(input_archive_filename, output_path):
 
 
 def main():
-    logging.getLogger().setLevel(logging.NOTSET)
-    console_handler = logging.StreamHandler(sys.stdout)
-    console_handler.setLevel(logging.INFO)
-    console_handler.setFormatter(logging.Formatter(LOGGING_FORMAT))
-    logging.getLogger().addHandler(console_handler)
+    logging_utils.create_console_logging()
     logging.info("Wait2 tool")
     logging.info("Python version: " + sys.version)
     logging.info("Preferred encoding: " + locale.getpreferredencoding())
@@ -100,7 +90,7 @@ def main():
     logging.info("Report directory: " + output_param)
 
     # Needs to be created once output file structure is ready.
-    create_file_logging(output_param)
+    logging_utils.create_file_logging(output_param)
 
     # Check whether as input we got list of files or single file
     # Semicolon is separation mark for list of input files
