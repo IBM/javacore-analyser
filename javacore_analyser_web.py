@@ -14,7 +14,7 @@ import tempfile
 from datetime import datetime
 from pathlib import Path
 
-from flask import Flask, render_template, request, send_from_directory, redirect, send_file
+from flask import Flask, render_template, request, send_from_directory, redirect
 
 import javacore_analyzer
 from constants import DEFAULT_REPORTS_DIR, DEFAULT_PORT
