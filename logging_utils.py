@@ -7,7 +7,8 @@ import logging
 import sys
 from pathlib import Path
 
-LOGGING_FORMAT = '%(asctime)s [%(levelname)s][%(filename)s:%(lineno)s] %(message)s'
+LOGGING_FORMAT = '%(asctime)s [thread: %(thread)d][%(levelname)s][%(filename)s:%(lineno)s] %(message)s'
+
 
 def create_file_logging(logging_file_dir):
     logging_file = logging_file_dir + "/wait2-debug.log"
