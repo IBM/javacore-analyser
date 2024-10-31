@@ -57,10 +57,9 @@ def extract_archive(input_archive_filename, output_path):
         file = py7zr.SevenZipFile(input_archive_filename)
         logging.info("Processing 7z file")
     else:
-        logging.error("The format of file is not supported. "
+        raise Exception("The format of file is not supported. "
                       "Currently we support only zip, tar.gz, tgz, tar.bz2 and 7z. "
-                      "Cannot proceed. Exiting")
-        exit(13)
+                      "Cannot proceed.")
 
     file.extractall(path=output_path)
     file.close()
