@@ -64,9 +64,16 @@ def compress(path):
 
 @app.route('/delete/<path:path>')
 def delete(path):
-    report_location = os.path.join(reports_dir, path)
-    logging.info("Deleting directory " + report_location)
-    shutil.rmtree(report_location)
+    # Checking if the report exists. This is to prevent attempt to delete any data by deleting any file outside
+    # report dir if you prepare path variable.
+    reports_list = os.listdir(reports_dir)
+    if path in reports_list:
+        report_location = os.path.join(reports_dir, path)
+        logging.info("Deleting directory " + report_location)
+        shutil.rmtree(report_location)
+    else:
+        logging.error("Deleted report in report list. Not deleting")
+        return "Cannot delete the report. The report <b>" + path + "</b> does not exist", 503
     return redirect("/")
 
 # Assisted by WCA@IBM
