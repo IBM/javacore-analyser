@@ -70,7 +70,7 @@ def delete(path):
     report_location = os.path.normpath(os.path.join(reports_dir, path))
     if not report_location.startswith(reports_dir):
         logging.error("Deleted report in report list. Not deleting")
-        return "Cannot delete the report. The report <b>" + path + "</b> does not exist", 503
+        return "Cannot delete the report.", 503
     shutil.rmtree(report_location)
 
     return redirect("/")
