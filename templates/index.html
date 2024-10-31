@@ -24,7 +24,12 @@
         {% for report in reports %}
         <tr>
           <td><a href="reports/{{ report }}/index.html">{{ report }}</a></td>
-          <td><a href="zip/{{ report }}"> download </a></td>
+          <td><a href="zip/{{ report }}" > download </a></td>
+          <td>
+            <a href="delete/{{ report }}" onclick="return confirm('Do you want to delete report {{ report }}?')">
+              delete
+            </a>
+          </td>
         </tr>
         {% endfor %}
       </table>

@@ -60,6 +60,13 @@ def compress(path):
     finally:
         temp_zip_dir.cleanup()
 
+@app.route('/delete/<path:path>')
+def delete(path):
+    report_location = os.path.join(reports_dir, path)
+    logging.info("Deleting directory " + report_location)
+    shutil.rmtree(report_location)
+    return redirect("/")
+
 # Assisted by WCA@IBM
 # Latest GenAI contribution: ibm/granite-20b-code-instruct-v2
 @app.route('/upload', methods=['POST'])
