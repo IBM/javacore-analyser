@@ -7,8 +7,6 @@ import argparse
 import fnmatch
 import locale
 import logging
-
-import logging_utils
 import os.path
 import shutil
 import sys
@@ -19,9 +17,9 @@ import zipfile
 
 import py7zr
 
-from constants import DEFAULT_FILE_DELIMITER, DATA_OUTPUT_SUBDIR
+import logging_utils
+from constants import DEFAULT_FILE_DELIMITER
 from javacore_set import JavacoreSet
-
 
 SUPPORTED_ARCHIVES_FORMATS = {"zip", "gz", "tgz", "bz2", "lzma", "7z"}
 
@@ -122,20 +120,24 @@ def generate_javecore_set_data(files):
     """
 
     # Location when we store extracted archive or copied javacores files
-    javacores_temp_dir = tempfile.TemporaryDirectory()
+    try:
+        javacores_temp_dir = tempfile.TemporaryDirectory()
 
-    javacores_temp_dir_name = javacores_temp_dir.name
-    for file in files:
-        if os.path.isdir(file):
-            shutil.copytree(file, javacores_temp_dir_name, dirs_exist_ok=True)
-        else:
-            filename, extension = os.path.splitext(file)
-            extension = extension[1:]  # trim trailing "."
-            if extension.lower() in SUPPORTED_ARCHIVES_FORMATS:
-                extract_archive(file, javacores_temp_dir_name)  # Extract archive to temp dir
+        javacores_temp_dir_name = javacores_temp_dir.name
+        for file in files:
+            if os.path.isdir(file):
+                shutil.copytree(file, javacores_temp_dir_name, dirs_exist_ok=True)
             else:
-                shutil.copy2(file, javacores_temp_dir_name)
-    return JavacoreSet.process_javacores(javacores_temp_dir_name)
+                filename, extension = os.path.splitext(file)
+                extension = extension[1:]  # trim trailing "."
+                if extension.lower() in SUPPORTED_ARCHIVES_FORMATS:
+                    extract_archive(file, javacores_temp_dir_name)  # Extract archive to temp dir
+                else:
+                    shutil.copy2(file, javacores_temp_dir_name)
+        return JavacoreSet.process_javacores(javacores_temp_dir_name)
+    finally:
+        javacores_temp_dir.cleanup()
+
 
 
 # Assisted by WCA@IBM
