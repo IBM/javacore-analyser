@@ -90,4 +90,10 @@ def upload_file():
 
 
 if __name__ == '__main__':
+    """
+    The application passes the following environmental variables:
+    DEBUG (default: False) - defines if we should run an app in debug mode
+    PORT - application port
+    REPORTS_DIR - the directory when the reports are stored as default
+    """
     app.run(debug=os.getenv("DEBUG", False), port=os.getenv("PORT", DEFAULT_PORT))
