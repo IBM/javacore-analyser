@@ -4,11 +4,9 @@
 #
 import locale
 import logging
-import shutil
-
-import logging_utils
 import os
 import re
+import shutil
 import sys
 import tempfile
 from datetime import datetime
@@ -17,6 +15,7 @@ from pathlib import Path
 from flask import Flask, render_template, request, send_from_directory, redirect
 
 import javacore_analyzer
+import logging_utils
 from constants import DEFAULT_REPORTS_DIR, DEFAULT_PORT
 
 app = Flask(__name__)
@@ -91,4 +90,4 @@ def upload_file():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, port=os.getenv("PORT", DEFAULT_PORT))
+    app.run(debug=os.getenv("DEBUG", False), port=os.getenv("PORT", DEFAULT_PORT))
