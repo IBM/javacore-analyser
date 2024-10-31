@@ -32,7 +32,7 @@ Steps:
   `python javacore_analyzer.py <input-data> <output-dir>`  
 Where `<input-data>` is one of the following:
 * The directory containing javacores and optionally verbose gc
-* Archive (7z, zip, tar.gz, tar.bz2) containint the same
+* Archive (7z, zip, tar.gz, tar.bz2) containing the same
 * List of the javacores separated by `'` character. Optionally you can add `--separator` option to define your own separator.
 You can type the following command to obtain the help:  
 `python javacore_analyzer.py --help`
