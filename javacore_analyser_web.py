@@ -18,6 +18,11 @@ import javacore_analyzer
 import logging_utils
 from constants import DEFAULT_REPORTS_DIR, DEFAULT_PORT
 
+"""
+To run the application from cmd type:
+export REPORTS_DIR=/tmp/reports
+flask --app javacore_analyser_web run
+"""
 app = Flask(__name__)
 with app.app_context():
     logging_utils.create_console_logging()
