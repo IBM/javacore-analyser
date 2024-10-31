@@ -21,12 +21,16 @@
 
     <h2>List of generated reports:</h2>
       <table>
+        <tr><th> Name </th><th> Creation Date </th><th> Download </th><th> Delete </th></tr>
         {% for report in reports %}
+        {% set name = report['name'] %}
+        {% set date = report['date'] %}
         <tr>
-          <td><a href="reports/{{ report }}/index.html">{{ report }}</a></td>
-          <td><a href="zip/{{ report }}" > download </a></td>
+          <td><a href="reports/{{ name }}/index.html">{{ name }}</a></td>
+          <td> {{ date }} </td>
+          <td><a href="zip/{{ name }}" > download </a></td>
           <td>
-            <a href="delete/{{ report }}" onclick="return confirm('Do you want to delete report {{ report }}?')">
+            <a href="delete/{{ name }}" onclick="return confirm('Do you want to delete report {{ name }}?')">
               delete
             </a>
           </td>

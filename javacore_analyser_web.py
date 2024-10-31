@@ -9,6 +9,7 @@ import re
 import shutil
 import sys
 import tempfile
+import time
 from datetime import datetime
 from pathlib import Path
 
@@ -36,7 +37,8 @@ with app.app_context():
 
 @app.route('/')
 def index():
-    reports = [Path(f).name for f in os.scandir(reports_dir) if f.is_dir()]
+    reports = [{"name": Path(f).name, "date": time.ctime(os.path.getctime(f))}
+               for f in os.scandir(reports_dir) if f.is_dir()]
     return render_template('index.html', reports=reports)
 
 
