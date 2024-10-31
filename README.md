@@ -27,8 +27,12 @@ Steps:
    `pip install -r requirements.txt`
 
 ### Running the tool:
+
+#### Running cmd application: 
 1. Activate your created virtual environment according to activate Virtual Environment according to [Creating virtual environments](https://docs.python.org/3/tutorial/venv.html#creating-virtual-environments)
-2. Navigate in command line to unpacked tool and run the following command:  
+2. Install the requirements using pip: 
+ `pip install requirements.txt` 
+3. Navigate in command line to unpacked tool and run the following command:  
   `python javacore_analyzer.py <input-data> <output-dir>`  
 Where `<input-data>` is one of the following:
 * The directory containing javacores and optionally verbose gc
@@ -37,6 +41,15 @@ Where `<input-data>` is one of the following:
 You can type the following command to obtain the help:  
 `python javacore_analyzer.py --help`
 
+#### Running web application:
+1. Repeat steps 1 and 2 from cmd application
+2. Navigate to unpacked tool and run the following commands: 
+  ```
+  export REPORTS_DIR=/tmp/reports  
+  flask --app javacore_analyser_web run
+  ``` 
+ The first command sets the location of the generated reports stored.  
+ The second command starts the server which can be accessed by navigating to http://localhost:5000
 
 <!-- The following are OPTIONAL, but strongly suggested to have in your repository. -->
 <!--
