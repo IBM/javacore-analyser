@@ -37,8 +37,9 @@ with app.app_context():
 
 @app.route('/')
 def index():
-    reports = [{"name": Path(f).name, "date": time.ctime(os.path.getctime(f))}
+    reports = [{"name": Path(f).name, "date": time.ctime(os.path.getctime(f)), "timestamp": os.path.getctime(f)}
                for f in os.scandir(reports_dir) if f.is_dir()]
+    reports.sort(key=lambda item: item["timestamp"], reverse=True)
     return render_template('index.html', reports=reports)
 
 
