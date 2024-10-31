@@ -67,13 +67,12 @@ def delete(path):
     # Checking if the report exists. This is to prevent attempt to delete any data by deleting any file outside
     # report dir if you prepare path variable.
     reports_list = os.listdir(reports_dir)
-    if path in reports_list:
-        report_location = os.path.join(reports_dir, path)
-        logging.info("Deleting directory " + report_location)
-        shutil.rmtree(report_location)
-    else:
+    report_location = os.path.normpath(os.path.join(reports_dir, path))
+    if not report_location.startswith(reports_dir):
         logging.error("Deleted report in report list. Not deleting")
         return "Cannot delete the report. The report <b>" + path + "</b> does not exist", 503
+    shutil.rmtree(report_location)
+
     return redirect("/")
 
 # Assisted by WCA@IBM
