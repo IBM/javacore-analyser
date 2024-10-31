@@ -10,7 +10,6 @@ import shutil
 import sys
 import tempfile
 import time
-from datetime import datetime
 from pathlib import Path
 
 from flask import Flask, render_template, request, send_from_directory, redirect
@@ -89,10 +88,7 @@ def upload_file():
             file.save(file_name)
             input_files.append(file_name)
 
-        if len(input_files) == 1:
-            report_name = Path(input_files[0]).name
-        else:
-            report_name = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        report_name = request.values.get("report_name")
         report_name = re.sub(r'[^a-zA-Z0-9]', '_', report_name)
 
         # Process the uploaded file
