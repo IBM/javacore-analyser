@@ -55,12 +55,13 @@ def compress(path):
         zip_filename = path + ".zip"
         report_location = os.path.join(reports_dir, path)
         shutil.make_archive(os.path.join(temp_zip_dir_name, path), 'zip', report_location)
-        logging.debug("Generated zip file location:" + os.path.join(temp_zip_dir_name,zip_filename))
+        logging.debug("Generated zip file location:" + os.path.join(temp_zip_dir_name, zip_filename))
         logging.debug("Temp zip dir name: " + temp_zip_dir_name)
         logging.debug("Zip filename: " + zip_filename)
         return send_from_directory(temp_zip_dir_name, zip_filename, as_attachment=True)
     finally:
         temp_zip_dir.cleanup()
+
 
 @app.route('/delete/<path:path>')
 def delete(path):
@@ -74,6 +75,7 @@ def delete(path):
     shutil.rmtree(report_location)
 
     return redirect("/")
+
 
 # Assisted by WCA@IBM
 # Latest GenAI contribution: ibm/granite-20b-code-instruct-v2
