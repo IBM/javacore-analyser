@@ -36,6 +36,22 @@ class TestJavacoreSet(unittest.TestCase):
         line = "2CIUSERARG               -Xmxg"
         self.snapshot.parse_xmx(line)
         self.assertEqual(self.snapshot.xmx, UNKNOWN)
+        #
+        line = "2CIUSERARG               -Xmx32k"
+        mem = self.snapshot.parse_mem_arg(line)
+        self.assertEqual(mem, "32k")
+        #
+        line = "2CIUSERARG               -Xmx32K"
+        mem = self.snapshot.parse_mem_arg(line)
+        self.assertEqual(mem, "32K")
+        #
+        line = "2CIUSERARG               -Xmx323232"
+        mem = self.snapshot.parse_mem_arg(line)
+        self.assertEqual(mem, "323232")
+        #
+        line = "2CIUSERARG               -Xmx32B"
+        mem = self.snapshot.parse_mem_arg(line)
+        self.assertEqual(mem, UNKNOWN)
 
     def test_parse_xms(self):
         line = "2CIUSERARG               -Xms32g"
@@ -54,6 +70,7 @@ class TestJavacoreSet(unittest.TestCase):
         line = "2CIUSERARG               -Xmng"
         self.snapshot.parse_xmn(line)
         self.assertEqual(self.snapshot.xmn, UNKNOWN)
+
 
     def test_parse_gc_policy(self):
         line = "2CIUSERARG               -Xgcpolicy:gencon"
