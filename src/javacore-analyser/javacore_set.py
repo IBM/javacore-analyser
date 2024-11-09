@@ -14,6 +14,7 @@ from multiprocessing.dummy import Pool
 from pathlib import Path
 from xml.dom.minidom import parseString
 
+import importlib_resources
 from lxml import etree
 from lxml.etree import XMLSyntaxError
 
@@ -111,15 +112,20 @@ class JavacoreSet:
     def __create_output_files_structure(self, output_dir):
         if not os.path.isdir(output_dir):
             os.mkdir(output_dir)
-        data_dir = output_dir + '/data'
-        if os.path.isdir(data_dir):
-            shutil.rmtree(data_dir, ignore_errors=True)
-        logging.info("Data dir: " + data_dir)
-        shutil.copytree("data", data_dir, dirs_exist_ok=True)
+        data_output_dir = output_dir + '/data'
+        if os.path.isdir(data_output_dir):
+            shutil.rmtree(data_output_dir, ignore_errors=True)
+        logging.info("Data dir: " + data_output_dir)
+
+        # In pip package we have to access file by resource, not directly by filename
+        style_css_resource = importlib_resources.files("javacore-analyser") / "data" / "style.css"
+        data_dir = os.path.dirname(style_css_resource)
+        os.mkdir(data_output_dir)
+        shutil.copytree(data_dir, data_output_dir, dirs_exist_ok=True)
 
     def __generate_htmls_for_threads(self, output_dir, temp_dir_name):
         self.create_xml_xsl_for_collection(temp_dir_name + "/threads",
-                                           "data/xml/threads/thread",
+                                           output_dir + "/data/xml/threads/thread",
                                            self.threads,
                                            "thread")
         self.generate_htmls_from_xmls_xsls(self.report_xml_file,
@@ -128,7 +134,7 @@ class JavacoreSet:
 
     def __generate_htmls_for_javacores(self, output_dir, temp_dir_name):
         self.create_xml_xsl_for_collection(temp_dir_name + "/javacores",
-                                           "data/xml/javacores/javacore",
+                                           output_dir + "/data/xml/javacores/javacore",
                                            self.javacores,
                                            "")
         self.generate_htmls_from_xmls_xsls(self.report_xml_file,
@@ -457,8 +463,8 @@ class JavacoreSet:
     def __create_index_html(input_dir, output_dir):
 
         # Copy index.xml and report.xsl to temp - for index.html we don't need to generate anything. Copying is enough.
-        shutil.copy2("data/xml/index.xml", input_dir)
-        shutil.copy2("data/xml/report.xsl", input_dir)
+        shutil.copy2(output_dir + "/data/xml/index.xml", input_dir)
+        shutil.copy2(output_dir + "/data/xml/report.xsl", input_dir)
 
         xslt_doc = etree.parse(input_dir + "/report.xsl")
         xslt_transformer = etree.XSLT(xslt_doc)
