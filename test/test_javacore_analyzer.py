@@ -11,9 +11,8 @@ import sys
 import unittest
 from unittest.mock import patch
 
+import javacore_analyzer
 from javacore import CorruptedJavacoreException
-
-import javacore_analyser
 
 
 def rm_tmp_dir():
@@ -25,46 +24,46 @@ class TestJavacoreAnalyzer(unittest.TestCase):
 
     @classmethod
     def setUpClass(self):
-        self.ziptestargs = ["javacore_analyser", "test/data/archives/javacores.zip", "tmp"]
-        self.gztestargs = ["javacore_analyser", "test/data/archives/javacores.tar.gz", "tmp"]
-        self.tgztestargs = ["javacore_analyser", "test/data/archives/javacores.tgz", "tmp"]
-        self.bz2testargs = ["javacore_analyser", "test/data/archives/javacores.tar.bz2", "tmp"]
-        self.sevenztestargs = ["javacore_analyser", "test/data/archives/javacores.7z", "tmp"]
-        self.withoutjavacoresargs = ["javacore_analyser", "test/data/archives/archive_without_javacores.zip", "tmp"]
-        self.javacorefilescorrupted = ["javacore_analyser", "test/data/archives/javacores-corrupted.zip", "tmp"]
-        self.javacoresstartingaaa = ["javacore_analyser", "test/data/archives/javacores-starting-aaa.zip", "tmp"]
-        self.javacores_with_invalid_chars = ["javacore_analyser", "test/data/archives/javacores_with_invalid_chars.zip",
+        self.ziptestargs = ["javacore_analyzer", "test/data/archives/javacores.zip", "tmp"]
+        self.gztestargs = ["javacore_analyzer", "test/data/archives/javacores.tar.gz", "tmp"]
+        self.tgztestargs = ["javacore_analyzer", "test/data/archives/javacores.tgz", "tmp"]
+        self.bz2testargs = ["javacore_analyzer", "test/data/archives/javacores.tar.bz2", "tmp"]
+        self.sevenztestargs = ["javacore_analyzer", "test/data/archives/javacores.7z", "tmp"]
+        self.withoutjavacoresargs = ["javacore_analyzer", "test/data/archives/archive_without_javacores.zip", "tmp"]
+        self.javacorefilescorrupted = ["javacore_analyzer", "test/data/archives/javacores-corrupted.zip", "tmp"]
+        self.javacoresstartingaaa = ["javacore_analyzer", "test/data/archives/javacores-starting-aaa.zip", "tmp"]
+        self.javacores_with_invalid_chars = ["javacore_analyzer", "test/data/archives/javacores_with_invalid_chars.zip",
                                              "tmp"]
-        self.twofilesargs_default_separator = ["javacore_analyser",
+        self.twofilesargs_default_separator = ["javacore_analyzer",
                                                "test/data/javacores/javacore.20220606.114458.32888.0001.txt"
                                                ";test/data/javacores/javacore.20220606.114502.32888.0002.txt", "tmp"]
-        self.twofilesargs_different_separator = ["javacore_analyser",
+        self.twofilesargs_different_separator = ["javacore_analyzer",
                                                  "test/data/javacores/javacore.20220606.114458.32888.0001.txt"
                                                  ":test/data/javacores/javacore.20220606.114502.32888.0002.txt", "tmp",
                                                  "--separator", ":"]
-        self.issue129 = ["javacore_analyser", "test/data/issue129", "tmp"]
-        self.expateerror = ["javacore_analyser", "test/data/verboseGcJavacores", "tmp"]
-        self.threadnameswithquotes = ["javacore_analyser", "test/data/quotationMarks", "tmp"]
+        self.issue129 = ["javacore_analyzer", "test/data/issue129", "tmp"]
+        self.expateerror = ["javacore_analyzer", "test/data/verboseGcJavacores", "tmp"]
+        self.threadnameswithquotes = ["javacore_analyzer", "test/data/quotationMarks", "tmp"]
         rm_tmp_dir()
 
     def test_api(self):
-        javacore_analyser.process_javacores_and_generate_report_data(["test/data/archives/javacores.zip"], "tmp")
+        javacore_analyzer.process_javacores_and_generate_report_data(["test/data/archives/javacores.zip"], "tmp")
         test_failed = False
         try:
-            javacore_analyser.process_javacores_and_generate_report_data(["test/data/archives/javacores-corrupted.zip"],
+            javacore_analyzer.process_javacores_and_generate_report_data(["test/data/archives/javacores-corrupted.zip"],
                                                                          "tmp")
         except CorruptedJavacoreException:
             test_failed = True
         self.assertTrue(test_failed, "API on corrupted file should fail but finished successfully")
-        javacore_analyser.process_javacores_and_generate_report_data(
+        javacore_analyzer.process_javacores_and_generate_report_data(
             ["test/data/javacores/javacore.20220606.114458.32888.0001.txt",
              "test/data/javacores/javacore.20220606.114502.32888.0002.txt"], "tmp")
-        javacore_analyser.process_javacores_and_generate_report_data(
+        javacore_analyzer.process_javacores_and_generate_report_data(
             ["test/data/javacores"], "tmp")
 
         test_failed = False
         try:
-            javacore_analyser.process_javacores_and_generate_report_data([], "tmp")
+            javacore_analyzer.process_javacores_and_generate_report_data([], "tmp")
         except RuntimeError:
             test_failed = True
         self.assertTrue(test_failed, "API on missing javacores should fail but finished successfully")
@@ -117,7 +116,7 @@ class TestJavacoreAnalyzer(unittest.TestCase):
         sys.stdout = captured_output  # and redirect stdout.
         try:
             with patch.object(sys, 'argv', self.withoutjavacoresargs):
-                javacore_analyser.main()
+                javacore_analyzer.main()
         except SystemExit:
             console_output = captured_output.getvalue()
             self.assertRegex(console_output,
@@ -131,7 +130,7 @@ class TestJavacoreAnalyzer(unittest.TestCase):
         sys.stdout = captured_output  # and redirect stdout.
         try:
             with patch.object(sys, 'argv', self.javacores_with_invalid_chars):
-                javacore_analyser.main()
+                javacore_analyzer.main()
         except SystemExit:
             console_output = captured_output.getvalue()
             self.assertRegex(console_output, "CorruptedJavacoreException")
@@ -146,7 +145,7 @@ class TestJavacoreAnalyzer(unittest.TestCase):
         sys.stdout = captured_output  # and redirect stdout.
         try:
             with patch.object(sys, 'argv', self.javacorefilescorrupted):
-                javacore_analyser.main()
+                javacore_analyzer.main()
         except SystemExit:
             console_output = captured_output.getvalue()
             self.assertRegex(console_output, "Error during processing file:")
@@ -156,7 +155,7 @@ class TestJavacoreAnalyzer(unittest.TestCase):
     def runMainWithParams(self, args):
         # From https://stackoverflow.com/questions/18668947/how-do-i-set-sys-argv-so-i-can-unit-test-it
         with patch.object(sys, 'argv', args):
-            javacore_analyser.main()
+            javacore_analyzer.main()
         self.assert_data_generated_and_not_empty()
 
     # Checks whether report.xml and report.xsl have been generated.

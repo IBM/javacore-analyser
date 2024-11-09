@@ -118,7 +118,7 @@ class JavacoreSet:
         logging.info("Data dir: " + data_output_dir)
 
         # In pip package we have to access file by resource, not directly by filename
-        style_css_resource = importlib_resources.files("javacore_analyser") / "data" / "style.css"
+        style_css_resource = importlib_resources.files("javacore-analyser") / "data" / "style.css"
         data_dir = os.path.dirname(style_css_resource)
         os.mkdir(data_output_dir)
         shutil.copytree(data_dir, data_output_dir, dirs_exist_ok=True)
