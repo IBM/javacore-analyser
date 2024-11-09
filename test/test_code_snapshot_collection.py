@@ -5,8 +5,8 @@
 
 import unittest
 
+from code_snapshot_collection import CodeSnapshotCollection
 from java_thread import Thread
-from javacore_analyser.code_snapshot_collection import CodeSnapshotCollection
 from thread_snapshot import ThreadSnapshot
 
 

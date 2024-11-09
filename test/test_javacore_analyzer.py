@@ -63,7 +63,7 @@ class TestJavacoreAnalyzer(unittest.TestCase):
 
         test_failed = False
         try:
-            javacore_analyzer.process_javacores_and_generate_report_data([], "tmp")
+            javacore_analyzer.process_javacores_and_generate_report_data([],"tmp")
         except RuntimeError:
             test_failed = True
         self.assertTrue(test_failed, "API on missing javacores should fail but finished successfully")
