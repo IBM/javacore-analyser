@@ -6,9 +6,9 @@
 import datetime
 import unittest
 
-from java_thread import Thread
-from javacore import Javacore
-from thread_snapshot import ThreadSnapshot
+from javacore_analyser.java_thread import Thread
+from javacore_analyser.javacore import Javacore
+from javacore_analyser.thread_snapshot import ThreadSnapshot
 
 
 class TestJavaThread(unittest.TestCase):

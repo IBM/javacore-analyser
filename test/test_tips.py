@@ -9,10 +9,10 @@ import shutil
 import tempfile
 import unittest
 
-import tips
-from java_thread import Thread
-from javacore_set import JavacoreSet
-from thread_snapshot import ThreadSnapshot
+from javacore_analyser import tips
+from javacore_analyser.java_thread import Thread
+from javacore_analyser.javacore_set import JavacoreSet
+from javacore_analyser.thread_snapshot import ThreadSnapshot
 
 
 class TestTips(unittest.TestCase):

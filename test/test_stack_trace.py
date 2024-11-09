@@ -5,9 +5,9 @@
 
 import unittest
 
-from stack_trace import StackTrace
-from stack_trace_element import StackTraceElement
-from stack_trace_kind import StackTraceKind
+from javacore_analyser.stack_trace import StackTrace
+from javacore_analyser.stack_trace_element import StackTraceElement
+from javacore_analyser.stack_trace_kind import StackTraceKind
 
 
 class TestStackTrace(unittest.TestCase):

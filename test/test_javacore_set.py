@@ -6,8 +6,8 @@
 import os
 import unittest
 
-from constants import UNKNOWN
-from javacore_set import JavacoreSet
+from javacore_analyser.constants import UNKNOWN
+from javacore_analyser.javacore_set import JavacoreSet
 
 
 class TestJavacoreSet(unittest.TestCase):

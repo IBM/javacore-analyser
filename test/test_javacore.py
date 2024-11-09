@@ -6,9 +6,9 @@
 import os
 import unittest
 
-from javacore import Javacore
-from javacore_set import JavacoreSet
-from thread_snapshot import ThreadSnapshot
+from javacore_analyser.javacore import Javacore
+from javacore_analyser.javacore_set import JavacoreSet
+from javacore_analyser.thread_snapshot import ThreadSnapshot
 
 
 class TestJavacore(unittest.TestCase):
