@@ -14,27 +14,18 @@ import tarfile
 import tempfile
 import traceback
 import zipfile
-from pathlib import Path
 
 import py7zr
 
-from constants import DEFAULT_FILE_DELIMITER, DATA_OUTPUT_SUBDIR
+import logging_utils
+from constants import DEFAULT_FILE_DELIMITER
 from javacore_set import JavacoreSet
-
-LOGGING_FORMAT = '%(asctime)s [%(levelname)s][%(filename)s:%(lineno)s] %(message)s'
 
 SUPPORTED_ARCHIVES_FORMATS = {"zip", "gz", "tgz", "bz2", "lzma", "7z"}
 
 
 
 
-def create_file_logging(logging_file_dir):
-    logging_file = logging_file_dir + "/wait2-debug.log"
-    Path(logging_file_dir).mkdir(parents=True, exist_ok=True) # Sometimes the folder of logging might not exist
-    file_handler = logging.FileHandler(logging_file, mode='w')
-    file_handler.setLevel(logging.DEBUG)
-    file_handler.setFormatter(logging.Formatter(LOGGING_FORMAT))
-    logging.getLogger().addHandler(file_handler)
 
 def extract_archive(input_archive_filename, output_path):
     """
@@ -64,10 +55,9 @@ def extract_archive(input_archive_filename, output_path):
         file = py7zr.SevenZipFile(input_archive_filename)
         logging.info("Processing 7z file")
     else:
-        logging.error("The format of file is not supported. "
+        raise Exception("The format of file is not supported. "
                       "Currently we support only zip, tar.gz, tgz, tar.bz2 and 7z. "
-                      "Cannot proceed. Exiting")
-        exit(13)
+                      "Cannot proceed.")
 
     file.extractall(path=output_path)
     file.close()
@@ -76,11 +66,7 @@ def extract_archive(input_archive_filename, output_path):
 
 
 def main():
-    logging.getLogger().setLevel(logging.NOTSET)
-    console_handler = logging.StreamHandler(sys.stdout)
-    console_handler.setLevel(logging.INFO)
-    console_handler.setFormatter(logging.Formatter(LOGGING_FORMAT))
-    logging.getLogger().addHandler(console_handler)
+    logging_utils.create_console_logging()
     logging.info("Wait2 tool")
     logging.info("Python version: " + sys.version)
     logging.info("Preferred encoding: " + locale.getpreferredencoding())
@@ -101,7 +87,7 @@ def main():
     logging.info("Report directory: " + output_param)
 
     # Needs to be created once output file structure is ready.
-    create_file_logging(output_param)
+    logging_utils.create_file_logging(output_param)
 
     # Check whether as input we got list of files or single file
     # Semicolon is separation mark for list of input files
@@ -134,22 +120,23 @@ def generate_javecore_set_data(files):
     """
 
     # Location when we store extracted archive or copied javacores files
-    javacores_temp_dir = tempfile.TemporaryDirectory()
-    # It is strange but sometimes the temp directory contains the content from previous run
-    # javacores_temp_dir.cleanup()
-    javacores_temp_dir_name = javacores_temp_dir.name
-    for file in files:
-        # file = file.strip() # Remove leading or trailing space in file path
-        if os.path.isdir(file):
-            shutil.copytree(file, javacores_temp_dir_name, dirs_exist_ok=True)
-        else:
-            filename, extension = os.path.splitext(file)
-            extension = extension[1:]  # trim trailing "."
-            if extension.lower() in SUPPORTED_ARCHIVES_FORMATS:
-                extract_archive(file, javacores_temp_dir_name)  # Extract archive to temp dir
+    try:
+        javacores_temp_dir = tempfile.TemporaryDirectory()
+
+        javacores_temp_dir_name = javacores_temp_dir.name
+        for file in files:
+            if os.path.isdir(file):
+                shutil.copytree(file, javacores_temp_dir_name, dirs_exist_ok=True)
             else:
-                shutil.copy2(file, javacores_temp_dir_name)
-    return JavacoreSet.process_javacores(javacores_temp_dir_name)
+                filename, extension = os.path.splitext(file)
+                extension = extension[1:]  # trim trailing "."
+                if extension.lower() in SUPPORTED_ARCHIVES_FORMATS:
+                    extract_archive(file, javacores_temp_dir_name)  # Extract archive to temp dir
+                else:
+                    shutil.copy2(file, javacores_temp_dir_name)
+        return JavacoreSet.process_javacores(javacores_temp_dir_name)
+    finally:
+        javacores_temp_dir.cleanup()
 
 
 
@@ -168,7 +155,6 @@ def process_javacores_and_generate_report_data(input_files, output_dir):
     """
     javacore_set = generate_javecore_set_data(input_files)
     javacore_set.generate_report_files(output_dir)
-
 
 
 if __name__ == "__main__":

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<!--
+# Copyright IBM Corp. 2024 - 2024
+# SPDX-License-Identifier: Apache-2.0
+-->
+
+<!--
+// Assisted by WCA@IBM
+// Latest GenAI contribution: ibm/granite-20b-code-instruct-v2
+-->
+<html xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
+  <head>
+    <title>Javacore Analyser</title>
+  </head>
+  <body>
+    <h1>Javacore Analyser</h1>
+
+    <h2>Generate report:</h2>
+    <form action="/upload" method="post" enctype="multipart/form-data">
+      <br>Report Name: <input type="text" id="report_name" name="report_name" required></br>
+      <br>Archive file or multiple javacore files: <input type="file" name="files" multiple required> </br>
+      <strong>
+        NOTE: The report generation is expensive operation and might take even few minutes. Please be patient
+      </strong>
+      <br><input type="submit" value="Upload"></br>
+    </form>
+    <br></br>
+
+
+    <h2>List of generated reports:</h2>
+      <table>
+        <tr><th> Name </th><th> Creation Date </th><th> Download </th><th> Delete </th></tr>
+        {% for report in reports %}
+        {% set name = report['name'] %}
+        {% set date = report['date'] %}
+        <tr>
+          <td><a href="reports/{{ name }}/index.html">{{ name }}</a></td>
+          <td> {{ date }} </td>
+          <td><a href="zip/{{ name }}" > download </a></td>
+          <td>
+            <a href="delete/{{ name }}" onclick="return confirm('Do you want to delete report {{ name }}?')">
+              delete
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </table>
+  </body>
+</html>
