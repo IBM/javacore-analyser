@@ -53,6 +53,7 @@ class JavacoreSet:
         self.verbose_gc_files = []
         self.threads = SnapshotCollectionCollection(Thread)
         self.stacks = SnapshotCollectionCollection(CodeSnapshotCollection)
+        self.report_xml_file = None
 
         self.doc = None
 
@@ -65,42 +66,73 @@ class JavacoreSet:
         self.tips = []
         self.gc_parser = VerboseGcParser()
 
-    def process_javacores_dir(input_path, output_path):
-        temp_dir = tempfile.TemporaryDirectory()
-        try:
-            jset = JavacoreSet.create(input_path)
-            jset.print_java_settings()
-            jset.populate_snapshot_collections()
-            jset.sort_snapshots()
-            # jset.find_top_blockers()
-            jset.print_blockers()
-            jset.print_thread_states()
-            jset.generate_tips()
-            output_dir = output_path
-            temp_dir_name = temp_dir.name
-            logging.info("Created temp dir: " + temp_dir_name)
-            jset.create_report_xml(temp_dir_name + "/report.xml")
-            jset.generate_htmls_for_threads(output_dir, temp_dir_name)
-            jset.generate_htmls_for_javacores(output_dir, temp_dir_name)
-            jset.create_index_html(temp_dir_name, output_dir)
-        finally:
-            temp_dir.cleanup()
+    # Assisted by WCA@IBM
+    # Latest GenAI contribution: ibm/granite-8b-code-instruct
+    def process_javacores(input_path):
+        """
+        Processes Java core data and generates tips based on the analysis.
 
-    def generate_htmls_for_threads(self, output_dir, temp_dir_name):
+        Args:
+            input_path (str): The path to the directory containing the Javacore data.
+
+        Returns:
+            JavacoreSet: A JavacoreSet object containing the analysis results.
+        """
+        jset = JavacoreSet.create(input_path)
+        jset.print_java_settings()
+        jset.populate_snapshot_collections()
+        jset.sort_snapshots()
+        # jset.find_top_blockers()
+        jset.print_blockers()
+        jset.print_thread_states()
+        jset.generate_tips()
+        return jset
+
+    # Assisted by WCA@IBM
+    # Latest GenAI contribution: ibm/granite-8b-code-instruct
+    def generate_report_files(self, output_dir):
+        """
+        Generate report files in HTML format.
+
+        Parameters:
+        - output_dir (str): The directory where the generated report files will be saved.
+
+        Returns:
+        - None
+        """
+        temp_dir = tempfile.TemporaryDirectory()
+        temp_dir_name = temp_dir.name
+        logging.info("Created temp dir: " + temp_dir_name)
+        self.__create_output_files_structure(output_dir)
+        self.__create_report_xml(temp_dir_name + "/report.xml")
+        self.__generate_htmls_for_threads(output_dir, temp_dir_name)
+        self.__generate_htmls_for_javacores(output_dir, temp_dir_name)
+        self.__create_index_html(temp_dir_name, output_dir)
+
+    def __create_output_files_structure(self, output_dir):
+        if not os.path.isdir(output_dir):
+            os.mkdir(output_dir)
+        data_dir = output_dir + '/data'
+        if os.path.isdir(data_dir):
+            shutil.rmtree(data_dir, ignore_errors=True)
+        logging.info("Data dir: " + data_dir)
+        shutil.copytree("data", data_dir, dirs_exist_ok=True)
+
+    def __generate_htmls_for_threads(self, output_dir, temp_dir_name):
         self.create_xml_xsl_for_collection(temp_dir_name + "/threads",
                                            "data/xml/threads/thread",
                                            self.threads,
                                            "thread")
-        self.generate_htmls_from_xmls_xsls(temp_dir_name + "/report.xml",
+        self.generate_htmls_from_xmls_xsls(self.report_xml_file,
                                            temp_dir_name + "/threads",
                                            output_dir + "/threads", )
 
-    def generate_htmls_for_javacores(self, output_dir, temp_dir_name):
+    def __generate_htmls_for_javacores(self, output_dir, temp_dir_name):
         self.create_xml_xsl_for_collection(temp_dir_name + "/javacores",
                                            "data/xml/javacores/javacore",
                                            self.javacores,
                                            "")
-        self.generate_htmls_from_xmls_xsls(temp_dir_name + "/report.xml",
+        self.generate_htmls_from_xmls_xsls(self.report_xml_file,
                                            temp_dir_name + "/javacores",
                                            output_dir + "/javacores", )
 
@@ -128,8 +160,7 @@ class JavacoreSet:
         jset = JavacoreSet(path)
         jset.populate_files_list()
         if len(jset.files) < 1:
-            print("No javacores found. You need at least one javacore. Exiting with error 13")
-            exit(13)
+            raise RuntimeError("No javacores found. You need at least one javacore. Exiting with error 13")
         first_javacore = jset.get_one_javacore()
         jset.parse_common_data(first_javacore)
         jset.parse_javacores()
@@ -257,10 +288,20 @@ class JavacoreSet:
         for thread in self.threads:
             logging.debug("max running states:" + str(thread.get_continuous_running_states()))
             logging.debug(thread.name + "(id: " + str(thread.id) + "; hash: " + thread.get_hash() + ") " + \
-            "states: " + thread.get_snapshot_states())
+                          "states: " + thread.get_snapshot_states())
 
-    def create_report_xml(self, output_file):
-        """ get all information an concatenate in an xml"""
+    # Assisted by WCA@IBM
+    # Latest GenAI contribution: ibm/granite-8b-code-instruct
+    def __create_report_xml(self, output_file):
+        """
+        Generate an XML report containing information about the Javacoreset data.
+
+        Parameters:
+        - output_file (str): The path and filename of the output XML file.
+
+        Returns:
+        None
+        """
 
         logging.info("Generating report xml")
 
@@ -390,11 +431,31 @@ class JavacoreSet:
         self.doc.writexml(stream, indent="  ", addindent="  ", newl='\n', encoding="utf-8")
         stream.close()
         self.doc.unlink()
+        self.report_xml_file = output_file
 
         logging.info("Finished generating report xml")
 
+    # Assisted by WCA@IBM
+    # Latest GenAI contribution: ibm/granite-8b-code-instruct
+    def get_javacore_set_in_xml(self):
+        """
+        Returns the JavaCore set in the XML report file.
+
+        Parameters:
+        self (JavacoreSet): The instance of the javacore_set class.
+
+        Returns:
+        str: The JavaCore set in the XML format.
+        """
+        try:
+            file = open(self.report_xml_file, "r")
+            content = file.read()
+            return content
+        finally:
+            file.close()
+
     @staticmethod
-    def create_index_html(input_dir, output_dir):
+    def __create_index_html(input_dir, output_dir):
 
         # Copy index.xml and report.xsl to temp - for index.html we don't need to generate anything. Copying is enough.
         shutil.copy2("data/xml/index.xml", input_dir)

@@ -33,3 +33,7 @@ DEFAULT_FILE_DELIMITER = ';'
 MIN_JAVACORE_SIZE = 5 * 1024 # Minimal Javacore size in bytes
 
 DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
+
+# Web application constants
+DEFAULT_REPORTS_DIR = "reports"
+DEFAULT_PORT = 5000

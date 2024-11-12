@@ -2,4 +2,4 @@ dicttoxml
 py7zr
 lxml
 pyana
-tqdm
+ttqdm
