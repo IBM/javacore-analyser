@@ -86,7 +86,7 @@ Change the second parameter to the directory where you want the output report be
 To run web application:
 1. Right click on **javacore_analyzer_web.py** directory in **Project** view and select **Modify Run Configuration...**.
 2. Add the following **Environmental variables:**
-   * **DEBUG:TRUE**
+   * **DEBUG:True**
    * **REPORTS_DIR:/tmp/web_reports**  
    You can change the report dir to the location when you want to store the report. 
    The application will start on http://localhost:5000
