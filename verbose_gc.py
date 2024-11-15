@@ -136,7 +136,6 @@ class VerboseGcFile:
     def get_file_name(self):
         head, tail = ntpath.split(self.__path)
         return tail or ntpath.basename(head)
-        return tail
 
     '''
     gets the number of gc collections in this VerboseGcFile
