@@ -124,7 +124,7 @@ class VerboseGcFile:
 
             if not root_closing_tag_available:
                 xml_text = xml_text + ROOT_CLOSING_TAG
-                logging.info("adding closing tag")
+                logging.debug("adding closing tag")
 
             self.__doc = parseString(xml_text)
             self.__root = self.__doc.documentElement
