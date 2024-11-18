@@ -64,7 +64,7 @@ def extract_archive(input_archive_filename, output_path):
 
 def main():
     logging_utils.create_console_logging()
-    logging.info("Wait2 tool")
+    logging.info("IBM Javacore analyser")
     logging.info("Python version: " + sys.version)
     logging.info("Preferred encoding: " + locale.getpreferredencoding())
 
