@@ -137,18 +137,18 @@ class JavacoreSet:
 
     def __generate_htmls_for_threads(self, output_dir, temp_dir_name):
         create_xml_xsl_for_collection(temp_dir_name + "/threads",
-                                           "data/xml/threads/thread",
-                                           self.threads,
-                                           "thread")
+                                      output_dir + "/data/xml/threads/thread",
+                                      self.threads,
+                                      "thread")
         self.generate_htmls_from_xmls_xsls(self.report_xml_file,
                                            temp_dir_name + "/threads",
                                            output_dir + "/threads", )
 
     def __generate_htmls_for_javacores(self, output_dir, temp_dir_name):
         create_xml_xsl_for_collection(temp_dir_name + "/javacores",
-                                           "data/xml/javacores/javacore",
-                                           self.javacores,
-                                           "")
+                                      output_dir + "/data/xml/javacores/javacore",
+                                      self.javacores,
+                                      "")
         self.generate_htmls_from_xmls_xsls(self.report_xml_file,
                                            temp_dir_name + "/javacores",
                                            output_dir + "/javacores", )
@@ -475,8 +475,8 @@ class JavacoreSet:
     def __create_index_html(input_dir, output_dir):
 
         # Copy index.xml and report.xsl to temp - for index.html we don't need to generate anything. Copying is enough.
-        shutil.copy2("data/xml/index.xml", input_dir)
-        shutil.copy2("data/xml/report.xsl", input_dir)
+        shutil.copy2(output_dir + "/data/xml/index.xml", input_dir)
+        shutil.copy2(output_dir + "/data/xml/report.xsl", input_dir)
 
         xslt_doc = etree.parse(input_dir + "/report.xsl")
         xslt_transformer = etree.XSLT(xslt_doc)
