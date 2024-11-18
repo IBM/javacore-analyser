@@ -17,9 +17,9 @@ import zipfile
 
 import py7zr
 
-import logging_utils
-from constants import DEFAULT_FILE_DELIMITER
-from javacore_set import JavacoreSet
+from javacore_analyser import logging_utils
+from javacore_analyser.constants import DEFAULT_FILE_DELIMITER
+from javacore_analyser.javacore_set import JavacoreSet
 
 SUPPORTED_ARCHIVES_FORMATS = {"zip", "gz", "tgz", "bz2", "lzma", "7z"}
 

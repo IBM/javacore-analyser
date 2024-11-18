@@ -11,7 +11,7 @@ import sys
 import unittest
 from unittest.mock import patch
 
-from javacore_analyser import javacore_analyser
+from javacore_analyser import javacore_analyser_batch
 from javacore_analyser.javacore import CorruptedJavacoreException
 
 
@@ -47,23 +47,23 @@ class TestJavacoreAnalyser(unittest.TestCase):
         rm_tmp_dir()
 
     def test_api(self):
-        javacore_analyser.process_javacores_and_generate_report_data(["test/data/archives/javacores.zip"], "tmp")
+        javacore_analyser_batch.process_javacores_and_generate_report_data(["test/data/archives/javacores.zip"], "tmp")
         test_failed = False
         try:
-            javacore_analyser.process_javacores_and_generate_report_data(["test/data/archives/javacores-corrupted.zip"],
+            javacore_analyser_batch.process_javacores_and_generate_report_data(["test/data/archives/javacores-corrupted.zip"],
                                                                          "tmp")
         except CorruptedJavacoreException:
             test_failed = True
         self.assertTrue(test_failed, "API on corrupted file should fail but finished successfully")
-        javacore_analyser.process_javacores_and_generate_report_data(
+        javacore_analyser_batch.process_javacores_and_generate_report_data(
             ["test/data/javacores/javacore.20220606.114458.32888.0001.txt",
              "test/data/javacores/javacore.20220606.114502.32888.0002.txt"], "tmp")
-        javacore_analyser.process_javacores_and_generate_report_data(
+        javacore_analyser_batch.process_javacores_and_generate_report_data(
             ["test/data/javacores"], "tmp")
 
         test_failed = False
         try:
-            javacore_analyser.process_javacores_and_generate_report_data([], "tmp")
+            javacore_analyser_batch.process_javacores_and_generate_report_data([], "tmp")
         except RuntimeError:
             test_failed = True
         self.assertTrue(test_failed, "API on missing javacores should fail but finished successfully")
@@ -116,7 +116,7 @@ class TestJavacoreAnalyser(unittest.TestCase):
         sys.stdout = captured_output  # and redirect stdout.
         try:
             with patch.object(sys, 'argv', self.withoutjavacoresargs):
-                javacore_analyser.main()
+                javacore_analyser_batch.main()
         except SystemExit:
             console_output = captured_output.getvalue()
             self.assertRegex(console_output,
@@ -130,7 +130,7 @@ class TestJavacoreAnalyser(unittest.TestCase):
         sys.stdout = captured_output  # and redirect stdout.
         try:
             with patch.object(sys, 'argv', self.javacores_with_invalid_chars):
-                javacore_analyser.main()
+                javacore_analyser_batch.main()
         except SystemExit:
             console_output = captured_output.getvalue()
             self.assertRegex(console_output, "CorruptedJavacoreException")
@@ -145,7 +145,7 @@ class TestJavacoreAnalyser(unittest.TestCase):
         sys.stdout = captured_output  # and redirect stdout.
         try:
             with patch.object(sys, 'argv', self.javacorefilescorrupted):
-                javacore_analyser.main()
+                javacore_analyser_batch.main()
         except SystemExit:
             console_output = captured_output.getvalue()
             self.assertRegex(console_output, "Error during processing file:")
@@ -155,7 +155,7 @@ class TestJavacoreAnalyser(unittest.TestCase):
     def runMainWithParams(self, args):
         # From https://stackoverflow.com/questions/18668947/how-do-i-set-sys-argv-so-i-can-unit-test-it
         with patch.object(sys, 'argv', args):
-            javacore_analyser.main()
+            javacore_analyser_batch.main()
         self.assert_data_generated_and_not_empty()
 
     # Checks whether report.xml and report.xsl have been generated.

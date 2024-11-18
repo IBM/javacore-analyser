@@ -17,14 +17,14 @@ from xml.dom.minidom import parseString
 from lxml import etree
 from lxml.etree import XMLSyntaxError
 
-import tips
-from code_snapshot_collection import CodeSnapshotCollection
-from constants import *
-from java_thread import Thread
-from javacore import Javacore
-from snapshot_collection import SnapshotCollection
-from snapshot_collection_collection import SnapshotCollectionCollection
-from verbose_gc import VerboseGcParser
+from javacore_analyser import tips
+from javacore_analyser.code_snapshot_collection import CodeSnapshotCollection
+from javacore_analyser.constants import *
+from javacore_analyser.java_thread import Thread
+from javacore_analyser.javacore import Javacore
+from javacore_analyser.snapshot_collection import SnapshotCollection
+from javacore_analyser.snapshot_collection_collection import SnapshotCollectionCollection
+from javacore_analyser.verbose_gc import VerboseGcParser
 
 
 class JavacoreSet:
@@ -115,7 +115,7 @@ class JavacoreSet:
         if os.path.isdir(data_dir):
             shutil.rmtree(data_dir, ignore_errors=True)
         logging.info("Data dir: " + data_dir)
-        shutil.copytree("../../test/data", data_dir, dirs_exist_ok=True)
+        shutil.copytree("src/javacore_analyser/data", data_dir, dirs_exist_ok=True)
 
     def __generate_htmls_for_threads(self, output_dir, temp_dir_name):
         self.create_xml_xsl_for_collection(temp_dir_name + "/threads",

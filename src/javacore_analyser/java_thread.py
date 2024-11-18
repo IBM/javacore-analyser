@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-from abstract_snapshot_collection import AbstractSnapshotCollection
+from javacore_analyser.abstract_snapshot_collection import AbstractSnapshotCollection
 
 
 class Thread(AbstractSnapshotCollection):
