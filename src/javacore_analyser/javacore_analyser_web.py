@@ -15,8 +15,8 @@ from pathlib import Path
 from flask import Flask, render_template, request, send_from_directory, redirect
 
 import javacore_analyser.javacore_analyser_batch
-from javacore_analyser import logging_utils
 from javacore_analyser.constants import DEFAULT_REPORTS_DIR, DEFAULT_PORT
+from javacore_analyser.logging_utils import create_console_logging, create_file_logging
 
 """
 To run the application from cmd type:
@@ -25,13 +25,13 @@ flask --app javacore_analyser_web run
 """
 app = Flask(__name__)
 with app.app_context():
-    logging_utils.create_console_logging()
+    create_console_logging()
     logging.info("Javacore analyser")
     logging.info("Python version: " + sys.version)
     logging.info("Preferred encoding: " + locale.getpreferredencoding())
     reports_dir = os.getenv("REPORTS_DIR", DEFAULT_REPORTS_DIR)
     logging.info("Reports directory: " + reports_dir)
-    logging_utils.create_file_logging(reports_dir)
+    create_file_logging(reports_dir)
 
 
 @app.route('/')
