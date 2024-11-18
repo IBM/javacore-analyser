@@ -116,8 +116,9 @@ def generate_javecore_set_data(files):
     - JavacoreSet: Generated JavacoreSet object containing the processed data.
     """
 
-    # Location when we store extracted archive or copied javacores files
+
     try:
+        # Location when we store extracted archive or copied javacores files
         javacores_temp_dir = tempfile.TemporaryDirectory()
 
         javacores_temp_dir_name = javacores_temp_dir.name
