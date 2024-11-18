@@ -1,3 +1,8 @@
+#
+# Copyright IBM Corp. 2024 - 2024
+# SPDX-License-Identifier: Apache-2.0
+#
+
 [build-system]
 requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
@@ -16,6 +21,13 @@ license = {file = "LICENSE"}
 requires-python = ">=3.9"
 classifiers = [
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3 :: Only",
     "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
 ]
@@ -28,10 +40,16 @@ dependencies = [
 ]
 
 [project.scripts]
-javacore_analyser_batch="javacore_analyser:javacore_analyser_batch"
-javacore_analyser_web="javacore_analyser:javacore_analyser_web"
+javacore_analyser_batch="javacore_analyser.javacore_analyser_batch:main"
 
 [project.urls]
 Homepage = "https://github.com/IBM/javacore-analyser"
 Issues = "https://github.com/IBM/javacore-analyser/issues"
 Changelog = "https://github.com/IBM/javacore-analyser/CHANGELOG.md"
+Source = "https://github.com/IBM/javacore-analyser"
+
+[tool.setuptools]
+package-data = { "data" = ["data/*"] }
+
+[tool.setuptools.packages.find]
+where = ["src"]
