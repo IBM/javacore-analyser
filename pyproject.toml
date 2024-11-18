@@ -4,8 +4,8 @@
 #
 
 [build-system]
-requires = ["setuptools>=61.0"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [project]
 name = "javacore_analyser"
@@ -47,6 +47,3 @@ Homepage = "https://github.com/IBM/javacore-analyser"
 Issues = "https://github.com/IBM/javacore-analyser/issues"
 Changelog = "https://github.com/IBM/javacore-analyser/CHANGELOG.md"
 Source = "https://github.com/IBM/javacore-analyser"
-
-[tool.setuptools]
-package-data = { "data" = ["data/*"] }
