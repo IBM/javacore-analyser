@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "javacore_analyser"
+dynamic = ["version"]
+authors = [
+    { name="Krzysztof Kazmierczyk", email="kazm@ibm.com" },
+    { name="Piotr Aniola", email="Piotr.Aniola@ibm.com" },
+    { name="Tadeusz Janasiewicz", email="t.janasiewicz@ibm.com" },
+]
+description = "The tool to review IBM Javacore files"
+readme = "README.md"
+license = {file = "LICENSE"}
+requires-python = ">=3.9"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "dicttoxml",
+    "py7zr",
+    "lxml",
+    "pyana",
+    "importlib-resources",
+]
+
+[project.scripts]
+javacore_analyser_batch="javacore_analyser:javacore_analyser_batch"
+javacore_analyser_web="javacore_analyser:javacore_analyser_web"
+
+[project.urls]
+Homepage = "https://github.com/IBM/javacore-analyser"
+Issues = "https://github.com/IBM/javacore-analyser/issues"
+Changelog = "https://github.com/IBM/javacore-analyser/CHANGELOG.md"
