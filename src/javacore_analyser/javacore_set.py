@@ -27,6 +27,24 @@ from javacore_analyser.snapshot_collection_collection import SnapshotCollectionC
 from javacore_analyser.verbose_gc import VerboseGcParser
 
 
+def create_xml_xsl_for_collection(tmp_dir, xml_xsls_prefix_path, collection, output_file_prefix):
+    logging.info("Creating xmls and xsls in " + tmp_dir)
+    os.mkdir(tmp_dir)
+    extensions = [".xsl", ".xml"]
+    for extension in extensions:
+        file_content = Path(xml_xsls_prefix_path + extension).read_text()
+        for element in collection:
+            element_id = element.get_id()
+            filename = output_file_prefix + "_" + str(element_id) + extension
+            if filename.startswith("_"):
+                filename = filename[1:]
+            file = os.path.join(tmp_dir, filename)
+            logging.debug("Writing file " + file)
+            f = open(file, "w")
+            f.write(file_content.format(id=element_id))
+            f.close()
+
+
 class JavacoreSet:
     """represents a single javacore collection
     consisting of one or more javacore files"""
@@ -118,7 +136,7 @@ class JavacoreSet:
         shutil.copytree("src/javacore_analyser/data", data_dir, dirs_exist_ok=True)
 
     def __generate_htmls_for_threads(self, output_dir, temp_dir_name):
-        self.create_xml_xsl_for_collection(temp_dir_name + "/threads",
+        create_xml_xsl_for_collection(temp_dir_name + "/threads",
                                            "data/xml/threads/thread",
                                            self.threads,
                                            "thread")
@@ -127,7 +145,7 @@ class JavacoreSet:
                                            output_dir + "/threads", )
 
     def __generate_htmls_for_javacores(self, output_dir, temp_dir_name):
-        self.create_xml_xsl_for_collection(temp_dir_name + "/javacores",
+        create_xml_xsl_for_collection(temp_dir_name + "/javacores",
                                            "data/xml/javacores/javacore",
                                            self.javacores,
                                            "")
@@ -527,23 +545,6 @@ class JavacoreSet:
 
         logging.debug("Generating file " + html_file)
         output_doc.write(html_file, pretty_print=True)
-
-    def create_xml_xsl_for_collection(self, tmp_dir, xml_xsls_prefix_path, collection, output_file_prefix):
-        logging.info("Creating xmls and xsls in " + tmp_dir)
-        os.mkdir(tmp_dir)
-        extensions = [".xsl", ".xml"]
-        for extension in extensions:
-            file_content = Path(xml_xsls_prefix_path + extension).read_text()
-            for element in collection:
-                element_id = element.get_id()
-                filename = output_file_prefix + "_" + str(element_id) + extension
-                if filename.startswith("_"):
-                    filename = filename[1:]
-                file = os.path.join(tmp_dir, filename)
-                logging.debug("Writing file " + file)
-                f = open(file, "w")
-                f.write(file_content.format(id=element_id))
-                f.close()
 
     @staticmethod
     def parse_mem_arg(line):
