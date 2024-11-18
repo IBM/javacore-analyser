@@ -553,7 +553,8 @@ class JavacoreSet:
 
     @staticmethod
     def parse_mem_arg(line):
-        tokens = re.findall("[\d]+[MmGg]", line)
+        line = line.split()[-1]  # avoid matching the '2' in tag name 2CIUSERARG
+        tokens = re.findall("[\d]+[KkMmGg]?$", line)
         if len(tokens) != 1: return UNKNOWN
         return tokens[0]
 
