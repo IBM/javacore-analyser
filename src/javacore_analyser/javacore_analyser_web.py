@@ -14,6 +14,7 @@ from pathlib import Path
 
 from flask import Flask, render_template, request, send_from_directory, redirect
 
+import javacore_analyser.javacore_analyser_batch
 import logging_utils
 from constants import DEFAULT_REPORTS_DIR, DEFAULT_PORT
 
@@ -100,7 +101,8 @@ def upload_file():
 
         # Process the uploaded file
         report_output_dir = reports_dir + '/' + report_name
-        javacore_analyzer.process_javacores_and_generate_report_data(input_files, report_output_dir)
+        javacore_analyser.javacore_analyser_batch.process_javacores_and_generate_report_data(input_files,
+                                                                                             report_output_dir)
 
         return redirect("/reports/" + report_name + "/index.html")
     finally:
