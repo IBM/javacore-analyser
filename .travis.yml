@@ -5,6 +5,6 @@ install:
  - pip install -r requirements.txt
 env:
  global:
-  - PYTHONPATH=src
+  - PYTHONPATH=src:test
 script:
  - python -m unittest test.test_javacore test.test_thread_snapshot test.test_javacore_set test.test_java_thread test.test_stack_trace test.test_javacore_analyzer test.test_tips test.test_verbose_gc_parser test.test_gc_collection test.test_code_snapshot_collection
