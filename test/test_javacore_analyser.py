@@ -11,6 +11,7 @@ import sys
 import unittest
 from unittest.mock import patch
 
+from javacore_analyser import javacore_analyser
 from javacore_analyser.javacore import CorruptedJavacoreException
 
 

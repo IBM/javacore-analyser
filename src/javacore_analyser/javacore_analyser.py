@@ -24,9 +24,6 @@ from javacore_set import JavacoreSet
 SUPPORTED_ARCHIVES_FORMATS = {"zip", "gz", "tgz", "bz2", "lzma", "7z"}
 
 
-
-
-
 def extract_archive(input_archive_filename, output_path):
     """
 
@@ -56,8 +53,8 @@ def extract_archive(input_archive_filename, output_path):
         logging.info("Processing 7z file")
     else:
         raise Exception("The format of file is not supported. "
-                      "Currently we support only zip, tar.gz, tgz, tar.bz2 and 7z. "
-                      "Cannot proceed.")
+                        "Currently we support only zip, tar.gz, tgz, tar.bz2 and 7z. "
+                        "Cannot proceed.")
 
     file.extractall(path=output_path)
     file.close()
@@ -137,7 +134,6 @@ def generate_javecore_set_data(files):
         return JavacoreSet.process_javacores(javacores_temp_dir_name)
     finally:
         javacores_temp_dir.cleanup()
-
 
 
 # Assisted by WCA@IBM
