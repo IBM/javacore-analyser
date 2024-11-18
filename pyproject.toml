@@ -30,6 +30,13 @@ classifiers = [
     "Programming Language :: Python :: 3 :: Only",
     "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Environment :: Web Environment",
+    "Framework :: Flask",
+    "Intended Audience :: Customer Service",
+    "Intended Audience :: System Administrators",
+    "Natural Language :: English",
 ]
 dependencies = [
     "dicttoxml",
