@@ -50,6 +50,3 @@ Source = "https://github.com/IBM/javacore-analyser"
 
 [tool.setuptools]
 package-data = { "data" = ["data/*"] }
-
-[tool.setuptools.packages.find]
-where = ["src"]
