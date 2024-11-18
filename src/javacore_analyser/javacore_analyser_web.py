@@ -15,8 +15,8 @@ from pathlib import Path
 from flask import Flask, render_template, request, send_from_directory, redirect
 
 import javacore_analyser.javacore_analyser_batch
-import logging_utils
-from constants import DEFAULT_REPORTS_DIR, DEFAULT_PORT
+from javacore_analyser import logging_utils
+from javacore_analyser.constants import DEFAULT_REPORTS_DIR, DEFAULT_PORT
 
 """
 To run the application from cmd type:
