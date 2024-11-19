@@ -109,6 +109,13 @@ def upload_file():
     finally:
         javacores_temp_dir.cleanup()
 
+def main():
+    debug = os.getenv("DEBUG", False)
+    port = os.getenv("PORT", DEFAULT_PORT)
+    if debug:
+        app.run(debug=True, port=port)  # Run Flask for development
+    else:
+        serve(app, port=port)  # Run Waitress in production
 
 if __name__ == '__main__':
     """
@@ -117,9 +124,4 @@ if __name__ == '__main__':
     PORT - application port
     REPORTS_DIR - the directory when the reports are stored as default
     """
-    debug = os.getenv("DEBUG", False)
-    port = os.getenv("PORT", DEFAULT_PORT)
-    if debug:
-        app.run(debug=True, port=port)  #Run Flask for development
-    else:
-        serve(app, port=port)  #Run Waitress in production
+    main()
