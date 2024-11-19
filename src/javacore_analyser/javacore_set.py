@@ -28,12 +28,15 @@ from javacore_analyser.snapshot_collection_collection import SnapshotCollectionC
 from javacore_analyser.verbose_gc import VerboseGcParser
 
 
-def create_xml_xsl_for_collection(tmp_dir, xml_xsls_prefix_path, collection, output_file_prefix):
+def _create_xml_xsl_for_collection(tmp_dir, templates_dir, xml_xsl_filename, collection, output_file_prefix):
     logging.info("Creating xmls and xsls in " + tmp_dir)
     os.mkdir(tmp_dir)
     extensions = [".xsl", ".xml"]
     for extension in extensions:
-        file_content = Path(xml_xsls_prefix_path + extension).read_text()
+        file_full_path = os.path.normpath(os.path.join(templates_dir, xml_xsl_filename + extension))
+        if not file_full_path.startswith(templates_dir):
+            raise Exception("Security exception: Uncontrolled data used in path expression")
+        file_content = Path(file_full_path).read_text()
         for element in collection:
             element_id = element.get_id()
             filename = output_file_prefix + "_" + str(element_id) + extension
@@ -44,6 +47,9 @@ def create_xml_xsl_for_collection(tmp_dir, xml_xsls_prefix_path, collection, out
             f = open(file, "w")
             f.write(file_content.format(id=element_id))
             f.close()
+
+
+
 
 
 class JavacoreSet:
@@ -141,18 +147,18 @@ class JavacoreSet:
         shutil.copytree(data_dir, data_output_dir, dirs_exist_ok=True)
 
     def __generate_htmls_for_threads(self, output_dir, temp_dir_name):
-        create_xml_xsl_for_collection(temp_dir_name + "/threads",
-                                      output_dir + "/data/xml/threads/thread",
-                                      self.threads,
+        _create_xml_xsl_for_collection(temp_dir_name + "/threads",
+                                        output_dir + "/data/xml/threads", "thread",
+                                        self.threads,
                                       "thread")
         self.generate_htmls_from_xmls_xsls(self.report_xml_file,
                                            temp_dir_name + "/threads",
                                            output_dir + "/threads", )
 
     def __generate_htmls_for_javacores(self, output_dir, temp_dir_name):
-        create_xml_xsl_for_collection(temp_dir_name + "/javacores",
-                                      output_dir + "/data/xml/javacores/javacore",
-                                      self.javacores,
+        _create_xml_xsl_for_collection(temp_dir_name + "/javacores",
+                                        output_dir + "/data/xml/javacores/", "javacore",
+                                        self.javacores,
                                       "")
         self.generate_htmls_from_xmls_xsls(self.report_xml_file,
                                            temp_dir_name + "/javacores",
