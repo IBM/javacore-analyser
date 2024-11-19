@@ -13,6 +13,7 @@ import time
 from pathlib import Path
 
 from flask import Flask, render_template, request, send_from_directory, redirect
+from waitress import serve
 
 import javacore_analyser.javacore_analyser_batch
 from javacore_analyser.constants import DEFAULT_REPORTS_DIR, DEFAULT_PORT
@@ -116,4 +117,9 @@ if __name__ == '__main__':
     PORT - application port
     REPORTS_DIR - the directory when the reports are stored as default
     """
-    app.run(debug=os.getenv("DEBUG", False), port=os.getenv("PORT", DEFAULT_PORT))
+    debug = os.getenv("DEBUG", False)
+    port = os.getenv("PORT", DEFAULT_PORT)
+    if debug:
+        app.run(debug=True, port=port)  #Run Flask for development
+    else:
+        serve(app, port=port)  #Run Waitress in production
