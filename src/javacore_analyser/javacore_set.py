@@ -136,7 +136,9 @@ class JavacoreSet:
     def __create_output_files_structure(self, output_dir):
         if not os.path.isdir(output_dir):
             os.mkdir(output_dir)
-        data_output_dir = output_dir + '/data'
+        data_output_dir = os.path.normpath(os.path.join(output_dir, 'data'))
+        if not data_output_dir.startswith(output_dir):
+            raise Exception("Security exception: Uncontrolled data used in path expression")
         if os.path.isdir(data_output_dir):
             shutil.rmtree(data_output_dir, ignore_errors=True)
         logging.info("Data dir: " + data_output_dir)
