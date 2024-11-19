@@ -10,3 +10,4 @@ test/data/javacores-WAIT2/report.xsl
 .vscode
 dist
 src/javacore_analyser.egg-info
+reports
