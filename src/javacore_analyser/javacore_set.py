@@ -49,9 +49,6 @@ def _create_xml_xsl_for_collection(tmp_dir, templates_dir, xml_xsl_filename, col
             f.close()
 
 
-
-
-
 class JavacoreSet:
     """represents a single javacore collection
     consisting of one or more javacore files"""
@@ -150,18 +147,18 @@ class JavacoreSet:
 
     def __generate_htmls_for_threads(self, output_dir, temp_dir_name):
         _create_xml_xsl_for_collection(temp_dir_name + "/threads",
-                                        output_dir + "/data/xml/threads", "thread",
-                                        self.threads,
-                                      "thread")
+                                       output_dir + "/data/xml/threads", "thread",
+                                       self.threads,
+                                       "thread")
         self.generate_htmls_from_xmls_xsls(self.report_xml_file,
                                            temp_dir_name + "/threads",
                                            output_dir + "/threads", )
 
     def __generate_htmls_for_javacores(self, output_dir, temp_dir_name):
         _create_xml_xsl_for_collection(temp_dir_name + "/javacores",
-                                        output_dir + "/data/xml/javacores/", "javacore",
-                                        self.javacores,
-                                      "")
+                                       output_dir + "/data/xml/javacores/", "javacore",
+                                       self.javacores,
+                                       "")
         self.generate_htmls_from_xmls_xsls(self.report_xml_file,
                                            temp_dir_name + "/javacores",
                                            output_dir + "/javacores", )
@@ -485,11 +482,22 @@ class JavacoreSet:
             file.close()
 
     @staticmethod
+    def validate_uncontrolled_data_used_in_path(path_params):
+        fullpath = os.path.normpath(os.path.join(path_params))
+        if not fullpath.startswith(path_params[0]):
+            raise Exception("Security exception: Uncontrolled data used in path expression")
+        return fullpath
+
+    @staticmethod
     def __create_index_html(input_dir, output_dir):
 
         # Copy index.xml and report.xsl to temp - for index.html we don't need to generate anything. Copying is enough.
-        shutil.copy2(output_dir + "/data/xml/index.xml", input_dir)
-        shutil.copy2(output_dir + "/data/xml/report.xsl", input_dir)
+        #index_xml = validate_uncontrolled_data_used_in_path([output_dir, "data", "xml", "index.xml"])
+        index_xml = os.path.normpath(importlib_resources.files("javacore_analyser") / "data" / "xml" / "index.xml")
+        shutil.copy2(index_xml, input_dir)
+
+        report_xsl = os.path.normpath(importlib_resources.files("javacore_analyser") / "data" / "xml" / "report.xsl")
+        shutil.copy2(report_xsl, input_dir)
 
         xslt_doc = etree.parse(input_dir + "/report.xsl")
         xslt_transformer = etree.XSLT(xslt_doc)
