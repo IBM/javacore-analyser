@@ -72,7 +72,7 @@ def main():
     parser.add_argument("input_param", help="Input file(s) or directory")
     parser.add_argument("output_param", help="Report output directory")
     parser.add_argument("--separator",
-                        help='Input files separator (default "' + DEFAULT_FILE_DELIMITER + '"',
+                        help='Input files separator (default "' + DEFAULT_FILE_DELIMITER + '")',
                         default=DEFAULT_FILE_DELIMITER)
     args = parser.parse_args()
 
