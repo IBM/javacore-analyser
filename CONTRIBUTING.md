@@ -91,6 +91,11 @@ To run web application:
    You can change the report dir to the location when you want to store the report. 
    The application will start on http://localhost:5000
 
+
+## Build pip package 
+Follow the steps from [Packaging projects](https://packaging.python.org/en/latest/tutorials/packaging-projects/).
+Currently Chris has an API keys for test and production pypi
+
 ## Testing
 As default the tests in Pycharm are ran in the current selected directory. However we want to run them in main 
 directory of the tool (**javacore-analyser** directory, not **test** directory). 
