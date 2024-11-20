@@ -4,7 +4,7 @@
 #
 
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling", "versioningit"]
 build-backend = "hatchling.build"
 
 [project]
@@ -58,3 +58,6 @@ Homepage = "https://github.com/IBM/javacore-analyser"
 Issues = "https://github.com/IBM/javacore-analyser/issues"
 Changelog = "https://github.com/IBM/javacore-analyser/CHANGELOG.md"
 Source = "https://github.com/IBM/javacore-analyser"
+
+[tool.hatch.version]
+source = "versioningit"
