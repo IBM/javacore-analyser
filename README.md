@@ -33,13 +33,13 @@ Steps:
 2. Install the requirements using pip: 
  `pip install requirements.txt` 
 3. Navigate in command line to unpacked tool and run the following command:  
-  `python javacore_analyzer.py <input-data> <output-dir>`  
+  `python src/javacore_analyser/javacore_analyser.py <input-data> <output-dir>`  
 Where `<input-data>` is one of the following:
 * The directory containing javacores and optionally verbose gc
 * Archive (7z, zip, tar.gz, tar.bz2) containing the same
 * List of the javacores separated by `'` character. Optionally you can add `--separator` option to define your own separator.
 You can type the following command to obtain the help:  
-`python javacore_analyzer.py --help`
+`python src/javacore_analyser/javacore_analyser.py --help`
 
 #### Running web application:
 1. Repeat steps 1 and 2 from cmd application
