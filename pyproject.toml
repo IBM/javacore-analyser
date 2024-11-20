@@ -8,8 +8,9 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
+dynamic = ["version"]
 name = "javacore_analyser"
-version = "2.0rc1"
+#version = "2.0rc1"
 authors = [
     { name="Krzysztof Kazmierczyk", email="kazm@ibm.com" },
     { name="Piotr Aniola", email="Piotr.Aniola@ibm.com" },
