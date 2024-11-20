@@ -81,10 +81,10 @@ To run the tool with sample data perform the following steps:
 When the window appears, add the following commandline to **run parameters**  
 `test/data/javacores /tmp/javacoreanalyser_output`  
 Change the second parameter to the directory where you want the output report be created.
-2. Right click again on **javacore_analyzer.py** and select **Run** or **Debug**.
+2. Right click again on **javacore_analyser.py** and select **Run** or **Debug**.
 
 To run web application:
-1. Right click on **javacore_analyzer_web.py** directory in **Project** view and select **Modify Run Configuration...**.
+1. Right click on **javacore_analyser_web.py** directory in **Project** view and select **Modify Run Configuration...**.
 2. Add the following **Environmental variables:**
    * **DEBUG:True**
    * **REPORTS_DIR:/tmp/web_reports**  
