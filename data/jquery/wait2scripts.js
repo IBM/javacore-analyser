@@ -147,10 +147,34 @@ const loadChartGC = function() {
   // 3. find the HEAP_SIZE
   const MB_SIZE = Math.pow(1024, 2)
   let HEAP_SIZE;
-  if(document.getElementById('sys_info_table').rows[2].cells[1].innerHTML.slice(-1).toLowerCase() === 'g')
-    HEAP_SIZE = Number(document.getElementById('sys_info_table').rows[2].cells[1].innerHTML.slice(0, -1)) * MB_SIZE * 1024;
-  else
-    HEAP_SIZE = Number(document.getElementById('sys_info_table').rows[2].cells[1].innerHTML.slice(0, -1)) * MB_SIZE;
+  let heapUnit = document.getElementById('sys_info_table').rows[2].cells[1].innerHTML.slice(-1).toLowerCase();
+
+  if(!isNaN(Number(heapUnit))) {
+     HEAP_SIZE = Number(document.getElementById('sys_info_table').rows[2].cells[1].innerHTML);
+  }
+  else {
+
+      switch (heapUnit) {
+        case "g":
+            HEAP_SIZE =
+                Number(document.getElementById('sys_info_table').rows[2].cells[1].innerHTML.slice(0, -1))
+                    * MB_SIZE * 1024;
+        break;
+        case "m":
+            HEAP_SIZE =
+                Number(document.getElementById('sys_info_table').rows[2].cells[1].innerHTML.slice(0, -1))
+                    * MB_SIZE;
+        break;
+        case "k":
+            HEAP_SIZE =
+                Number(document.getElementById('sys_info_table').rows[2].cells[1].innerHTML.slice(0, -1))
+                    * 1024;
+        break;
+        default:
+            console.log("Hmm, what now .. heap unit undefined!");
+        break;
+      }
+  }
 
   // 4. create input data for GC chart
   //        start with gc collection done after the first javacore creation
