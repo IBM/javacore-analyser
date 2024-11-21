@@ -7,6 +7,7 @@ FROM python:3
 
 EXPOSE 5000/tcp
 ENV REPORTS_DIR=/reports
+RUN mkdir /reports
 VOLUME ["/reports"]
 
 RUN pip install --no-cache-dir javacore-analyser
