@@ -16,6 +16,7 @@ from xml.dom.minidom import parseString
 
 from lxml import etree
 from lxml.etree import XMLSyntaxError
+from tqdm import tqdm
 
 import tips
 from code_snapshot_collection import CodeSnapshotCollection
@@ -26,7 +27,6 @@ from snapshot_collection import SnapshotCollection
 from snapshot_collection_collection import SnapshotCollectionCollection
 from verbose_gc import VerboseGcParser
 
-from tqdm import tqdm
 
 class JavacoreSet:
     """represents a single javacore collection
@@ -236,7 +236,7 @@ class JavacoreSet:
 
     def parse_javacores(self):
         """ creates a Javacore object for each javacore...txt file in the given path """
-        for filename in tqdm(self.files, "Parsing Javacore files"):
+        for filename in tqdm(self.files, "Parsing Javacore files", unit=" javacores"):
             filename = os.path.join(self.path, filename)
             javacore = Javacore()
             javacore.create(filename, self)
@@ -482,7 +482,7 @@ class JavacoreSet:
         shutil.copy2(report_xml_file, data_input_dir)
 
         list_files = os.listdir(data_input_dir)
-        progress_bar = tqdm(desc="Generating html files")
+        progress_bar = tqdm(desc="Generating html files", unit=' files')
 
         # Generating list of tuples. This is required attribute for p.map function executed few lines below.
         generate_html_from_xml_xsl_files_params = []
@@ -541,7 +541,7 @@ class JavacoreSet:
         extensions = [".xsl", ".xml"]
         for extension in extensions:
             file_content = Path(xml_xsls_prefix_path + extension).read_text()
-            for element in tqdm(collection, desc="Creating xml/xsl files"):
+            for element in tqdm(collection, desc="Creating xml/xsl files", unit=" files"):
                 element_id = element.get_id()
                 filename = output_file_prefix + "_" + str(element_id) + extension
                 if filename.startswith("_"):
