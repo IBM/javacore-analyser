@@ -148,16 +148,16 @@ class JavacoreSet:
 
     def __generate_htmls_for_threads(self, output_dir, temp_dir_name):
         _create_xml_xsl_for_collection(os.path.join(temp_dir_name, "threads"),
-                                       os.path.join(output_dir,"data","xml","threads"), "thread",
+                                       os.path.join(output_dir, "data", "xml", "threads"), "thread",
                                        self.threads,
                                        "thread")
         self.generate_htmls_from_xmls_xsls(self.report_xml_file,
                                            os.path.join(temp_dir_name, "threads"),
-                                           os.path.join(output_dir,"threads"))
+                                           os.path.join(output_dir, "threads"))
 
     def __generate_htmls_for_javacores(self, output_dir, temp_dir_name):
         _create_xml_xsl_for_collection(os.path.join(temp_dir_name, "javacores"),
-                                       os.path.join(output_dir,"data","xml","javacores"), "javacore",
+                                       os.path.join(output_dir, "data", "xml", "javacores"), "javacore",
                                        self.javacores,
                                        "")
         self.generate_htmls_from_xmls_xsls(self.report_xml_file,
