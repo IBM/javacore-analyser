@@ -46,7 +46,8 @@ dependencies = [
     "pyana",
     "importlib-resources",
     "flask",
-    "waitress"
+    "waitress",
+    "tqdm"
 ]
 
 [project.scripts]
