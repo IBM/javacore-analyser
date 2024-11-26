@@ -15,6 +15,7 @@ from pathlib import Path
 from xml.dom.minidom import parseString
 
 import importlib_resources
+from importlib_resources.abc import Traversable
 from lxml import etree
 from lxml.etree import XMLSyntaxError
 
@@ -140,28 +141,28 @@ class JavacoreSet:
             shutil.rmtree(data_output_dir, ignore_errors=True)
         logging.info("Data dir: " + data_output_dir)
 
-        style_css_resource = importlib_resources.files("javacore_analyser") / "data" / "style.css"
+        style_css_resource: Traversable = importlib_resources.files("javacore_analyser") / "data" / "style.css"
         data_dir = os.path.dirname(style_css_resource)
         os.mkdir(data_output_dir)
         shutil.copytree(data_dir, data_output_dir, dirs_exist_ok=True)
 
     def __generate_htmls_for_threads(self, output_dir, temp_dir_name):
-        _create_xml_xsl_for_collection(temp_dir_name + os.sep + "threads",
-                                       output_dir + os.sep + "data" + os.sep + "xml" + os.sep + "threads", "thread",
+        _create_xml_xsl_for_collection(os.path.join(temp_dir_name, "threads"),
+                                       os.path.join(output_dir,"data","xml","threads"), "thread",
                                        self.threads,
                                        "thread")
         self.generate_htmls_from_xmls_xsls(self.report_xml_file,
-                                           temp_dir_name + os.sep + "threads",
-                                           output_dir + os.sep + "threads", )
+                                           os.path.join(temp_dir_name, "threads"),
+                                           os.path.join(output_dir,"threads"))
 
     def __generate_htmls_for_javacores(self, output_dir, temp_dir_name):
-        _create_xml_xsl_for_collection(temp_dir_name + os.sep + "javacores",
-                                       output_dir + os.sep + "data" + os.sep + "xml" + os.sep + "javacores", "javacore",
+        _create_xml_xsl_for_collection(os.path.join(temp_dir_name, "javacores"),
+                                       os.path.join(output_dir,"data","xml","javacores"), "javacore",
                                        self.javacores,
                                        "")
         self.generate_htmls_from_xmls_xsls(self.report_xml_file,
-                                           temp_dir_name + os.sep + "javacores",
-                                           output_dir + os.sep + "javacores", )
+                                           os.path.join(temp_dir_name, "javacores"),
+                                           os.path.join(output_dir, "javacores"))
 
     def populate_snapshot_collections(self):
         for javacore in self.javacores:
