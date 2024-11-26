@@ -40,7 +40,6 @@ classifiers = [
     "Natural Language :: English",
 ]
 dependencies = [
-    "dicttoxml",
     "py7zr",
     "lxml",
     "pyana",

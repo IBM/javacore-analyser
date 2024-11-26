@@ -1,4 +1,3 @@
-dicttoxml
 py7zr
 lxml
 pyana
