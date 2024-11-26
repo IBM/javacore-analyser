@@ -18,6 +18,7 @@ import importlib_resources
 from importlib_resources.abc import Traversable
 from lxml import etree
 from lxml.etree import XMLSyntaxError
+from tqdm import tqdm
 
 from javacore_analyser import tips
 from javacore_analyser.code_snapshot_collection import CodeSnapshotCollection
@@ -520,10 +521,13 @@ class JavacoreSet:
             os.mkdir(output_dir)
         shutil.copy2(report_xml_file, data_input_dir)
 
+        list_files = os.listdir(data_input_dir)
+        progress_bar = tqdm(desc="Generating html files", unit=' files')
+
         # Generating list of tuples. This is required attribute for p.map function executed few lines below.
         generate_html_from_xml_xsl_files_params = []
-        for file in os.listdir(data_input_dir):
-            generate_html_from_xml_xsl_files_params.append((file, data_input_dir, output_dir))
+        for file in list_files:
+            generate_html_from_xml_xsl_files_params.append((file, data_input_dir, output_dir, progress_bar))
 
         # https://docs.python.org/3.8/library/multiprocessing.html
         threads_no = JavacoreSet.get_number_of_parallel_threads()
@@ -531,6 +535,7 @@ class JavacoreSet:
         with Pool(threads_no) as p:
             p.map(JavacoreSet.generate_html_from_xml_xsl_files, generate_html_from_xml_xsl_files_params)
 
+        progress_bar.close()
         logging.info(f"Generated html files in {output_dir}")
 
     # Run with the same number of threads as you have processes but leave one thread for something else.
@@ -541,7 +546,7 @@ class JavacoreSet:
     @staticmethod
     def generate_html_from_xml_xsl_files(args):
 
-        collection_file, collection_input_dir, output_dir = args
+        collection_file, collection_input_dir, output_dir, progress_bar = args
 
         if not collection_file.endswith(".xsl"): return
 
@@ -567,6 +572,25 @@ class JavacoreSet:
 
         logging.debug("Generating file " + html_file)
         output_doc.write(html_file, pretty_print=True)
+
+        progress_bar.update(1)
+
+    def create_xml_xsl_for_collection(self, tmp_dir, xml_xsls_prefix_path, collection, output_file_prefix):
+        logging.info("Creating xmls and xsls in " + tmp_dir)
+        os.mkdir(tmp_dir)
+        extensions = [".xsl", ".xml"]
+        for extension in extensions:
+            file_content = Path(xml_xsls_prefix_path + extension).read_text()
+            for element in tqdm(collection, desc="Creating xml/xsl files", unit=" files"):
+                element_id = element.get_id()
+                filename = output_file_prefix + "_" + str(element_id) + extension
+                if filename.startswith("_"):
+                    filename = filename[1:]
+                file = os.path.join(tmp_dir, filename)
+                logging.debug("Writing file " + file)
+                f = open(file, "w")
+                f.write(file_content.format(id=element_id))
+                f.close()
 
     @staticmethod
     def parse_mem_arg(line):
