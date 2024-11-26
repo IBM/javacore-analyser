@@ -146,22 +146,22 @@ class JavacoreSet:
         shutil.copytree(data_dir, data_output_dir, dirs_exist_ok=True)
 
     def __generate_htmls_for_threads(self, output_dir, temp_dir_name):
-        _create_xml_xsl_for_collection(temp_dir_name + "/threads",
-                                       output_dir + "/data/xml/threads", "thread",
+        _create_xml_xsl_for_collection(temp_dir_name + os.sep + "threads",
+                                       output_dir + os.sep + "data" + os.sep + "xml" + os.sep + "threads", "thread",
                                        self.threads,
                                        "thread")
         self.generate_htmls_from_xmls_xsls(self.report_xml_file,
-                                           temp_dir_name + "/threads",
-                                           output_dir + "/threads", )
+                                           temp_dir_name + os.sep + "threads",
+                                           output_dir + os.sep + "threads", )
 
     def __generate_htmls_for_javacores(self, output_dir, temp_dir_name):
-        _create_xml_xsl_for_collection(temp_dir_name + "/javacores",
-                                       output_dir + "/data/xml/javacores/", "javacore",
+        _create_xml_xsl_for_collection(temp_dir_name + os.sep + "javacores",
+                                       output_dir + os.sep + "data" + os.sep + "xml" + os.sep + "javacores", "javacore",
                                        self.javacores,
                                        "")
         self.generate_htmls_from_xmls_xsls(self.report_xml_file,
-                                           temp_dir_name + "/javacores",
-                                           output_dir + "/javacores", )
+                                           temp_dir_name + os.sep + "javacores",
+                                           output_dir + os.sep + "javacores", )
 
     def populate_snapshot_collections(self):
         for javacore in self.javacores:
