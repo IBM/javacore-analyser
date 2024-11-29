@@ -17,11 +17,13 @@
 
     <h2>Generate report:</h2>
     <form action="/upload" method="post" enctype="multipart/form-data">
-      <br>Choose archive (zip, 7z, tgz, bz2) file or multiple javacore files:
-        <input type="file" name="files" multiple required> </br>
-      <br>Give the name for your report: <input type="text" id="report_name" name="report_name" required></br>
-      <br><input type="submit" value="Run"></br>
-      <p></p>
+      <ol>
+      <li>Choose archive (zip, 7z, tgz, bz2) file or multiple javacore files:
+        <input type="file" name="files" multiple required>
+      </li>
+      <li>Give the name for your report: <input type="text" id="report_name" name="report_name" required></li>
+      <li>Click button to process: <input type="submit" value="Run"></li>
+      </ol>
       <strong>
         NOTE: Report generation is an expensive operation. It may take a few minutes. Please be patient.
       </strong>
