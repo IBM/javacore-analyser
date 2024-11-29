@@ -8,6 +8,8 @@ import ntpath
 from datetime import datetime
 from xml.dom.minidom import Element, parseString
 
+from tqdm import tqdm
+
 ROOT_CLOSING_TAG = "</verbosegc>"
 GC_START = "gc-start"
 GC_END = "gc-end"
@@ -43,7 +45,7 @@ class VerboseGcParser:
 
     def parse_files(self, start_time, stop_time):
         logging.info("Started parsing GC files")
-        for file_path in self.__file_paths:
+        for file_path in tqdm(self.__file_paths, desc="Parsing verbose gc", unit=" file"):
             try:
                 collects_from_time_range = 0
                 file = VerboseGcFile(file_path)

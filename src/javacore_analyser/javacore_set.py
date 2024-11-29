@@ -34,7 +34,7 @@ def _create_xml_xsl_for_collection(tmp_dir, templates_dir, xml_xsl_filename, col
     logging.info("Creating xmls and xsls in " + tmp_dir)
     os.mkdir(tmp_dir)
     extensions = [".xsl", ".xml"]
-    for extension in extensions:
+    for extension in tqdm(extensions, desc="Creating xml/xsl files", unit= " file"):
         file_full_path = os.path.normpath(os.path.join(templates_dir, xml_xsl_filename + extension))
         if not file_full_path.startswith(templates_dir):
             raise Exception("Security exception: Uncontrolled data used in path expression")
@@ -168,7 +168,7 @@ class JavacoreSet:
     def populate_snapshot_collections(self):
         for javacore in self.javacores:
             javacore.print_javacore()
-            for s in javacore.snapshots:
+            for s in tqdm(javacore.snapshots, desc="Populating snapshot collection", unit=" javacore"):
                 self.threads.add_snapshot(s)
                 self.stacks.add_snapshot(s)
 
@@ -265,7 +265,7 @@ class JavacoreSet:
 
     def parse_javacores(self):
         """ creates a Javacore object for each javacore...txt file in the given path """
-        for filename in self.files:
+        for filename in tqdm(self.files, "Parsing javacore files", unit=" file"):
             filename = os.path.join(self.path, filename)
             javacore = Javacore()
             javacore.create(filename, self)
@@ -285,7 +285,7 @@ class JavacoreSet:
     #     return None
 
     def sort_snapshots(self):
-        for thread in self.threads:
+        for thread in tqdm(self.threads, "Sorting snapshot data", unit= " snapshot"):
             thread.sort_snapshots()
             # thread.compare_call_stacks()
 
