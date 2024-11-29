@@ -5,9 +5,9 @@
 
 import unittest
 
-from code_snapshot_collection import CodeSnapshotCollection
-from java_thread import Thread
-from thread_snapshot import ThreadSnapshot
+from javacore_analyser.code_snapshot_collection import CodeSnapshotCollection
+from javacore_analyser.java_thread import Thread
+from javacore_analyser.thread_snapshot import ThreadSnapshot
 
 
 class TestCodeSnapshotCollection(unittest.TestCase):

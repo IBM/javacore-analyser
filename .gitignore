@@ -1,0 +1,13 @@
+.git
+venv
+.idea
+__pycache__
+test/data/javacores/output/export.xml
+test/data/javacores/output/export.xsl
+tmp
+test/data/javacores-WAIT2/report.xml
+test/data/javacores-WAIT2/report.xsl
+.vscode
+dist
+src/javacore_analyser.egg-info
+reports

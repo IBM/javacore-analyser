@@ -1,0 +1,68 @@
+#
+# Copyright IBM Corp. 2024 - 2024
+# SPDX-License-Identifier: Apache-2.0
+#
+
+[build-system]
+requires = ["hatchling", "versioningit"]
+build-backend = "hatchling.build"
+
+[project]
+dynamic = ["version"]
+name = "javacore_analyser"
+#version = "2.0rc1"
+authors = [
+    { name="Krzysztof Kazmierczyk", email="kazm@ibm.com" },
+    { name="Piotr Aniola", email="Piotr.Aniola@ibm.com" },
+    { name="Tadeusz Janasiewicz", email="t.janasiewicz@ibm.com" },
+]
+description = "The tool to review IBM Javacore files"
+readme = "README.md"
+license = {file = "LICENSE"}
+requires-python = ">=3.9"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3 :: Only",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Environment :: Web Environment",
+    "Framework :: Flask",
+    "Intended Audience :: Customer Service",
+    "Intended Audience :: System Administrators",
+    "Natural Language :: English",
+]
+dependencies = [
+    "py7zr",
+    "lxml",
+    "pyana",
+    "importlib-resources",
+    "flask",
+    "waitress",
+    "tqdm"
+]
+
+[project.scripts]
+javacore_analyser_batch="javacore_analyser.javacore_analyser_batch:main"
+javacore_analyser_web="javacore_analyser.javacore_analyser_web:main"
+
+[project.urls]
+Homepage = "https://github.com/IBM/javacore-analyser"
+Issues = "https://github.com/IBM/javacore-analyser/issues"
+Changelog = "https://github.com/IBM/javacore-analyser/CHANGELOG.md"
+Source = "https://github.com/IBM/javacore-analyser"
+
+[tool.hatch.version]
+source = "versioningit"
+
+[tool.versioningit.format]
+distance = "{next_version}.dev{distance}"
+dirty = "{version}"
+distance-dirty = "{next_version}.dev{distance}"

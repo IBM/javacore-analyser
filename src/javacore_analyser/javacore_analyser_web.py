@@ -13,10 +13,11 @@ import time
 from pathlib import Path
 
 from flask import Flask, render_template, request, send_from_directory, redirect
+from waitress import serve
 
-import javacore_analyzer
-import logging_utils
-from constants import DEFAULT_REPORTS_DIR, DEFAULT_PORT
+import javacore_analyser.javacore_analyser_batch
+from javacore_analyser.constants import DEFAULT_REPORTS_DIR, DEFAULT_PORT
+from javacore_analyser.logging_utils import create_console_logging, create_file_logging
 
 """
 To run the application from cmd type:
@@ -25,13 +26,13 @@ flask --app javacore_analyser_web run
 """
 app = Flask(__name__)
 with app.app_context():
-    logging_utils.create_console_logging()
+    create_console_logging()
     logging.info("Javacore analyser")
     logging.info("Python version: " + sys.version)
     logging.info("Preferred encoding: " + locale.getpreferredencoding())
     reports_dir = os.getenv("REPORTS_DIR", DEFAULT_REPORTS_DIR)
     logging.info("Reports directory: " + reports_dir)
-    logging_utils.create_file_logging(reports_dir)
+    create_file_logging(reports_dir)
 
 
 @app.route('/')
@@ -101,12 +102,20 @@ def upload_file():
 
         # Process the uploaded file
         report_output_dir = reports_dir + '/' + report_name
-        javacore_analyzer.process_javacores_and_generate_report_data(input_files, report_output_dir)
+        javacore_analyser.javacore_analyser_batch.process_javacores_and_generate_report_data(input_files,
+                                                                                             report_output_dir)
 
         return redirect("/reports/" + report_name + "/index.html")
     finally:
         javacores_temp_dir.cleanup()
 
+def main():
+    debug = os.getenv("DEBUG", False)
+    port = os.getenv("PORT", DEFAULT_PORT)
+    if debug:
+        app.run(debug=True, port=port)  # Run Flask for development
+    else:
+        serve(app, port=port)  # Run Waitress in production
 
 if __name__ == '__main__':
     """
@@ -115,4 +124,4 @@ if __name__ == '__main__':
     PORT - application port
     REPORTS_DIR - the directory when the reports are stored as default
     """
-    app.run(debug=os.getenv("DEBUG", False), port=os.getenv("PORT", DEFAULT_PORT))
+    main()

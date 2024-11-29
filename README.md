@@ -16,41 +16,57 @@ The tool analyzes Javacores and verbose gc logs and provides some reports like c
 ## Installation and usage
 
 ### Installation:
-The tool requires Python 3.9 or higher plus some packages - see more in [REQUIREMENTS](REQUIREMENTS.md). Despite it is not mandatory, it is recommended in Python to use virtual environment to manage packages.
+The tool requires Python 3.9 or higher plus some packages - see more in [REQUIREMENTS](REQUIREMENTS.md). 
+Despite it is not mandatory, it is recommended in Python to use virtual environment to manage packages.
+
+#### Installing from pip
+This is most common option which you will need in 99% of situations  
 
 Steps:
 1. Download and install Python. Usually the latest version is supported. Search for supported versions in 
 [REQUIREMENTS](REQUIREMENTS.md)
-2. [Download](https://github.com/IBM/javacore-analyser/releases) and unpack the tool.
-3. Create and activate Virtual Environment according to [Creating virtual environments](https://docs.python.org/3/tutorial/venv.html#creating-virtual-environments).
-4. Install all required pip packages. Navigate in command line to unpacked tool and type
-   `pip install -r requirements.txt`
+2. Create and activate Virtual Environment according to [Creating virtual environments](https://docs.python.org/3/tutorial/venv.html#creating-virtual-environments).
+3. Run the following command:
+   `pip install javacore-analyser`  
+    OR
+   `pip install --extra-index-url https://test.pypi.org/simple/ javacore-analyser` - if you want an experimental version
+
+#### Installing from sources
+This is recommended for geeks only:
+1. Repeat steps 1 and 2 from above
+2. Download the project files either from [Releases](https://github.com/IBM/javacore-analyser/releases) or from [main](https://github.com/IBM/javacore-analyser/archive/refs/heads/main.zip)
+3. Extract the code and from code directory execute
+   `pip install .`
 
 ### Running the tool:
 
 #### Running cmd application: 
-1. Activate your created virtual environment according to activate Virtual Environment according to [Creating virtual environments](https://docs.python.org/3/tutorial/venv.html#creating-virtual-environments)
-2. Install the requirements using pip: 
+1. Install application if not done yet
+2. Activate your created virtual environment according to activate Virtual Environment according to [Creating virtual environments](https://docs.python.org/3/tutorial/venv.html#creating-virtual-environments)
+3. Install the requirements using pip: 
  `pip install requirements.txt` 
-3. Navigate in command line to unpacked tool and run the following command:  
-  `python javacore_analyzer.py <input-data> <output-dir>`  
+4. Run the following command from cmd: `javacore-analyser-batch <input-data> <generated-reports-dir>`
 Where `<input-data>` is one of the following:
 * The directory containing javacores and optionally verbose gc
 * Archive (7z, zip, tar.gz, tar.bz2) containing the same
-* List of the javacores separated by `'` character. Optionally you can add `--separator` option to define your own separator.
+* List of the javacores separated by `;` character. Optionally you can add `--separator` option to define your own separator.
 You can type the following command to obtain the help:  
-`python javacore_analyzer.py --help`
+`javacore-analyser-batch --help`
 
 #### Running web application:
-1. Repeat steps 1 and 2 from cmd application
-2. Navigate to unpacked tool and run the following commands: 
+1. Repeat steps 1-3 from cmd application
+2. OPTIONAL: set the following variables:
   ```
   export REPORTS_DIR=/tmp/reports  
-  flask --app javacore_analyser_web run
+  export PORT=5000
   ``` 
- The first command sets the location of the generated reports stored.  
- The second command starts the server which can be accessed by navigating to http://localhost:5000
+ The first parameter sets where the reports need to be stored. If not set, then the `reports` dir will be created in current location.  
+ The first parameter set the port to use by application. If not specified, 5000 will be used.  
+3. Execute the following command from cmd:  
+  `javacore_analyser_web`
 
+  Now you can type (http://localhost:5000/).  
+ 
 <!-- The following are OPTIONAL, but strongly suggested to have in your repository. -->
 <!--
 * [dco.yml](.github/dco.yml) - This enables DCO bot for you, please take a look https://github.com/probot/dco for more details.

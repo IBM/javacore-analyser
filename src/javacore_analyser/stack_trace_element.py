@@ -3,8 +3,8 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-from constants import STACK_TRACE, NATIVE_STACK_TRACE
-from stack_trace_kind import StackTraceKind
+from javacore_analyser.constants import STACK_TRACE, NATIVE_STACK_TRACE
+from javacore_analyser.stack_trace_kind import StackTraceKind
 
 
 class StackTraceElement:

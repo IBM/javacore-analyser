@@ -8,8 +8,8 @@ import datetime
 import logging
 import os.path
 
-from constants import THREAD_INFO, DATETIME, SIGINFO, ENCODING
-from thread_snapshot import ThreadSnapshot
+from javacore_analyser.constants import THREAD_INFO, DATETIME, SIGINFO, ENCODING
+from javacore_analyser.thread_snapshot import ThreadSnapshot
 
 
 class CorruptedJavacoreException(Exception):

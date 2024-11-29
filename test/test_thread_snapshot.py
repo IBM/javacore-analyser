@@ -7,11 +7,11 @@ import time
 import unittest
 from xml.dom.minidom import parseString
 
-from java_thread import Thread
-from javacore import Javacore
-from stack_trace import StackTrace
-from stack_trace_element import StackTraceElement
-from thread_snapshot import ThreadSnapshot
+from javacore_analyser.java_thread import Thread
+from javacore_analyser.javacore import Javacore
+from javacore_analyser.stack_trace import StackTrace
+from javacore_analyser.stack_trace_element import StackTraceElement
+from javacore_analyser.thread_snapshot import ThreadSnapshot
 
 
 class TestThreadSnapshot(unittest.TestCase):

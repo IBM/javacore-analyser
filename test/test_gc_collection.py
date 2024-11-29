@@ -6,7 +6,7 @@
 import unittest
 from xml.dom.minidom import Element, parseString
 
-from verbose_gc import GcCollection, DURATION
+from javacore_analyser.verbose_gc import GcCollection, DURATION
 
 
 class TestGcCollection(unittest.TestCase):

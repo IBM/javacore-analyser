@@ -8,7 +8,7 @@ import unittest
 from datetime import datetime
 from xml.dom.minidom import parseString
 
-from verbose_gc import VerboseGcParser, GC_COLLECTIONS, GC_COLLECTION
+from javacore_analyser.verbose_gc import VerboseGcParser, GC_COLLECTIONS, GC_COLLECTION
 
 
 class TestVerboseGcParser(unittest.TestCase):

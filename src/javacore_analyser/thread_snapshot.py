@@ -7,10 +7,10 @@ import os
 import re
 from datetime import datetime
 
-from constants import *
-from stack_trace import StackTrace
-from stack_trace_element import StackTraceElement
-from stack_trace_kind import StackTraceKind
+from javacore_analyser.constants import *
+from javacore_analyser.stack_trace import StackTrace
+from javacore_analyser.stack_trace_element import StackTraceElement
+from javacore_analyser.stack_trace_kind import StackTraceKind
 
 
 class ThreadSnapshot:

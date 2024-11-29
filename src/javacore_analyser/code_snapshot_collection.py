@@ -3,9 +3,9 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-from abstract_snapshot_collection import AbstractSnapshotCollection
-from stack_trace import StackTrace
-from thread_snapshot import ThreadSnapshot
+from javacore_analyser.abstract_snapshot_collection import AbstractSnapshotCollection
+from javacore_analyser.stack_trace import StackTrace
+from javacore_analyser.thread_snapshot import ThreadSnapshot
 
 
 class CodeSnapshotCollection(AbstractSnapshotCollection):
