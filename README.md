@@ -43,9 +43,7 @@ This is recommended for geeks only:
 #### Running cmd application: 
 1. Install application if not done yet
 2. Activate your created virtual environment according to activate Virtual Environment according to [Creating virtual environments](https://docs.python.org/3/tutorial/venv.html#creating-virtual-environments)
-3. Install the requirements using pip: 
- `pip install requirements.txt` 
-4. Run the following command from cmd: `javacore-analyser-batch <input-data> <generated-reports-dir>`
+3. Run the following command from cmd: `javacore-analyser-batch <input-data> <generated-reports-dir>`
 Where `<input-data>` is one of the following:
 * The directory containing javacores and optionally verbose gc
 * Archive (7z, zip, tar.gz, tar.bz2) containing the same
