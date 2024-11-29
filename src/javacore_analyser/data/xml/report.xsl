@@ -748,7 +748,7 @@
 
                     <p></p>
                     <div class="margined">
-                        <a href="https://w3.ibm.com/w3publisher/wait2-tool" target="_blank">Documentation</a>
+                        <a href="https://github.com/IBM/javacore-analyser/wiki" target="_blank">Documentation</a>
                     </div>
                     <div class="margined">
                         In case of any issues with the tool use Slack group:
