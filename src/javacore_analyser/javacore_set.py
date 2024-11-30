@@ -126,10 +126,29 @@ class JavacoreSet:
         temp_dir_name = temp_dir.name
         logging.info("Created temp dir: " + temp_dir_name)
         self.__create_report_xml(temp_dir_name + "/report.xml")
+        placeholder_filename = os.path.join(output_dir, "data", "html", "processing_data.html")
+        self.__generate_placeholder_htmls(placeholder_filename,
+                                          os.path.join(output_dir, "threads"),
+                                          self.threads, "thread")
+        self.__generate_placeholder_htmls(placeholder_filename,
+                                          os.path.join(output_dir, "javacores"),
+                                          self.javacores, "")
+        self.__create_index_html(temp_dir_name, output_dir)
         self.__generate_htmls_for_threads(output_dir, temp_dir_name)
         self.__generate_htmls_for_javacores(output_dir, temp_dir_name)
-        self.__create_index_html(temp_dir_name, output_dir)
 
+
+    def __generate_placeholder_htmls(self, placeholder_file, dir, collection, file_prefix):
+        if os.path.exists(dir):
+            shutil.rmtree(dir)
+        os.mkdir(dir)
+
+        for element in tqdm(collection, desc="Generating placeholder htmls", unit=" file"):
+            filename = file_prefix + "_" + element.get_id() + ".html"
+            if filename.startswith("_"):
+                filename = filename[1:]
+            file_path = os.path.join(dir, filename)
+            shutil.copy2(placeholder_file, file_path)
 
 
     def __generate_htmls_for_threads(self, output_dir, temp_dir_name):
