@@ -146,6 +146,8 @@ class JavacoreSet:
         data_dir = os.path.dirname(style_css_resource)
         os.mkdir(data_output_dir)
         shutil.copytree(data_dir, data_output_dir, dirs_exist_ok=True)
+        shutil.copy2(os.path.join(data_output_dir, "html","processing_data.html"),
+                     os.path.join(output_dir, "index.html"))
 
     def __generate_htmls_for_threads(self, output_dir, temp_dir_name):
         _create_xml_xsl_for_collection(os.path.join(temp_dir_name, "threads"),
