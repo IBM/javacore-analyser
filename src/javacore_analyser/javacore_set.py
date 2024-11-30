@@ -15,7 +15,6 @@ from pathlib import Path
 from xml.dom.minidom import parseString
 
 import importlib_resources
-from importlib_resources.abc import Traversable
 from lxml import etree
 from lxml.etree import XMLSyntaxError
 from tqdm import tqdm
@@ -126,29 +125,12 @@ class JavacoreSet:
         temp_dir = tempfile.TemporaryDirectory()
         temp_dir_name = temp_dir.name
         logging.info("Created temp dir: " + temp_dir_name)
-        self.create_output_files_structure(output_dir)
         self.__create_report_xml(temp_dir_name + "/report.xml")
         self.__generate_htmls_for_threads(output_dir, temp_dir_name)
         self.__generate_htmls_for_javacores(output_dir, temp_dir_name)
         self.__create_index_html(temp_dir_name, output_dir)
 
-    @staticmethod
-    def create_output_files_structure(self, output_dir):
-        if not os.path.isdir(output_dir):
-            os.mkdir(output_dir)
-        data_output_dir = os.path.normpath(os.path.join(output_dir, 'data'))
-        if not data_output_dir.startswith(output_dir):
-            raise Exception("Security exception: Uncontrolled data used in path expression")
-        if os.path.isdir(data_output_dir):
-            shutil.rmtree(data_output_dir, ignore_errors=True)
-        logging.info("Data dir: " + data_output_dir)
 
-        style_css_resource: Traversable = importlib_resources.files("javacore_analyser") / "data" / "style.css"
-        data_dir = os.path.dirname(style_css_resource)
-        os.mkdir(data_output_dir)
-        shutil.copytree(data_dir, data_output_dir, dirs_exist_ok=True)
-        shutil.copy2(os.path.join(data_output_dir, "html","processing_data.html"),
-                     os.path.join(output_dir, "index.html"))
 
     def __generate_htmls_for_threads(self, output_dir, temp_dir_name):
         _create_xml_xsl_for_collection(os.path.join(temp_dir_name, "threads"),
