@@ -53,15 +53,11 @@ You can type the following command to obtain the help:
 
 #### Running web application:
 1. Repeat steps 1-3 from cmd application
-2. OPTIONAL: set the following variables:
-  ```
-  export REPORTS_DIR=/tmp/reports  
-  export PORT=5000
-  ``` 
- The first parameter sets where the reports need to be stored. If not set, then the `reports` dir will be created in current location.  
- The first parameter set the port to use by application. If not specified, 5000 will be used.  
-3. Execute the following command from cmd:  
-  `javacore_analyser_web`
+2. Execute the following command from cmd:  
+  `javacore_analyser_web --port=500 --reports-dir=/data/reports_dir`
+
+     The first parameter set the port to use by application. If not specified, 5000 will be used.  
+     The second parameter sets where the reports need to be stored. If not set, then the `reports` dir will be created in current location.  
 
   Now you can type (http://localhost:5000/).  
  
