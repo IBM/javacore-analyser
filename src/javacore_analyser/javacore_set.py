@@ -126,13 +126,14 @@ class JavacoreSet:
         temp_dir = tempfile.TemporaryDirectory()
         temp_dir_name = temp_dir.name
         logging.info("Created temp dir: " + temp_dir_name)
-        self.__create_output_files_structure(output_dir)
+        self.create_output_files_structure(output_dir)
         self.__create_report_xml(temp_dir_name + "/report.xml")
         self.__generate_htmls_for_threads(output_dir, temp_dir_name)
         self.__generate_htmls_for_javacores(output_dir, temp_dir_name)
         self.__create_index_html(temp_dir_name, output_dir)
 
-    def __create_output_files_structure(self, output_dir):
+    @staticmethod
+    def create_output_files_structure(self, output_dir):
         if not os.path.isdir(output_dir):
             os.mkdir(output_dir)
         data_output_dir = os.path.normpath(os.path.join(output_dir, 'data'))
