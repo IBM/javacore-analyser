@@ -71,6 +71,9 @@ You can type the following command to obtain the help:
 There is an unofficial Docker/Podman container managed by one of projects developers. Use the following command 
 to start it:  
 `podman run -it --rm --name javacore-analyser --mount type=bind,src="/local-reports-dir",target=/reports -p 5001:5000 ghcr.io/kkazmierczyk/javacore-analyser:latest`  
+OR  
+`docker run -it --rm --name javacore-analyser --mount type=bind,src="/local-reports-dir",target=/reports -p 5001:5000 ghcr.io/kkazmierczyk/javacore-analyser:latest`  
+
 The `mount` option specifies where you want locally to store the reports. The reports in the container are stored in 
 `/reports` directory. If you remove mount option, the application will work but the reports will not persist after 
 restart.  
