@@ -69,15 +69,19 @@ def main():
     logging.info("Preferred encoding: " + locale.getpreferredencoding())
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("input_param", help="Input file(s) or directory")
-    parser.add_argument("output_param", help="Report output directory")
+    parser.add_argument("input", help=
+        "Input javacore file(s) or directory with javacores. The javacores can be packed "
+        "into one of the supported archive formats: zip, gz, bz2, lzma, 7z. "
+        "Additional the verbose GC logs from the time when the javacores were collected can be added. "
+        "See doc: https://github.com/IBM/javacore-analyser/wiki")
+    parser.add_argument("output", help="Name of directory where report will be generated")
     parser.add_argument("--separator",
                         help='Input files separator (default "' + DEFAULT_FILE_DELIMITER + '")',
                         default=DEFAULT_FILE_DELIMITER)
     args = parser.parse_args()
 
-    input_param = args.input_param
-    output_param = args.output_param
+    input_param = args.input
+    output_param = args.output
     files_separator = args.separator
 
     logging.info("Input parameter: " + input_param)
