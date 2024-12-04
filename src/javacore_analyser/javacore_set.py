@@ -521,6 +521,10 @@ class JavacoreSet:
             os.mkdir(output_dir)
         shutil.copy2(report_xml_file, data_input_dir)
 
+        # https://docs.python.org/3.8/library/multiprocessing.html
+        threads_no = JavacoreSet.get_number_of_parallel_threads()
+        logging.info(f"Using {threads_no} threads to generate html files")
+
         list_files = os.listdir(data_input_dir)
         progress_bar = tqdm(desc="Generating html files", unit=' files')
 
@@ -529,9 +533,6 @@ class JavacoreSet:
         for file in list_files:
             generate_html_from_xml_xsl_files_params.append((file, data_input_dir, output_dir, progress_bar))
 
-        # https://docs.python.org/3.8/library/multiprocessing.html
-        threads_no = JavacoreSet.get_number_of_parallel_threads()
-        logging.info(f"Using {threads_no} threads to generate html files")
         with Pool(threads_no) as p:
             p.map(JavacoreSet.generate_html_from_xml_xsl_files, generate_html_from_xml_xsl_files_params)
 
