@@ -15,7 +15,6 @@ from pathlib import Path
 from xml.dom.minidom import parseString
 
 import importlib_resources
-from importlib_resources.abc import Traversable
 from lxml import etree
 from lxml.etree import XMLSyntaxError
 from tqdm import tqdm
@@ -126,26 +125,31 @@ class JavacoreSet:
         temp_dir = tempfile.TemporaryDirectory()
         temp_dir_name = temp_dir.name
         logging.info("Created temp dir: " + temp_dir_name)
-        self.__create_output_files_structure(output_dir)
         self.__create_report_xml(temp_dir_name + "/report.xml")
+        placeholder_filename = os.path.join(output_dir, "data", "html", "processing_data.html")
+        self.__generate_placeholder_htmls(placeholder_filename,
+                                          os.path.join(output_dir, "threads"),
+                                          self.threads, "thread")
+        self.__generate_placeholder_htmls(placeholder_filename,
+                                          os.path.join(output_dir, "javacores"),
+                                          self.javacores, "")
+        self.__create_index_html(temp_dir_name, output_dir)
         self.__generate_htmls_for_threads(output_dir, temp_dir_name)
         self.__generate_htmls_for_javacores(output_dir, temp_dir_name)
-        self.__create_index_html(temp_dir_name, output_dir)
 
-    def __create_output_files_structure(self, output_dir):
-        if not os.path.isdir(output_dir):
-            os.mkdir(output_dir)
-        data_output_dir = os.path.normpath(os.path.join(output_dir, 'data'))
-        if not data_output_dir.startswith(output_dir):
-            raise Exception("Security exception: Uncontrolled data used in path expression")
-        if os.path.isdir(data_output_dir):
-            shutil.rmtree(data_output_dir, ignore_errors=True)
-        logging.info("Data dir: " + data_output_dir)
 
-        style_css_resource: Traversable = importlib_resources.files("javacore_analyser") / "data" / "style.css"
-        data_dir = os.path.dirname(style_css_resource)
-        os.mkdir(data_output_dir)
-        shutil.copytree(data_dir, data_output_dir, dirs_exist_ok=True)
+    def __generate_placeholder_htmls(self, placeholder_file, dir, collection, file_prefix):
+        if os.path.exists(dir):
+            shutil.rmtree(dir)
+        os.mkdir(dir)
+
+        for element in tqdm(collection, desc="Generating placeholder htmls", unit=" file"):
+            filename = file_prefix + "_" + element.get_id() + ".html"
+            if filename.startswith("_"):
+                filename = filename[1:]
+            file_path = os.path.join(dir, filename)
+            shutil.copy2(placeholder_file, file_path)
+
 
     def __generate_htmls_for_threads(self, output_dir, temp_dir_name):
         _create_xml_xsl_for_collection(os.path.join(temp_dir_name, "threads"),

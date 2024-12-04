@@ -37,3 +37,4 @@ DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 # Web application constants
 DEFAULT_REPORTS_DIR = "reports"
 DEFAULT_PORT = 5000
+TEMP_DIR = "temp_data" # Folder to store temporary data for creating reports
