@@ -105,7 +105,6 @@ def upload_file():
             raise Exception("Security exception: Uncontrolled data used in path expression")
         os.mkdir(javacores_temp_dir_name)
 
-
         # Get the list of files from webpage
         files = request.files.getlist("files")
 
