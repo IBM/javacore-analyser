@@ -103,7 +103,7 @@ def upload_file():
         javacores_temp_dir_name = os.path.normpath(os.path.join(reports_dir, TEMP_DIR, report_name))
         if not javacores_temp_dir_name.startswith(reports_dir):
             raise Exception("Security exception: Uncontrolled data used in path expression")
-        javacores_temp_dir = os.mkdir(javacores_temp_dir_name)
+        os.mkdir(javacores_temp_dir_name)
 
 
         # Get the list of files from webpage
@@ -127,7 +127,7 @@ def upload_file():
         time.sleep(1) # Give 1 second to generate index.html in processing_thread before redirecting
         return redirect("/reports/" + report_name + "/index.html")
     finally:
-        shutil.rmtree(javacores_temp_dir, ignore_errors=True)
+        shutil.rmtree(javacores_temp_dir_name, ignore_errors=True)
 
 def main():
     debug = os.getenv("DEBUG", False)
