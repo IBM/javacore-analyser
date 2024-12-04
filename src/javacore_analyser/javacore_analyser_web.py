@@ -93,16 +93,18 @@ def delete(path):
 # Latest GenAI contribution: ibm/granite-20b-code-instruct-v2
 @app.route('/upload', methods=['POST'])
 def upload_file():
-    try:
-        report_name = request.values.get("report_name")
-        report_name = re.sub(r'[^a-zA-Z0-9]', '_', report_name)
 
-        # Create a temporary directory to store uploaded files
-        # Note We have to use permanent files and then delete them.
-        # tempfile.Temporary_directory function does not work when you want to access files from another threads.
-        javacores_temp_dir_name = os.path.normpath(os.path.join(reports_dir, TEMP_DIR, report_name))
-        if not javacores_temp_dir_name.startswith(reports_dir):
-            raise Exception("Security exception: Uncontrolled data used in path expression")
+    report_name = request.values.get("report_name")
+    report_name = re.sub(r'[^a-zA-Z0-9]', '_', report_name)
+
+    # Create a temporary directory to store uploaded files
+    # Note We have to use permanent files and then delete them.
+    # tempfile.Temporary_directory function does not work when you want to access files from another threads.
+    javacores_temp_dir_name = os.path.normpath(os.path.join(reports_dir, TEMP_DIR, report_name))
+    if not javacores_temp_dir_name.startswith(reports_dir):
+        raise Exception("Security exception: Uncontrolled data used in path expression")
+
+    try:
         os.mkdir(javacores_temp_dir_name)
 
         # Get the list of files from webpage
