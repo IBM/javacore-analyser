@@ -49,10 +49,32 @@ $(function() {
     searchInNode(rootNode, searchTerm);
   }
 
+    function processChild(child) {
+        try {
+            if (isDomNode(child) && child.classList.contains('toggle_expand')) {
+                for (i = 0; i < child.childNodes.length; ++i) {
+                    grandchild = child.childNodes[i];
+                    if (isDomNode(grandchild) && grandchild.text == '[+] Expand') {
+                        grandchild.text = '[-] Collapse';
+                    }
+                }
+            }
+        } catch(err) {
+            console.log(err);
+        }
+    }
+
     function searchInNode(node, searchTerm) {
         if (!isDomNode(node)) return;
         if (node.textContent.toUpperCase().match(searchTerm.toUpperCase())) {
             // expand the node here
+            if (!node.classList.contains('show-all')) {
+                node.classList.add('show-all');
+                for (i = 0; i < node.childNodes.length; ++i) {
+                    child = node.childNodes[i];
+                    processChild(child);
+                }
+            }
             if (node.getAttribute('style') && node.style.display == "none") {
                 node.style.display = "";
             }
