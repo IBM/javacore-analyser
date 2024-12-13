@@ -114,7 +114,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--debug", help="Debug mode. Use only for development", default=False)
     parser.add_argument("--port", help="Port to run application", default=DEFAULT_PORT)
-    parser.add_argument("--reports_dir", help="Directory where app reports are stored",
+    parser.add_argument("--reports-dir", help="Directory where app reports are stored",
                         default=DEFAULT_REPORTS_DIR)
     args = parser.parse_args()
     debug = args.debug
