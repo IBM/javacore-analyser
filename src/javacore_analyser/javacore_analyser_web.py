@@ -110,6 +110,7 @@ def upload_file():
     finally:
         javacores_temp_dir.cleanup()
 
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--debug", help="Debug mode. Use only for development", default=False)
