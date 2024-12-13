@@ -2,6 +2,8 @@
 # Copyright IBM Corp. 2024 - 2024
 # SPDX-License-Identifier: Apache-2.0
 #
+from tqdm import tqdm
+
 
 class SnapshotCollectionCollection:
 
@@ -31,7 +33,7 @@ class SnapshotCollectionCollection:
 
         all_threads_node = doc.createElement('all_snapshot_collection')
         info_node.appendChild(all_threads_node)
-        for collection in self.snapshot_collections:
+        for collection in tqdm(self.snapshot_collections, desc=" Generating threads data", unit=" thread"):
             all_threads_node.appendChild(collection.get_xml(doc))
 
         return info_node

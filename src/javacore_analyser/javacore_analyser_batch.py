@@ -15,7 +15,9 @@ import tempfile
 import traceback
 import zipfile
 
+import importlib_resources
 import py7zr
+from importlib_resources.abc import Traversable
 
 from javacore_analyser import logging_utils
 from javacore_analyser.constants import DEFAULT_FILE_DELIMITER
@@ -69,15 +71,19 @@ def main():
     logging.info("Preferred encoding: " + locale.getpreferredencoding())
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("input_param", help="Input file(s) or directory")
-    parser.add_argument("output_param", help="Report output directory")
+    parser.add_argument("input", help=
+        "Input javacore file(s) or directory with javacores. The javacores can be packed "
+        "into one of the supported archive formats: zip, gz, bz2, lzma, 7z. "
+        "Additional the verbose GC logs from the time when the javacores were collected can be added. "
+        "See doc: https://github.com/IBM/javacore-analyser/wiki")
+    parser.add_argument("output", help="Name of directory where report will be generated")
     parser.add_argument("--separator",
                         help='Input files separator (default "' + DEFAULT_FILE_DELIMITER + '")',
                         default=DEFAULT_FILE_DELIMITER)
     args = parser.parse_args()
 
-    input_param = args.input_param
-    output_param = args.output_param
+    input_param = args.input
+    output_param = args.output
     files_separator = args.separator
 
     logging.info("Input parameter: " + input_param)
@@ -137,6 +143,24 @@ def generate_javecore_set_data(files):
         javacores_temp_dir.cleanup()
 
 
+def create_output_files_structure(output_dir):
+    if not os.path.isdir(output_dir):
+        os.mkdir(output_dir)
+    data_output_dir = os.path.normpath(os.path.join(output_dir, 'data'))
+    if not data_output_dir.startswith(output_dir):
+        raise Exception("Security exception: Uncontrolled data used in path expression")
+    if os.path.isdir(data_output_dir):
+        shutil.rmtree(data_output_dir, ignore_errors=True)
+    logging.info("Data dir: " + data_output_dir)
+
+    style_css_resource: Traversable = importlib_resources.files("javacore_analyser") / "data" / "style.css"
+    data_dir = os.path.dirname(style_css_resource)
+    os.mkdir(data_output_dir)
+    shutil.copytree(data_dir, data_output_dir, dirs_exist_ok=True)
+    shutil.copy2(os.path.join(data_output_dir, "html", "processing_data.html"),
+                 os.path.join(output_dir, "index.html"))
+
+
 # Assisted by WCA@IBM
 # Latest GenAI contribution: ibm/granite-8b-code-instruct
 def process_javacores_and_generate_report_data(input_files, output_dir):
@@ -150,6 +174,7 @@ def process_javacores_and_generate_report_data(input_files, output_dir):
     Returns:
     None
     """
+    create_output_files_structure(output_dir)
     javacore_set = generate_javecore_set_data(input_files)
     javacore_set.generate_report_files(output_dir)
 
