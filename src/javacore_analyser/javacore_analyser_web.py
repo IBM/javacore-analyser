@@ -102,7 +102,7 @@ def upload_file():
         report_name = re.sub(r'[^a-zA-Z0-9]', '_', report_name)
 
         # Process the uploaded file
-        report_output_dir = reports_dir + '/' + report_name
+        report_output_dir = reports_dir + os.sep + report_name
         javacore_analyser.javacore_analyser_batch.process_javacores_and_generate_report_data(input_files,
                                                                                              report_output_dir)
 
