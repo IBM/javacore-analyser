@@ -10,6 +10,7 @@ import re
 import shutil
 import sys
 import tempfile
+import threading
 import time
 from pathlib import Path
 
@@ -17,7 +18,7 @@ from flask import Flask, render_template, request, send_from_directory, redirect
 from waitress import serve
 
 import javacore_analyser.javacore_analyser_batch
-from javacore_analyser.constants import DEFAULT_REPORTS_DIR, DEFAULT_PORT
+from javacore_analyser.constants import DEFAULT_REPORTS_DIR, DEFAULT_PORT, TEMP_DIR
 from javacore_analyser.logging_utils import create_console_logging, create_file_logging
 
 """
@@ -27,6 +28,16 @@ flask --app javacore_analyser_web run
 """
 app = Flask(__name__)
 reports_dir = DEFAULT_REPORTS_DIR
+
+
+
+# Assisted by watsonx Code Assistant
+def create_temp_data_in_reports_dir(reports_dir):
+    tmp_reports_dir = os.path.join(reports_dir, TEMP_DIR)
+    if os.path.isdir(tmp_reports_dir):
+        shutil.rmtree(tmp_reports_dir, ignore_errors=True)
+    os.mkdir(tmp_reports_dir)
+
 with app.app_context():
     create_console_logging()
     logging.info("Javacore analyser")
@@ -34,12 +45,13 @@ with app.app_context():
     logging.info("Preferred encoding: " + locale.getpreferredencoding())
     logging.info("Reports directory: " + reports_dir)
     create_file_logging(reports_dir)
+    create_temp_data_in_reports_dir(reports_dir)
 
 
 @app.route('/')
 def index():
     reports = [{"name": Path(f).name, "date": time.ctime(os.path.getctime(f)), "timestamp": os.path.getctime(f)}
-               for f in os.scandir(reports_dir) if f.is_dir()]
+               for f in os.scandir(reports_dir) if f.is_dir() and Path(f).name is not TEMP_DIR]
     reports.sort(key=lambda item: item["timestamp"], reverse=True)
     return render_template('index.html', reports=reports)
 
@@ -83,10 +95,19 @@ def delete(path):
 # Latest GenAI contribution: ibm/granite-20b-code-instruct-v2
 @app.route('/upload', methods=['POST'])
 def upload_file():
+
+    report_name = request.values.get("report_name")
+    report_name = re.sub(r'[^a-zA-Z0-9]', '_', report_name)
+
+    # Create a temporary directory to store uploaded files
+    # Note We have to use permanent files and then delete them.
+    # tempfile.Temporary_directory function does not work when you want to access files from another threads.
+    javacores_temp_dir_name = os.path.normpath(os.path.join(reports_dir, TEMP_DIR, report_name))
+    if not javacores_temp_dir_name.startswith(reports_dir):
+        raise Exception("Security exception: Uncontrolled data used in path expression")
+
     try:
-        # Create a temporary directory to store uploaded files
-        javacores_temp_dir = tempfile.TemporaryDirectory()
-        javacores_temp_dir_name = javacores_temp_dir.name
+        os.mkdir(javacores_temp_dir_name)
 
         # Get the list of files from webpage
         files = request.files.getlist("files")
@@ -98,17 +119,18 @@ def upload_file():
             file.save(file_name)
             input_files.append(file_name)
 
-        report_name = request.values.get("report_name")
-        report_name = re.sub(r'[^a-zA-Z0-9]', '_', report_name)
-
         # Process the uploaded file
-        report_output_dir = reports_dir + '/' + report_name
-        javacore_analyser.javacore_analyser_batch.process_javacores_and_generate_report_data(input_files,
-                                                                                             report_output_dir)
+        report_output_dir = os.path.join(reports_dir, report_name)
+        processing_thread = threading.Thread(
+            target=javacore_analyser.javacore_analyser_batch.process_javacores_and_generate_report_data,
+            name="Processing javacore data", args=(input_files, report_output_dir)
+        )
+        processing_thread.start()
 
+        time.sleep(1) # Give 1 second to generate index.html in processing_thread before redirecting
         return redirect("/reports/" + report_name + "/index.html")
     finally:
-        javacores_temp_dir.cleanup()
+        shutil.rmtree(javacores_temp_dir_name, ignore_errors=True)
 
 def main():
     parser = argparse.ArgumentParser()
