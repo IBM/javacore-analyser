@@ -2,6 +2,7 @@
 # Copyright IBM Corp. 2024 - 2024
 # SPDX-License-Identifier: Apache-2.0
 #
+import argparse
 import locale
 import logging
 import os
@@ -22,10 +23,11 @@ from javacore_analyser.logging_utils import create_console_logging, create_file_
 
 """
 To run the application from cmd type:
-export REPORTS_DIR=/tmp/reports
+
 flask --app javacore_analyser_web run
 """
 app = Flask(__name__)
+reports_dir = DEFAULT_REPORTS_DIR
 
 
 # Assisted by watsonx Code Assistant
@@ -34,17 +36,6 @@ def create_temp_data_in_reports_dir(reports_dir):
     if os.path.isdir(tmp_reports_dir):
         shutil.rmtree(tmp_reports_dir, ignore_errors=True)
     os.mkdir(tmp_reports_dir)
-
-with app.app_context():
-    create_console_logging()
-    logging.info("Javacore analyser")
-    logging.info("Python version: " + sys.version)
-    logging.info("Preferred encoding: " + locale.getpreferredencoding())
-    reports_dir = os.getenv("REPORTS_DIR", DEFAULT_REPORTS_DIR)
-    logging.info("Reports directory: " + reports_dir)
-    create_file_logging(reports_dir)
-    create_temp_data_in_reports_dir(reports_dir)
-
 
 @app.route('/')
 def index():
@@ -130,9 +121,27 @@ def upload_file():
     finally:
         shutil.rmtree(javacores_temp_dir_name, ignore_errors=True)
 
+
 def main():
-    debug = os.getenv("DEBUG", False)
-    port = os.getenv("PORT", DEFAULT_PORT)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--debug", help="Debug mode. Use only for development", default=False)
+    parser.add_argument("--port", help="Port to run application", default=DEFAULT_PORT)
+    parser.add_argument("--reports-dir", help="Directory where app reports are stored",
+                        default=DEFAULT_REPORTS_DIR)
+    args = parser.parse_args()
+    debug = args.debug
+    port = args.port
+    global reports_dir
+    reports_dir = args.reports_dir
+
+    create_console_logging()
+    logging.info("Javacore analyser")
+    logging.info("Python version: " + sys.version)
+    logging.info("Preferred encoding: " + locale.getpreferredencoding())
+    logging.info("Reports directory: " + reports_dir)
+    create_file_logging(reports_dir)
+    create_temp_data_in_reports_dir(reports_dir)
+
     if debug:
         app.run(debug=True, port=port)  # Run Flask for development
     else:
