@@ -15,6 +15,8 @@ $('.show').click(function () {
     }
 });
 
+
+
 function expand_it(whichEl, link) {
     whichEl.style.display = (whichEl.style.display == "none") ? "" : "none";
     //if (link) {
