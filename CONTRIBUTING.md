@@ -96,6 +96,15 @@ To run web application:
 Follow the steps from [Packaging projects](https://packaging.python.org/en/latest/tutorials/packaging-projects/).
 Currently Chris has an API keys for test and production pypi
 
+## Build container localy  
+To build a container:  
+`podman build -t javacore-analyser .`  
+To start the container:  
+`podman run -it --rm --name javacore-analyser --mount type=bind,src="local-dir-on-fs",target=/reports -p 5001:5000 javacore-analyser`  
+`src` parameter specifies where you want to store reports locally  
+`-p` specifies port mapping. The application in container is running on port 5000. You can map it to another port on 
+your machine (5001 in this example).
+
 ## Testing
 As default the tests in Pycharm are ran in the current selected directory. However we want to run them in main 
 directory of the tool (**javacore-analyser** directory, not **test** directory). 
