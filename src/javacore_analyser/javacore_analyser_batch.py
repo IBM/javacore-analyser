@@ -153,7 +153,7 @@ def create_output_files_structure(output_dir):
     logging.info("Data dir: " + data_output_dir)
 
     style_css_resource: Traversable = importlib_resources.files("javacore_analyser") / "data" / "style.css"
-    data_dir = os.path.dirname(style_css_resource)
+    data_dir = os.path.dirname(str(style_css_resource))
     os.mkdir(data_output_dir)
     shutil.copytree(data_dir, data_output_dir, dirs_exist_ok=True)
     shutil.copy2(os.path.join(data_output_dir, "html", "processing_data.html"),

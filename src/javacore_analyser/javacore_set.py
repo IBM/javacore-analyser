@@ -502,10 +502,11 @@ class JavacoreSet:
 
         # Copy index.xml and report.xsl to temp - for index.html we don't need to generate anything. Copying is enough.
         # index_xml = validate_uncontrolled_data_used_in_path([output_dir, "data", "xml", "index.xml"])
-        index_xml = os.path.normpath(importlib_resources.files("javacore_analyser") / "data" / "xml" / "index.xml")
+        index_xml = os.path.normpath(str(importlib_resources.files("javacore_analyser") / "data" / "xml" / "index.xml"))
         shutil.copy2(index_xml, input_dir)
 
-        report_xsl = os.path.normpath(importlib_resources.files("javacore_analyser") / "data" / "xml" / "report.xsl")
+        report_xsl = os.path.normpath(
+            str(importlib_resources.files("javacore_analyser") / "data" / "xml" / "report.xsl"))
         shutil.copy2(report_xsl, input_dir)
 
         xslt_doc = etree.parse(input_dir + "/report.xsl")
@@ -583,7 +584,8 @@ class JavacoreSet:
 
         progress_bar.update(1)
 
-    def create_xml_xsl_for_collection(self, tmp_dir, xml_xsls_prefix_path, collection, output_file_prefix):
+    @staticmethod
+    def create_xml_xsl_for_collection(tmp_dir, xml_xsls_prefix_path, collection, output_file_prefix):
         logging.info("Creating xmls and xsls in " + tmp_dir)
         os.mkdir(tmp_dir)
         extensions = [".xsl", ".xml"]
@@ -603,7 +605,7 @@ class JavacoreSet:
     @staticmethod
     def parse_mem_arg(line):
         line = line.split()[-1]  # avoid matching the '2' in tag name 2CIUSERARG
-        tokens = re.findall("[\d]+[KkMmGg]?$", line)
+        tokens = re.findall("\d+[KkMmGg]?$", line)
         if len(tokens) != 1: return UNKNOWN
         return tokens[0]
 
