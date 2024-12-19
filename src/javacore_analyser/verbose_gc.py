@@ -111,6 +111,7 @@ class VerboseGcFile:
 
     def __parse(self):
         # read in the file as collection of lines
+        file = None
         try:
             xml_text = ""
             root_closing_tag_available = False

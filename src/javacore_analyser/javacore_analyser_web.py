@@ -31,11 +31,12 @@ reports_dir = DEFAULT_REPORTS_DIR
 
 
 # Assisted by watsonx Code Assistant
-def create_temp_data_in_reports_dir(reports_dir):
-    tmp_reports_dir = os.path.join(reports_dir, TEMP_DIR)
+def create_temp_data_in_reports_dir(directory):
+    tmp_reports_dir = os.path.join(directory, TEMP_DIR)
     if os.path.isdir(tmp_reports_dir):
         shutil.rmtree(tmp_reports_dir, ignore_errors=True)
     os.mkdir(tmp_reports_dir)
+
 
 @app.route('/')
 def index():
@@ -52,8 +53,8 @@ def dir_listing(path):
 
 @app.route('/zip/<path:path>')
 def compress(path):
+    temp_zip_dir = tempfile.TemporaryDirectory()
     try:
-        temp_zip_dir = tempfile.TemporaryDirectory()
         temp_zip_dir_name = temp_zip_dir.name
         zip_filename = path + ".zip"
         report_location = os.path.join(reports_dir, path)
@@ -70,7 +71,7 @@ def compress(path):
 def delete(path):
     # Checking if the report exists. This is to prevent attempt to delete any data by deleting any file outside
     # report dir if you prepare path variable.
-    reports_list = os.listdir(reports_dir)
+    # reports_list = os.listdir(reports_dir)
     report_location = os.path.normpath(os.path.join(reports_dir, path))
     if not report_location.startswith(reports_dir):
         logging.error("Deleted report in report list. Not deleting")
@@ -116,7 +117,7 @@ def upload_file():
         )
         processing_thread.start()
 
-        time.sleep(1) # Give 1 second to generate index.html in processing_thread before redirecting
+        time.sleep(1)  # Give 1 second to generate index.html in processing_thread before redirecting
         return redirect("/reports/" + report_name + "/index.html")
     finally:
         shutil.rmtree(javacores_temp_dir_name, ignore_errors=True)
@@ -146,6 +147,7 @@ def main():
         app.run(debug=True, port=port)  # Run Flask for development
     else:
         serve(app, port=port)  # Run Waitress in production
+
 
 if __name__ == '__main__':
     """

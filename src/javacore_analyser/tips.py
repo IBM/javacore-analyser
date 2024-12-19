@@ -2,6 +2,7 @@
 # Copyright IBM Corp. 2024 - 2024
 # SPDX-License-Identifier: Apache-2.0
 #
+import logging
 
 # This is a module containing list of the tips.
 # Each tip has to implement dynamic method generate(javacore_set)
@@ -16,6 +17,7 @@ class TestTip:
 
     @staticmethod
     def generate(javacore_set):
+        logging.info(javacore_set)
         return ["this is a test tip. Ignore it."]
 
 
@@ -157,7 +159,7 @@ class BlockingThreadsTip:
                 result.append(BlockingThreadsTip.BLOCKING_THREADS_TEXT.format(blocker_name,
                                                                               blocked_size / javacores_no))
                 if len(result) >= BlockingThreadsTip.MAX_BLOCKING_THREADS_NO:
-                    break;
+                    break
         return result
 
 
@@ -165,9 +167,9 @@ class HighCpuUsageTip:
     # Generates the tip if the thread is using above x percent of CPU. Also informs, if this is verbose gc thread.
 
     # Report as high cpu usage for the application using the cpu usage above this value
-    CRITICAL_CPU_USAGE = 50;
+    CRITICAL_CPU_USAGE = 50
 
-    CRITICAL_USAGE_FOR_GC = 5;
+    CRITICAL_USAGE_FOR_GC = 5
 
     MAX_NUMBER_OF_HIGH_CPU_USAGE_THREADS = 5
 

@@ -127,7 +127,8 @@ class Javacore:
     def encode(self, string):
         bts = str.encode(string, self.get_encoding(), 'ignore')
         for i in range(0, len(bts)):
-            if bts[i] < 32 and bts[i] != 9 and bts[i] != 10 and bts[i] != 13 and bts[i] != 1:         # fix for 'XML Syntax error PCDATA invalid char#405'
+            # fix for 'XML Syntax error PCDATA invalid char#405'
+            if bts[i] < 32 and bts[i] != 9 and bts[i] != 10 and bts[i] != 13 and bts[i] != 1:
                 raise CorruptedJavacoreException("Javacore " + self.filename + " is corrupted in line " + string)
         string = bts.decode('utf-8', 'ignore')
         return string
@@ -145,7 +146,7 @@ class Javacore:
                     break
                 line = self.encode(line)
                 if line.startswith(THREAD_INFO):
-                    line = self.processThreadName(line, file)
+                    line = Javacore.process_thread_name(line, file)
                     snapshot = ThreadSnapshot.create(line, file, self)
                     self.snapshots.append(snapshot)
         except Exception as e:
@@ -158,7 +159,8 @@ class Javacore:
         finally:
             file.close()
 
-    def processThreadName(self, line, file):
+    @staticmethod
+    def process_thread_name(line, file):
         count = line.count('"')
         if count == 0: return line  # anonymous native threads
         while True:

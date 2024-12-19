@@ -2,7 +2,7 @@
 # Copyright IBM Corp. 2024 - 2024
 # SPDX-License-Identifier: Apache-2.0
 #
-
+import logging
 import os
 import re
 from datetime import datetime
@@ -123,7 +123,8 @@ class ThreadSnapshot:
         try:
             token = m.group(1)
             self.cpu_usage = float(token)
-        except:
+        except Exception as ex:
+            logging.warning(ex)
             self.cpu_usage = 0
         # tokens = re.findall("[0-9]+\.[0-9]+", line)
         # if len(tokens) == 0:

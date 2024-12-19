@@ -26,8 +26,8 @@ class StackTrace:
     def __iter__(self):
         return self.stack_trace_elements.__iter__()
 
-    def __next__(self):
-        return self.stack_trace_elements.__next__()
+    # def __next__(self):
+    #    return self.stack_trace_elements.__next__()
 
     def equals(self, stack_trace):
         self_stack_trace_size = len(self.stack_trace_elements)
