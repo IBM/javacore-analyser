@@ -99,7 +99,9 @@ const loadChartGC = function() {
   }
 
   const sysResourceE3Elem = document.getElementById('systemresources_myChartGC');
-  sysResourceE3Elem.classList.remove('hide');
+  if (sysResourceE3Elem) {
+    sysResourceE3Elem.classList.remove('hide');
+  }
 
   const ctx = document.getElementById('myChartGC');
 
