@@ -127,7 +127,7 @@ const loadChartGC = function() {
        startingPoint = timestamp;
 
     if(endingPoint < timestamp)
-        endingPoint > timestamp;
+        endingPoint = timestamp;
   }
 
   coresTimeRange['startTime'] = startingPoint;
