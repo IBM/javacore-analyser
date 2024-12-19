@@ -25,8 +25,8 @@ class SnapshotCollectionCollection:
     def __iter__(self):
         return self.snapshot_collections.__iter__()
 
-    def __next__(self):
-        return self.snapshot_collections.__next__()
+    # def __next__(self):
+    #    return self.snapshot_collections.__next__()
 
     def get_xml(self, doc):
         info_node = doc.createElement(self.snapshot_collection_type.__name__)

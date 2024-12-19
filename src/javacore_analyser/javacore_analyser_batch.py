@@ -71,11 +71,12 @@ def main():
     logging.info("Preferred encoding: " + locale.getpreferredencoding())
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("input", help=
-        "Input javacore file(s) or directory with javacores. The javacores can be packed "
-        "into one of the supported archive formats: zip, gz, bz2, lzma, 7z. "
-        "Additional the verbose GC logs from the time when the javacores were collected can be added. "
-        "See doc: https://github.com/IBM/javacore-analyser/wiki")
+    parser.add_argument("input", help="Input javacore file(s) or directory with javacores. "
+                                      "The javacores can be packed "
+                                      "into one of the supported archive formats: zip, gz, bz2, lzma, 7z. "
+                                      "Additional the verbose GC logs from the time "
+                                      "when the javacores were collected can be added. "
+                                      "See doc: https://github.com/IBM/javacore-analyser/wiki")
     parser.add_argument("output", help="Name of directory where report will be generated")
     parser.add_argument("--separator",
                         help='Input files separator (default "' + DEFAULT_FILE_DELIMITER + '")',
@@ -104,6 +105,7 @@ def main():
         process_javacores_and_generate_report_data(files, output_param)
     except Exception as ex:
         traceback.print_exc(file=sys.stdout)
+        logging.error(ex)
         logging.error("Processing was not successful. Correct the problem and try again. Exiting with error 13",
                       exc_info=True)
         exit(13)
@@ -121,12 +123,9 @@ def generate_javecore_set_data(files):
     Returns:
     - JavacoreSet: Generated JavacoreSet object containing the processed data.
     """
-
-
+    javacores_temp_dir = tempfile.TemporaryDirectory()
     try:
         # Location when we store extracted archive or copied javacores files
-        javacores_temp_dir = tempfile.TemporaryDirectory()
-
         javacores_temp_dir_name = javacores_temp_dir.name
         for file in files:
             if os.path.isdir(file):

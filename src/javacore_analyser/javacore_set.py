@@ -33,7 +33,7 @@ def _create_xml_xsl_for_collection(tmp_dir, templates_dir, xml_xsl_filename, col
     logging.info("Creating xmls and xsls in " + tmp_dir)
     os.mkdir(tmp_dir)
     extensions = [".xsl", ".xml"]
-    for extension in tqdm(extensions, desc="Creating xml/xsl files", unit= " file"):
+    for extension in tqdm(extensions, desc="Creating xml/xsl files", unit=" file"):
         file_full_path = os.path.normpath(os.path.join(templates_dir, xml_xsl_filename + extension))
         if not file_full_path.startswith(templates_dir):
             raise Exception("Security exception: Uncontrolled data used in path expression")
@@ -90,6 +90,7 @@ class JavacoreSet:
 
     # Assisted by WCA@IBM
     # Latest GenAI contribution: ibm/granite-8b-code-instruct
+    @staticmethod
     def process_javacores(input_path):
         """
         Processes Java core data and generates tips based on the analysis.
@@ -137,19 +138,18 @@ class JavacoreSet:
         self.__generate_htmls_for_threads(output_dir, temp_dir_name)
         self.__generate_htmls_for_javacores(output_dir, temp_dir_name)
 
-
-    def __generate_placeholder_htmls(self, placeholder_file, dir, collection, file_prefix):
-        if os.path.exists(dir):
-            shutil.rmtree(dir)
-        os.mkdir(dir)
+    @staticmethod
+    def __generate_placeholder_htmls(placeholder_file, directory, collection, file_prefix):
+        if os.path.exists(directory):
+            shutil.rmtree(directory)
+        os.mkdir(directory)
 
         for element in tqdm(collection, desc="Generating placeholder htmls", unit=" file"):
             filename = file_prefix + "_" + element.get_id() + ".html"
             if filename.startswith("_"):
                 filename = filename[1:]
-            file_path = os.path.join(dir, filename)
+            file_path = os.path.join(directory, filename)
             shutil.copy2(placeholder_file, file_path)
-
 
     def __generate_htmls_for_threads(self, output_dir, temp_dir_name):
         _create_xml_xsl_for_collection(os.path.join(temp_dir_name, "threads"),
@@ -240,6 +240,7 @@ class JavacoreSet:
         filename = os.path.join(self.path, filename)
         curr_line = ""
         i = 0
+        file = None
         try:
             file = open(filename, 'r')
             for line in file:
@@ -259,7 +260,8 @@ class JavacoreSet:
                 elif line.startswith(JAVA_VERSION):
                     self.java_version = line[len(JAVA_VERSION) + 1:].strip()
                     continue
-        except Exception as e:
+        except Exception as ex:
+            logging.error(ex)
             print(f'Error during processing file: {file.name} \n'
                   f'line number: {i} \n'
                   f'line: {curr_line}\n'
@@ -289,7 +291,7 @@ class JavacoreSet:
     #     return None
 
     def sort_snapshots(self):
-        for thread in tqdm(self.threads, "Sorting snapshot data", unit= " snapshot"):
+        for thread in tqdm(self.threads, "Sorting snapshot data", unit=" snapshot"):
             thread.sort_snapshots()
             # thread.compare_call_stacks()
 
@@ -320,7 +322,7 @@ class JavacoreSet:
     def print_thread_states(self):
         for thread in self.threads:
             logging.debug("max running states:" + str(thread.get_continuous_running_states()))
-            logging.debug(thread.name + "(id: " + str(thread.id) + "; hash: " + thread.get_hash() + ") " + \
+            logging.debug(thread.name + "(id: " + str(thread.id) + "; hash: " + thread.get_hash() + ") " +
                           "states: " + thread.get_snapshot_states())
 
     # Assisted by WCA@IBM
@@ -480,6 +482,7 @@ class JavacoreSet:
         Returns:
         str: The JavaCore set in the XML format.
         """
+        file = None
         try:
             file = open(self.report_xml_file, "r")
             content = file.read()
@@ -498,7 +501,7 @@ class JavacoreSet:
     def __create_index_html(input_dir, output_dir):
 
         # Copy index.xml and report.xsl to temp - for index.html we don't need to generate anything. Copying is enough.
-        #index_xml = validate_uncontrolled_data_used_in_path([output_dir, "data", "xml", "index.xml"])
+        # index_xml = validate_uncontrolled_data_used_in_path([output_dir, "data", "xml", "index.xml"])
         index_xml = os.path.normpath(importlib_resources.files("javacore_analyser") / "data" / "xml" / "index.xml")
         shutil.copy2(index_xml, input_dir)
 

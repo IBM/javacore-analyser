@@ -30,11 +30,11 @@ ENCODING = '1TICHARSET'
 DATA_OUTPUT_SUBDIR = '/data/'
 DEFAULT_FILE_DELIMITER = ';'
 
-MIN_JAVACORE_SIZE = 5 * 1024 # Minimal Javacore size in bytes
+MIN_JAVACORE_SIZE = 5 * 1024  # Minimal Javacore size in bytes
 
 DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 # Web application constants
 DEFAULT_REPORTS_DIR = "reports"
 DEFAULT_PORT = 5000
-TEMP_DIR = "temp_data" # Folder to store temporary data for creating reports
+TEMP_DIR = "temp_data"  # Folder to store temporary data for creating reports
