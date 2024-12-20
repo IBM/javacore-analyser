@@ -6,10 +6,9 @@
 FROM python:3
 
 EXPOSE 5000/tcp
-ENV REPORTS_DIR=/reports
 RUN mkdir /reports
 VOLUME ["/reports"]
 
 RUN pip install --no-cache-dir javacore-analyser
 
-CMD [ "javacore_analyser_web" ]
+CMD [ "javacore_analyser_web", "--port=5000", "reports_dir=/reports" ]
