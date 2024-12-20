@@ -261,11 +261,11 @@ class JavacoreSet:
                     self.java_version = line[len(JAVA_VERSION) + 1:].strip()
                     continue
         except Exception as ex:
-            logging.error(ex)
-            print(f'Error during processing file: {file.name} \n'
-                  f'line number: {i} \n'
-                  f'line: {curr_line}\n'
-                  f'Check the exception below what happened')
+            logging.exception(ex)
+            logging.error(f'Error during processing file: {file.name} \n'
+                          f'line number: {i} \n'
+                          f'line: {curr_line}\n'
+                          f'Check the exception below what happened')
         finally:
             file.close()
 

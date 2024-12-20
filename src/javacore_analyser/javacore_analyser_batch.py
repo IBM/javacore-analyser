@@ -102,9 +102,8 @@ def main():
     try:
         process_javacores_and_generate_report_data(files, output_param)
     except Exception as ex:
-        logging.error(ex)
-        logging.error("Processing was not successful. Correct the problem and try again. Exiting with error 13",
-                      exc_info=True)
+        logging.exception(ex)
+        logging.error("Processing was not successful. Correct the problem and try again. Exiting with error 13")
         exit(13)
 
 
