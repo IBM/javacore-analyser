@@ -12,7 +12,6 @@ import shutil
 import sys
 import tarfile
 import tempfile
-import traceback
 import zipfile
 
 import importlib_resources
@@ -96,15 +95,13 @@ def main():
     # Check whether as input we got list of files or single file
     # Semicolon is separation mark for list of input files
     if files_separator in input_param or fnmatch.fnmatch(input_param, '*javacore*.txt'):
-        # Process list of the files (copy all or them to output dir
+        # Process list of the files (copy all or them to output dir)
         files = input_param.split(files_separator)
     else:
         files = [input_param]
-
     try:
         process_javacores_and_generate_report_data(files, output_param)
     except Exception as ex:
-        traceback.print_exc(file=sys.stdout)
         logging.error(ex)
         logging.error("Processing was not successful. Correct the problem and try again. Exiting with error 13",
                       exc_info=True)
