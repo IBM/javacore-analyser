@@ -12,7 +12,6 @@ import shutil
 import sys
 import tarfile
 import tempfile
-import traceback
 import zipfile
 
 import importlib_resources
@@ -71,11 +70,12 @@ def main():
     logging.info("Preferred encoding: " + locale.getpreferredencoding())
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("input", help=
-        "Input javacore file(s) or directory with javacores. The javacores can be packed "
-        "into one of the supported archive formats: zip, gz, bz2, lzma, 7z. "
-        "Additional the verbose GC logs from the time when the javacores were collected can be added. "
-        "See doc: https://github.com/IBM/javacore-analyser/wiki")
+    parser.add_argument("input", help="Input javacore file(s) or directory with javacores. "
+                                      "The javacores can be packed "
+                                      "into one of the supported archive formats: zip, gz, bz2, lzma, 7z. "
+                                      "Additional the verbose GC logs from the time "
+                                      "when the javacores were collected can be added. "
+                                      "See doc: https://github.com/IBM/javacore-analyser/wiki")
     parser.add_argument("output", help="Name of directory where report will be generated")
     parser.add_argument("--separator",
                         help='Input files separator (default "' + DEFAULT_FILE_DELIMITER + '")',
@@ -95,17 +95,15 @@ def main():
     # Check whether as input we got list of files or single file
     # Semicolon is separation mark for list of input files
     if files_separator in input_param or fnmatch.fnmatch(input_param, '*javacore*.txt'):
-        # Process list of the files (copy all or them to output dir
+        # Process list of the files (copy all or them to output dir)
         files = input_param.split(files_separator)
     else:
         files = [input_param]
-
     try:
         process_javacores_and_generate_report_data(files, output_param)
     except Exception as ex:
-        traceback.print_exc(file=sys.stdout)
-        logging.error("Processing was not successful. Correct the problem and try again. Exiting with error 13",
-                      exc_info=True)
+        logging.exception(ex)
+        logging.error("Processing was not successful. Correct the problem and try again. Exiting with error 13")
         exit(13)
 
 
@@ -121,12 +119,9 @@ def generate_javecore_set_data(files):
     Returns:
     - JavacoreSet: Generated JavacoreSet object containing the processed data.
     """
-
-
+    javacores_temp_dir = tempfile.TemporaryDirectory()
     try:
         # Location when we store extracted archive or copied javacores files
-        javacores_temp_dir = tempfile.TemporaryDirectory()
-
         javacores_temp_dir_name = javacores_temp_dir.name
         for file in files:
             if os.path.isdir(file):
@@ -154,7 +149,7 @@ def create_output_files_structure(output_dir):
     logging.info("Data dir: " + data_output_dir)
 
     style_css_resource: Traversable = importlib_resources.files("javacore_analyser") / "data" / "style.css"
-    data_dir = os.path.dirname(style_css_resource)
+    data_dir = os.path.dirname(str(style_css_resource))
     os.mkdir(data_output_dir)
     shutil.copytree(data_dir, data_output_dir, dirs_exist_ok=True)
     shutil.copy2(os.path.join(data_output_dir, "html", "processing_data.html"),

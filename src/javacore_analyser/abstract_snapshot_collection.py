@@ -59,7 +59,7 @@ class AbstractSnapshotCollection(abc.ABC):
         self.thread_snapshots.append(snapshot)
 
     def index_of(self, snapshot):
-        for i in range(len(self.thread_snapshotssnaps)):
+        for i in range(len(self.thread_snapshots)):
             if self.thread_snapshots[i] == snapshot: return i
         return -1
 
@@ -142,7 +142,7 @@ class AbstractSnapshotCollection(abc.ABC):
         result = 0
         for i in self.thread_snapshots:
             el = i.get_java_stack_depth()
-            if el>result:
+            if el > result:
                 result = el
         return result
 

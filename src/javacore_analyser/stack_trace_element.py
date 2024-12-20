@@ -9,7 +9,7 @@ from javacore_analyser.stack_trace_kind import StackTraceKind
 
 class StackTraceElement:
 
-    def __init__(self, line = None):
+    def __init__(self, line=None):
         if line is None:
             self.line = None
             self.kind = StackTraceKind.JAVA
