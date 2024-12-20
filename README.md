@@ -60,6 +60,21 @@ You can type the following command to obtain the help:
      The second parameter sets where the reports need to be stored. If not set, then the `reports` dir will be created in current location.  
 
   Now you can type (http://localhost:5000/).  
+
+### Running container image
+There is an unofficial Docker/Podman container managed by one of projects developers. Use the following command 
+to start it:
+
+`podman run -it --rm --name javacore-analyser --mount type=bind,src="/local-reports-dir",target=/reports -p 5001:5000 ghcr.io/kkazmierczyk/javacore-analyser:latest`
+
+or  
+`docker run -it --rm --name javacore-analyser --mount type=bind,src="/local-reports-dir",target=/reports -p 5001:5000 ghcr.io/kkazmierczyk/javacore-analyser:latest`  
+
+The `mount` option specifies where you want locally to store the reports. The reports in the container are stored in 
+`/reports` directory. If you remove mount option, the application will work but the reports will not persist after 
+restart.  
+The application is running in the container on port 5000. By using `-p 5001:5000` option, you specify to map container 
+port 5000 to port 5001 on your machine. Therefore the application will be available under `http://localhost:5001/`.
  
 <!-- The following are OPTIONAL, but strongly suggested to have in your repository. -->
 <!--
