@@ -4,24 +4,23 @@
 #
 import argparse
 
-from javacore_analyser import javacore_analyser_batch, constants
+from javacore_analyser import javacore_analyser_batch, constants, javacore_analyser_web
 
 
 def main():
     parser = argparse.ArgumentParser()
+    subparsers = parser.add_subparsers(dest="type", help="Application type")
 
-    type_arg = parser.add_argument("type", choices=["batch", "web"], default="batch",
-                                   help="Application type")
+    batch = subparsers.add_parser("batch", description="Run batch application")
+    batch.add_argument("input", help="Input file(s) or directory")
+    batch.add_argument("output", help="Destination report directory")
+    batch.add_argument("--separator", default=constants.DEFAULT_FILE_DELIMITER)
 
-    batch_group = parser.add_argument_group("batch", description="Run batch application")
-    batch_group.add_argument("input", help="Input file(s) or directory")
-    batch_group.add_argument("output", help="Destination report directory")
-    batch_group.add_argument("--separator", default=constants.DEFAULT_FILE_DELIMITER)
-
-    web_group = parser.add_argument_group("web", description="Run web application")
-    web_group.add_argument("--port", help="Application port", default=constants.DEFAULT_PORT)
-    web_group.add_argument("--reports_directory", help="Directory to store reports data",
-                           default=constants.DEFAULT_REPORTS_DIR)
+    web = subparsers.add_parser("web", description="Run web application")
+    web.add_argument("--debug", help="Debug mode. Use True only for app development", default=False)
+    web.add_argument("--port", help="Application port", default=constants.DEFAULT_PORT)
+    web.add_argument("--reports-dir", help="Directory to store reports data",
+                     default=constants.DEFAULT_REPORTS_DIR)
 
     args = parser.parse_args()
 
@@ -29,6 +28,7 @@ def main():
 
     if app_type.lower() == "web":
         print("Running web application")
+        javacore_analyser_web.run_web(args.debug, args.port, args.reports_dir)
     elif app_type.lower() == "batch":
         print("Running batch application")
         javacore_analyser_batch.batch_process(args.input, args.output, args.separator)
