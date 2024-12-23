@@ -9,7 +9,7 @@ from javacore_analyser import javacore_analyser_batch, constants, javacore_analy
 
 def main():
     parser = argparse.ArgumentParser()
-    subparsers = parser.add_subparsers(dest="type", help="Application type")
+    subparsers = parser.add_subparsers(dest="type", help="Application type", required=True)
 
     batch = subparsers.add_parser("batch", description="Run batch application")
     batch.add_argument("input", help="Input file(s) or directory")
