@@ -6,7 +6,6 @@ before_install:
  - pip install -U pytest
  - pip install -U build
  - pip install -U twine
- - pip install codecov
 install:
  - pip install -r requirements.txt
  - pip install .
@@ -16,8 +15,6 @@ env:
 script:
  - pytest
  - python -m build
-after_success:
- - codecov
 deploy:
   provider: script
   #script: python -m twine upload --skip-existing --verbose --password $TWINE_TEST_TOKEN --repository testpypi dist/* #test instance
