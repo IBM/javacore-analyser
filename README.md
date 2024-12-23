@@ -7,6 +7,7 @@
 ![GitHub contributors](https://img.shields.io/github/contributors/IBM/javacore-analyser)
 ![GitHub last commit](https://img.shields.io/github/last-commit/IBM/javacore-analyser)
 ![GitHub Release Date](https://img.shields.io/github/release-date/IBM/javacore-analyser)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/javacore-analyser)
 
 <!-- Not always needed, but a scope helps the user understand in a short sentance like below, why this repo exists -->
 ## Scope
