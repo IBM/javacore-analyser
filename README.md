@@ -7,8 +7,8 @@
 <!-- Build Status, is a great thing to have at the top of your repository, it shows that you take your CI/CD as first class citizens -->
 [![Build Status](https://app.travis-ci.com/IBM/javacore-analyser.svg?token=w3i4X11XppEi2tJQsxDb&branch=main)](https://app.travis-ci.com/IBM/javacore-analyser)
 ![GitHub last commit](https://img.shields.io/github/last-commit/IBM/javacore-analyser)
-![GitHub commit activity](https://img.shields.io/github/commit-activity/t/IBM/javacore-analyser)
 ![GitHub Release Date](https://img.shields.io/github/release-date/IBM/javacore-analyser)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/t/IBM/javacore-analyser)
 ![GitHub Issues or Pull Requests](https://img.shields.io/github/issues-pr/IBM/javacore-analyser)
 ![GitHub Issues or Pull Requests](https://img.shields.io/github/issues-pr-closed/IBM/javacore-analyser)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/javacore-analyser)
