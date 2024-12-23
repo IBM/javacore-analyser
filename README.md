@@ -43,23 +43,29 @@ This is recommended for geeks only:
 #### Running cmd application: 
 1. Install application if not done yet
 2. Activate your created virtual environment according to activate Virtual Environment according to [Creating virtual environments](https://docs.python.org/3/tutorial/venv.html#creating-virtual-environments)
-3. Run the following command from cmd: `javacore-analyser-batch <input-data> <generated-reports-dir>`
+3. Run the following command from cmd:  
+`javacore-analyser-batch <input-data> <generated-reports-dir>`  
+or  
+`python -m javacore_analyser <input-data> <generated-reports-dir>`  
+
 Where `<input-data>` is one of the following:
 * The directory containing javacores and optionally verbose gc
 * Archive (7z, zip, tar.gz, tar.bz2) containing the same
 * List of the javacores separated by `;` character. Optionally you can add `--separator` option to define your own separator.
 You can type the following command to obtain the help:  
-`javacore-analyser-batch --help`
+`javacore-analyser-batch --help` or `python -m javacore_analyser --help`
 
 #### Running web application:
 1. Repeat steps 1-3 from cmd application
 2. Execute the following command from cmd:  
-  `javacore_analyser_web --port=500 --reports-dir=/data/reports_dir`  
+  `javacore_analyser_web --port=5000 --reports-dir=/data/reports_dir`  
+     or  
+  `python -m javacore_analyser --port=5000 --reports-dir=/data/reports_dir`  
 
-     The first parameter set the port to use by application. If not specified, 5000 will be used.  
-     The second parameter sets where the reports need to be stored. If not set, then the `reports` dir will be created in current location.  
+   The first parameter set the port to use by application. If not specified, 5000 will be used.  
+   The second parameter sets where the reports need to be stored. If not set, then the `reports` dir will be created in current location.  
 
-  Now you can type (http://localhost:5000/).  
+Now you can type (http://localhost:5000/).  
 
 ### Running container image
 There is an unofficial Docker/Podman container managed by one of projects developers. Use the following command 
