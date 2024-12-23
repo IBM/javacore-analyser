@@ -132,9 +132,14 @@ def main():
     args = parser.parse_args()
     debug = args.debug
     port = args.port
-    global reports_dir
-    reports_dir = args.reports_dir
+    reports_directory = args.reports_dir
 
+    run_web(debug, port, reports_directory)
+
+
+def run_web(debug=False, port=5000, reports_directory=DEFAULT_REPORTS_DIR):
+    global reports_dir
+    reports_dir = reports_directory
     create_console_logging()
     logging.info("Javacore analyser")
     logging.info("Python version: " + sys.version)
@@ -142,7 +147,6 @@ def main():
     logging.info("Reports directory: " + reports_dir)
     create_file_logging(reports_dir)
     create_temp_data_in_reports_dir(reports_dir)
-
     if debug:
         app.run(debug=True, port=port)  # Run Flask for development
     else:

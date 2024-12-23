@@ -64,11 +64,6 @@ def extract_archive(input_archive_filename, output_path):
 
 
 def main():
-    logging_utils.create_console_logging()
-    logging.info("IBM Javacore analyser")
-    logging.info("Python version: " + sys.version)
-    logging.info("Preferred encoding: " + locale.getpreferredencoding())
-
     parser = argparse.ArgumentParser()
     parser.add_argument("input", help="Input javacore file(s) or directory with javacores. "
                                       "The javacores can be packed "
@@ -86,12 +81,18 @@ def main():
     output_param = args.output
     files_separator = args.separator
 
+    batch_process(input_param, output_param, files_separator)
+
+
+def batch_process(input_param, output_param, files_separator=DEFAULT_FILE_DELIMITER):
+    logging_utils.create_console_logging()
+    logging.info("IBM Javacore analyser")
+    logging.info("Python version: " + sys.version)
+    logging.info("Preferred encoding: " + locale.getpreferredencoding())
     logging.info("Input parameter: " + input_param)
     logging.info("Report directory: " + output_param)
-
     # Needs to be created once output file structure is ready.
     logging_utils.create_file_logging(output_param)
-
     # Check whether as input we got list of files or single file
     # Semicolon is separation mark for list of input files
     if files_separator in input_param or fnmatch.fnmatch(input_param, '*javacore*.txt'):
