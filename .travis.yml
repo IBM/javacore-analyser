@@ -13,9 +13,9 @@ env:
  global:
   - PYTHONPATH=src:test
 script:
- #- pytest
- #- python -m build
- - docker build .
+ - pytest
+ - python -m build
+ #- docker build .
 deploy:
  - provider: script
    #script: python -m twine upload --skip-existing --verbose --password $TWINE_TEST_TOKEN --repository testpypi dist/* #test instance
@@ -29,6 +29,6 @@ deploy:
    draft: true
    file: dist/*
    on:
-    all_branches: true # uncomment for testing purposes
-    # branch: prod # uncomment on production
-    # tags: true # We need to consider if we want to publish all versions or every build (which should not be an issue
+    # all_branches: true # uncomment for testing purposes
+    branch: prod # uncomment on production
+    tags: true # We need to consider if we want to publish all versions or every build (which should not be an issue
