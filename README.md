@@ -1,17 +1,18 @@
 <!-- This should be the location of the title of the repository, normally the short name -->
 # Javacore Analyser
 
+![GitHub License](https://img.shields.io/github/license/IBM/javacore-analyser)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/javacore-analyser)
+![GitHub contributors](https://img.shields.io/github/contributors/IBM/javacore-analyser)  
 <!-- Build Status, is a great thing to have at the top of your repository, it shows that you take your CI/CD as first class citizens -->
 [![Build Status](https://app.travis-ci.com/IBM/javacore-analyser.svg?token=w3i4X11XppEi2tJQsxDb&branch=main)](https://app.travis-ci.com/IBM/javacore-analyser)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/t/IBM/javacore-analyser)
-![GitHub contributors](https://img.shields.io/github/contributors/IBM/javacore-analyser)
 ![GitHub last commit](https://img.shields.io/github/last-commit/IBM/javacore-analyser)
 ![GitHub Release Date](https://img.shields.io/github/release-date/IBM/javacore-analyser)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/javacore-analyser)
 ![GitHub Issues or Pull Requests](https://img.shields.io/github/issues-pr/IBM/javacore-analyser)
 ![GitHub Issues or Pull Requests](https://img.shields.io/github/issues-pr-closed/IBM/javacore-analyser)
-![GitHub License](https://img.shields.io/github/license/IBM/javacore-analyser)
-![PyPI - Python Version](https://img.shields.io/pypi/pyversions/javacore-analyser)
+
 
 <!-- Not always needed, but a scope helps the user understand in a short sentance like below, why this repo exists -->
 ## Scope
