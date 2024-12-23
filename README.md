@@ -11,6 +11,7 @@
 ![GitHub Issues or Pull Requests](https://img.shields.io/github/issues-pr/IBM/javacore-analyser)
 ![GitHub Issues or Pull Requests](https://img.shields.io/github/issues-pr-closed/IBM/javacore-analyser)
 ![GitHub License](https://img.shields.io/github/license/IBM/javacore-analyser)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/javacore-analyser)
 
 <!-- Not always needed, but a scope helps the user understand in a short sentance like below, why this repo exists -->
 ## Scope
