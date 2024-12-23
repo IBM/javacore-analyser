@@ -7,10 +7,10 @@ python:
 # - "3.13"
 before_install:
  - pip install -U pytest
- - pip install codecov
+# - pip install codecov
 install:
  - pip install -r requirements.txt
- - pip install .
+# - pip install .
 env:
  global:
   - PYTHONPATH=src:test
@@ -25,5 +25,6 @@ deploy:
   edge: true # opt in to dpl v2
   skip_existing: true
   distributions: "sdist bdist_hatchling"
-  #on:
-  # tags: true
+  on:
+   all_branches: true # For testing only. Comment once the script is running
+ # tags: true
