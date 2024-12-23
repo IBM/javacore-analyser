@@ -18,4 +18,5 @@ deploy:
   provider: pypi
   server: https://test.pypi.org
   edge: true # opt in to dpl v2
-  skip_existing: True
+  skip_existing: true
+  distributions: "sdist bdist_hatchling"
