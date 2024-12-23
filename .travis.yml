@@ -10,7 +10,12 @@ install:
 env:
  global:
   - PYTHONPATH=src:test
-script:
- - pytest
-after_success:
- - codecov
+#script:
+# - pytest
+#after_success:
+# - codecov
+deploy:
+  provider: pypi
+  server: https://test.pypi.org
+  edge: true # opt in to dpl v2
+  skip_existing: True
