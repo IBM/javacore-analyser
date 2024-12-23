@@ -37,4 +37,7 @@ def main():
 
 
 if __name__ == '__main__':
+    # This is the code to be able to run the app from command line.
+    # Try this:
+    # python -m javacore_analyser -h
     main()
