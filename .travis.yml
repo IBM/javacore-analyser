@@ -7,6 +7,7 @@ python:
 # - "3.13"
 before_install:
  - pip install -U pytest
+ - pip install -U build
 # - pip install codecov
 install:
  - pip install -r requirements.txt
@@ -16,7 +17,7 @@ env:
   - PYTHONPATH=src:test
 script:
 # - pytest
-# - python -m build
+ - python -m build
 #after_success:
 # - codecov
 deploy:
