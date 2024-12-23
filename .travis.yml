@@ -27,4 +27,4 @@ deploy:
   distributions: "sdist bdist_hatchling"
   on:
    all_branches: true # For testing only. Comment once the script is running
- # tags: true
+ # tags: true # Uncomment this line to publish when the tag is created
