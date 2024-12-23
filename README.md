@@ -4,6 +4,7 @@
 <!-- Build Status, is a great thing to have at the top of your repository, it shows that you take your CI/CD as first class citizens -->
 [![Build Status](https://app.travis-ci.com/IBM/javacore-analyser.svg?token=w3i4X11XppEi2tJQsxDb&branch=main)](https://app.travis-ci.com/IBM/javacore-analyser)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/t/IBM/javacore-analyser)
+![GitHub contributors](https://img.shields.io/github/contributors/IBM/javacore-analyser)
 
 <!-- Not always needed, but a scope helps the user understand in a short sentance like below, why this repo exists -->
 ## Scope
