@@ -86,10 +86,10 @@ def main():
     output_param = args.output
     files_separator = args.separator
 
-    batch_process(input_param, output_param, files_separator=DEFAULT_FILE_DELIMITER)
+    batch_process(input_param, output_param, files_separator)
 
 
-def batch_process(input_param, output_param, files_separator):
+def batch_process(input_param, output_param, files_separator=DEFAULT_FILE_DELIMITER):
     logging.info("Input parameter: " + input_param)
     logging.info("Report directory: " + output_param)
     # Needs to be created once output file structure is ready.
