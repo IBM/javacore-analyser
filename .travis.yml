@@ -8,6 +8,7 @@ python:
 before_install:
  - pip install -U pytest
  - pip install -U build
+ - pip install --upgrade twine
 # - pip install codecov
 install:
  - pip install -r requirements.txt
@@ -18,15 +19,16 @@ env:
 script:
 # - pytest
  - python -m build
-#after_success:
+after_success:
+ - python -m twine upload --repository testpypi dist/*
 # - codecov
-deploy:
-  provider: pypi
-  server: https://test.pypi.org
-  edge: true # opt in to dpl v2
-  skip_existing: true
-  script: build.sh
-  distributions: "sdist bdist_wheel"
-  on:
-   all_branches: true # For testing only. Comment once the script is running
+#deploy:
+#  provider: pypi
+#  server: https://test.pypi.org
+#  edge: true # opt in to dpl v2
+#  skip_existing: true
+#  script: build.sh
+#  distributions: "sdist bdist_wheel"
+#  on:
+#   all_branches: true # For testing only. Comment once the script is running
  # tags: true # Uncomment this line to publish when the tag is created
