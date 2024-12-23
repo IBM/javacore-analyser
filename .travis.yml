@@ -25,4 +25,4 @@ deploy:
   on:
    all_branches: true # uncomment for testing purposes
    # branch: prod # uncomment on production
-   tags: true # uncomment on production
+   # tags: true # uncomment on production
