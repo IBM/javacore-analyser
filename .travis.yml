@@ -23,6 +23,6 @@ deploy:
   #script: python -m twine upload --skip-existing --verbose --password $TWINE_TEST_TOKEN --repository testpypi dist/* #test instance
   script: python -m twine upload --skip-existing --verbose --password $TWINE_PROD_TOKEN dist/* #production instance.
   on:
-   all_branches: true # uncomment for testing purposes
-   # branch: prod # uncomment on production
-   # tags: true # uncomment on production
+   # all_branches: true # uncomment for testing purposes
+   branch: prod # uncomment on production
+   # tags: true # We need to consider if we want to publish all versions or every build (which should not be an issue
