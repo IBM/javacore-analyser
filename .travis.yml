@@ -21,10 +21,10 @@ script:
 # - codecov
 deploy:
   provider: pypi
- # server: https://test.pypi.org
+  server: https://test.pypi.org
   edge: true # opt in to dpl v2
   skip_existing: true
-  # distributions: "sdist bdist_hatchling"
+  distributions: "bdist_hatchling"
   on:
    all_branches: true # For testing only. Comment once the script is running
  # tags: true # Uncomment this line to publish when the tag is created
