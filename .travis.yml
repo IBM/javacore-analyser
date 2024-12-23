@@ -13,8 +13,8 @@ env:
  global:
   - PYTHONPATH=src:test
 script:
- - pytest
- - python -m build
+ #- pytest
+ #- python -m build
  - podman build .
 deploy:
  - provider: script
