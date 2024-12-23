@@ -16,7 +16,7 @@ env:
   - PYTHONPATH=src:test
 script:
 # - pytest
- - echo "next stage: deploy"
+ - python -V
 #after_success:
 # - codecov
 deploy:
