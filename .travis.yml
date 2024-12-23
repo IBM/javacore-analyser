@@ -1,9 +1,9 @@
 language: python
 python:
-# - "3.9"
+ - "3.9"
 # - "3.10"
 # - "3.11"
- - "3.12"
+# - "3.12"
 before_install:
  - pip install 'urllib3<2.0' #Enforce SSL version to be able to run twine
  - pip install -U pytest
@@ -20,7 +20,7 @@ script:
 # - pytest
  - python -m build
 after_success:
- - python -m twine upload --skip-existing --repository testpypi dist/*
+ - python -m twine upload --skip-existing --verbose --repository testpypi dist/*
 # - codecov
 #deploy:
 #  provider: pypi
