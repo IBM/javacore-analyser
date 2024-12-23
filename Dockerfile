@@ -10,6 +10,6 @@ ENV REPORTS_DIR=/reports
 RUN mkdir /reports
 VOLUME ["/reports"]
 
-RUN pip install --no-cache-dir --root-user-action javacore-analyser
+RUN pip install --no-cache-dir --root-user-action ignore javacore-analyser
 
 CMD [ "javacore_analyser_web" ]
