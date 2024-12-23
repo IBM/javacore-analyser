@@ -15,6 +15,7 @@ env:
 script:
 # - pytest
  - python -m build
+ - docker build .
 deploy:
  - provider: script
    #script: python -m twine upload --skip-existing --verbose --password $TWINE_TEST_TOKEN --repository testpypi dist/* #test instance
