@@ -10,8 +10,8 @@ install:
 env:
  global:
   - PYTHONPATH=src:test
-#script:
-# - pytest
+script:
+ - pytest
 #after_success:
 # - codecov
 deploy:
