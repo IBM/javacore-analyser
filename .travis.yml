@@ -6,6 +6,7 @@ python:
 # - "3.12"
 # - "3.13"
 before_install:
+ - pip install urllib3==1.26.6 #Enforce SSL version to be able to run twine
  - pip install -U pytest
  - pip install -U build
  - pip install --upgrade twine
@@ -20,7 +21,7 @@ script:
 # - pytest
  - python -m build
 after_success:
- - python -m twine upload --repository testpypi dist/*
+ - python -m twine upload --skip-existing --repository testpypi dist/*
 # - codecov
 #deploy:
 #  provider: pypi
