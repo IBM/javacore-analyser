@@ -14,10 +14,9 @@ env:
  global:
   - PYTHONPATH=src:test
 script:
-# - pytest
+ - pytest
  - python -m build
 after_success:
-# - python -m twine upload --skip-existing --verbose --repository testpypi dist/*
  - codecov
 deploy:
   provider: script
@@ -26,13 +25,3 @@ deploy:
    all_branches: true # uncomment for testing purposes
    #branch: prod # uncomment on production
    #tags: true # uncomment on production
- #deploy:
-#  provider: pypi
-#  server: https://test.pypi.org
-#  edge: true # opt in to dpl v2
-#  skip_existing: true
-#  script: build.sh
-#  distributions: "sdist bdist_wheel"
-#  on:
-#   all_branches: true # For testing only. Comment once the script is running
- # tags: true # Uncomment this line to publish when the tag is created
