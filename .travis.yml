@@ -5,8 +5,8 @@ before_install:
  - pip install 'urllib3<2.0' #Enforce SSL version to be able to run twine
  - pip install -U pytest
  - pip install -U build
- - pip install --upgrade twine
-# - pip install codecov
+ - pip install -U twine
+ - pip install codecov
 install:
  - pip install -r requirements.txt
  - pip install .
@@ -17,9 +17,16 @@ script:
 # - pytest
  - python -m build
 after_success:
- - python -m twine upload --skip-existing --verbose --repository testpypi dist/*
-# - codecov
-#deploy:
+# - python -m twine upload --skip-existing --verbose --repository testpypi dist/*
+ - codecov
+deploy:
+  provider: script
+  script: python -m twine upload --skip-existing --verbose --repository testpypi dist/*
+  on:
+   all_branches: true # uncomment for testing purposes
+   #branch: prod # uncomment on production
+   #tags: true # uncomment on production
+ #deploy:
 #  provider: pypi
 #  server: https://test.pypi.org
 #  edge: true # opt in to dpl v2
