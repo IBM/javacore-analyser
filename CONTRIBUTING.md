@@ -94,7 +94,7 @@ To run web application:
 
 ## Build pip package 
 Follow the steps from [Packaging projects](https://packaging.python.org/en/latest/tutorials/packaging-projects/).
-Currently Chris has an API keys for test and production pypi
+Currently Chris and Tad have an API keys for test and production pypi
 
 ## Build container localy  
 To build a container:  
@@ -114,6 +114,28 @@ or
 `src` parameter specifies where you want to store reports locally  
 `-p` specifies port mapping. The application in container is running on port 5000. You can map it to another port on 
 your machine (5001 in this example).
+
+## Publish the container to ghcr.io/ibm/javacore-analyser
+Once you built the container locally, you might need to publish it on ghcr.io/ibm/javacore-analyser.
+Here are the instructions: 
+https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry.  
+Steps:
+1. Generate the token by navigating to https://github.com/settings/tokens/new?scopes=write:packages. 
+   * Select the read:packages scope to download container images and read their metadata.
+   * Select the write:packages scope to download and upload container images and read and write their metadata.
+   * Select the delete:packages scope to delete container images.
+2. Tag image:
+   ```commandline
+   podman image tag localhost/javacore-analyser ghcr.io/ibm/javacore-analyser:latest
+   podman image tag localhost/javacore-analyser ghcr.io/ibm/javacore-analyser:2.1
+   ```
+3. Push the image:
+   ```commandline
+   export CR_PAT=<token-id generated in step 1>
+   echo $CR_PAT | podman login ghcr.io -u USERNAME --password-stdin  
+   podman push ghcr.io/ibm/javacore-analyser:2.1
+   podman push ghcr.io/ibm/javacore-analyser:latest
+   ```
 
 ## Testing
 As default the tests in Pycharm are ran in the current selected directory. However we want to run them in main 
