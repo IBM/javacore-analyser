@@ -11,4 +11,4 @@ VOLUME ["/reports"]
 
 RUN pip install --no-cache-dir javacore-analyser
 
-CMD [ "javacore_analyser_web", "--port=5000", "reports_dir=/reports" ]
+CMD [ "javacore_analyser_web", "--port=5000", "--reports-dir=/reports" ]
