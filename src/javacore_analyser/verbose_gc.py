@@ -155,7 +155,6 @@ class VerboseGcFile:
     gets the total number of gc collections in this VerboseGcFile
     regardless of the time when tey occurred with regards to the javacores
     '''
-
     def get_total_number_of_collects(self):
         if self.__total_number_of_collects < 0:
             self.get_collects()

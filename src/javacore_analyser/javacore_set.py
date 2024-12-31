@@ -385,6 +385,8 @@ class JavacoreSet:
 
         verbose_gc_list_node = self.doc.createElement("verbose_gc_list")
         report_info_node.appendChild(verbose_gc_list_node)
+
+        total_collects_in_time_limits = 0
         for vgc in self.gc_parser.get_files():
             verbose_gc_node = self.doc.createElement("verbose_gc")
             verbose_gc_list_node.appendChild(verbose_gc_node)
@@ -394,9 +396,11 @@ class JavacoreSet:
             verbose_gc_collects_node = self.doc.createElement("verbose_gc_collects")
             verbose_gc_node.appendChild(verbose_gc_collects_node)
             verbose_gc_collects_node.appendChild(self.doc.createTextNode(str(vgc.get_number_of_collects())))
+            total_collects_in_time_limits += vgc.get_number_of_collects()
             verbose_gc_total_collects_node = self.doc.createElement("verbose_gc_total_collects")
             verbose_gc_node.appendChild(verbose_gc_total_collects_node)
             verbose_gc_total_collects_node.appendChild(self.doc.createTextNode(str(vgc.get_total_number_of_collects())))
+        verbose_gc_list_node.setAttribute("total_collects_in_time_limits", str(total_collects_in_time_limits))
 
         system_info_node = self.doc.createElement("system_info")
         doc_node.appendChild(system_info_node)
