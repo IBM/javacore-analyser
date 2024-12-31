@@ -115,6 +115,53 @@ or
 `-p` specifies port mapping. The application in container is running on port 5000. You can map it to another port on 
 your machine (5001 in this example).
 
+## Releasing a new version
+Release a new version is partially automated by Travis. Here are the steps:  
+1. Make sure you are on `main` branch in your repository.
+2. Create a new tag e.g:  
+   `git tag 2.1`
+3. Push the tag to Github:  
+  `git push --tags`  
+  alternatively you can perform this operation from Pycharm UI (**Git** -> **Push** -> Select **Push Tags** -> 
+  Click **Push**)  
+   
+   Creating a new tag invokes a build operation which is doing the following:
+   * The following code 
+      ```yaml
+     deploy:
+      - provider: script
+        #script: python -m twine upload --skip-existing --verbose --password $TWINE_TEST_TOKEN --repository testpypi dist/* #test instance
+        script: python -m twine upload --skip-existing --verbose --password $TWINE_PROD_TOKEN dist/* #production instance.  
+        on:  
+        # all_branches: true # uncomment for testing purposes
+          branch: prod # uncomment on production
+          tags: true # We need to consider if we want to publish all versions or every build (which should not be an issue
+     ```
+     Is publishing pip package to pip repository. You are setting all passwords here: 
+     https://app.travis-ci.com/github/IBM/javacore-analyser/settings section **Environmental Variables**.
+     **TWINE_USERNAME** should be set to **__token__** and **TWINE_PROD_TOKEN** or **TWINE_TEST_TOKEN** are the tokens
+     set on pipy page (https://pypi.org/manage/account/token/ or https://test.pypi.org/manage/account/token/).
+   * The following code:
+     ```yaml
+      - provider: releases
+        edge: true
+        draft: true
+        file: dist/*
+        on:
+          # all_branches: true # uncomment for testing purposes
+          branch: prod # uncomment on production
+          tags: true # We need to consider if we want to publish all versions or every build (which should not be an issue
+     ```  
+     Generates the new **Draft** release on Github and adds distribution files (They are located in `dist/*`).
+     This code requires setting **GITHUB_TOKEN** variable in 
+     https://app.travis-ci.com/github/IBM/javacore-analyser/settings. You can generate github token on 
+https://github.com/settings/tokens/new
+4. Navigate in Github to the new Draft release page. You can easily find it on 
+   https://github.com/IBM/javacore-analyser/releases
+5. Click on Edit pen and then click on **Generate release notes** and edit them before saving.
+6. Publish release.
+7. Copy release notes to [CHANGELOG.md](CHANGELOG.md) file.
+
 ## Testing
 As default the tests in Pycharm are ran in the current selected directory. However we want to run them in main 
 directory of the tool (**javacore-analyser** directory, not **test** directory). 
