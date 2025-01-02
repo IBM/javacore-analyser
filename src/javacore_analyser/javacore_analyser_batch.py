@@ -91,6 +91,7 @@ def batch_process(input_param, output_param, files_separator=DEFAULT_FILE_DELIMI
     logging.info("Preferred encoding: " + locale.getpreferredencoding())
     logging.info("Input parameter: " + input_param)
     logging.info("Report directory: " + output_param)
+    output_param = os.path.normpath(output_param)
     # Needs to be created once output file structure is ready.
     logging_utils.create_file_logging(output_param)
     # Check whether as input we got list of files or single file
