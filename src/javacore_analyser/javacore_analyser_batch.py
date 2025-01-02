@@ -101,6 +101,7 @@ def batch_process(input_param, output_param, files_separator=DEFAULT_FILE_DELIMI
     else:
         files = [input_param]
     try:
+        files = [os.path.normpath(file) for file in files]
         process_javacores_and_generate_report_data(files, output_param)
     except Exception as ex:
         logging.exception(ex)
