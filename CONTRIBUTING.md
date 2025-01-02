@@ -136,6 +136,16 @@ Steps:
    podman push ghcr.io/ibm/javacore-analyser:2.1
    podman push ghcr.io/ibm/javacore-analyser:latest
    ```
+  
+## Publish multiplatform image 
+To publish the image for multiple platforms, follow these instructions:
+https://developers.redhat.com/articles/2023/11/03/how-build-multi-architecture-container-images#benefits_of_multi_architecture_containers
+```commandline
+podman manifest create javacore-analyser:2.1
+podman build --platform linux/amd64,linux/arm64,linux/i386  --manifest javacore-analyser:2.1  .
+podman manifest push javacore-analyser:2.1 docker://ghcr.io/ibm/javacore-analyser:2.1
+podman manifest push javacore-analyser:2.1 docker://ghcr.io/ibm/javacore-analyser:latest
+```
 
 ## Testing
 As default the tests in Pycharm are ran in the current selected directory. However we want to run them in main 
