@@ -1,3 +1,7 @@
+#
+# Copyright IBM Corp. 2025 - 2025
+# SPDX-License-Identifier: Apache-2.0
+#
 import unittest
 
 from javacore_analyser.har_file import HarFile
