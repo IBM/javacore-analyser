@@ -300,7 +300,7 @@
                                         </li>
                                         <li>
                                             <strong>Hostname</strong>
-                                            is the name of the host from which the HAR file was collected.
+                                            is the name of the server machine for which the HAR file was collected.
                                         </li>
                                         <li>
                                             <strong>Browser</strong>
