@@ -1,5 +1,5 @@
 #
-# Copyright IBM Corp. 2024 - 2024
+# Copyright IBM Corp. 2024 - 2025
 # SPDX-License-Identifier: Apache-2.0
 #
 
@@ -21,7 +21,6 @@ readme = "README.md"
 license = {file = "LICENSE"}
 requires-python = ">=3.9"
 classifiers = [
-    "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
@@ -46,7 +45,8 @@ dependencies = [
     "importlib-resources",
     "flask",
     "waitress",
-    "tqdm"
+    "tqdm",
+    "haralyzer"
 ]
 
 [project.scripts]

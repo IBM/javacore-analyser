@@ -1,3 +1,8 @@
+/*
+Copyright IBM Corp. 2024 - 2025
+SPDX-License-Identifier: Apache-2.0
+*/
+
 table.heading {
     border: none;
     width: 100%;
@@ -100,6 +105,28 @@ td {
   text-align: left;
 }
 
+.info {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+  color: orange
+}
+
+/* Tooltip text */
+.info .infotooltip {
+  visibility: hidden;
+  width: 120px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+
+  /* Position the tooltip text - see examples below! */
+  position: absolute;
+  z-index: 1;
+}
+
 .warning {
   position: relative;
   display: inline-block;
@@ -140,6 +167,11 @@ mark {
 
 mark.current {
   background: orange;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.info:hover .infotooltip {
+  visibility: visible;
 }
 
 /* Show the tooltip text when you mouse over the tooltip container */
