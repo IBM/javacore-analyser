@@ -109,6 +109,10 @@
     background-color: red
 }
 
+.tablesorter-blue td.http_failure {
+    background-color: red
+}
+
 /* hovered row colors
  you'll need to add additional lines for
  rows with more than 2 child rows

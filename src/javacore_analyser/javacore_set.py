@@ -22,6 +22,7 @@ from tqdm import tqdm
 from javacore_analyser import tips
 from javacore_analyser.code_snapshot_collection import CodeSnapshotCollection
 from javacore_analyser.constants import *
+from javacore_analyser.har_file import HarFile
 from javacore_analyser.java_thread import Thread
 from javacore_analyser.javacore import Javacore
 from javacore_analyser.snapshot_collection import SnapshotCollection
@@ -87,6 +88,7 @@ class JavacoreSet:
         self.blocked_snapshots = []
         self.tips = []
         self.gc_parser = VerboseGcParser()
+        self.har_files = []
 
     # Assisted by WCA@IBM
     # Latest GenAI contribution: ibm/granite-8b-code-instruct
@@ -230,6 +232,9 @@ class JavacoreSet:
                 if fnmatch.fnmatch(file, '*verbosegc*.txt*'):
                     self.gc_parser.add_file(dirpath + os.sep + file)
                     logging.info("VerboseGC file found: " + file)
+                if fnmatch.fnmatch(file, "*.har"):
+                    self.har_files.append(HarFile(dirpath + os.sep + file))
+                    logging.info("HAR file found: " + file)
 
         # sorting files by name.
         # Unless the user changed the javacore file name format, this is equivalent to sorting by date
@@ -401,6 +406,12 @@ class JavacoreSet:
             verbose_gc_node.appendChild(verbose_gc_total_collects_node)
             verbose_gc_total_collects_node.appendChild(self.doc.createTextNode(str(vgc.get_total_number_of_collects())))
         verbose_gc_list_node.setAttribute("total_collects_in_time_limits", str(total_collects_in_time_limits))
+
+        if len(self.har_files) > 0:
+            har_files_node = self.doc.createElement("har_files")
+            doc_node.appendChild(har_files_node)
+            for har in self.har_files:
+                har_files_node.appendChild(har.get_xml(self.doc))
 
         system_info_node = self.doc.createElement("system_info")
         doc_node.appendChild(system_info_node)

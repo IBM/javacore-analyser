@@ -24,7 +24,7 @@ class TestJavacoreAnalyser(unittest.TestCase):
 
     @classmethod
     def setUpClass(self):
-        self.ziptestargs = ["javacore_analyser", "test/data/archives/javacores.zip", "tmp"]
+        self.ziptestargs = ["javacore_analyser", "test/data/archives/javacores.zip", "tmp/subfolder"]
         self.gztestargs = ["javacore_analyser", "test/data/archives/javacores.tar.gz", "tmp"]
         self.tgztestargs = ["javacore_analyser", "test/data/archives/javacores.tgz", "tmp"]
         self.bz2testargs = ["javacore_analyser", "test/data/archives/javacores.tar.bz2", "tmp"]
