@@ -12,6 +12,7 @@ import shutil
 import sys
 import tarfile
 import tempfile
+import traceback
 import zipfile
 
 import importlib_resources
@@ -159,6 +160,15 @@ def create_output_files_structure(output_dir):
                  os.path.join(output_dir, "index.html"))
 
 
+def generate_error_page(output_dir, exception):
+    error_page_text = importlib_resources.read_text("javacore_analyser", "data/html/error.html")
+    tb = traceback.format_exc()
+    file = os.path.join(output_dir, "index.html")
+    f = open(file, "w")
+    f.write(error_page_text.format(stacktrace=tb))
+    f.close()
+
+
 # Assisted by WCA@IBM
 # Latest GenAI contribution: ibm/granite-8b-code-instruct
 def process_javacores_and_generate_report_data(input_files, output_dir):
@@ -172,9 +182,14 @@ def process_javacores_and_generate_report_data(input_files, output_dir):
     Returns:
     None
     """
-    create_output_files_structure(output_dir)
-    javacore_set = generate_javecore_set_data(input_files)
-    javacore_set.generate_report_files(output_dir)
+    try:
+        create_output_files_structure(output_dir)
+        javacore_set = generate_javecore_set_data(input_files)
+        javacore_set.generate_report_files(output_dir)
+    except Exception as ex:
+        logging.exception(ex)
+        logging.error("Processing was not successful. Correct the problem and try again.")
+        generate_error_page(output_dir, ex)
 
 
 if __name__ == "__main__":
