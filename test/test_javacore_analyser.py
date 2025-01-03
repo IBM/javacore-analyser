@@ -134,6 +134,9 @@ class TestJavacoreAnalyser(unittest.TestCase):
         except SystemExit:
             console_output = captured_output.getvalue()
             self.assertRegex(console_output, "Error during processing file:")
+            content = open("tmp/index.html", "r").read()
+            self.assertRegex(content, "Processing failed with an error.",
+                             "index.html is missing \"Processing failed with an error.\" text")
         finally:
             sys.stdout = default_output  # Reset redirect.
 
