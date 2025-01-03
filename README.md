@@ -63,7 +63,7 @@ Where `<input-data>` is one of the following:
 * Archive (7z, zip, tar.gz, tar.bz2) containing the same
 * List of the javacores separated by `;` character. Optionally you can add `--separator` option to define your own separator.
 You can type the following command to obtain the help:  
-`javacore-analyser-batch --help` or `python -m javacore_analyser barch --help`
+`javacore-analyser-batch --help` or `python -m javacore_analyser batch --help`
 
 #### Running web application:
 1. Repeat steps 1-3 from cmd application
