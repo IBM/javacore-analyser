@@ -142,6 +142,7 @@ class JavacoreSet:
 
     @staticmethod
     def __generate_placeholder_htmls(placeholder_file, directory, collection, file_prefix):
+        logging.debug("Generating placeholder htmls")
         if os.path.exists(directory):
             shutil.rmtree(directory)
         os.mkdir(directory)
@@ -152,6 +153,7 @@ class JavacoreSet:
                 filename = filename[1:]
             file_path = os.path.join(directory, filename)
             shutil.copy2(placeholder_file, file_path)
+        logging.debug("Finished generating placeholder htmls")
 
     def __generate_htmls_for_threads(self, output_dir, temp_dir_name):
         _create_xml_xsl_for_collection(os.path.join(temp_dir_name, "threads"),
