@@ -147,7 +147,7 @@ class JavacoreSet:
             shutil.rmtree(directory)
         os.mkdir(directory)
 
-        for element in tqdm(collection, desc="Generating placeholder htmls", unit=" file"):
+        for element in tqdm(collection, desc="Generating placeholder htmls", unit=" files"):
             filename = file_prefix + "_" + element.get_id() + ".html"
             if filename.startswith("_"):
                 filename = filename[1:]
