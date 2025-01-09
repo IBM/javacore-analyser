@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
-# Copyright IBM Corp. 2024 - 2024
+# Copyright IBM Corp. 2024 - 2025
 # SPDX-License-Identifier: Apache-2.0
 -->
 
@@ -51,6 +51,15 @@
                         });
 
                         $('#verbose_gc_files_table').tablesorter({
+                            theme : 'blue',
+                            headers: {
+                                0: { sorter: false },
+                                1: { sorter: false },
+                                2: { sorter: false }
+                            },
+                        });
+
+                        $('#har_files_table').tablesorter({
                             theme : 'blue',
                             headers: {
                                 0: { sorter: false },
@@ -115,6 +124,21 @@
                               [2, 1]
                             ],
                             sortInitialOrder: 'desc',
+                            headers : {
+                                0 : { sortInitialOrder: 'asc'  }
+                            },
+                            usNumberFormat : false,
+                            sortReset : true,
+                            sortRestart : true
+                        });
+
+                        $('#HttpCallTable').tablesorter({
+                            theme : 'blue',
+                            widgets : ['zebra', 'columns'],
+                            sortList: [
+                              [2, 1]
+                            ],
+                            sortInitialOrder: 'asc',
                             headers : {
                                 0 : { sortInitialOrder: 'asc'  }
                             },
@@ -262,6 +286,49 @@
                             </xsl:when>
                             <xsl:otherwise> No verbose GC files </xsl:otherwise>
                         </xsl:choose>
+                    <xsl:choose>
+                            <xsl:when test="doc/har_files">
+                                <h4>HAR files</h4>
+                                <a id="togglehardoc" href="javascript:expand_it(hardoc,togglehardoc)" class="expandit">
+                                    What does this table tell me?</a>
+                                <div id="hardoc" style="display:none;">
+                                    This table shows all the HAR files that are included in the data set.
+                                    <ul>
+                                        <li>
+                                            <strong>File Name</strong>
+                                            is the name of the HAR file.
+                                        </li>
+                                        <li>
+                                            <strong>Hostname</strong>
+                                            is the name of the server machine for which the HAR file was collected.
+                                        </li>
+                                        <li>
+                                            <strong>Browser</strong>
+                                            contains information about the browser that was used to collect the HAR file.
+                                        </li>
+                                    </ul>
+                                </div>
+                                <table id="har_files_table">
+                                    <thead>
+                                        <tr>
+                                            <th class="sixty">File Name</th>
+                                            <th class="ten">Hostname</th>
+                                            <th class="ten">Browser</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <xsl:for-each select="doc/har_files/har_file">
+                                            <tr>
+                                                <td class="left"><xsl:value-of select="@filename"/></td>
+                                                <td class="left"><xsl:value-of select="@hostname"/></td>
+                                                <td class="left"><xsl:value-of select="@browser"/></td>
+                                            </tr>
+                                        </xsl:for-each>
+                                    </tbody>
+                                </table>
+                            </xsl:when>
+                            <!-- xsl:otherwise> No HAR files </xsl:otherwise -->
+                        </xsl:choose>
                     </div>
                     <h3><a id="toggle_system_properties"
                            href="javascript:expand_it(system_properties, toggle_system_properties)"
@@ -355,25 +422,41 @@
                             <h4>Garbage Collection Activity</h4>
                             <a id="togglememusagedoc" href="javascript:expand_it(memusagedoc,togglememusagedoc)" class="expandit">
                                 What does this chart tell me?</a>
-                            <div id="memusagedoc" style="display:none;">
-                                This chart shows all the garbage collections that happened between the time
-                                of the first and the last javacore in the data set.
-                                Garbage collections that happened before the first
-                                or after the last javacore generation time are not included.
-                                <ul>
-                                    <li><strong>Heap Usage</strong>
-                                        is the available Java heap memory over time,
-                                        based on the garbage collection data from the verbose GC log files.
-                                    </li>
-                                    <li><strong>Total Heap</strong>
-                                        is the maximum size of the Java heap, configured by using the Xmx Java argument,
-                                        expressed in megabytes.
-                                    </li>
-                                </ul>
-                            </div>
-                            <div id="systemresources_myChartGC" class="chart-container hide">
-                                <canvas id="myChartGC" height="200"></canvas>
-                            </div>
+                                <xsl:choose>
+                                    <xsl:when test="doc/report_info/verbose_gc_list/verbose_gc">
+                                        <xsl:choose>
+                                            <xsl:when test="//verbose_gc_list/@total_collects_in_time_limits = 0">
+                                                <br/>
+                                                There were no garbage collections withing the javacore time limits
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                <div id="memusagedoc" style="display:none;">
+                                                This chart shows all the garbage collections that happened between the time
+                                                of the first and the last javacore in the data set.
+                                                Garbage collections that happened before the first
+                                                or after the last javacore generation time are not included.
+                                                <ul>
+                                                    <li><strong>Heap Usage</strong>
+                                                        is the available Java heap memory over time,
+                                                        based on the garbage collection data from the verbose GC log files.
+                                                    </li>
+                                                    <li><strong>Total Heap</strong>
+                                                        is the maximum size of the Java heap, configured by using the Xmx Java argument,
+                                                        expressed in megabytes.
+                                                    </li>
+                                            </ul>
+                                        </div>
+                                        <div id="systemresources_myChartGC" class="chart-container hide">
+                                            <canvas id="myChartGC" height="200"></canvas>
+                                        </div>
+                                            </xsl:otherwise>
+                                        </xsl:choose>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <br/>
+                                        No verbosegc logs were provided
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             <h4>CPU Load</h4>
                             <a id="togglecpuloaddoc" href="javascript:expand_it(cpuloaddoc,togglecpuloaddoc)" class="expandit">
                                 What does this chart tell me?</a>
@@ -745,6 +828,70 @@
                         </tbody>
                     </table>
                 </div>
+
+                <xsl:choose>
+                    <xsl:when test="doc/har_files">
+                        <h3><a  id="toggle_http_calls" href="javascript:expand_it(http_calls,toggle_http_calls)" class="expandit">HTTP calls</a></h3>
+                        <div id="http_calls" style="display:none;" >
+                            <a id="togglehttpcallsdoc" href="javascript:expand_it(httpcallsdoc,togglehttpcallsdoc)" class="expandit">
+                                What does this table tell me?</a>
+                                <div id="httpcallsdoc" style="display:none;">
+                                The table shows the HTTP calls that are included in the HAR files from the data set.
+                                The table can be sorted by clicking on a column header.
+                                <ul>
+                                    <li><strong>URL</strong>
+                                        is the URL of the HTTP request.
+                                    </li>
+                                    <li><strong>Status</strong>
+                                        is the HTTP response code.
+                                    </li>
+                                    <li><strong>Start time</strong>
+                                        is the time when the HTTP request was made.
+                                    </li>
+                                    <li><strong>Duration</strong>
+                                        is the amount of time it took to complete the HTTP call, in milliseconds.
+                                    </li>
+                                    <li><strong>Size</strong>
+                                        is size of the response body, in bytes.
+                                    </li>
+                                </ul>
+                            </div>
+                            <table id="HttpCallTable" class="tablesorter">
+                                <thead>
+                                    <tr>
+                                        <th  class="sixty">URL</th>
+                                        <th>Status</th>
+                                        <th>Start Time</th>
+                                        <th>Duration</th>
+                                        <th>Size</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <xsl:for-each select="//http_call">
+                                        <tr>
+                                            <td class="left"><xsl:value-of select="@url"/></td>
+                                            <td>
+                                                <xsl:choose>
+                                                    <xsl:when test="@success='False'">
+                                                        <xsl:attribute name="class">http_failure</xsl:attribute>
+                                                    </xsl:when>
+                                                </xsl:choose>
+                                                <xsl:value-of select="@status"/>
+                                            </td>
+                                            <td><xsl:value-of select="@start_time"/></td>
+                                            <td>
+                                                <div class="info"><xsl:value-of select="@duration"/>
+                                                    <span class="infotooltip"><xsl:value-of select="@timings"/></span>
+                                                </div>
+                                            </td>
+                                            <td><xsl:value-of select="@size"/></td>
+                                        </tr>
+                                    </xsl:for-each>
+                                </tbody>
+                            </table>
+                        </div>
+                    </xsl:when>
+                </xsl:choose>
 
                     <p></p>
                     <div class="margined">

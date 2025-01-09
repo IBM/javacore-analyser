@@ -1,5 +1,5 @@
 #
-# Copyright IBM Corp. 2024 - 2024
+# Copyright IBM Corp. 2024 - 2025
 # SPDX-License-Identifier: Apache-2.0
 #
 
@@ -12,7 +12,6 @@ import unittest
 from unittest.mock import patch
 
 from javacore_analyser import javacore_analyser_batch
-from javacore_analyser.javacore import CorruptedJavacoreException
 
 
 def rm_tmp_dir():
@@ -48,25 +47,11 @@ class TestJavacoreAnalyser(unittest.TestCase):
 
     def test_api(self):
         javacore_analyser_batch.process_javacores_and_generate_report_data(["test/data/archives/javacores.zip"], "tmp")
-        test_failed = False
-        try:
-            javacore_analyser_batch.process_javacores_and_generate_report_data(["test/data/archives/javacores-corrupted.zip"],
-                                                                         "tmp")
-        except CorruptedJavacoreException:
-            test_failed = True
-        self.assertTrue(test_failed, "API on corrupted file should fail but finished successfully")
         javacore_analyser_batch.process_javacores_and_generate_report_data(
             ["test/data/javacores/javacore.20220606.114458.32888.0001.txt",
              "test/data/javacores/javacore.20220606.114502.32888.0002.txt"], "tmp")
         javacore_analyser_batch.process_javacores_and_generate_report_data(
             ["test/data/javacores"], "tmp")
-
-        test_failed = False
-        try:
-            javacore_analyser_batch.process_javacores_and_generate_report_data([], "tmp")
-        except RuntimeError:
-            test_failed = True
-        self.assertTrue(test_failed, "API on missing javacores should fail but finished successfully")
 
     def test_issue129(self):
         self.runMainWithParams(self.issue129)
@@ -149,6 +134,9 @@ class TestJavacoreAnalyser(unittest.TestCase):
         except SystemExit:
             console_output = captured_output.getvalue()
             self.assertRegex(console_output, "Error during processing file:")
+            content = open("tmp/index.html", "r").read()
+            self.assertRegex(content, "Processing failed with an error.",
+                             "index.html is missing \"Processing failed with an error.\" text")
         finally:
             sys.stdout = default_output  # Reset redirect.
 
