@@ -1,8 +1,18 @@
 <!-- This should be the location of the title of the repository, normally the short name -->
 # Javacore Analyser
 
+![GitHub License](https://img.shields.io/github/license/IBM/javacore-analyser)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/javacore-analyser)
+![GitHub contributors](https://img.shields.io/github/contributors/IBM/javacore-analyser)  
 <!-- Build Status, is a great thing to have at the top of your repository, it shows that you take your CI/CD as first class citizens -->
 [![Build Status](https://app.travis-ci.com/IBM/javacore-analyser.svg?token=w3i4X11XppEi2tJQsxDb&branch=main)](https://app.travis-ci.com/IBM/javacore-analyser)
+![GitHub last commit](https://img.shields.io/github/last-commit/IBM/javacore-analyser)
+![GitHub Release Date](https://img.shields.io/github/release-date/IBM/javacore-analyser)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/t/IBM/javacore-analyser)
+![GitHub Issues or Pull Requests](https://img.shields.io/github/issues-pr/IBM/javacore-analyser)
+![GitHub Issues or Pull Requests](https://img.shields.io/github/issues-pr-closed/IBM/javacore-analyser)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/javacore-analyser)
+
 
 <!-- Not always needed, but a scope helps the user understand in a short sentance like below, why this repo exists -->
 ## Scope
@@ -31,6 +41,7 @@ Steps:
     OR
    `pip install --pre javacore-analyser` - if you want an experimental version
 
+
 #### Installing from sources
 This is recommended for geeks only:
 1. Repeat steps 1 and 2 from above
@@ -43,23 +54,29 @@ This is recommended for geeks only:
 #### Running cmd application: 
 1. Install application if not done yet
 2. Activate your created virtual environment according to activate Virtual Environment according to [Creating virtual environments](https://docs.python.org/3/tutorial/venv.html#creating-virtual-environments)
-3. Run the following command from cmd: `javacore-analyser-batch <input-data> <generated-reports-dir>`
+3. Run the following command from cmd:  
+`javacore-analyser-batch <input-data> <generated-reports-dir>`  
+or  
+`python -m javacore_analyser batch <input-data> <generated-reports-dir>`  
+
 Where `<input-data>` is one of the following:
 * The directory containing javacores and optionally verbose gc
 * Archive (7z, zip, tar.gz, tar.bz2) containing the same
 * List of the javacores separated by `;` character. Optionally you can add `--separator` option to define your own separator.
 You can type the following command to obtain the help:  
-`javacore-analyser-batch --help`
+`javacore-analyser-batch --help` or `python -m javacore_analyser batch --help`
 
 #### Running web application:
 1. Repeat steps 1-3 from cmd application
 2. Execute the following command from cmd:  
-  `javacore_analyser_web --port=500 --reports-dir=/data/reports_dir`
+  `javacore_analyser_web --port=5000 --reports-dir=/data/reports_dir`  
+     or  
+  `python -m javacore_analyser web --port=5000 --reports-dir=/data/reports_dir`  
 
-     The first parameter set the port to use by application. If not specified, 5000 will be used.  
-     The second parameter sets where the reports need to be stored. If not set, then the `reports` dir will be created in current location.  
+   The first parameter set the port to use by application. If not specified, 5000 will be used.  
+   The second parameter sets where the reports need to be stored. If not set, then the `reports` dir will be created in current location.  
 
-  Now you can type (http://localhost:5000/).  
+Now you can type (http://localhost:5000/).  
 
 ### Running container image
 There is an unofficial Docker/Podman container managed by one of projects developers. Use the following command 

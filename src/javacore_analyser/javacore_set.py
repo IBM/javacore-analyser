@@ -1,5 +1,5 @@
 #
-# Copyright IBM Corp. 2024 - 2024
+# Copyright IBM Corp. 2024 - 2025
 # SPDX-License-Identifier: Apache-2.0
 #
 
@@ -22,6 +22,7 @@ from tqdm import tqdm
 from javacore_analyser import tips
 from javacore_analyser.code_snapshot_collection import CodeSnapshotCollection
 from javacore_analyser.constants import *
+from javacore_analyser.har_file import HarFile
 from javacore_analyser.java_thread import Thread
 from javacore_analyser.javacore import Javacore
 from javacore_analyser.snapshot_collection import SnapshotCollection
@@ -87,6 +88,7 @@ class JavacoreSet:
         self.blocked_snapshots = []
         self.tips = []
         self.gc_parser = VerboseGcParser()
+        self.har_files = []
 
     # Assisted by WCA@IBM
     # Latest GenAI contribution: ibm/granite-8b-code-instruct
@@ -140,16 +142,18 @@ class JavacoreSet:
 
     @staticmethod
     def __generate_placeholder_htmls(placeholder_file, directory, collection, file_prefix):
+        logging.debug("Generating placeholder htmls")
         if os.path.exists(directory):
             shutil.rmtree(directory)
         os.mkdir(directory)
 
-        for element in tqdm(collection, desc="Generating placeholder htmls", unit=" file"):
+        for element in tqdm(collection, desc="Generating placeholder htmls", unit=" files"):
             filename = file_prefix + "_" + element.get_id() + ".html"
             if filename.startswith("_"):
                 filename = filename[1:]
             file_path = os.path.join(directory, filename)
             shutil.copy2(placeholder_file, file_path)
+        logging.debug("Finished generating placeholder htmls")
 
     def __generate_htmls_for_threads(self, output_dir, temp_dir_name):
         _create_xml_xsl_for_collection(os.path.join(temp_dir_name, "threads"),
@@ -230,6 +234,9 @@ class JavacoreSet:
                 if fnmatch.fnmatch(file, '*verbosegc*.txt*'):
                     self.gc_parser.add_file(dirpath + os.sep + file)
                     logging.info("VerboseGC file found: " + file)
+                if fnmatch.fnmatch(file, "*.har"):
+                    self.har_files.append(HarFile(dirpath + os.sep + file))
+                    logging.info("HAR file found: " + file)
 
         # sorting files by name.
         # Unless the user changed the javacore file name format, this is equivalent to sorting by date
@@ -385,6 +392,8 @@ class JavacoreSet:
 
         verbose_gc_list_node = self.doc.createElement("verbose_gc_list")
         report_info_node.appendChild(verbose_gc_list_node)
+
+        total_collects_in_time_limits = 0
         for vgc in self.gc_parser.get_files():
             verbose_gc_node = self.doc.createElement("verbose_gc")
             verbose_gc_list_node.appendChild(verbose_gc_node)
@@ -394,9 +403,17 @@ class JavacoreSet:
             verbose_gc_collects_node = self.doc.createElement("verbose_gc_collects")
             verbose_gc_node.appendChild(verbose_gc_collects_node)
             verbose_gc_collects_node.appendChild(self.doc.createTextNode(str(vgc.get_number_of_collects())))
+            total_collects_in_time_limits += vgc.get_number_of_collects()
             verbose_gc_total_collects_node = self.doc.createElement("verbose_gc_total_collects")
             verbose_gc_node.appendChild(verbose_gc_total_collects_node)
             verbose_gc_total_collects_node.appendChild(self.doc.createTextNode(str(vgc.get_total_number_of_collects())))
+        verbose_gc_list_node.setAttribute("total_collects_in_time_limits", str(total_collects_in_time_limits))
+
+        if len(self.har_files) > 0:
+            har_files_node = self.doc.createElement("har_files")
+            doc_node.appendChild(har_files_node)
+            for har in self.har_files:
+                har_files_node.appendChild(har.get_xml(self.doc))
 
         system_info_node = self.doc.createElement("system_info")
         doc_node.appendChild(system_info_node)

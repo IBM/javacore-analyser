@@ -1,5 +1,5 @@
 #
-# Copyright IBM Corp. 2024 - 2024
+# Copyright IBM Corp. 2024 - 2025
 # SPDX-License-Identifier: Apache-2.0
 #
 
@@ -12,6 +12,7 @@ import shutil
 import sys
 import tarfile
 import tempfile
+import traceback
 import zipfile
 
 import importlib_resources
@@ -64,11 +65,6 @@ def extract_archive(input_archive_filename, output_path):
 
 
 def main():
-    logging_utils.create_console_logging()
-    logging.info("IBM Javacore analyser")
-    logging.info("Python version: " + sys.version)
-    logging.info("Preferred encoding: " + locale.getpreferredencoding())
-
     parser = argparse.ArgumentParser()
     parser.add_argument("input", help="Input javacore file(s) or directory with javacores. "
                                       "The javacores can be packed "
@@ -86,12 +82,19 @@ def main():
     output_param = args.output
     files_separator = args.separator
 
+    batch_process(input_param, output_param, files_separator)
+
+
+def batch_process(input_param, output_param, files_separator=DEFAULT_FILE_DELIMITER):
+    logging_utils.create_console_logging()
+    logging.info("IBM Javacore analyser")
+    logging.info("Python version: " + sys.version)
+    logging.info("Preferred encoding: " + locale.getpreferredencoding())
     logging.info("Input parameter: " + input_param)
     logging.info("Report directory: " + output_param)
-
+    output_param = os.path.normpath(output_param)
     # Needs to be created once output file structure is ready.
     logging_utils.create_file_logging(output_param)
-
     # Check whether as input we got list of files or single file
     # Semicolon is separation mark for list of input files
     if files_separator in input_param or fnmatch.fnmatch(input_param, '*javacore*.txt'):
@@ -100,6 +103,7 @@ def main():
     else:
         files = [input_param]
     try:
+        files = [os.path.normpath(file) for file in files]
         process_javacores_and_generate_report_data(files, output_param)
     except Exception as ex:
         logging.exception(ex)
@@ -156,6 +160,15 @@ def create_output_files_structure(output_dir):
                  os.path.join(output_dir, "index.html"))
 
 
+def generate_error_page(output_dir, exception):
+    error_page_text = importlib_resources.read_text("javacore_analyser", "data/html/error.html")
+    tb = traceback.format_exc()
+    file = os.path.join(output_dir, "index.html")
+    f = open(file, "w")
+    f.write(error_page_text.format(stacktrace=tb))
+    f.close()
+
+
 # Assisted by WCA@IBM
 # Latest GenAI contribution: ibm/granite-8b-code-instruct
 def process_javacores_and_generate_report_data(input_files, output_dir):
@@ -169,9 +182,14 @@ def process_javacores_and_generate_report_data(input_files, output_dir):
     Returns:
     None
     """
-    create_output_files_structure(output_dir)
-    javacore_set = generate_javecore_set_data(input_files)
-    javacore_set.generate_report_files(output_dir)
+    try:
+        create_output_files_structure(output_dir)
+        javacore_set = generate_javecore_set_data(input_files)
+        javacore_set.generate_report_files(output_dir)
+    except Exception as ex:
+        logging.exception(ex)
+        logging.error("Processing was not successful. Correct the problem and try again.")
+        generate_error_page(output_dir, ex)
 
 
 if __name__ == "__main__":

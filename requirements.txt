@@ -5,3 +5,5 @@ importlib-resources
 waitress # Production WSGI server
 flask # WSGI server for development the code
 tqdm
+haralyzer
+

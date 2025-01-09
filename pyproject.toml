@@ -1,5 +1,5 @@
 #
-# Copyright IBM Corp. 2024 - 2024
+# Copyright IBM Corp. 2024 - 2025
 # SPDX-License-Identifier: Apache-2.0
 #
 
@@ -21,7 +21,6 @@ readme = "README.md"
 license = {file = "LICENSE"}
 requires-python = ">=3.9"
 classifiers = [
-    "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
@@ -46,7 +45,8 @@ dependencies = [
     "importlib-resources",
     "flask",
     "waitress",
-    "tqdm"
+    "tqdm",
+    "haralyzer"
 ]
 
 [project.scripts]
@@ -56,7 +56,7 @@ javacore_analyser_web="javacore_analyser.javacore_analyser_web:main"
 [project.urls]
 Homepage = "https://github.com/IBM/javacore-analyser"
 Issues = "https://github.com/IBM/javacore-analyser/issues"
-Changelog = "https://github.com/IBM/javacore-analyser/CHANGELOG.md"
+Changelog = "https://github.com/IBM/javacore-analyser/blob/main/CHANGELOG.md"
 Source = "https://github.com/IBM/javacore-analyser"
 
 [tool.hatch.version]
