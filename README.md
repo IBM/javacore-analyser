@@ -39,7 +39,8 @@ Steps:
 3. Run the following command:
    `pip install javacore-analyser`  
     OR
-   `pip install --pre --extra-index-url https://test.pypi.org/simple/ javacore-analyser` - if you want an experimental version
+   `pip install --pre javacore-analyser` - if you want an experimental version
+
 
 #### Installing from sources
 This is recommended for geeks only:
