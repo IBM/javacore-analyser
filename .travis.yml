@@ -3,7 +3,6 @@ python:
  - "3.9"
 before_install:
  - pip install 'urllib3<2.0' #Enforce SSL version to be able to run twine
- - pip install -U pytest
  - pip install -U build
  - pip install -U twine
 install:
@@ -13,7 +12,7 @@ env:
  global:
   - PYTHONPATH=src:test
 script:
- - pytest
+ - python -m unittest discover
  - python -m build
  #- docker build .
 deploy:
