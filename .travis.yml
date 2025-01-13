@@ -21,7 +21,7 @@ deploy:
    script: python -m twine upload --skip-existing --verbose --password $TWINE_PROD_TOKEN dist/* #production instance.
    on:
      # all_branches: true # uncomment for testing purposes
-     branch: prod # uncomment on production
+     branch: main # uncomment on production
      # tags: true # If uncommented, the pip package will be created only if tag is created. Otherwise it will be always created for production branch.
  - provider: releases
    edge: true
@@ -29,5 +29,5 @@ deploy:
    file: dist/*
    on:
     # all_branches: true # uncomment for testing purposes
-    branch: prod # uncomment on production
+    branch: main # uncomment on production
     tags: true # We need to consider if we want to publish all versions or every build (which should not be an issue
