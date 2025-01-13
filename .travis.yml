@@ -30,4 +30,4 @@ deploy:
    on:
     # all_branches: true # uncomment for testing purposes
     # branch: main # uncomment on production
-    tags: true # We need to consider if we want to publish all versions or every build (which should not be an issue
+    tags: true # We need to consider if we want to publish all versions or every build
