@@ -142,7 +142,7 @@ class JavacoreSet:
 
     @staticmethod
     def __generate_placeholder_htmls(placeholder_file, directory, collection, file_prefix):
-        logging.info("Generating placeholder htmls")
+        logging.info(f"Generating placeholder htmls in {directory}")
         if os.path.exists(directory):
             shutil.rmtree(directory)
         os.mkdir(directory)
