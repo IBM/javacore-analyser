@@ -1,11 +1,12 @@
 #
-# Copyright IBM Corp. 2024 - 2024
+# Copyright IBM Corp. 2024 - 2025
 # SPDX-License-Identifier: Apache-2.0
 #
 
 import logging
 import ntpath
 from datetime import datetime
+from pathlib import Path
 from xml.dom.minidom import Element, parseString
 
 from tqdm import tqdm
@@ -110,22 +111,11 @@ class VerboseGcFile:
         self.__parse()
 
     def __parse(self):
-        # read in the file as collection of lines
-        file = None
         try:
-            xml_text = ""
-            root_closing_tag_available = False
-            file = open(self.__path, 'r+')
-            lines = file.readlines()
-            # find the last non-empty line
-            for line in lines:
-                line = line.strip()
-                # workaround for https://github.com/eclipse-openj9/openj9/issues/17978
-                line = line.replace("&#x1;", "?")
-                xml_text = xml_text + line
-                if line == ROOT_CLOSING_TAG: root_closing_tag_available = True
-
-            if not root_closing_tag_available:
+            file = Path(self.__path)
+            xml_text = file.read_text()
+            xml_text = xml_text.replace("&#x1;", "?")
+            if ROOT_CLOSING_TAG not in xml_text:
                 xml_text = xml_text + ROOT_CLOSING_TAG
                 logging.debug("adding closing tag")
 
@@ -133,8 +123,6 @@ class VerboseGcFile:
             self.__root = self.__doc.documentElement
         except Exception as ex:
             raise GcVerboseProcessingException() from ex
-        finally:
-            if not file.closed: file.close()
 
     def get_file_name(self):
         head, tail = ntpath.split(self.__path)
