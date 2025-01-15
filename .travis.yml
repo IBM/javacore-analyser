@@ -1,10 +1,33 @@
 language: python
 python:
  - "3.9"
+before_install:
+ - pip install 'urllib3<2.0' #Enforce SSL version to be able to run twine
+ - pip install -U build
+ - pip install -U twine
 install:
  - pip install -r requirements.txt
+ - pip install .
 env:
  global:
   - PYTHONPATH=src:test
 script:
- - python -m unittest test.test_javacore test.test_thread_snapshot test.test_javacore_set test.test_java_thread test.test_stack_trace test.test_javacore_analyser test.test_tips test.test_verbose_gc_parser test.test_gc_collection test.test_code_snapshot_collection
+ - python -m unittest discover
+ - python -m build
+ #- docker build .
+deploy:
+ - provider: script
+   #script: python -m twine upload --skip-existing --verbose --password $TWINE_TEST_TOKEN --repository testpypi dist/* #test instance
+   script: python -m twine upload --skip-existing --verbose --password $TWINE_PROD_TOKEN dist/* #production instance.
+   on:
+     # all_branches: true # uncomment for testing purposes
+     branch: main # uncomment on production
+     # tags: true # If uncommented, the pip package will be created only if tag is created. Otherwise it will be always created for production branch.
+ - provider: releases
+   edge: true
+   draft: true
+   file: dist/*
+   on:
+    # all_branches: true # uncomment for testing purposes
+    # branch: main # uncomment on production
+    tags: true # We need to consider if we want to publish all versions or every build
