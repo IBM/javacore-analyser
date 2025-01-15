@@ -111,8 +111,6 @@ class VerboseGcFile:
         self.__parse()
 
     def __parse(self):
-        # read in the file as collection of lines
-        file = None
         try:
             file = Path(self.__path)
             xml_text = file.read_text()
