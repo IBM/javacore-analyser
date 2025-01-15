@@ -115,6 +115,7 @@ or
 `-p` specifies port mapping. The application in container is running on port 5000. You can map it to another port on 
 your machine (5001 in this example).
 
+
 ## Publish the container to ghcr.io/ibm/javacore-analyser
 Once you built the container locally, you might need to publish it on ghcr.io/ibm/javacore-analyser.
 Here are the instructions: 
@@ -123,7 +124,8 @@ Steps:
 1. Generate the token by navigating to https://github.com/settings/tokens/new?scopes=write:packages. 
    * Select the read:packages scope to download container images and read their metadata.
    * Select the write:packages scope to download and upload container images and read and write their metadata.
-   * Select the delete:packages scope to delete container images.
+   * Select the delete:packages scope to delete container images.  
+   NOTE: you can use the same token for multiple pushes until it does not expire.
 2. Tag image:
    ```commandline
    podman image tag localhost/javacore-analyser ghcr.io/ibm/javacore-analyser:latest
@@ -137,15 +139,66 @@ Steps:
    podman push ghcr.io/ibm/javacore-analyser:latest
    ```
   
-## Publish multiplatform image 
+## Build and Publish multiplatform image 
 To publish the image for multiple platforms, follow these instructions:
 https://developers.redhat.com/articles/2023/11/03/how-build-multi-architecture-container-images#benefits_of_multi_architecture_containers
 ```commandline
+<Generate token if you do not have it yet>
+export CR_PAT=<token-id generated in step 1>
+echo $CR_PAT | podman login ghcr.io -u USERNAME --password-stdin  
 podman manifest create javacore-analyser:2.1
 podman build --platform linux/amd64,linux/arm64,linux/i386  --manifest javacore-analyser:2.1  .
 podman manifest push javacore-analyser:2.1 docker://ghcr.io/ibm/javacore-analyser:2.1
 podman manifest push javacore-analyser:2.1 docker://ghcr.io/ibm/javacore-analyser:latest
 ```
+
+## Releasing a new version
+Release a new version is partially automated by Travis. Here are the steps:  
+1. Make sure you are on `main` branch in your repository.
+2. Create a new tag e.g:  
+   `git tag 2.1`
+3. Push the tag to Github:  
+  `git push --tags`  
+  alternatively you can perform this operation from Pycharm UI (**Git** -> **Push** -> Select **Push Tags** -> 
+  Click **Push**)  
+   
+   Creating a new tag invokes a build operation which is doing the following:
+   * The following code 
+      ```yaml
+     deploy:
+      - provider: script
+        #script: python -m twine upload --skip-existing --verbose --password $TWINE_TEST_TOKEN --repository testpypi dist/* #test instance
+        script: python -m twine upload --skip-existing --verbose --password $TWINE_PROD_TOKEN dist/* #production instance.  
+        on:  
+        # all_branches: true # uncomment for testing purposes
+          branch: prod # uncomment on production
+          tags: true # We need to consider if we want to publish all versions or every build (which should not be an issue
+     ```
+     Is publishing pip package to pip repository. You are setting all passwords here: 
+     https://app.travis-ci.com/github/IBM/javacore-analyser/settings section **Environmental Variables**.
+     **TWINE_USERNAME** should be set to **__token__** and **TWINE_PROD_TOKEN** or **TWINE_TEST_TOKEN** are the tokens
+     set on pipy page (https://pypi.org/manage/account/token/ or https://test.pypi.org/manage/account/token/).
+   * The following code:
+     ```yaml
+      - provider: releases
+        edge: true
+        draft: true
+        file: dist/*
+        on:
+          # all_branches: true # uncomment for testing purposes
+          branch: prod # uncomment on production
+          tags: true # We need to consider if we want to publish all versions or every build (which should not be an issue
+     ```  
+     Generates the new **Draft** release on Github and adds distribution files (They are located in `dist/*`).
+     This code requires setting **GITHUB_TOKEN** variable in 
+     https://app.travis-ci.com/github/IBM/javacore-analyser/settings. You can generate github token on 
+https://github.com/settings/tokens/new
+4. Navigate in Github to the new Draft release page. You can easily find it on 
+   https://github.com/IBM/javacore-analyser/releases
+5. Click on Edit pen and then click on **Generate release notes** and edit them before saving.
+6. Publish release.
+7. Copy release notes to [CHANGELOG.md](CHANGELOG.md) file.
+
 
 ## Testing
 As default the tests in Pycharm are ran in the current selected directory. However we want to run them in main 

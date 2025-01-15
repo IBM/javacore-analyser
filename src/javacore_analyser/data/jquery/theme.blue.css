@@ -1,6 +1,8 @@
-/*************
-  Blue Theme
- *************/
+/*
+Copyright IBM Corp. 2024 - 2025
+SPDX-License-Identifier: Apache-2.0
+*/
+
 /* overall */
 .tablesorter-blue {
 	width: 100%;
@@ -106,6 +108,10 @@
 }
 
 .tablesorter-blue td.blocked {
+    background-color: red
+}
+
+.tablesorter-blue td.http_failure {
     background-color: red
 }
 

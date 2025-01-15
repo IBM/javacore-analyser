@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.1] - 2025-01-02
+* Fixes #66 Move information about progress bar after information about number of threads by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/67
+* #27 there is no progress indicator on the web app by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/59
+* #57 Add more progress bars in the code by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/58
+* Expanding stack traces that contain search result by @PiotrAniola82 in https://github.com/IBM/javacore-analyser/pull/70
+* Fixes #60 Switch to use cmd properties in web app by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/72
+* Fixed PEP warnings by @PiotrAniola82 in https://github.com/IBM/javacore-analyser/pull/75
+* #20 generate docker image by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/48
+* Create _main_ class by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/80
+* Different time range on gc activity and cpu load graphs by @PiotrAniola82 in https://github.com/IBM/javacore-analyser/pull/76
+
+[2.1]: https://github.com/IBM/javacore-analyser/releases/tag/2.1
 
 ## [2.0] - 2024-12-03
 * #10 extract api methods by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/11
