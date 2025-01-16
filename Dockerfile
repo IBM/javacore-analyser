@@ -12,4 +12,4 @@ VOLUME ["/reports"]
 CMD javacore_analyser_web --port=5000 --reports-dir=/reports
 
 # This is the most frequently modified line so it should be at the end.
-RUN pip install --no-cache-dir javacore-analyser
+RUN pip install --root-user-action ignore --no-cache-dir javacore-analyser
