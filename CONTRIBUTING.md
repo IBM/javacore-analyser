@@ -104,6 +104,11 @@ or
 
 `docker build -t javacore-analyser .`
 
+If you want to build a particular version, you need to add `--build-arg version=` argument, for example:
+`podman build --build-arg version='==2.1' -t javacore-analyser .` 
+or 
+`podman build --build-arg version='<2.1' -t javacore-analyser .`  
+
 To start the container:  
 `podman run -it --rm --name javacore-analyser --mount type=bind,src="local-dir-on-fs",target=/reports -p 5001:5000 javacore-analyser`  
 
