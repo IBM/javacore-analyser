@@ -2044,4 +2044,3 @@
 <allocation-satisfied id="468" threadId="00000000036B8300" bytesRequested="40" />
 <af-end id="469" timestamp="2023-04-25T11:13:16.863" threadId="00000000036B8C80" success="true" from="nursery"/>
 <exclusive-end id="470" timestamp="2023-04-25T11:13:16.863" durationms="175.876" />
-</verbosegc>
