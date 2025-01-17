@@ -261,6 +261,7 @@ const loadChart = function () {
   for(let i=1; i<snapshotsNumber; i++){
     let rowEl = document.getElementById('all_threads_table_thread_xsl').rows[i];
     let value = Number(rowEl.cells[3].innerText);
+
     if(!isNaN(value)){
         inputData.push(Number(rowEl.cells[3].innerText));
         labels.push(String(rowEl.cells[0].innerText));
