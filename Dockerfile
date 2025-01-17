@@ -14,7 +14,7 @@ RUN mkdir /reports
 VOLUME ["/reports"]
 
 
-ENTRYPOINT ["javacore_analyser_web", "--port=5000", "--reports-dir=/reports"]
+CMD ["javacore_analyser_web", "--port=5000", "--reports-dir=/reports"]
 
 # As default we do not set the version to have the latest one for build.
 ARG version=
