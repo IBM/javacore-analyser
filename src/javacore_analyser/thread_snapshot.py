@@ -210,18 +210,6 @@ class ThreadSnapshot:
         file_name = ""
         if self.file:
             file_name = self.javacore.filename.split(os.sep)[-1].strip()
-        # thread name
-        thread_name_node = doc.createElement("thread_name")
-        thread_name_node.appendChild(doc.createTextNode(self.name))
-        thread_snapshot_node.appendChild(thread_name_node)
-        # thread id
-        thread_name_node = doc.createElement("thread_id")
-        thread_name_node.appendChild(doc.createTextNode(str(self.get_thread_id())))
-        thread_snapshot_node.appendChild(thread_name_node)
-        # thread hash
-        thread_hash_node = doc.createElement("thread_hash")
-        thread_hash_node.appendChild(doc.createTextNode(str(self.get_thread_hash())))
-        thread_snapshot_node.appendChild(thread_hash_node)
         # CPU usage
         cpu_usage_node = doc.createElement("cpu_usage")
         cpu_usage_node.appendChild(doc.createTextNode(str(self.get_cpu_usage_inc())))
