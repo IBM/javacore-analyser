@@ -262,6 +262,7 @@ const loadChart = function () {
     let rowEl = document.getElementById('all_threads_table_thread_xsl').rows[i];
     let value = Number(rowEl.cells[3].innerText);
 
+    // verify the input data
     if(!isNaN(value)){
         inputData.push(Number(rowEl.cells[3].innerText));
         labels.push(String(rowEl.cells[0].innerText));
