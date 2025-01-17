@@ -51,6 +51,15 @@ class TestThreadSnapshot(unittest.TestCase):
         self.snapshot.parse_thread_id(line)
         self.assertEqual(self.snapshot.thread_id, '0x1D')
 
+    def test_get_thread_address(self):
+        line = '3XMTHREADINFO      "kernel-command-listener" J9VMThread:0x0000000000602500, \
+        omrthread_t:0x000000A813EC05B8, java/lang/Thread:0x00000008008915F0, state:R, prio=5"'
+        address = self.snapshot.get_thread_address(line)
+        self.assertEqual(address, "0x00000008008915F0")
+        line = line = '3XMTHREADINFO      Anonymous native thread'
+        address = self.snapshot.get_thread_address(line)
+        self.assertEqual(address, "")
+
     def test_parse_state(self):
         line = '3XMTHREADINFO      "kernel-command-listener" J9VMThread:0x0000000000602500, \
         omrthread_t:0x000000A813EC05B8, java/lang/Thread:0x00000008008915F0, state:R, prio=5"'

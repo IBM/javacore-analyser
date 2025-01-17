@@ -86,7 +86,9 @@ class ThreadSnapshot:
         address = ""
         if match:   # native threads don't have an address
             address = match.group(2)
-        return self.javacore.encode(address)
+        if self.javacore:
+            address = self.javacore.encode(address)
+        return address
 
     def get_thread_hash(self):
         if self.thread:
