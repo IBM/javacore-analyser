@@ -586,7 +586,10 @@
                                         <a>
                                             <xsl:attribute name="id"><xsl:value-of select="concat('toggle_thread_name',$i)"/></xsl:attribute>
                                             <xsl:attribute name="href"><xsl:value-of select="concat('javascript:expand_stack(stack',$i,',toggle_thread_name',$i,')')"/></xsl:attribute>
-                                            <xsl:attribute name="class">expandit</xsl:attribute><xsl:value-of select="thread_name"/></a>
+                                            <xsl:attribute name="class">expandit</xsl:attribute>
+                                            <xsl:value-of select="thread_name"/>
+                                            (@<xsl:value-of select="thread_address"/>)
+                                        </a>
                                         <a class="right" target="_blank">
                                             <xsl:attribute name="href">
                                                 <xsl:value-of select="concat('threads/thread_', thread_hash, '.html')"/>

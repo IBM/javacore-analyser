@@ -21,6 +21,7 @@ class ThreadSnapshot:
         self.allocated_mem = 0
         self.name = None
         self.thread_id = None
+        self.thread_address = None
         self.thread = None
         self.javacore = None
         self.blocker = None
@@ -38,6 +39,7 @@ class ThreadSnapshot:
         snapshot.file = file
         snapshot.javacore = javacore
         snapshot.name = snapshot.get_thread_name(line)
+        snapshot.thread_address = snapshot.get_thread_address(line)
         snapshot.parse_state(line)
         snapshot.parse_snapshot_data()
         return snapshot
@@ -75,6 +77,16 @@ class ThreadSnapshot:
         # well-formed-invalid-token-line-1-column-13722
         name = name.translate(str.maketrans({"\01": "[SOH]"}))
         return name
+
+    def get_thread_address(self, line):
+        """ assuming line format:
+        3XMTHREADINFO      "Default Executor-thread-27781" J9VMThread:0x0000000009443300,
+        omrthread_t:0x000000A8B62C3758, java/lang/Thread:0x00000008432D4140, state:B, prio=5 """
+        match = re.search("(java/lang/Thread:)(0x[0-9a-fA-F]+)", line)
+        address = ""
+        if match:   # native threads don't have an address
+            address = match.group(2)
+        return self.javacore.encode(address)
 
     def get_thread_hash(self):
         if self.thread:

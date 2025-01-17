@@ -8,6 +8,14 @@ from javacore_analyser.abstract_snapshot_collection import AbstractSnapshotColle
 
 class Thread(AbstractSnapshotCollection):
 
+    def __init__(self):
+        super().__init__()
+        self.thread_address = ""
+
+    def create(self, thread_snapshot):
+        super().create(thread_snapshot)
+        self.thread_address = thread_snapshot.thread_address
+
     def get_hash(self):
         id_str = self.name + str(self.id)
         hashcode = abs(hash(id_str))
@@ -25,6 +33,11 @@ class Thread(AbstractSnapshotCollection):
         name_node = doc.createElement("thread_name")
         name_node.appendChild(doc.createTextNode(self.name + " (" + str(self.id) + ")"))
         thread_node.appendChild(name_node)
+
+        # thread address
+        thread_address_node = doc.createElement("thread_address")
+        thread_address_node.appendChild(doc.createTextNode(self.thread_address))
+        thread_node.appendChild(thread_address_node)
 
         # hash
         hash_node = doc.createElement("thread_hash")

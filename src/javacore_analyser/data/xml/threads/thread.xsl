@@ -33,7 +33,11 @@
                 </div>
                 <div class="content">
                     <p class="right"><a href="../index.html"> Back to Main page </a></p>
-                    <h2>Wait Report for thread: <b><xsl:value-of select="thread_name"/></b></h2>
+                    <h2>
+                        Wait Report for thread: <b><xsl:value-of select="thread_name"/></b>
+                        <br/>
+                        java/lang/Thread:<xsl:value-of select="thread_address"/>
+                    </h2>
                     <xsl:choose>
                         <xsl:when test="//javacore_count = 1">
                             System resource utilization data cannot be calculated with only a single javacore.
