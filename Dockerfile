@@ -14,10 +14,10 @@ RUN mkdir /reports
 VOLUME ["/reports"]
 
 
-CMD ["javacore_analyser_web", "--port=5000", "--reports-dir=/reports"]
+ENTRYPOINT ["javacore_analyser_web", "--port=5000", "--reports-dir=/reports"]
 
 # As default we do not set the version to have the latest one for build.
 ARG version=
 # This is the most frequently modified line so it should be at the end.
-#RUN ["pip", "install", "--no-cache-dir", "javacore-analyser${version}"]
-RUN pip install javacore-analyser${version}
+#RUN ["pip", "install", "--no-cache-dir", "--root-user-action", "ignore", "javacore-analyser${version}"]
+RUN pip install --no-cache-dir --root-user-action ignore javacore-analyser${version}
