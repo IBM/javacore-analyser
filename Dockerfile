@@ -10,10 +10,8 @@ LABEL org.opencontainers.image.description="This is a tool to analyse IBM Javaco
 LABEL org.opencontainers.image.licenses="Apache-2.0"
 
 EXPOSE 5000/tcp
-ENV REPORTS_DIR=/reports
 RUN mkdir /reports
 VOLUME ["/reports"]
 
-RUN pip install --no-cache-dir --root-user-action ignore javacore-analyser
-
-CMD [ "javacore_analyser_web" ]
+RUN ["pip", "install", "--no-cache-dir", "javacore-analyser"]
+CMD ["javacore_analyser_web", "--port=5000", "--reports-dir=/reports"]
