@@ -533,7 +533,7 @@
                         that may be reused for unrelated tasks. Two tasks with different thread names are therefore treated
                         as separate threads for the purpose of this report, even if they are executed in the scope of the same
                         Thread java object.
-                        The address of the java Thread object is included in parentheses next to the thread name.
+                        The address of the java Thread object is included for each thread. This corresponds to the address reported in Java heapdumps.
                         The table can be sorted by clicking on any column header.
                         The following information is displayed for each thread:
                         <ul>
@@ -589,8 +589,9 @@
                                             <xsl:attribute name="href"><xsl:value-of select="concat('javascript:expand_stack(stack',$i,',toggle_thread_name',$i,')')"/></xsl:attribute>
                                             <xsl:attribute name="class">expandit</xsl:attribute>
                                             <xsl:value-of select="thread_name"/>
-                                            (@<xsl:value-of select="thread_address"/>)
                                         </a>
+                                        <br/>
+                                        java/lang/Thread:<xsl:value-of select="thread_address"/>
                                         <a class="right" target="_blank">
                                             <xsl:attribute name="href">
                                                 <xsl:value-of select="concat('threads/thread_', thread_hash, '.html')"/>
