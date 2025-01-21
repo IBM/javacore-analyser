@@ -14,7 +14,7 @@ RUN mkdir /reports
 VOLUME ["/reports"]
 
 # As default we do not set the version to have the latest one for build.
-ARG version=
+ARG version=""
 #RUN ["pip", "install", "--no-cache-dir", "--root-user-action", "ignore", "javacore-analyser${version}"]
 RUN pip install --no-cache-dir --root-user-action ignore javacore-analyser${version}
 CMD ["javacore_analyser_web", "--port=5000", "--reports-dir=/reports"]
