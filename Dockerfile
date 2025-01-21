@@ -1,5 +1,5 @@
 #
-# Copyright IBM Corp. 2024 - 2024
+# Copyright IBM Corp. 2024 - 2025
 # SPDX-License-Identifier: Apache-2.0
 #
 
@@ -13,5 +13,8 @@ EXPOSE 5000/tcp
 RUN mkdir /reports
 VOLUME ["/reports"]
 
-RUN ["pip", "install", "--no-cache-dir", "javacore-analyser"]
+# As default we do not set the version to have the latest one for build.
+ARG version=
+#RUN ["pip", "install", "--no-cache-dir", "--root-user-action", "ignore", "javacore-analyser${version}"]
+RUN pip install --no-cache-dir --root-user-action ignore javacore-analyser${version}
 CMD ["javacore_analyser_web", "--port=5000", "--reports-dir=/reports"]
