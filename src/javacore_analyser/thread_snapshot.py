@@ -21,6 +21,7 @@ class ThreadSnapshot:
         self.allocated_mem = 0
         self.name = None
         self.thread_id = None
+        self.thread_address = None
         self.thread = None
         self.javacore = None
         self.blocker = None
@@ -38,6 +39,7 @@ class ThreadSnapshot:
         snapshot.file = file
         snapshot.javacore = javacore
         snapshot.name = snapshot.get_thread_name(line)
+        snapshot.thread_address = snapshot.get_thread_address(line)
         snapshot.parse_state(line)
         snapshot.parse_snapshot_data()
         return snapshot
@@ -75,6 +77,18 @@ class ThreadSnapshot:
         # well-formed-invalid-token-line-1-column-13722
         name = name.translate(str.maketrans({"\01": "[SOH]"}))
         return name
+
+    def get_thread_address(self, line):
+        """ assuming line format:
+        3XMTHREADINFO      "Default Executor-thread-27781" J9VMThread:0x0000000009443300,
+        omrthread_t:0x000000A8B62C3758, java/lang/Thread:0x00000008432D4140, state:B, prio=5 """
+        match = re.search("(java/lang/Thread:)(0x[0-9a-fA-F]+)", line)
+        address = ""
+        if match:   # native threads don't have an address
+            address = match.group(2)
+        if self.javacore:
+            address = self.javacore.encode(address)
+        return address
 
     def get_thread_hash(self):
         if self.thread:
@@ -198,18 +212,6 @@ class ThreadSnapshot:
         file_name = ""
         if self.file:
             file_name = self.javacore.filename.split(os.sep)[-1].strip()
-        # thread name
-        thread_name_node = doc.createElement("thread_name")
-        thread_name_node.appendChild(doc.createTextNode(self.name))
-        thread_snapshot_node.appendChild(thread_name_node)
-        # thread id
-        thread_name_node = doc.createElement("thread_id")
-        thread_name_node.appendChild(doc.createTextNode(str(self.get_thread_id())))
-        thread_snapshot_node.appendChild(thread_name_node)
-        # thread hash
-        thread_hash_node = doc.createElement("thread_hash")
-        thread_hash_node.appendChild(doc.createTextNode(str(self.get_thread_hash())))
-        thread_snapshot_node.appendChild(thread_hash_node)
         # CPU usage
         cpu_usage_node = doc.createElement("cpu_usage")
         cpu_usage_node.appendChild(doc.createTextNode(str(self.get_cpu_usage_inc())))

@@ -533,6 +533,7 @@
                         that may be reused for unrelated tasks. Two tasks with different thread names are therefore treated
                         as separate threads for the purpose of this report, even if they are executed in the scope of the same
                         Thread java object.
+                        The address of the java Thread object is included for each thread. This corresponds to the address reported in Java heapdumps.
                         The table can be sorted by clicking on any column header.
                         The following information is displayed for each thread:
                         <ul>
@@ -586,7 +587,9 @@
                                         <a>
                                             <xsl:attribute name="id"><xsl:value-of select="concat('toggle_thread_name',$i)"/></xsl:attribute>
                                             <xsl:attribute name="href"><xsl:value-of select="concat('javascript:expand_stack(stack',$i,',toggle_thread_name',$i,')')"/></xsl:attribute>
-                                            <xsl:attribute name="class">expandit</xsl:attribute><xsl:value-of select="thread_name"/></a>
+                                            <xsl:attribute name="class">expandit</xsl:attribute>
+                                            <xsl:value-of select="thread_name"/>
+                                        </a>
                                         <a class="right" target="_blank">
                                             <xsl:attribute name="href">
                                                 <xsl:value-of select="concat('threads/thread_', thread_hash, '.html')"/>
@@ -596,6 +599,7 @@
                                         <br/>
                                         <div  style="display:none;" >
                                             <xsl:attribute name="id"><xsl:value-of select="concat('stack',$i)"/></xsl:attribute>
+                                            java/lang/Thread:<xsl:value-of select="thread_address"/>
                                             <xsl:for-each select="*[starts-with(name(), 'stack')]">
                                                 <div>
                                                     <xsl:choose>
