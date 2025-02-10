@@ -68,6 +68,8 @@ class JavacoreSet:
         self.os_level = ""
         self.architecture = ""
         self.java_version = ""
+        self.start_time = ""
+        self.cmd_line = ""
         self.user_args = []
         # end of static information
         self.files = []
@@ -191,6 +193,8 @@ class JavacoreSet:
         logging.debug("Architecture: {}".format(self.architecture))
         logging.debug("Java version: {}".format(self.java_version))
         logging.debug("OS Level: {}".format(self.os_level))
+        logging.debug("Start time: {}".format(self.start_time))
+        logging.debug("Command line: {}".format(self.cmd_line))
 
     @staticmethod
     def create(path):
@@ -266,6 +270,12 @@ class JavacoreSet:
                     continue
                 elif line.startswith(JAVA_VERSION):
                     self.java_version = line[len(JAVA_VERSION) + 1:].strip()
+                    continue
+                elif line.startswith(STARTTIME):
+                    self.start_time = line[line.find(":") + 1:].strip()
+                    continue
+                elif line.startswith(CMD_LINE):
+                    self.cmd_line = line[len(CMD_LINE) + 1:].strip()
                     continue
         except Exception as ex:
             logging.exception(ex)
