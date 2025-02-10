@@ -98,6 +98,13 @@ class TestJavacoreSet(unittest.TestCase):
         self.dummy_javacore_set.parse_verbose_gc(line)
         self.assertTrue(self.dummy_javacore_set.verbose_gc)
 
+    def test_start_time(self):
+        self.assertEqual(self.javacore_set_from_test_data.start_time, "2022/06/06 at 11:33:18:586")
+
+    def test_CMD_line(self):
+        self.assertTrue(self.javacore_set_from_test_data.cmd_line.startswith("C:\\jazz\\ELM703M19\\server\\jre\\bin"
+                                                                             "\\javaw"))
+
     def test_parse_user_args(self):
         line = "2CIUSERARG               -Xmx32g"
         self.dummy_javacore_set.parse_user_args(line)
