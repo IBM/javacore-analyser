@@ -384,7 +384,7 @@
                                     <td class="left"><xsl:value-of select="doc/system_info/os_level"/></td>
                                 </tr>
                                 <tr>
-                                    <td>JVM Startup time</td>
+                                    <td>JVM startup time</td>
                                     <td class="left"><xsl:value-of select="doc/system_info/jvm_start_time"/></td>
                                 </tr>
                                  <tr>

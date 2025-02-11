@@ -101,7 +101,7 @@ class TestJavacoreSet(unittest.TestCase):
     def test_start_time(self):
         self.assertEqual(self.javacore_set_from_test_data.jvm_start_time, "2022/06/06 at 11:33:18:586")
 
-    def test_CMD_line(self):
+    def test_cmd_line(self):
         self.assertTrue(self.javacore_set_from_test_data.cmd_line.startswith("C:\\jazz\\ELM703M19\\server\\jre\\bin"
                                                                              "\\javaw"))
 
