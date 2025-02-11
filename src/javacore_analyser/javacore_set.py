@@ -68,6 +68,8 @@ class JavacoreSet:
         self.os_level = ""
         self.architecture = ""
         self.java_version = ""
+        self.jvm_start_time = ""
+        self.cmd_line = ""
         self.user_args = []
         # end of static information
         self.files = []
@@ -191,6 +193,8 @@ class JavacoreSet:
         logging.debug("Architecture: {}".format(self.architecture))
         logging.debug("Java version: {}".format(self.java_version))
         logging.debug("OS Level: {}".format(self.os_level))
+        logging.debug("JVM Startup time: {}".format(self.jvm_start_time))
+        logging.debug("Command line: {}".format(self.cmd_line))
 
     @staticmethod
     def create(path):
@@ -266,6 +270,12 @@ class JavacoreSet:
                     continue
                 elif line.startswith(JAVA_VERSION):
                     self.java_version = line[len(JAVA_VERSION) + 1:].strip()
+                    continue
+                elif line.startswith(STARTTIME):
+                    self.jvm_start_time = line[line.find(":") + 1:].strip()
+                    continue
+                elif line.startswith(CMD_LINE):
+                    self.cmd_line = line[len(CMD_LINE) + 1:].strip()
                     continue
         except Exception as ex:
             logging.exception(ex)
@@ -471,6 +481,14 @@ class JavacoreSet:
         os_level_node = self.doc.createElement("os_level")
         system_info_node.appendChild(os_level_node)
         os_level_node.appendChild(self.doc.createTextNode(self.os_level))
+
+        jvm_startup_time = self.doc.createElement("jvm_start_time")
+        system_info_node.appendChild(jvm_startup_time)
+        jvm_startup_time.appendChild(self.doc.createTextNode(self.jvm_start_time))
+
+        cmd_line = self.doc.createElement("cmd_line")
+        system_info_node.appendChild(cmd_line)
+        cmd_line.appendChild(self.doc.createTextNode(self.cmd_line))
 
         doc_node.appendChild(self.get_blockers_xml())
         doc_node.appendChild(self.threads.get_xml(self.doc))

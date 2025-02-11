@@ -383,6 +383,14 @@
                                     <td>Os level</td>
                                     <td class="left"><xsl:value-of select="doc/system_info/os_level"/></td>
                                 </tr>
+                                <tr>
+                                    <td>JVM startup time</td>
+                                    <td class="left"><xsl:value-of select="doc/system_info/jvm_start_time"/></td>
+                                </tr>
+                                 <tr>
+                                    <td>Command line</td>
+                                    <td class="left"><xsl:value-of select="doc/system_info/cmd_line"/></td>
+                                </tr>
                             </tbody>
                         </table>
                         <h4>Java Arguments</h4>
