@@ -29,5 +29,5 @@ deploy:
    file: dist/*
    on:
     # all_branches: true # uncomment for testing purposes
-    # branch: main # uncomment on production
+    branch: main # uncomment on production
     tags: true # We need to consider if we want to publish all versions or every build
