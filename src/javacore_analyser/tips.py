@@ -73,8 +73,8 @@ class DifferentIssuesTip:
     MAX_INTERVAL_FOR_JAVACORES = 330  # 330 seconds (5 minutes and a little more time)
     DIFFERENT_ISSUES_MESSAGE = """[WARNING] The time interval between javacore {0} and {1} is {2:.0f} seconds, while 
     the recommended maximum interval between two javacores is 300 seconds (5 minutes). It is likely that these
-    two javacores do not correspond to one occurrence of a single issue. Please review the list of javacores received 
-    from the customer and run WAIT2 only against the ones that are applicable for the issue you are investigating. """
+    two javacores do not correspond to one occurrence of a single issue. Please review the list of javacores 
+    and the tool only against the ones that are applicable for the issue you are investigating. """
 
     @staticmethod
     def generate(javacore_set):
@@ -103,7 +103,7 @@ class TooFewJavacoresTip:
 
     MIN_NUMBER_OF_JAVACORES = 10
 
-    ONE_JAVACORE_WARNING = '''[WARNING] You generated this WAIT2 report with only one javacore. 
+    ONE_JAVACORE_WARNING = '''[WARNING] You generated this the report with only one javacore. 
                                 CPU usage calculation is not possible.'''
 
     NOT_ENOUGH_JAVACORES_MESSAGE = """[WARNING] You ran the tool against {0} Javacores. The analysis 

@@ -159,7 +159,7 @@
                     <button data-search="clear">✖</button>
                 </div>
                 <div class="content">
-                <h1>Wait Report</h1>
+                <h1>Javacore Analyser Report</h1>
                 <div class="margined">
                     from data between
                     <b><xsl:value-of select="doc/report_info/javacores_generation_time/starting_time"/></b> and
