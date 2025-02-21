@@ -16,6 +16,13 @@ class Thread(AbstractSnapshotCollection):
         super().create(thread_snapshot)
         self.thread_address = thread_snapshot.thread_address
 
+    def is_interesting(self):
+        if self.get_total_cpu() > 0: return True
+        if self.get_avg_mem() // (1024 * 1024) > 0: return True     # memory in megabytes
+        if len(self.get_blocker_threads()) > 0: return True
+        if len(self.get_blocker_threads()) > 0: return True
+        return False
+
     def get_hash(self):
         id_str = self.name + str(self.id)
         hashcode = abs(hash(id_str))
@@ -23,6 +30,8 @@ class Thread(AbstractSnapshotCollection):
 
     def get_xml(self, doc):
         thread_node = super().get_xml(doc)
+
+        thread_node.setAttribute("has_drill_down", str(self.is_interesting()))
 
         # thread ID
         id_node = doc.createElement("thread_id")

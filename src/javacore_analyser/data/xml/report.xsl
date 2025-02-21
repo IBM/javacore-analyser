@@ -598,13 +598,17 @@
                                             <xsl:attribute name="class">expandit</xsl:attribute>
                                             <xsl:value-of select="thread_name"/>
                                         </a>
-                                        <a class="right" target="_blank">
-                                            <xsl:attribute name="href">
-                                                <xsl:value-of select="concat('threads/thread_', thread_hash, '.html')"/>
-                                            </xsl:attribute>
-                                            More...
-                                        </a>
-                                        <br/>
+                                        <xsl:choose>
+                                                <xsl:when test="@has_drill_down='True'">
+                                                <a class="right" target="_blank">
+                                                    <xsl:attribute name="href">
+                                                        <xsl:value-of select="concat('threads/thread_', thread_hash, '.html')"/>
+                                                    </xsl:attribute>
+                                                    More...
+                                                </a>
+                                                <br/>
+                                            </xsl:when>
+                                        </xsl:choose>
                                         <div  style="display:none;" >
                                             <xsl:attribute name="id"><xsl:value-of select="concat('stack',$i)"/></xsl:attribute>
                                             java/lang/Thread:<xsl:value-of select="thread_address"/>
