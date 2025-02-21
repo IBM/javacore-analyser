@@ -107,7 +107,7 @@ class TestJavaThread(unittest.TestCase):
         thread = Thread()
         thread_snapshot1 = ThreadSnapshot()
         thread_snapshot2 = ThreadSnapshot()
-        thread_snapshot2.allocated_mem = 100    # 100 bytes
+        thread_snapshot2.allocated_mem = 1024 * 1023 - 1 # just shy of a megabyte
         thread.thread_snapshots.append(thread_snapshot1)
         thread.thread_snapshots.append(thread_snapshot2)
         self.assertFalse(thread.is_interesting(),
