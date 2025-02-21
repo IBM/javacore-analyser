@@ -93,3 +93,39 @@ class TestJavaThread(unittest.TestCase):
     def test_get_avg_mem(self):
         self.assertEqual(self.thread.get_avg_mem(), 53956.0)
 
+    def test_is_interesting(self):
+        thread = Thread()
+        thread_snapshot1 = ThreadSnapshot()
+        thread.thread_snapshots.append(thread_snapshot1)
+        self.assertFalse(thread.is_interesting(),
+                         "A thread with one empty snapshot is not interesting")
+        thread_snapshot2 = ThreadSnapshot()
+        thread_snapshot2.cpu_usage = 100
+        thread.thread_snapshots.append(thread_snapshot2)
+        self.assertTrue(thread.is_interesting(), "This thread consumes CPU")
+
+        thread = Thread()
+        thread_snapshot1 = ThreadSnapshot()
+        thread_snapshot2 = ThreadSnapshot()
+        thread_snapshot2.allocated_mem = 100    # 100 bytes
+        thread.thread_snapshots.append(thread_snapshot1)
+        thread.thread_snapshots.append(thread_snapshot2)
+        self.assertFalse(thread.is_interesting(),
+                         "This thread allocated less than a megabyte of memory so should be boring")
+
+        thread = Thread()
+        thread_snapshot1 = ThreadSnapshot()
+        thread_snapshot2 = ThreadSnapshot()
+        thread_snapshot2.allocated_mem = 1024 * 1024  # 1 megabyte
+        thread.thread_snapshots.append(thread_snapshot1)
+        thread.thread_snapshots.append(thread_snapshot2)
+        self.assertFalse(thread.is_interesting(),
+                         "This thread allocated a megabyte of memory, so should be interesting")
+
+        thread = Thread()
+        thread_snapshot1 = ThreadSnapshot()
+        thread_snapshot2 = ThreadSnapshot()
+        thread.thread_snapshots.append(thread_snapshot1)
+        thread_snapshot1.blocker = thread_snapshot2
+        self.assertTrue(thread.is_interesting(), "This thread is blocked, so should be interesting")
+
