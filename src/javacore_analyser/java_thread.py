@@ -20,7 +20,7 @@ class Thread(AbstractSnapshotCollection):
         if self.get_total_cpu() > 0: return True
         if self.get_avg_mem() // (1024 * 1024) > 0: return True     # memory in megabytes
         if len(self.get_blocker_threads()) > 0: return True
-        if len(self.get_blocker_threads()) > 0: return True
+        if len(self.get_blocking_threads()) > 0: return True
         return False
 
     def get_hash(self):
