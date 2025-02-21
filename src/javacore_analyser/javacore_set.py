@@ -20,6 +20,7 @@ from lxml.etree import XMLSyntaxError
 from tqdm import tqdm
 
 from javacore_analyser import tips
+from javacore_analyser.Properties import Properties
 from javacore_analyser.code_snapshot_collection import CodeSnapshotCollection
 from javacore_analyser.constants import *
 from javacore_analyser.har_file import HarFile
@@ -44,7 +45,7 @@ def _create_xml_xsl_for_collection(tmp_dir, templates_dir, xml_xsl_filename, col
             filename = output_file_prefix + "_" + str(element_id) + extension
             if filename.startswith("_"):
                 filename = filename[1:]
-            if element.is_interesting():
+            if element.is_interesting() or not Properties.get_instance().skip_boring:
                 file = os.path.join(tmp_dir, filename)
                 logging.debug("Writing file " + file)
                 f = open(file, "w")
@@ -153,7 +154,7 @@ class JavacoreSet:
         os.mkdir(directory)
 
         for element in tqdm(collection, desc="Generating placeholder htmls", unit=" file"):
-            if element.is_interesting():
+            if element.is_interesting() or not Properties.get_instance().skip_boring:
                 filename = file_prefix + "_" + element.get_id() + ".html"
                 if filename.startswith("_"):
                     filename = filename[1:]

@@ -2,7 +2,7 @@
 # Copyright IBM Corp. 2024 - 2024
 # SPDX-License-Identifier: Apache-2.0
 #
-
+from javacore_analyser.Properties import Properties
 from javacore_analyser.abstract_snapshot_collection import AbstractSnapshotCollection
 
 
@@ -31,7 +31,8 @@ class Thread(AbstractSnapshotCollection):
     def get_xml(self, doc):
         thread_node = super().get_xml(doc)
 
-        thread_node.setAttribute("has_drill_down", str(self.is_interesting()))
+        thread_node.setAttribute("has_drill_down",
+                                 str(self.is_interesting() or not Properties.get_instance().skip_boring))
 
         # thread ID
         id_node = doc.createElement("thread_id")

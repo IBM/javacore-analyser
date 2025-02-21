@@ -22,6 +22,7 @@ from importlib_resources.abc import Traversable
 from javacore_analyser import logging_utils
 from javacore_analyser.constants import DEFAULT_FILE_DELIMITER
 from javacore_analyser.javacore_set import JavacoreSet
+from javacore_analyser.Properties import Properties
 
 SUPPORTED_ARCHIVES_FORMATS = {"zip", "gz", "tgz", "bz2", "lzma", "7z"}
 
@@ -76,11 +77,14 @@ def main():
     parser.add_argument("--separator",
                         help='Input files separator (default "' + DEFAULT_FILE_DELIMITER + '")',
                         default=DEFAULT_FILE_DELIMITER)
+    parser.add_argument("--skip_boring", help='Skips drilldown page generation for threads that do not do anything',
+                        default='True')
     args = parser.parse_args()
 
     input_param = args.input
     output_param = args.output
     files_separator = args.separator
+    Properties.get_instance().skip_boring = args.skip_boring != 'False'
 
     batch_process(input_param, output_param, files_separator)
 
