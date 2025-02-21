@@ -21,13 +21,15 @@ class CodeSnapshotCollection(AbstractSnapshotCollection):
     """
     Returns list of the threads for which given stack appears
     """
-
     def get_threads(self):
         result = set()
         for snapshot in self.thread_snapshots:
             thread = snapshot.thread
             result.add(thread)
         return result
+
+    def is_interesting(self):  # method is to be overloaded in subclasses, ignore the static warning
+        return True
 
     def get_xml(self, doc):
         snapshot_collection_node = super().get_xml(doc)

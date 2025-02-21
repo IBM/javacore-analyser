@@ -28,4 +28,8 @@ class TestCodeSnapshotCollection(unittest.TestCase):
 
             snapshot_collection1.thread_snapshots.append(snapshot)
 
-        self.assertEqual(len(snapshot_collection1.get_threads()),2)
+        self.assertEqual(len(snapshot_collection1.get_threads()), 2)
+
+    def test_is_interesting(self):
+        code_snapshot_collection = CodeSnapshotCollection()
+        self.assertTrue(code_snapshot_collection.is_interesting())

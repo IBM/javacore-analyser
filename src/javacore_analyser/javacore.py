@@ -42,6 +42,9 @@ class Javacore:
         self.javacore_set = javacore_set
         self.extract_thread_snapshots()
 
+    def is_interesting(self):  # method is to be overloaded in subclasses, ignore the static warning
+        return True
+
     def get_cpu_percentage(self):
         if self.__total_cpu == -1:
             self.__calculate_total_cpu_and_load()
