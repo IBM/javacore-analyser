@@ -550,6 +550,8 @@
                                 of the code that the thread was executing in each of the javacores in which it appears.
                                 Note that there may be multiple threads with the same name,
                                 since the names of threads are not unique over time, and may be reused.
+                                A 'More' link may appear next to the thread name to allow to drilldown into that thread's individual page
+                                The drilldown may be supressed for threads that don't appear to be doing anything interesting.
                             </li>
                             <li><strong>Total CPU usage</strong>
                                 is the total number of seconds the thread was using CPU time since the first javacore,
