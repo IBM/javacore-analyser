@@ -20,7 +20,7 @@ from lxml.etree import XMLSyntaxError
 from tqdm import tqdm
 
 from javacore_analyser import tips
-from javacore_analyser.Properties import Properties
+from javacore_analyser.properties import Properties
 from javacore_analyser.code_snapshot_collection import CodeSnapshotCollection
 from javacore_analyser.constants import *
 from javacore_analyser.har_file import HarFile

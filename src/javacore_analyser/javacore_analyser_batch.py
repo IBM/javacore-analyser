@@ -22,7 +22,7 @@ from importlib_resources.abc import Traversable
 from javacore_analyser import logging_utils
 from javacore_analyser.constants import DEFAULT_FILE_DELIMITER
 from javacore_analyser.javacore_set import JavacoreSet
-from javacore_analyser.Properties import Properties
+from javacore_analyser.properties import Properties
 
 SUPPORTED_ARCHIVES_FORMATS = {"zip", "gz", "tgz", "bz2", "lzma", "7z"}
 
