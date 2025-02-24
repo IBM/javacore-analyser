@@ -63,6 +63,7 @@ Where `<input-data>` is one of the following:
 * The directory containing javacores and optionally verbose gc
 * Archive (7z, zip, tar.gz, tar.bz2) containing the same
 * List of the javacores separated by `;` character. Optionally you can add `--separator` option to define your own separator.
+* You can specify `--skip_boring=False` if you want drill-down pages generated for all the threads, including the ones that do not do anything interesting.
 You can type the following command to obtain the help:  
 `javacore-analyser-batch --help` or `python -m javacore_analyser batch --help`
 

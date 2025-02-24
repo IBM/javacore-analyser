@@ -25,6 +25,7 @@ from javacore_analyser.constants import *
 from javacore_analyser.har_file import HarFile
 from javacore_analyser.java_thread import Thread
 from javacore_analyser.javacore import Javacore
+from javacore_analyser.properties import Properties
 from javacore_analyser.snapshot_collection import SnapshotCollection
 from javacore_analyser.snapshot_collection_collection import SnapshotCollectionCollection
 from javacore_analyser.verbose_gc import VerboseGcParser
@@ -44,11 +45,14 @@ def _create_xml_xsl_for_collection(tmp_dir, templates_dir, xml_xsl_filename, col
             filename = output_file_prefix + "_" + str(element_id) + extension
             if filename.startswith("_"):
                 filename = filename[1:]
-            file = os.path.join(tmp_dir, filename)
-            logging.debug("Writing file " + file)
-            f = open(file, "w")
-            f.write(file_content.format(id=element_id))
-            f.close()
+            if element.is_interesting() or not Properties.get_instance().skip_boring:
+                file = os.path.join(tmp_dir, filename)
+                logging.debug("Writing file " + file)
+                f = open(file, "w")
+                f.write(file_content.format(id=element_id))
+                f.close()
+            else:
+                logging.debug("Skipping boring file: " + filename)
 
 
 class JavacoreSet:
@@ -149,12 +153,13 @@ class JavacoreSet:
             shutil.rmtree(directory)
         os.mkdir(directory)
 
-        for element in tqdm(collection, desc="Generating placeholder htmls", unit=" files"):
-            filename = file_prefix + "_" + element.get_id() + ".html"
-            if filename.startswith("_"):
-                filename = filename[1:]
-            file_path = os.path.join(directory, filename)
-            shutil.copy2(placeholder_file, file_path)
+        for element in tqdm(collection, desc="Generating placeholder htmls", unit=" file"):
+            if element.is_interesting() or not Properties.get_instance().skip_boring:
+                filename = file_prefix + "_" + element.get_id() + ".html"
+                if filename.startswith("_"):
+                    filename = filename[1:]
+                file_path = os.path.join(directory, filename)
+                shutil.copy2(placeholder_file, file_path)
         logging.info("Finished generating placeholder htmls")
 
     def __generate_htmls_for_threads(self, output_dir, temp_dir_name):
@@ -569,7 +574,7 @@ class JavacoreSet:
         logging.info(f"Using {threads_no} threads to generate html files")
 
         list_files = os.listdir(data_input_dir)
-        progress_bar = tqdm(desc="Generating html files", unit=' files')
+        progress_bar = tqdm(desc="Generating html files", unit=' file')
 
         # Generating list of tuples. This is required attribute for p.map function executed few lines below.
         generate_html_from_xml_xsl_files_params = []
@@ -626,7 +631,7 @@ class JavacoreSet:
         extensions = [".xsl", ".xml"]
         for extension in extensions:
             file_content = Path(xml_xsls_prefix_path + extension).read_text()
-            for element in tqdm(collection, desc="Creating xml/xsl files", unit=" files"):
+            for element in tqdm(collection, desc="Creating xml/xsl files", unit=" file"):
                 element_id = element.get_id()
                 filename = output_file_prefix + "_" + str(element_id) + extension
                 if filename.startswith("_"):
