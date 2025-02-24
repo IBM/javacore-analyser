@@ -1,7 +1,7 @@
 import logging
 import unittest
 
-from javacore_analyser.Properties import Properties
+from javacore_analyser.properties import Properties
 
 
 class TestProperties(unittest.TestCase):
