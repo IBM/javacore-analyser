@@ -1,5 +1,5 @@
 $(function(){
-    $('#javacores_files_table').tablesorter({
+    $('#generated_reports_table').tablesorter({
         theme : 'blue',
         headers: {
             1: { sorter: false },
