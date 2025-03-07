@@ -1,5 +1,24 @@
 # Changelog
 
+## [2.3] - 2025-02-25
+* 126 allow skipping drilldown generation for uninteresting threads by @PiotrAniola82 in https://github.com/IBM/javacore-analyser/pull/128
+
+## [2.2] - 2025-02-11
+* #69 use normpath for paths. by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/85
+* #86 Add har file support by @PiotrAniola82 in https://github.com/IBM/javacore-analyser/pull/89
+* #87 Better logging when processing is failing by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/88
+* #101 - improve the message regarding generating placeholder htmls by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/102
+* #99 Do not include test dir to source package for pip by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/100
+* #47 Create official container image by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/84
+* #61 Adopt env properties for dockerfile by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/77
+* #107 Improve performance of processing verbose gc files. by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/108
+* #97 Changed the way how the data are fetched (from innerHTML to innerText) and condition to add only numbers was added. by @tjanasiewicz in https://github.com/IBM/javacore-analyser/pull/113
+* #111 Pass tool version to dockerfile by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/112
+* #106 Add the address of the thread in the thread name by @PiotrAniola82 in https://github.com/IBM/javacore-analyser/pull/114
+* #117 Add brackets to ARG in Dockerfile by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/118
+* #121 Replace the wait name with javacore analyser in the code by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/122
+* #123 Add startup time and command line to the report by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/124
+
 ## [2.1] - 2025-01-02
 * Fixes #66 Move information about progress bar after information about number of threads by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/67
 * #27 there is no progress indicator on the web app by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/59
