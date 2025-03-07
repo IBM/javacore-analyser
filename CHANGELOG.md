@@ -3,6 +3,8 @@
 ## [2.3] - 2025-02-25
 * 126 allow skipping drilldown generation for uninteresting threads by @PiotrAniola82 in https://github.com/IBM/javacore-analyser/pull/128
 
+[2.3]: https://github.com/IBM/javacore-analyser/releases/tag/2.3
+
 ## [2.2] - 2025-02-11
 * #69 use normpath for paths. by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/85
 * #86 Add har file support by @PiotrAniola82 in https://github.com/IBM/javacore-analyser/pull/89
@@ -18,6 +20,8 @@
 * #117 Add brackets to ARG in Dockerfile by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/118
 * #121 Replace the wait name with javacore analyser in the code by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/122
 * #123 Add startup time and command line to the report by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/124
+
+[2.2]: https://github.com/IBM/javacore-analyser/releases/tag/2.2
 
 ## [2.1] - 2025-01-02
 * Fixes #66 Move information about progress bar after information about number of threads by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/67
