@@ -1,5 +1,5 @@
 #
-# Copyright IBM Corp. 2024 - 2024
+# Copyright IBM Corp. 2024 - 2025
 # SPDX-License-Identifier: Apache-2.0
 #
 import argparse
@@ -49,6 +49,7 @@ def index():
 @app.route('/reports/<path:path>')
 def dir_listing(path):
     return send_from_directory(reports_dir, path)
+
 
 
 @app.route('/zip/<path:path>')
@@ -139,7 +140,7 @@ def main():
 
 def run_web(debug=False, port=5000, reports_directory=DEFAULT_REPORTS_DIR):
     global reports_dir
-    reports_dir = reports_directory
+    reports_dir = os.path.abspath(reports_directory)
     create_console_logging()
     logging.info("Javacore analyser")
     logging.info("Python version: " + sys.version)
