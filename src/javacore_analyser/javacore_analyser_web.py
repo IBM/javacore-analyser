@@ -51,7 +51,6 @@ def dir_listing(path):
     return send_from_directory(reports_dir, path)
 
 
-
 @app.route('/zip/<path:path>')
 def compress(path):
     temp_zip_dir = tempfile.TemporaryDirectory()
