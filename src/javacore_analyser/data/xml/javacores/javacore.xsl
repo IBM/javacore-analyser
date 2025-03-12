@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
-# Copyright IBM Corp. 2024 - 2024
+# Copyright IBM Corp. 2024 - 2025
 # SPDX-License-Identifier: Apache-2.0
 -->
 
@@ -58,9 +58,9 @@
                                                 </xsl:attribute>
                                                 <a target="_blank">
                                                     <xsl:attribute name="href">
-                                                        <xsl:value-of select="concat('../threads/thread_', thread_hash, '.html')"/>
+                                                        <xsl:value-of select="concat('../threads/thread_', preceding-sibling::thread_hash, '.html')"/>
                                                     </xsl:attribute>
-                                                    <xsl:value-of select="thread_name"/>
+                                                    <xsl:value-of select="preceding-sibling::thread_name"/>
                                                 </a>
                                                 <xsl:choose>
                                                     <xsl:when test="stack_depth &gt; 0">
