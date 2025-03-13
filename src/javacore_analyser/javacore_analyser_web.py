@@ -1,5 +1,5 @@
 #
-# Copyright IBM Corp. 2024 - 2024
+# Copyright IBM Corp. 2024 - 2025
 # SPDX-License-Identifier: Apache-2.0
 #
 import argparse
@@ -26,7 +26,7 @@ To run the application from cmd type:
 
 flask --app javacore_analyser_web run
 """
-app = Flask(__name__)
+app = Flask(__name__, static_folder='data')
 reports_dir = DEFAULT_REPORTS_DIR
 
 

@@ -11,6 +11,12 @@
 <html xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
   <head>
     <title>Javacore Analyser</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='jquery/jq.css') }}"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='jquery/theme.blue.css') }}"/>
+    <script type="text/javascript" src="{{ url_for('static', filename='jquery/jquery.min.js') }}"> _ </script>
+    <script type="text/javascript" src="{{ url_for('static', filename='jquery/jquery.tablesorter.min.js') }}"> _ </script>
+    <script type="text/javascript" src="{{ url_for('static', filename='style.js')}}"></script>
   </head>
   <body>
     <h1>Javacore Analyser</h1>
@@ -34,9 +40,16 @@
     <br></br>
 
 
-    <h2>List of generated reports:</h2>
-      <table>
-        <tr><th> Name </th><th> Creation Date </th><th> Download </th><th> Delete </th></tr>
+    <h1>List of generated reports:</h1>
+      <table id="generated_reports_table">
+        <thead>
+          <tr>
+            <th> Name </th>
+            <th> Creation Date </th>
+            <th> Download </th>
+            <th> Delete </th>
+          </tr>
+        </thead>
         {% for report in reports %}
         {% set name = report['name'] %}
         {% set date = report['date'] %}
