@@ -139,7 +139,7 @@ def main():
 
 def run_web(debug=False, port=5000, reports_directory=DEFAULT_REPORTS_DIR):
     global reports_dir
-    reports_dir = reports_directory
+    reports_dir = os.path.abspath(reports_directory)
     create_console_logging()
     logging.info("Javacore analyser")
     logging.info("Python version: " + sys.version)
