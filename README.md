@@ -95,9 +95,9 @@ restart.
 The application is running in the container on port 5000. By using `-p 5001:5000` option, you specify to map container 
 port 5000 to port 5001 on your machine. Therefore the application will be available under `http://localhost:5001/`.
 
-NOTE: For some instances you get ` PermissionError: [Errno 13] Permission denied: '/reports/wait2-debug.log'` message. 
-In order to fix it, try different `src` param from `--mount` options or use 
-[--volume](https://docs.docker.com/engine/storage/volumes/) option instead. Find more on 
+NOTE: If you get a `PermissionError: [Errno 13] Permission denied: '/reports/wait2-debug.log'` message,
+try specifying a different folder as the `src` parameter value or use the
+[--volume](https://docs.docker.com/engine/storage/volumes/) option instead of `--mount`. Find more on 
 [Issue #140](https://github.com/IBM/javacore-analyser/issues/140#issuecomment-2757809160).
  
 <!-- The following are OPTIONAL, but strongly suggested to have in your repository. -->
