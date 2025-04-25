@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.4.0] - 2025-04-24
+* Removing vagueness by @yashrajmotwani23 in https://github.com/IBM/javacore-analyser/pull/134
+* Fixed javacore drilldown does not contain thread names by @PiotrAniola82 in https://github.com/IBM/javacore-analyser/pull/136
+* #24 main page style by @sonaleegupta in https://github.com/IBM/javacore-analyser/pull/138
+* #129 Set absolute path for reports dir. by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/137
+* #140 Add to the documention option to use volumes for containers. by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/141
+
+[2.4.0]: https://github.com/IBM/javacore-analyser/releases/tag/2.4.0
+
 ## [2.3] - 2025-02-25
 * 126 allow skipping drilldown generation for uninteresting threads by @PiotrAniola82 in https://github.com/IBM/javacore-analyser/pull/128
 
