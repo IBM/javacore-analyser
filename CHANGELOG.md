@@ -10,7 +10,7 @@
 [2.4.0]: https://github.com/IBM/javacore-analyser/releases/tag/2.4.0
 
 ## [2.3] - 2025-02-25
-* 126 allow skipping drilldown generation for uninteresting threads by @PiotrAniola82 in https://github.com/IBM/javacore-analyser/pull/128
+* #126 allow skipping drilldown generation for uninteresting threads by @PiotrAniola82 in https://github.com/IBM/javacore-analyser/pull/128
 
 [2.3]: https://github.com/IBM/javacore-analyser/releases/tag/2.3
 
