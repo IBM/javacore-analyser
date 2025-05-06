@@ -1,4 +1,4 @@
-#Copyright IBM Corp. 2025 - 2026
+#Copyright IBM Corp. 2025 - 2025
 #SPDX-License-Identifier: Apache-2.0
 
 #!/bin/bash
@@ -8,18 +8,23 @@ for arg in "$@"; do
         libertyPath="${arg#libertyPath=}"
     elif [[ $arg == javaPid=* ]]; then
         javaPid="${arg#javaPid=}"
+    elif [[ $arg == count=*  ]]; then
+        count="${arg#count=}"
+    elif [[ $arg == interval=* ]]; then
+        interval="${arg#interval=}"
     fi
 done
 
 # Validation
 if [[ -z "$libertyPath" && -z "$javaPid" ]]; then
     echo "Error: You must provide either 'libertyPath' or 'javaPid'."
-    echo "  ./javacoreCollector.sh libertyPath=/servers/clm"
+    echo "  ./javacoreCollector.sh libertyPath=/opt/ibm/liberty"
     echo "  ./javacoreCollector.sh javaPid=12345"
     exit 1
  fi
- count=${2:-10}
- interval=${3:-5}
+
+[ -z "$interval" ] && interval=5
+[ -z "$count" ] && count=10
 
 if [[ -n "$libertyPath" ]]; then
     echo "Liberty path provided: $libertyPath"
