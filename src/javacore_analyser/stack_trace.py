@@ -7,9 +7,13 @@ from javacore_analyser.stack_trace_element import StackTraceElement
 from javacore_analyser.stack_trace_kind import StackTraceKind
 
 
+
+
+
 class StackTrace:
     java_stack_depth: int
     EMPTY_STACK = "No stack"
+    TRUNCATION_DEPTH = 50  # as per https://github.ibm.com/IOT-ELM-Poznan/Wait2/issues/430
 
     """
     how many first lines of the stack need to be equal
