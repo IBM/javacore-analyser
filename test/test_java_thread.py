@@ -8,6 +8,8 @@ import unittest
 
 from javacore_analyser.java_thread import Thread
 from javacore_analyser.javacore import Javacore
+from javacore_analyser.stack_trace import StackTrace
+from javacore_analyser.stack_trace_element import StackTraceElement
 from javacore_analyser.thread_snapshot import ThreadSnapshot
 
 
@@ -128,4 +130,29 @@ class TestJavaThread(unittest.TestCase):
         thread.thread_snapshots.append(thread_snapshot1)
         thread_snapshot1.blocker = thread_snapshot2
         self.assertTrue(thread.is_interesting(), "This thread is blocked, so should be interesting")
+
+        thread = Thread()
+        thread_snapshot = ThreadSnapshot()
+        stack_trace = StackTrace()
+        for i in range(51):
+            stack_trace_element = StackTraceElement()
+            stack_trace.stack_trace_elements.append(stack_trace_element)
+        thread.thread_snapshots.append(thread_snapshot)
+        thread_snapshot.stack_trace = stack_trace
+        self.assertTrue(thread.is_interesting(), "This thread has a tall stack, so should be interesting")
+
+    def test_has_tall_stacks(self):
+        thread = Thread()
+        thread_snapshot = ThreadSnapshot()
+        stack_trace = StackTrace()
+        assert(not thread.has_tall_stacks())
+        for i in range(50):
+            stack_trace_element = StackTraceElement()
+            stack_trace.stack_trace_elements.append(stack_trace_element)
+        thread.thread_snapshots.append(thread_snapshot)
+        thread_snapshot.stack_trace = stack_trace
+        assert (not thread.has_tall_stacks())
+        stack_trace.stack_trace_elements.append(StackTraceElement())
+        assert (thread.has_tall_stacks())
+
 
