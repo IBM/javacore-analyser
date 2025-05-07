@@ -1,13 +1,10 @@
 #
-# Copyright IBM Corp. 2024 - 2024
+# Copyright IBM Corp. 2024 - 2025
 # SPDX-License-Identifier: Apache-2.0
 #
 
 from javacore_analyser.stack_trace_element import StackTraceElement
 from javacore_analyser.stack_trace_kind import StackTraceKind
-
-
-
 
 
 class StackTrace:
