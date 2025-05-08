@@ -4,6 +4,7 @@
 #
 from javacore_analyser.abstract_snapshot_collection import AbstractSnapshotCollection
 from javacore_analyser.properties import Properties
+from javacore_analyser.stack_trace import StackTrace
 
 
 class Thread(AbstractSnapshotCollection):
@@ -21,6 +22,7 @@ class Thread(AbstractSnapshotCollection):
         if self.get_avg_mem() // (1024 * 1024) > 0: return True     # memory in megabytes
         if len(self.get_blocker_threads()) > 0: return True
         if len(self.get_blocking_threads()) > 0: return True
+        if self.has_tall_stacks(): return True
         return False
 
     def get_hash(self):
@@ -144,3 +146,9 @@ class Thread(AbstractSnapshotCollection):
 
     def get_id(self):
         return self.get_hash()
+
+    def has_tall_stacks(self):
+        for snapshot in self.thread_snapshots:
+            if snapshot.stack_trace and snapshot.stack_trace.get_java_stack_depth() > StackTrace.TRUNCATION_DEPTH:
+                return True
+        return False
