@@ -52,7 +52,17 @@ def dir_listing(path):
 
 
 @app.route('/zip/<path:path>')
+# Assisted by watsonx Code Assistant 
 def compress(path):
+    """
+    Compress a directory and return the compressed file as an attachment.
+
+    Args:
+        path (str): The path to the directory to compress.
+
+    Returns:
+        send_from_directory: The compressed file as an attachment.
+    """
     temp_zip_dir = tempfile.TemporaryDirectory()
     try:
         temp_zip_dir_name = temp_zip_dir.name

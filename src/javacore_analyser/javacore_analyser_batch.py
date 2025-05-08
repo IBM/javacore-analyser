@@ -146,7 +146,17 @@ def generate_javecore_set_data(files):
         javacores_temp_dir.cleanup()
 
 
+# Assisted by watsonx Code Assistant 
 def create_output_files_structure(output_dir):
+    """
+    Creates the output report directory structure and copies necessary files.
+
+    Args:
+        output_dir (str): The output directory path.
+
+    Returns:
+        None
+    """
     if not os.path.isdir(output_dir):
         os.mkdir(output_dir)
     data_output_dir = os.path.normpath(os.path.join(output_dir, 'data'))
@@ -164,7 +174,18 @@ def create_output_files_structure(output_dir):
                  os.path.join(output_dir, "index.html"))
 
 
+# Assisted by watsonx Code Assistant 
 def generate_error_page(output_dir, exception):
+    """
+    Generate an error page with a stacktrace.
+
+    Args:
+        output_dir (str): The directory where the error page will be saved.
+        exception (Exception): The exception that caused the error.
+
+    Returns:
+        None
+    """
     error_page_text = importlib_resources.read_text("javacore_analyser", "data/html/error.html")
     tb = traceback.format_exc()
     file = os.path.join(output_dir, "index.html")
