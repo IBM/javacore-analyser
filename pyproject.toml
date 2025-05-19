@@ -71,3 +71,6 @@ source = "versioningit"
 distance = "{next_version}.dev{distance}"
 dirty = "{version}"
 distance-dirty = "{next_version}.dev{distance}"
+
+[tool.versioningit.next-version]
+method = "smallest"
