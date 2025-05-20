@@ -20,9 +20,9 @@ deploy:
    #script: python -m twine upload --skip-existing --verbose --password $TWINE_TEST_TOKEN --repository testpypi dist/* #test instance
    script: python -m twine upload --skip-existing --verbose --password $TWINE_PROD_TOKEN dist/* #production instance.
    on:
-     # all_branches: true # uncomment for testing purposes
-     branch: main # uncomment on production
-     # tags: true # If uncommented, the pip package will be created only if tag is created. Otherwise it will be always created for production branch.
+     all_branches: true # uncomment for testing purposes
+     # branch: main # uncomment on production
+     tags: true # If uncommented, the pip package will be created only if tag is created. Otherwise it will be always created for production branch.
  - provider: releases
    edge: true
    draft: true
