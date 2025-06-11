@@ -122,7 +122,11 @@ class Javacore:
             if not line:
                 break
             if line.startswith(ENCODING):
-                self.__encoding = line.split(" ")[-1].strip()
+                # Leave the default encoding if it was not defined
+                # 1TICHARSET     [not available]
+                temp = line.split(" ")[-1].strip()
+                if(temp != 'available]'):
+                    self.__encoding = line.split(" ")[-1].strip()
                 break
         file.close()
         return self.__encoding
