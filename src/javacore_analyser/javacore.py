@@ -124,8 +124,7 @@ class Javacore:
             if line.startswith(ENCODING):
                 # Leave the default encoding if it was not defined
                 # 1TICHARSET     [not available]
-                temp = line.split(" ")[-1].strip()
-                if(temp != 'available]'):
+                if not line.__contains__("[not available]"):
                     self.__encoding = line.split(" ")[-1].strip()
                 break
         file.close()
