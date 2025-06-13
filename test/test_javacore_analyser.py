@@ -43,6 +43,7 @@ class TestJavacoreAnalyser(unittest.TestCase):
         self.issue129 = ["javacore_analyser", "test/data/issue129", "tmp"]
         self.expateerror = ["javacore_analyser", "test/data/verboseGcJavacores", "tmp"]
         self.threadnameswithquotes = ["javacore_analyser", "test/data/quotationMarks", "tmp"]
+        self.encoding = ["javacore_analyser", "test/data/encoding/javacore.20220606.114458.32888.0001.txt", "tmp"]
         rm_tmp_dir()
 
     def test_api(self):
@@ -64,6 +65,9 @@ class TestJavacoreAnalyser(unittest.TestCase):
 
     def test_quotation_marks(self):
         self.runMainWithParams(self.threadnameswithquotes)
+
+    def test_unknown_encoding(self):
+        self.runMainWithParams(self.encoding)
 
     def test_run_zip(self):
         self.runMainWithParams(self.ziptestargs)

@@ -1,5 +1,5 @@
 #
-# Copyright IBM Corp. 2024 - 2024
+# Copyright IBM Corp. 2024 - 2025
 # SPDX-License-Identifier: Apache-2.0
 #
 
@@ -18,10 +18,15 @@ class TestJavacore(unittest.TestCase):
         self.filename = 'test' + os.path.sep + 'data' + os.path.sep + 'javacores' + os.path.sep + 'javacore.20220606.114458.32888.0001.txt'
         self.javacore = Javacore()
         self.javacore.create(self.filename, self.javacore_set)
+        self.filename2 = 'test' + os.path.sep + 'data' + os.path.sep + 'encoding' + os.path.sep + 'javacore.20220606.114458.32888.0001.txt'
+        self.javacore2 = Javacore()
+        self.javacore2.create(self.filename2, self.javacore_set)
 
     def test_get_encoding(self):
         encoding = self.javacore.get_encoding()
         self.assertEqual(encoding, '1252')
+        encoding = self.javacore2.get_encoding()
+        self.assertEqual(encoding, '850')
 
     def test_parse_snapshot_data(self):
         self.assertEqual(201, len(self.javacore.snapshots))

@@ -1,5 +1,5 @@
 #
-# Copyright IBM Corp. 2024 - 2024
+# Copyright IBM Corp. 2024 - 2025
 # SPDX-License-Identifier: Apache-2.0
 #
 
@@ -122,7 +122,10 @@ class Javacore:
             if not line:
                 break
             if line.startswith(ENCODING):
-                self.__encoding = line.split(" ")[-1].strip()
+                # Leave the default encoding if it was not defined
+                # 1TICHARSET     [not available]
+                if not line.__contains__("[not available]"):
+                    self.__encoding = line.split(" ")[-1].strip()
                 break
         file.close()
         return self.__encoding
