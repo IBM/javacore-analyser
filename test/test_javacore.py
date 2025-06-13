@@ -28,7 +28,6 @@ class TestJavacore(unittest.TestCase):
         encoding = self.javacore2.get_encoding()
         self.assertEqual(encoding, '850')
 
-
     def test_parse_snapshot_data(self):
         self.assertEqual(201, len(self.javacore.snapshots))
 
