@@ -17,13 +17,21 @@ done
 
 # Validation
 if [[ -z "$libertyPath" && -z "$javaPid" ]]; then
-    echo "Error: You must provide either 'libertyPath' or 'javaPid'."
+    echo "You must provide either libertyPath or javaPid arguments:"
     echo "  ./javacoreCollector.sh libertyPath=/opt/ibm/liberty"
     echo "  ./javacoreCollector.sh javaPid=12345"
+    echo "Optional arguments:"
+    echo ""
+    echo "   count - number of Javacores (default: 10)"
+    echo "   interval - interval in seconds to gather javacores (default: 30)"
+    echo ""
+    echo "Examples:"
+    echo "   ./javacoreCollector.sh libertyPath=/opt/ibm/liberty count=5 interval=60"
+    echo "   ./javacoreCollector.sh javaPid=12345"
     exit 1
  fi
 
-[ -z "$interval" ] && interval=5
+[ -z "$interval" ] && interval=30
 [ -z "$count" ] && count=10
 
 if [[ -n "$libertyPath" ]]; then
