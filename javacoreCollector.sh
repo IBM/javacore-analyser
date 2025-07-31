@@ -48,7 +48,7 @@ fi
 for i in $(seq 1 $count); do
     echo "[$(date)] Generating javacore #$i..."
     if [[ -n "$libertyPath" ]]; then
-        echo "command: $libertyPath/wlp/bin/server javadump $server"
+        echo "Running following command: $libertyPath/wlp/bin/server javadump $server"
         "$libertyPath"/wlp/bin/server javadump $server
     else
         kill -3 $javaPid
