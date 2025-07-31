@@ -12,6 +12,8 @@ for arg in "$@"; do
         count="${arg#count=}"
     elif [[ $arg == interval=* ]]; then
         interval="${arg#interval=}"
+    elif [[ $arg == server=* ]]; then
+        server="${arg#server=}"
     fi
 done
 
@@ -24,28 +26,36 @@ if [[ -z "$libertyPath" && -z "$javaPid" ]]; then
     echo ""
     echo "   count - number of Javacores (default: 10)"
     echo "   interval - interval in seconds to gather javacores (default: 30)"
+    echo "   server - server name for Liberty"
     echo ""
     echo "Examples:"
-    echo "   ./javacoreCollector.sh libertyPath=/opt/ibm/liberty count=5 interval=60"
-    echo "   ./javacoreCollector.sh javaPid=12345"
+    echo "   ./javacoreCollector.sh libertyPath=/opt/ibm/liberty server=clm count=5 interval=60"
+    echo "   ./javacoreCollector.sh javaPid=12345 count=5 interval=60"
     exit 1
  fi
 
 [ -z "$interval" ] && interval=30
 [ -z "$count" ] && count=10
+[ -z "$server" ] && server=""
 
 if [[ -n "$libertyPath" ]]; then
     echo "Liberty path provided: $libertyPath"
-    #libertyPath=$libertyPath
+    export WLP_USER_DIR=$libertyPath
 else
     echo "Java PID provided: $javaPid and javacores count $count"
-    for i in $(seq 1 $count); do
-        echo "[$(date)] Generating javacore #$i..."
-        kill -3 $javaPid
-        if [ $i -lt $count ]; then
-            sleep $interval
-        fi
-    done
 fi
+
+for i in $(seq 1 $count); do
+    echo "[$(date)] Generating javacore #$i..."
+    if [[ -n "$libertyPath" ]]; then
+        echo "command: $libertyPath/wlp/bin/server javadump $server"
+        "$libertyPath"/wlp/bin/server javadump $server
+    else
+        kill -3 $javaPid
+    fi
+    if [ $i -lt $count ]; then
+        sleep $interval
+    fi
+done
 
 exit 1
