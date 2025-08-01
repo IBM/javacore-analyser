@@ -45,7 +45,21 @@ else
     echo "Java PID provided: $javaPid and javacores count $count"
 fi
 
+mkdir javacore_data
+echo "Ulimit" >> javacore_data/ulimit.txt
+ulimit -a>>javacore_data/ulimit.txt
+
 for i in $(seq 1 $count); do
+
+    file_name=javacore_data/iteration${i}.txt
+    echo "Writing current system resources usage to $file_name"
+    echo "List of processes">>"$file_name"
+    ps aux>>"$file_name"
+    echo "Memory usage">>"$file_name"
+    free -k>>"$file_name"
+    echo "Disk usage">>"$file_name"
+    df -h>>"$file_name"
+
     echo "[$(date)] Generating javacore #$i..."
     if [[ -n "$libertyPath" ]]; then
         echo "Running following command: $libertyPath/wlp/bin/server javadump $server"
@@ -59,7 +73,9 @@ for i in $(seq 1 $count); do
 done
 
 echo "Compressing javacores and verbose gc data."
-tar -czvf javacores.tar.gz $libertyPath/servers/clm/javacore*.txt $libertyPath/servers/clm/verbosegc.txt*
+tar -czvf javacores.tar.gz $libertyPath/servers/clm/javacore*.txt $libertyPath/servers/clm/verbosegc.txt* javacore_data
 echo "Javacores and verbose gc data saved to javacores.tar.gz archive."
+echo "Deleting javacore_data dir"
+rm -rfv javacore_data
 
 exit 1
