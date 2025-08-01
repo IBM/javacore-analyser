@@ -58,8 +58,8 @@ for i in $(seq 1 $count); do
     fi
 done
 
+echo "Compressing javacores and verbose gc data."
 tar -czvf javacores.tar.gz $libertyPath/servers/clm/javacore*.txt $libertyPath/servers/clm/verbosegc.txt*
-
 echo "Javacores and verbose gc data saved to javacores.tar.gz archive."
 
 exit 1
