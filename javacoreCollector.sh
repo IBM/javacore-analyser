@@ -58,4 +58,6 @@ for i in $(seq 1 $count); do
     fi
 done
 
+# TODO compress javacores from $libertyPath/servers/$server
+
 exit 1
