@@ -72,8 +72,11 @@ for i in $(seq 1 $count); do
     fi
 done
 
-echo "Compressing javacores and verbose gc data."
-tar -czvf javacores.tar.gz $libertyPath/servers/clm/javacore*.txt $libertyPath/servers/clm/verbosegc.txt* javacore_data
+
+echo "Creating archive file"
+cp -vfr $libertyPath/servers/clm/javacore*.txt javacore_data
+cp -vfr $libertyPath/servers/clm/verbosegc.txt* javacore_data
+tar -czvf javacores.tar.gz javacore_data
 echo "Javacores and verbose gc data saved to javacores.tar.gz archive."
 echo "Deleting javacore_data dir"
 rm -rfv javacore_data
