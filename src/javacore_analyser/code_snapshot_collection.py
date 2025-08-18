@@ -9,19 +9,21 @@ from javacore_analyser.thread_snapshot import ThreadSnapshot
 
 
 class CodeSnapshotCollection(AbstractSnapshotCollection):
-    """
-    returns the stack trace that is common for all the
-    snapshots in this collection """
+    
 
     def get_stack_trace(self):
+        """
+        returns the stack trace that is common for all the
+        snapshots in this collection 
+        """
         snapshot = self.thread_snapshots[0]  # they all have the same stack,
         # so we can just take the first one
         return snapshot.stack_trace
 
-    """
-    Returns list of the threads for which given stack appears
-    """
     def get_threads(self):
+        """
+        Returns list of the threads for which given stack appears
+        """
         result = set()
         for snapshot in self.thread_snapshots:
             thread = snapshot.thread
