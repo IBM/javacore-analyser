@@ -1,7 +1,8 @@
+#!/bin/bash
+
 #Copyright IBM Corp. 2025 - 2025
 #SPDX-License-Identifier: Apache-2.0
 
-#!/bin/bash
 echo "executing javacore collector script"
 for arg in "$@"; do
     if [[ $arg == libertyPath=* ]]; then
