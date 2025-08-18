@@ -4,6 +4,8 @@
 #SPDX-License-Identifier: Apache-2.0
 
 echo "executing javacore collector script"
+current=`date`
+echo "Current time: $current"
 for arg in "$@"; do
     if [[ $arg == libertyPath=* ]]; then
         libertyPath="${arg#libertyPath=}"
@@ -75,8 +77,10 @@ done
 
 
 echo "Creating archive file"
-cp -vfr $libertyPath/servers/clm/javacore*.txt javacore_data
-cp -vfr $libertyPath/servers/clm/verbosegc.txt* javacore_data
+#copy all javacore files newer than script starting time
+cp -vf `find $libertyPath/servers/clm/javacore*.txt -newermt "$current"` javacore_data
+
+cp -vf $libertyPath/servers/clm/verbosegc.txt* javacore_data
 tar -czvf javacores.tar.gz javacore_data
 echo "Javacores and verbose gc data saved to javacores.tar.gz archive."
 echo "Deleting javacore_data dir"
