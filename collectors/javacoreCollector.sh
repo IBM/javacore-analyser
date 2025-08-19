@@ -17,14 +17,26 @@ for arg in "$@"; do
         interval="${arg#interval=}"
     elif [[ $arg == server=* ]]; then
         server="${arg#server=}"
+    elif [[ $arg == javacoresDir=* ]]; then
+        javacoresDir="${arg#javacoresDir=}"
     fi
 done
 
 # Validation
-if [[ -z "$libertyPath" && -z "$javaPid" ]]; then
-    echo "You must provide either libertyPath or javaPid arguments:"
-    echo "  ./javacoreCollector.sh libertyPath=/opt/ibm/liberty"
-    echo "  ./javacoreCollector.sh javaPid=12345"
+validated=false
+if [ -n "${libertyPath}" ] && [ -n "${server}" ]; then
+    validated=true
+elif [ -n "${javaPid}" ] && [ -n "${javacoresDir}" ]; then
+    validated=true
+else
+    validated=false
+fi
+if [ "$validated" = false ]; then
+    echo "Invalid arguments provided."
+    echo "You must provide either libertyPath with server name or javaPid with javacores dir arguments:"
+    echo "  ./javacoreCollector.sh libertyPath=/opt/ibm/liberty server=server_name"
+    echo "  ./javacoreCollector.sh javaPid=12345 javacoresDir=/path/to/javacores"
+    echo ""
     echo "Optional arguments:"
     echo ""
     echo "   count - number of Javacores (default: 10)"
@@ -33,19 +45,22 @@ if [[ -z "$libertyPath" && -z "$javaPid" ]]; then
     echo ""
     echo "Examples:"
     echo "   ./javacoreCollector.sh libertyPath=/opt/ibm/liberty server=clm count=5 interval=60"
-    echo "   ./javacoreCollector.sh javaPid=12345 count=5 interval=60"
+    echo "   ./javacoreCollector.sh javaPid=12345 javacoresDir=/my_app/javacores count=5 interval=60"
     exit 1
  fi
 
 [ -z "$interval" ] && interval=30
 [ -z "$count" ] && count=10
-[ -z "$server" ] && server=""
+
 
 if [[ -n "$libertyPath" ]]; then
     echo "Liberty path provided: $libertyPath"
+    javacoresDir="$libertyPath/servers/$server/"
     export WLP_USER_DIR=$libertyPath
+    verbosegcDir="$libertyPath/servers/$server"
 else
-    echo "Java PID provided: $javaPid and javacores count $count"
+    echo "Java PID provided: $javaPid"
+    verbosegcDir=
 fi
 
 mkdir javacore_data
@@ -78,9 +93,11 @@ done
 
 echo "Creating archive file"
 #copy all javacore files newer than script starting time
-cp -vf `find $libertyPath/servers/clm/javacore*.txt -newermt "$current"` javacore_data
-
-cp -vf $libertyPath/servers/clm/verbosegc.txt* javacore_data
+cp -vf `find $javacoresDir javacore*.txt -newermt "$current"` javacore_data
+#copy verbose gc files if they exist
+if [ -n "$verbosegcDir" ]; then
+    cp -vf $libertyPath/servers/$server/verbosegc.txt* javacore_data
+fi
 tar -czvf javacores.tar.gz javacore_data
 echo "Javacores and verbose gc data saved to javacores.tar.gz archive."
 echo "Deleting javacore_data dir"
