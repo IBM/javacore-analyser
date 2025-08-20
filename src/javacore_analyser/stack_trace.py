@@ -10,7 +10,7 @@ from javacore_analyser.stack_trace_kind import StackTraceKind
 class StackTrace:
     java_stack_depth: int
     EMPTY_STACK = "No stack"
-    TRUNCATION_DEPTH = 50  # as per https://github.ibm.com/IOT-ELM-Poznan/Wait2/issues/430
+    TRUNCATION_DEPTH = 50  # To limit number of lines displayed
 
     """
     how many first lines of the stack need to be equal
@@ -48,3 +48,9 @@ class StackTrace:
     def get_java_stack_depth(self):
         filtered = filter(lambda e: e.kind == StackTraceKind.JAVA, self.stack_trace_elements)
         return len(list(filtered))
+
+    def to_string(self):
+        result = ""
+        for el in self.stack_trace_elements:
+            result = result + el.line + " "
+        return result
