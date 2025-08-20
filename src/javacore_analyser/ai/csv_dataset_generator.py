@@ -7,9 +7,13 @@ from javacore_analyser.javacore_analyser_batch import generate_javecore_set_data
 
 def main(input_files):
     """
-    Generates data.csv files with input parameters which can be used for a model
-    :param input_files: one or more javacore files (or archives with javacores) from which generate csv file
-    :return: No value returned. Generates csv file
+    Generates data.csv files with input parameters which can be used for a model.
+
+    This function processes one or more javacore files (or archives with javacores) and generates a csv file named 'data.csv'.
+    It extracts various parameters from the javacore data such as thread name, CPU usage, allocated memory, state, number of blocking threads, and stack trace.
+
+    :param input_files: one or more javacore files (or archives with javacores) from which to generate csv file
+    :return: No value returned. Generates csv file 'data.csv'
     """
     javacore_set = generate_javecore_set_data(input_files)
     data = []
