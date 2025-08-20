@@ -6,6 +6,11 @@ from javacore_analyser.javacore_analyser_batch import generate_javecore_set_data
 
 
 def main(input_files):
+    """
+    Generates data.csv files with input parameters which can be used for a model
+    :param input_files: one or more javacore files (or archives with javacores) from which generate csv file
+    :return: No value returned. Generates csv file
+    """
     javacore_set = generate_javecore_set_data(input_files)
     data = []
     for thread in javacore_set.threads:
