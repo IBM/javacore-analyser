@@ -28,7 +28,7 @@ def main(input_files):
             if stack_trace is None:
                 stack_trace = ""
             else:
-                stack_trace = stack_trace.to_string()
+                stack_trace = stack_trace.to_string().replace("\n", " ")
             data.append({'name': name, 'cpu_usage': cpu_usage, 'allocated_mem': allocated_mem, 'state': state,
                          'blocking_threads': blocking_threads, 'stack_trace': stack_trace})
     pd.DataFrame.from_records(data).to_csv('data.csv', index=False)
