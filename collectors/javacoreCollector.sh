@@ -41,7 +41,6 @@ if [ "$validated" = false ]; then
     echo ""
     echo "   count - number of Javacores (default: 10)"
     echo "   interval - interval in seconds to gather javacores (default: 30)"
-    echo "   server - server name for Liberty"
     echo ""
     echo "Examples:"
     echo "   ./javacoreCollector.sh libertyPath=/opt/ibm/liberty server=clm count=5 interval=60"
