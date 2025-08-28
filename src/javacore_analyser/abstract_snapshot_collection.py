@@ -23,6 +23,20 @@ class AbstractSnapshotCollection(abc.ABC):
         self.add(thread_snapshot)
 
     def get_xml(self, doc):
+        """
+        Creates an XML node representing a snapshot collection with various metrics.
+
+        This method constructs an XML node named 'snapshot_collection' and populates it with child nodes for different metrics.
+        Each child node corresponds to a specific metric, such as total CPU usage, total time, CPU percentage, average memory,
+        maximum Java stack depth, and average Java stack depth. The text content of each child node is set to the string representation
+        of the respective metric value obtained from the class instance.
+
+        Args:
+            doc (xml.dom.minidom.Document): The XML document object to create nodes within.
+
+        Returns:
+            xml.dom.minidom.Element: The root 'snapshot_collection' node with all child nodes populated.
+        """
         snapshot_collection_node = doc.createElement('snapshot_collection')
         # total CPU usage
         total_cpu_usage_node = doc.createElement('total_cpu_usage')
