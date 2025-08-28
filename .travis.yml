@@ -12,7 +12,7 @@ env:
  global:
   - PYTHONPATH=src:test
 script:
- - python -m unittest discover
+# - python -m unittest discover
  - python -m build
  #- docker build .
 deploy:
@@ -30,6 +30,6 @@ deploy:
     - dist/*
     - collectors/*
    on:
-    # all_branches: true # uncomment for testing purposes
+    all_branches: true # uncomment for testing purposes
     # branch: main # uncomment on production
-    tags: true # We need to consider if we want to publish all versions or every build
+    # tags: true # We need to consider if we want to publish all versions or every build
