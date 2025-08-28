@@ -3,6 +3,8 @@
 ## [2.4.1] - 2025-06-16
 * #142 treat any thread with a truncated stack as interesting by @PiotrAniola82 in https://github.com/IBM/javacore-analyser/pull/148
 
+[2.4.1]: https://github.com/IBM/javacore-analyser/releases/tag/2.4.1
+
 ## [2.4.0] - 2025-04-24
 * Removing vagueness by @yashrajmotwani23 in https://github.com/IBM/javacore-analyser/pull/134
 * Fixed javacore drilldown does not contain thread names by @PiotrAniola82 in https://github.com/IBM/javacore-analyser/pull/136
