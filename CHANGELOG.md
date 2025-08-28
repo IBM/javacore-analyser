@@ -1,6 +1,11 @@
 # Changelog
 
-## [2.4.1] - 2025-06-16
+## [2.4.2] - 2025-06-16
+* #156 LookupError-unknown-encoding-available by @tjanasiewicz in https://github.com/IBM/javacore-analyser/pull/157
+
+[2.4.2]: https://github.com/IBM/javacore-analyser/releases/tag/2.4.2
+
+## [2.4.1] - 2025-05-20
 * #142 treat any thread with a truncated stack as interesting by @PiotrAniola82 in https://github.com/IBM/javacore-analyser/pull/148
 
 [2.4.1]: https://github.com/IBM/javacore-analyser/releases/tag/2.4.1
