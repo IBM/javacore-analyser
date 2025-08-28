@@ -99,7 +99,29 @@ NOTE: If you get a `PermissionError: [Errno 13] Permission denied: '/reports/wai
 try specifying a different folder as the `src` parameter value or use the
 [--volume](https://docs.docker.com/engine/storage/volumes/) option instead of `--mount`. Find more on 
 [Issue #140](https://github.com/IBM/javacore-analyser/issues/140#issuecomment-2757809160).
- 
+
+
+### Running collectors
+There is available collector to gather javacores, verbose gc and some further server configuration (`ulimit`, `ps`, memory and disk usage) for Linux systems.
+Perform the following steps to run the tool:
+1. Download the collector from [javacoreCollector.sh](collectors/javacoreCollector.sh) to the machine where you want to gather data. 
+2. Execute it with the following command:
+
+`./javacoreCollector.sh javaPid=12345 javacoresDir=/location/for/javacores` - for general collector
+
+or
+`./javacoreCollector.sh libertyPath=/opt/ibm/liberty server=liberty_server_name` - for liberty. 
+
+You can add count= and interval= parameters to specify the number of javacores (default: 10) and interval between each of them (defaul: 30s).
+
+Type `./javacoreCollector.sh` to get more help.
+
+After collection, the collector creates `javacores.tar.gz` file containing the following data:
+* javacore files, 
+* Verbose gc files, if found in `javacoresDir` or `libertyPath` location, 
+* Ulimit settings in `ulimit.txt` file,
+* output from `ps`, memory and disk usage it iteration files. This data is gathered periodically with the same interval as javacores. There is separate file created for each collection.
+
 <!-- The following are OPTIONAL, but strongly suggested to have in your repository. -->
 <!--
 * [dco.yml](.github/dco.yml) - This enables DCO bot for you, please take a look https://github.com/probot/dco for more details.
