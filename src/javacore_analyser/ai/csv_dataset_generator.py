@@ -30,12 +30,14 @@ def main(input_files):
             state = snapshot.state
             blocking_threads = len(snapshot.blocking)
             stack_trace = snapshot.stack_trace
+            stack_trace_depth = snapshot.get_java_stack_depth()
             if stack_trace is None:
                 stack_trace = ""
             else:
                 stack_trace = stack_trace.to_string().replace("\n", " ").replace("\r", " ")
             data.append({'name': name, 'cpu_usage': cpu_usage, 'allocated_mem': allocated_mem, 'state': state,
-                         'blocking_threads': blocking_threads, 'stack_trace': stack_trace})
+                         'blocking_threads': blocking_threads, 'stack_trace': stack_trace,
+                         'stack_trace_depth': stack_trace_depth})
     data.sort(key = lambda thread : len(thread['stack_trace']), reverse=True)
     pd.DataFrame.from_records(data).to_csv('data.csv', index=False)
 
