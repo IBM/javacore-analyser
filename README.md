@@ -102,17 +102,19 @@ try specifying a different folder as the `src` parameter value or use the
 
 
 ### Running collectors
-There is available collector to gather javacores, verbose gc and some further server configuration (`ulimit`, `ps`, memory and disk usage) for Linux systems.
+There is a collector available that will gather javacores, verbose gc and some further server configuration (`ulimit`, `ps`, memory and disk usage) for Linux systems.
 Perform the following steps to run the tool:
 1. Download the collector from [javacoreCollector.sh](collectors/javacoreCollector.sh) to the machine where you want to gather data. 
 2. Execute it with the following command:
 
-`./javacoreCollector.sh javaPid=12345 javacoresDir=/location/for/javacores` - for general collector
+`./javacoreCollector.sh libertyPath=/opt/ibm/liberty server=liberty_server_name` - for collecting diagnostic data from a java application running on an IBM WebSphere Liberty profile,
 
 or
-`./javacoreCollector.sh libertyPath=/opt/ibm/liberty server=liberty_server_name` - for liberty. 
 
-You can add count= and interval= parameters to specify the number of javacores (default: 10) and interval between each of them (defaul: 30s).
+`./javacoreCollector.sh javaPid=12345 javacoresDir=/location/for/javacores` - for collecting diagnostic data from any java aplication.
+
+
+You can add the 'count' and 'interval' parameters to specify the number of javacores (default: 10) and interval between each of them (defaul: 30s).
 
 Type `./javacoreCollector.sh` to get more help.
 
