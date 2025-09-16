@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.5.0] - 2025-09-16
+* #130 script to generate javacore collector for linux by @sonaleegupta in https://github.com/IBM/javacore-analyser/pull/146
+* #167 add collector file to release assets by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/168
+* #165 Add information about collectors to documentation. by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/166
+
+[2.5.0]: https://github.com/IBM/javacore-analyser/releases/tag/2.5.0
+
 ## [2.4.2] - 2025-06-16
 * #156 LookupError-unknown-encoding-available by @tjanasiewicz in https://github.com/IBM/javacore-analyser/pull/157
 
