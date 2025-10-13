@@ -20,6 +20,7 @@ from lxml.etree import XMLSyntaxError
 from tqdm import tqdm
 
 from javacore_analyser import tips
+import javacore_analyser
 from javacore_analyser.code_snapshot_collection import CodeSnapshotCollection
 from javacore_analyser.constants import *
 from javacore_analyser.har_file import HarFile
@@ -29,6 +30,7 @@ from javacore_analyser.properties import Properties
 from javacore_analyser.snapshot_collection import SnapshotCollection
 from javacore_analyser.snapshot_collection_collection import SnapshotCollectionCollection
 from javacore_analyser.verbose_gc import VerboseGcParser
+from javacore_analyser.ai.llm_local_model import LLMLocalModel
 
 
 def _create_xml_xsl_for_collection(tmp_dir, templates_dir, xml_xsl_filename, collection, output_file_prefix):
@@ -95,6 +97,10 @@ class JavacoreSet:
         self.tips = []
         self.gc_parser = VerboseGcParser()
         self.har_files = []
+
+        logging.info("Initialising LLM Model")
+        self.model = LLMLocalModel()
+        logging.info("LLM Model Initialised")
 
     # Assisted by WCA@IBM
     # Latest GenAI contribution: ibm/granite-8b-code-instruct
@@ -366,6 +372,13 @@ class JavacoreSet:
         <?xml-stylesheet type="text/xsl" href="data/report.xsl"?><doc/>''')
 
         doc_node = self.doc.documentElement
+
+        header_node = self.doc.createElement("header")
+        logging.info("Generating welcome message")
+        welcome_message = self.model.generate_response("Write one sentence tip for tunning Java application")
+        logging.info("Welcome message generated: " + welcome_message)
+        header_node.appendChild(self.doc.createTextNode(welcome_message))
+        doc_node.appendChild(header_node)
 
         javacore_count_node = self.doc.createElement("javacore_count")
         javacore_count_node.appendChild(self.doc.createTextNode(str(len(self.javacores))))

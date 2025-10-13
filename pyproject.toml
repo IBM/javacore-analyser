@@ -46,7 +46,8 @@ dependencies = [
     "flask",
     "waitress",
     "tqdm",
-    "haralyzer"
+    "haralyzer",
+    "ollama"
 ]
 
 [project.scripts]
