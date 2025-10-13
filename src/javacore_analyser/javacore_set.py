@@ -98,9 +98,8 @@ class JavacoreSet:
         self.gc_parser = VerboseGcParser()
         self.har_files = []
 
-        logging.info("Initialising LLM Model")
         self.model = LLMLocalModel()
-        logging.info("LLM Model Initialised")
+        
 
     # Assisted by WCA@IBM
     # Latest GenAI contribution: ibm/granite-8b-code-instruct
