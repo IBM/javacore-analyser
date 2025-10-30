@@ -13,7 +13,7 @@ class LLMLocalModel:
         logging.info("Initialising LLM Local Model")
         self.device = "cpu"
         self.max_tokens = 50
-        self.model_path = "ibm-granite/granite-4.0-h-micro"
+        self.model_path = "ibm-granite/granite-4.0-350M"
         self.model = AutoModelForCausalLM.from_pretrained(self.model_path)
         self.model.eval()
         logging.info("LLM Local Model Initialised")
