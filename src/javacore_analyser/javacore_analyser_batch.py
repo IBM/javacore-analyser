@@ -79,11 +79,13 @@ def main():
                         default=DEFAULT_FILE_DELIMITER)
     parser.add_argument("--skip_boring", help='Skips drilldown page generation for threads that do not do anything',
                         default='True')
+    parser.add_argument("--ai", default='False', required=False)
     args = parser.parse_args()
 
     input_param = args.input
     output_param = args.output
     files_separator = args.separator
+    Properties.get_instance().ai = args.ai
     Properties.get_instance().skip_boring = args.skip_boring != 'False'
 
     batch_process(input_param, output_param, files_separator)

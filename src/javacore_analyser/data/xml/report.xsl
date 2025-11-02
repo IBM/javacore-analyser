@@ -334,6 +334,10 @@
                            href="javascript:expand_it(system_properties, toggle_system_properties)"
                            class="expandit">System Information</a></h3>
                     <div id="system_properties" style="display:none;">
+                        <xsl:if test="doc/system_info/@ai_overview != ''">
+                            <h4>AI Overview:</h4>
+                                <xsl:value-of select="doc/system_info/@ai_overview" disable-output-escaping="yes"/>
+                        </xsl:if>
                         <h4>Basic JVM Configuration</h4>
                         <table id="sys_info_table" class="tablesorter">
                             <thead>
@@ -407,15 +411,22 @@
                 <h3><a id="toggleintelligenttips" href="javascript:expand_it(intelligenttips,toggleintelligenttips)" class="expandit">Intelligent tips</a></h3>
                 <div id="intelligenttips"  style="display:none;">
                     <xsl:choose>
-                        <xsl:when test="doc/report_info/tips/tip">
-                            <ul>
-                                <xsl:for-each select="doc/report_info/tips/tip">
-                                    <li><xsl:value-of select="current()"/></li>
-                                </xsl:for-each>
-                            </ul>
+                        <xsl:when test="doc/report_info/tips/@ai_tips != ''">
+                            <xsl:value-of select="doc/report_info/tips/@ai_tips" disable-output-escaping="yes" />
                         </xsl:when>
                         <xsl:otherwise>
-                            We did not find any tips for you.
+                            <xsl:choose>
+                                <xsl:when test="doc/report_info/tips/tip">
+                                    <ul>
+                                        <xsl:for-each select="doc/report_info/tips/tip">
+                                            <li><xsl:value-of select="current()"/></li>
+                                        </xsl:for-each>
+                                    </ul>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    We did not find any tips for you.
+                                </xsl:otherwise>
+                            </xsl:choose>
                         </xsl:otherwise>
                     </xsl:choose>
                 </div>
