@@ -38,7 +38,7 @@ def main(input_files):
             data.append({'name': name, 'cpu_usage': cpu_usage, 'allocated_mem': allocated_mem, 'state': state,
                          'blocking_threads': blocking_threads, 'stack_trace': stack_trace,
                          'stack_trace_depth': stack_trace_depth})
-    data.sort(key = lambda thread : len(thread['stack_trace']), reverse=True)
+    data.sort(key = lambda java_thread : len(java_thread['stack_trace']), reverse=True)
     pd.DataFrame.from_records(data).to_csv('data.csv', index=False)
 
     # Check if we can load data
