@@ -3,24 +3,35 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
+import logging
 from ollama import chat
 from ollama import ChatResponse
+import ollama
 
-from src.javacore_analyser.constants import DEFAULT_MODEL
+from javacore_analyser.constants import DEFAULT_MODEL
+
 
 
 # prerequisites:
 # install Ollama from https://ollama.com/download
-# > ollama pull granite3.3:8b
-# > ollama pull granite-code:3b
-# > pip install ollama
 
 class Ai:
+    """
+    A class representing an AI model infuser.
 
+    Attributes:
+        prompt (str): The current prompt being infused.
+        javacore_set (set): A set of Java cores for the AI model.
+        model (str): The AI model to be used for inference.
+    """
+    
     def __init__(self, javacore_set):
         self.prompt = ""
         self.javacore_set = javacore_set
         self.model = DEFAULT_MODEL
+        logging.info("Pulling model: " + self.model)
+        ollama.pull(self.model)
+        logging.info("Model pulled: " + self.model)
 
 
     def set_model(self, model):
@@ -31,12 +42,14 @@ class Ai:
         content = ""
         self.prompt = prompter.construct_prompt()
         if self.prompt and len(self.prompt) > 0:
+            logging.debug("Infusing prompt: " + self.prompt[40] + "...")
             response: ChatResponse = chat(model=self.model, messages=[
                 {
                     'role': 'user',
                     'content': self.prompt,
                 },
             ])
+            logging.debug("Infused finished")
             content = response.message.content
             content = content.replace('\n', '<br/>')
         return content

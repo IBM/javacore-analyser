@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-from src.javacore_analyser.ai.prompter import Prompter
+from javacore_analyser.ai.prompter import Prompter
 
 
 class TipsPrompter(Prompter) :
