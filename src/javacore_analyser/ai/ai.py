@@ -8,7 +8,7 @@ from ollama import chat
 from ollama import ChatResponse
 import ollama
 
-from javacore_analyser.constants import DEFAULT_MODEL
+from javacore_analyser.constants import DEFAULT_LLM_MODEL
 
 
 
@@ -24,11 +24,11 @@ class Ai:
         javacore_set (set): A set of Java cores for the AI model.
         model (str): The AI model to be used for inference.
     """
-    
+
     def __init__(self, javacore_set):
         self.prompt = ""
         self.javacore_set = javacore_set
-        self.model = DEFAULT_MODEL
+        self.model = DEFAULT_LLM_MODEL
         logging.info("Pulling model: " + self.model)
         ollama.pull(self.model)
         logging.info("Model pulled: " + self.model)
