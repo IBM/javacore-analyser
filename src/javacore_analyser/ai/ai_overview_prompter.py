@@ -6,22 +6,30 @@
 from javacore_analyser.ai.prompter import Prompter
 
 
+# Assisted by watsonx Code Assistant
+
 class AiOverviewPrompter(Prompter):
+    """
+    AiOverviewPrompter class generates a detailed prompt for explaining overview section.
+
+    Attributes:
+        - javacore_set (JavacoreSet): An object containing Java configuration details.
+    """
 
     def construct_prompt(self):
-        prompt = 'Given the information below, explain how to improve the performance of the java application\n'
-        prompt += 'Java configuration:\n'
-        prompt += 'Number of CPUs: ' + self.javacore_set.number_of_cpus + '\n'
-        prompt += 'Xmx=' + self.javacore_set.xmx + '\n'
-        prompt += 'Xms=' + self.javacore_set.xms + '\n'
-        prompt += 'Xmn=' + self.javacore_set.xmn + '\n'
-        prompt += 'GC policy: ' + self.javacore_set.gc_policy + '\n'
-        prompt += 'Compressed references: ' + str(self.javacore_set.compressed_refs) + '\n'
-        prompt += 'Verbose GC: ' + str(self.javacore_set.verbose_gc) + '\n'
-        prompt += 'OS level: ' + self.javacore_set.os_level + '\n'
-        prompt += 'System architecture: ' + self.javacore_set.architecture + '\n'
-        prompt += 'Java version: ' + self.javacore_set.java_version + '\n'
-        # jvm_start_time = ""
-        prompt += 'Command line: ' + self.javacore_set.cmd_line + '\n'
-        # prompt += self.javacore_set.user_args = []
+        prompt = f'''
+        Given the information below, explain how to improve the performance of the java application
+        Java configuration:
+        Number of CPUs: {self.javacore_set.number_of_cpus}
+        Xmx={self.javacore_set.xmx}
+        Xms={self.javacore_set.xms}
+        Xmn={self.javacore_set.xmn}
+        GC policy: {self.javacore_set.gc_policy}
+        Compressed references: {self.javacore_set.compressed_refs}
+        Verbose GC: {self.javacore_set.verbose_gc}
+        OS level: {self.javacore_set.os_level}
+        System architecture: {self.javacore_set.architecture}
+        Java version: {self.javacore_set.java_version}
+        Command line: {self.javacore_set.cmd_line}
+        '''
         return prompt
