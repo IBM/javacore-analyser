@@ -8,3 +8,4 @@ tqdm
 haralyzer
 ollama
 pandas
+Markdown

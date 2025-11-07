@@ -47,6 +47,9 @@ dependencies = [
     "waitress",
     "tqdm",
     "haralyzer"
+    "ollama"
+    "pandas"
+    "Markdown"
 ]
 
 [project.scripts]
