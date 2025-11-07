@@ -44,6 +44,7 @@ class TestJavacoreAnalyser(unittest.TestCase):
         self.expateerror = ["javacore_analyser", "test/data/verboseGcJavacores", "tmp"]
         self.threadnameswithquotes = ["javacore_analyser", "test/data/quotationMarks", "tmp"]
         self.encoding = ["javacore_analyser", "test/data/encoding/javacore.20220606.114458.32888.0001.txt", "tmp"]
+        self.ai = ["javacore_analyser", "test/data/archives/javacores.7z", "tmp", "--ai=true"]
         rm_tmp_dir()
 
     def test_api(self):
@@ -96,6 +97,9 @@ class TestJavacoreAnalyser(unittest.TestCase):
 
     def test_run_two_javacores_custom_separator(self):
         self.runMainWithParams(self.twofilesargs_different_separator)
+
+    def test_run_ai(self):
+        self.runMainWithParams(self.ai)
 
     def test_error_for_archive_without_javacores(self):
         # Run with params from https://stackoverflow.com/questions/18668947/how-do-i-set-sys-argv-so-i-can-unit-test-it
