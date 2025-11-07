@@ -8,3 +8,4 @@ tqdm
 haralyzer
 torch # LLM library
 transformers
+pandas
