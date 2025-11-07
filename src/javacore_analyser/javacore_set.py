@@ -30,9 +30,9 @@ from javacore_analyser.snapshot_collection import SnapshotCollection
 from javacore_analyser.snapshot_collection_collection import SnapshotCollectionCollection
 from javacore_analyser.verbose_gc import VerboseGcParser
 
-from src.javacore_analyser.ai.ai import Ai
-from src.javacore_analyser.ai.ai_overview_prompter import AiOverviewPrompter
-from src.javacore_analyser.ai.tips_prompter import TipsPrompter
+from javacore_analyser.ai.ai import Ai
+from javacore_analyser.ai.ai_overview_prompter import AiOverviewPrompter
+from javacore_analyser.ai.tips_prompter import TipsPrompter
 
 
 def _create_xml_xsl_for_collection(tmp_dir, templates_dir, xml_xsl_filename, collection, output_file_prefix):
