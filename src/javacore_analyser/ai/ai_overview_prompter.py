@@ -31,5 +31,6 @@ class AiOverviewPrompter(Prompter):
         System architecture: {self.javacore_set.architecture}
         Java version: {self.javacore_set.java_version}
         Command line: {self.javacore_set.cmd_line}
+        Limit number of suggestions to 5 most siginificant.
         '''
         return prompt
