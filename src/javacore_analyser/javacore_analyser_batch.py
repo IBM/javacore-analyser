@@ -79,7 +79,7 @@ def main():
                         default=DEFAULT_FILE_DELIMITER)
     parser.add_argument("--skip_boring", help='Skips drilldown page generation for threads that do not do anything',
                         default='True')
-    parser.add_argument("--ai", default='False', required=False)
+    parser.add_argument("--ai", default='False', required=False, help="Use AI genereated analysis")
     args = parser.parse_args()
 
     input_param = args.input
