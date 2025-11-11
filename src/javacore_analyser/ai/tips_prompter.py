@@ -13,6 +13,6 @@ class TipsPrompter(Prompter) :
         if len(self.javacore_set.tips) > 0:
             prompt = "Analyse the tips to help identify performance bottlenecks in a Java application: \n"
             for tip in self.javacore_set.tips:
-                for message in tip:
-                    prompt += message + '\n'
+                    prompt += tip + "\n"
+            prompt += "Provide maximum of 5 suggestions for performance improvements."
         return prompt
