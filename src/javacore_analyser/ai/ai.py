@@ -43,7 +43,7 @@ class Ai:
         content = ""
         self.prompt = prompter.construct_prompt()
         if self.prompt and len(self.prompt) > 0:
-            logging.debug("Infusing prompt: " + self.prompt[40] + "...")
+            logging.debug("Infusing prompt: " + self.prompt)
             response: ChatResponse = chat(model=self.model, messages=[
                 {
                     'role': 'user',
