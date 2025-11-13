@@ -15,6 +15,7 @@ import time
 from pathlib import Path
 
 from flask import Flask, render_template, request, send_from_directory, redirect
+from javacore_analyser.properties import Properties
 from waitress import serve
 
 import javacore_analyser.javacore_analyser_batch
@@ -139,15 +140,20 @@ def main():
     parser.add_argument("--port", help="Port to run application", default=DEFAULT_PORT)
     parser.add_argument("--reports-dir", help="Directory where app reports are stored",
                         default=DEFAULT_REPORTS_DIR)
+    parser.add_argument("--ai", help="Use AI to analyse the data", default=False)
+    parser.add_argument("--skip_boring", help='Skips drilldown page generation for threads that do not do anything', default=False)
     args = parser.parse_args()
     debug = args.debug
     port = args.port
     reports_directory = args.reports_dir
+    ai = args.ai
+    Properties.get_instance().ai = args.ai
+    Properties.get_instance().skip_boring = args.skip_boring != 'False'
 
-    run_web(debug, port, reports_directory)
+    run_web(debug, port, reports_directory, ai)
 
 
-def run_web(debug=False, port=5000, reports_directory=DEFAULT_REPORTS_DIR):
+def run_web(debug=False, port=5000, reports_directory=DEFAULT_REPORTS_DIR, ai=False):
     global reports_dir
     reports_dir = os.path.abspath(reports_directory)
     create_console_logging()
@@ -155,6 +161,7 @@ def run_web(debug=False, port=5000, reports_directory=DEFAULT_REPORTS_DIR):
     logging.info("Python version: " + sys.version)
     logging.info("Preferred encoding: " + locale.getpreferredencoding())
     logging.info("Reports directory: " + reports_dir)
+    logging.info("AI: " + str(ai))
     create_file_logging(reports_dir)
     create_temp_data_in_reports_dir(reports_dir)
     if debug:

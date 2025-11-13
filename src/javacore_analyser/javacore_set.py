@@ -30,6 +30,10 @@ from javacore_analyser.snapshot_collection import SnapshotCollection
 from javacore_analyser.snapshot_collection_collection import SnapshotCollectionCollection
 from javacore_analyser.verbose_gc import VerboseGcParser
 
+from javacore_analyser.ai.ai import Ai
+from javacore_analyser.ai.ai_overview_prompter import AiOverviewPrompter
+from javacore_analyser.ai.tips_prompter import TipsPrompter
+
 
 def _create_xml_xsl_for_collection(tmp_dir, templates_dir, xml_xsl_filename, collection, output_file_prefix):
     logging.info("Creating xmls and xsls in " + tmp_dir)
@@ -84,6 +88,9 @@ class JavacoreSet:
         self.stacks = SnapshotCollectionCollection(CodeSnapshotCollection)
         self.report_xml_file = None
 
+        self.ai_overview = ""
+        self.ai_tips = ""
+
         self.doc = None
 
         '''
@@ -117,6 +124,8 @@ class JavacoreSet:
         jset.print_blockers()
         jset.print_thread_states()
         jset.generate_tips()
+        if Properties.get_instance().ai.lower() == 'true':
+            jset.add_ai()
         return jset
 
     # Assisted by WCA@IBM
@@ -439,8 +448,10 @@ class JavacoreSet:
             tip_node = self.doc.createElement("tip")
             tips_node.appendChild(tip_node)
             tip_node.appendChild(self.doc.createTextNode(tip))
+        tips_node.setAttribute("ai_tips", self.ai_tips)
 
         user_args_list_node = self.doc.createElement("user_args_list")
+        system_info_node.setAttribute("ai_overview", self.ai_overview)
         system_info_node.appendChild(user_args_list_node)
         for arg in self.user_args:
             arg_node = self.doc.createElement("user_arg")
@@ -724,3 +735,8 @@ class JavacoreSet:
         for tip in tips.TIPS_LIST:
             tip_class = getattr(tips, tip)
             self.tips.extend(tip_class.generate(self))
+
+    def add_ai(self):
+        ai = Ai(self)
+        self.ai_overview = ai.infuse_in_html(AiOverviewPrompter(self))
+        self.ai_tips = ai.infuse_in_html(TipsPrompter(self))

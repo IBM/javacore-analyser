@@ -40,3 +40,5 @@ DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 DEFAULT_REPORTS_DIR = "reports"
 DEFAULT_PORT = 5000
 TEMP_DIR = "temp_data"  # Folder to store temporary data for creating reports
+
+DEFAULT_LLM_MODEL = "ibm/granite4:latest" # https://ollama.com/ibm/granite4

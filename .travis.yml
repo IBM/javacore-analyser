@@ -5,6 +5,7 @@ before_install:
  - pip install 'urllib3<2.0' #Enforce SSL version to be able to run twine
  - pip install -U build
  - pip install -U twine
+ - curl -fsSL https://ollama.com/install.sh | sh
 install:
  - pip install -r requirements.txt
  - pip install .
