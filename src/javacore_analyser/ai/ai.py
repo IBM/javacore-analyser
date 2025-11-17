@@ -4,6 +4,7 @@
 #
 
 import logging
+import markdown
 from ollama import chat
 from ollama import ChatResponse
 import ollama
@@ -51,5 +52,13 @@ class Ai:
             ])
             logging.debug("Infused finished")
             content = response.message.content
-            content = content.replace('\n', '<br/>')
         return content
+    
+    def response_to_html(self, response):
+        html = markdown.markdown(response)
+        return html
+    
+    def infuse_in_html(self, prompter):
+        content = self.infuse(prompter)
+        return self.response_to_html(content)
+        

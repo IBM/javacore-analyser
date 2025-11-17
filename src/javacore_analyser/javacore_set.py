@@ -738,6 +738,5 @@ class JavacoreSet:
 
     def add_ai(self):
         ai = Ai(self)
-        self.ai_overview = ai.infuse(AiOverviewPrompter(self))
-        self.ai_tips = ai.infuse(TipsPrompter(self))
-
+        self.ai_overview = ai.infuse_in_html(AiOverviewPrompter(self))
+        self.ai_tips = ai.infuse_in_html(TipsPrompter(self))
