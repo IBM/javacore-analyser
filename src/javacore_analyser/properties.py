@@ -3,7 +3,12 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
+# Assisted by watsonx Code Assistant
+
 class Properties:
+    """
+    A singleton class to manage properties that should not be changed after initialization.
+    """
 
     __instance = None
 
