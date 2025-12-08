@@ -8,6 +8,15 @@ import logging
 
 
 def read_properties(args):
+    """
+    Reads properties from a config file and command line arguments, converting string values to Boolean or numbers where applicable.
+
+    Args:
+        args (argparse.Namespace): Command line arguments containing optional properties.
+
+    Returns:
+        dict: A dictionary containing the properties with their respective values.
+    """
     properties = {}
     config_file = args.config_file
     logging.info(f"Reading properties from {config_file}")
