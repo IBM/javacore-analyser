@@ -94,7 +94,7 @@ class JavacoreSet:
         self.ai_overview = ""
         self.ai_tips = ""
 
-        self.doc = None       
+        self.doc = None
 
         '''
         List where each element is SnapshotCollection containing all threads blocked by given thread. 
