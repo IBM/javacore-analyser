@@ -19,10 +19,9 @@ import importlib_resources
 import py7zr
 from importlib_resources.abc import Traversable
 
-from javacore_analyser import logging_utils
+from javacore_analyser import logging_utils, properties_helper
 from javacore_analyser.constants import DEFAULT_FILE_DELIMITER
 from javacore_analyser.javacore_set import JavacoreSet
-from javacore_analyser.properties import Properties
 
 SUPPORTED_ARCHIVES_FORMATS = {"zip", "gz", "tgz", "bz2", "lzma", "7z"}
 
@@ -77,21 +76,25 @@ def main():
     parser.add_argument("--separator",
                         help='Input files separator (default "' + DEFAULT_FILE_DELIMITER + '")',
                         default=DEFAULT_FILE_DELIMITER)
-    parser.add_argument("--skip_boring", help='Skips drilldown page generation for threads that do not do anything',
-                        default='True')
-    parser.add_argument("--ai", default='False', required=False, help="Use AI genereated analysis")
+    parser.add_argument("--skip_boring", help="Skips drilldown page generation for threads that do not do anything",
+                        default="True")
+    parser.add_argument("--use_ai", default="False", required=False, help="Use AI genereated analysis")
+    parser.add_argument("--config_file", required=False, help="Configuration file", default="config.ini")
     args = parser.parse_args()
 
-    input_param = args.input
-    output_param = args.output
-    files_separator = args.separator
-    Properties.get_instance().ai = args.ai
-    Properties.get_instance().skip_boring = args.skip_boring != 'False'
+    properties = properties_helper.read_properties(args)
 
-    batch_process(input_param, output_param, files_separator)
+    try:
+        batch_process(properties)
+    except:
+        exit(13)
 
-
-def batch_process(input_param, output_param, files_separator=DEFAULT_FILE_DELIMITER):
+def batch_process(properties):
+    
+    input_param = properties["input"]
+    output_param = properties["output"]
+    files_separator = properties["separator"]
+    
     logging_utils.create_console_logging()
     logging.info("IBM Javacore analyser")
     logging.info("Python version: " + sys.version)
@@ -110,16 +113,15 @@ def batch_process(input_param, output_param, files_separator=DEFAULT_FILE_DELIMI
         files = [input_param]
     try:
         files = [os.path.normpath(file) for file in files]
-        process_javacores_and_generate_report_data(files, output_param)
+        process_javacores_and_generate_report_data(files, output_param, properties)
     except Exception as ex:
         logging.exception(ex)
-        logging.error("Processing was not successful. Correct the problem and try again. Exiting with error 13")
-        exit(13)
+        logging.error("Processing was not successful. Correct the problem and try again. ")
 
 
 # Assisted by WCA@IBM
 # Latest GenAI contribution: ibm/granite-8b-code-instruct
-def generate_javecore_set_data(files):
+def generate_javecore_set_data(files, properties):
     """
     Generate JavacoreSet data from given files.
 
@@ -143,7 +145,7 @@ def generate_javecore_set_data(files):
                     extract_archive(file, javacores_temp_dir_name)  # Extract archive to temp dir
                 else:
                     shutil.copy2(file, javacores_temp_dir_name)
-        return JavacoreSet.process_javacores(javacores_temp_dir_name)
+        return JavacoreSet.process_javacores(javacores_temp_dir_name, properties)
     finally:
         javacores_temp_dir.cleanup()
 
@@ -198,20 +200,21 @@ def generate_error_page(output_dir, exception):
 
 # Assisted by WCA@IBM
 # Latest GenAI contribution: ibm/granite-8b-code-instruct
-def process_javacores_and_generate_report_data(input_files, output_dir):
+def process_javacores_and_generate_report_data(input_files, output_dir, properties):
     """
     Processes Java core dump files and generates report data.
 
     Parameters:
     input_files (list): A list of paths to Java core dump files.
     output_dir (str): The directory where the generated report data will be saved.
+    properties (Properties): The properties object containing the configuration settings.
 
     Returns:
     None
     """
     try:
         create_output_files_structure(output_dir)
-        javacore_set = generate_javecore_set_data(input_files)
+        javacore_set = generate_javecore_set_data(input_files, properties)
         javacore_set.generate_report_files(output_dir)
     except Exception as ex:
         logging.exception(ex)

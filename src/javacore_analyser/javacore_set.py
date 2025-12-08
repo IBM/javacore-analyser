@@ -25,7 +25,6 @@ from javacore_analyser.constants import *
 from javacore_analyser.har_file import HarFile
 from javacore_analyser.java_thread import Thread
 from javacore_analyser.javacore import Javacore
-from javacore_analyser.properties import Properties
 from javacore_analyser.snapshot_collection import SnapshotCollection
 from javacore_analyser.snapshot_collection_collection import SnapshotCollectionCollection
 from javacore_analyser.verbose_gc import VerboseGcParser
@@ -35,7 +34,7 @@ from javacore_analyser.ai.ai_overview_prompter import AiOverviewPrompter
 from javacore_analyser.ai.tips_prompter import TipsPrompter
 
 
-def _create_xml_xsl_for_collection(tmp_dir, templates_dir, xml_xsl_filename, collection, output_file_prefix):
+def _create_xml_xsl_for_collection(tmp_dir, templates_dir, xml_xsl_filename, collection, output_file_prefix, skip_boring_files):
     logging.info("Creating xmls and xsls in " + tmp_dir)
     os.mkdir(tmp_dir)
     extensions = [".xsl", ".xml"]
@@ -49,7 +48,7 @@ def _create_xml_xsl_for_collection(tmp_dir, templates_dir, xml_xsl_filename, col
             filename = output_file_prefix + "_" + str(element_id) + extension
             if filename.startswith("_"):
                 filename = filename[1:]
-            if element.is_interesting() or not Properties.get_instance().skip_boring:
+            if element.is_interesting() or not skip_boring_files:
                 file = os.path.join(tmp_dir, filename)
                 logging.debug("Writing file " + file)
                 f = open(file, "w")
@@ -63,7 +62,11 @@ class JavacoreSet:
     """represents a single javacore collection
     consisting of one or more javacore files"""
 
-    def __init__(self, path):
+    def __init__(self, path, properties):
+
+        self.use_ai = properties["use_ai"]
+        self.skip_boring = properties["skip_boring"]
+
         self.path = path  # path of the folder where the javacores are located
         # start of static information
         self.number_of_cpus = None  # number of cpus the VM is using
@@ -91,7 +94,7 @@ class JavacoreSet:
         self.ai_overview = ""
         self.ai_tips = ""
 
-        self.doc = None
+        self.doc = None       
 
         '''
         List where each element is SnapshotCollection containing all threads blocked by given thread. 
@@ -106,17 +109,18 @@ class JavacoreSet:
     # Assisted by WCA@IBM
     # Latest GenAI contribution: ibm/granite-8b-code-instruct
     @staticmethod
-    def process_javacores(input_path):
+    def process_javacores(input_path, properties):
         """
         Processes Java core data and generates tips based on the analysis.
 
         Args:
             input_path (str): The path to the directory containing the Javacore data.
+            properties (Properties): The properties object containing the configuration settings.
 
         Returns:
             JavacoreSet: A JavacoreSet object containing the analysis results.
         """
-        jset = JavacoreSet.create(input_path)
+        jset = JavacoreSet.create(input_path, properties)
         jset.print_java_settings()
         jset.populate_snapshot_collections()
         jset.sort_snapshots()
@@ -124,7 +128,7 @@ class JavacoreSet:
         jset.print_blockers()
         jset.print_thread_states()
         jset.generate_tips()
-        if Properties.get_instance().ai.lower() == 'true':
+        if jset.use_ai:
             jset.add_ai()
         return jset
 
@@ -152,8 +156,8 @@ class JavacoreSet:
                                           os.path.join(output_dir, "javacores"),
                                           self.javacores, "")
         self.__create_index_html(temp_dir_name, output_dir)
-        self.__generate_htmls_for_threads(output_dir, temp_dir_name)
-        self.__generate_htmls_for_javacores(output_dir, temp_dir_name)
+        self.__generate_htmls_for_threads(output_dir, temp_dir_name, self.skip_boring)
+        self.__generate_htmls_for_javacores(output_dir, temp_dir_name, self.skip_boring)
 
     @staticmethod
     def __generate_placeholder_htmls(placeholder_file, directory, collection, file_prefix):
@@ -171,20 +175,20 @@ class JavacoreSet:
                 shutil.copy2(placeholder_file, file_path)
         logging.info("Finished generating placeholder htmls")
 
-    def __generate_htmls_for_threads(self, output_dir, temp_dir_name):
+    def __generate_htmls_for_threads(self, output_dir, temp_dir_name, skip_boring_files):
         _create_xml_xsl_for_collection(os.path.join(temp_dir_name, "threads"),
                                        os.path.join(output_dir, "data", "xml", "threads"), "thread",
                                        self.threads,
-                                       "thread")
+                                       "thread", skip_boring_files)
         self.generate_htmls_from_xmls_xsls(self.report_xml_file,
                                            os.path.join(temp_dir_name, "threads"),
                                            os.path.join(output_dir, "threads"))
 
-    def __generate_htmls_for_javacores(self, output_dir, temp_dir_name):
+    def __generate_htmls_for_javacores(self, output_dir, temp_dir_name, skip_boring_files):
         _create_xml_xsl_for_collection(os.path.join(temp_dir_name, "javacores"),
                                        os.path.join(output_dir, "data", "xml", "javacores"), "javacore",
                                        self.javacores,
-                                       "")
+                                       "", skip_boring_files)
         self.generate_htmls_from_xmls_xsls(self.report_xml_file,
                                            os.path.join(temp_dir_name, "javacores"),
                                            os.path.join(output_dir, "javacores"))
@@ -211,8 +215,8 @@ class JavacoreSet:
         logging.debug("Command line: {}".format(self.cmd_line))
 
     @staticmethod
-    def create(path):
-        jset = JavacoreSet(path)
+    def create(path, properties):
+        jset = JavacoreSet(path, properties)
         jset.populate_files_list()
         if len(jset.files) < 1:
             raise RuntimeError("No javacores found. You need at least one javacore. Exiting with error 13")
