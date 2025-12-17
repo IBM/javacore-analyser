@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 from javacore_analyser.abstract_snapshot_collection import AbstractSnapshotCollection
-from javacore_analyser.properties import Properties
 from javacore_analyser.stack_trace import StackTrace
 
 
