@@ -1,5 +1,5 @@
 #
-# Copyright IBM Corp. 2024 - 2024
+# Copyright IBM Corp. 2024 - 2025
 # SPDX-License-Identifier: Apache-2.0
 #
 from tqdm import tqdm
@@ -7,18 +7,20 @@ from tqdm import tqdm
 
 class SnapshotCollectionCollection:
 
-    def __init__(self, snapshot_collection_type):
+    def __init__(self, snapshot_collection_type, javacore_set):
         self.snapshot_collections = []
         self.highest_cpu = None
         self.highest_mem = None
         self.snapshot_collection_type = snapshot_collection_type
+        self.javacore_set = javacore_set
+
 
     def add_snapshot(self, snapshot):
         for snapshot_collection in self.snapshot_collections:
             if snapshot_collection.matches_snapshot(snapshot):
                 snapshot_collection.add(snapshot)
                 return
-        snapshot_collection = self.snapshot_collection_type()
+        snapshot_collection = self.snapshot_collection_type(self.javacore_set)
         snapshot_collection.create(snapshot)
         self.snapshot_collections.append(snapshot_collection)
 

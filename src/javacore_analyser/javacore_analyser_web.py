@@ -15,7 +15,6 @@ import time
 from pathlib import Path
 
 from flask import Flask, render_template, request, send_from_directory, redirect
-from javacore_analyser.properties import Properties
 from waitress import serve
 
 import javacore_analyser.javacore_analyser_batch

@@ -87,8 +87,8 @@ class JavacoreSet:
         self.javacores = []
         self.excluded_javacores = []
         self.verbose_gc_files = []
-        self.threads = SnapshotCollectionCollection(Thread)
-        self.stacks = SnapshotCollectionCollection(CodeSnapshotCollection)
+        self.threads = SnapshotCollectionCollection(Thread, self)
+        self.stacks = SnapshotCollectionCollection(CodeSnapshotCollection, self)
         self.report_xml_file = None
 
         self.ai_overview = ""
@@ -159,15 +159,15 @@ class JavacoreSet:
         self.__generate_htmls_for_threads(output_dir, temp_dir_name, self.skip_boring)
         self.__generate_htmls_for_javacores(output_dir, temp_dir_name, self.skip_boring)
 
-    @staticmethod
-    def __generate_placeholder_htmls(placeholder_file, directory, collection, file_prefix):
+    
+    def __generate_placeholder_htmls(self, placeholder_file, directory, collection, file_prefix):
         logging.info(f"Generating placeholder htmls in {directory}")
         if os.path.exists(directory):
             shutil.rmtree(directory)
         os.mkdir(directory)
 
         for element in tqdm(collection, desc="Generating placeholder htmls", unit=" file"):
-            if element.is_interesting() or not Properties.get_instance().skip_boring:
+            if element.is_interesting() or not self.skip_boring:
                 filename = file_prefix + "_" + element.get_id() + ".html"
                 if filename.startswith("_"):
                     filename = filename[1:]

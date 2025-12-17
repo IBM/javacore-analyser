@@ -1,5 +1,5 @@
 #
-# Copyright IBM Corp. 2024 - 2024
+# Copyright IBM Corp. 2024 - 2025
 # SPDX-License-Identifier: Apache-2.0
 #
 
@@ -8,7 +8,7 @@ import abc
 
 class AbstractSnapshotCollection(abc.ABC):
 
-    def __init__(self):
+    def __init__(self, javacoreset):
         self.name = None
         self.id = None
         self.total_cpu = 0
@@ -16,6 +16,7 @@ class AbstractSnapshotCollection(abc.ABC):
         self.avg_mem = 0
         self.avg_memory = 0
         self.thread_snapshots = []
+        self.javacoreset = javacoreset
 
     def create(self, thread_snapshot):
         self.name = thread_snapshot.name

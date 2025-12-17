@@ -8,9 +8,10 @@ from javacore_analyser.stack_trace import StackTrace
 
 class Thread(AbstractSnapshotCollection):
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, javacoreset):
+        super().__init__(javacoreset)
         self.thread_address = ""
+        self.javacoreset = javacoreset
 
     def create(self, thread_snapshot):
         super().create(thread_snapshot)
@@ -33,7 +34,7 @@ class Thread(AbstractSnapshotCollection):
         thread_node = super().get_xml(doc)
 
         thread_node.setAttribute("has_drill_down",
-                                 str(self.is_interesting() or not Properties.get_instance().skip_boring))
+                                 str(self.is_interesting() or not self.javacoreset.skip_boring))
 
         # thread ID
         id_node = doc.createElement("thread_id")
