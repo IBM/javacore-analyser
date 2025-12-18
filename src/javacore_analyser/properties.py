@@ -72,12 +72,7 @@ class Properties:
                 properties[key] = False
             elif value.isdigit():
                 properties[key] = int(value)
-
         self.properties = properties
-
-        config['DEFAULT'] = {'test': 123}
-        with open('example.ini', 'w') as configfile:
-            config.write(configfile)
 
     @staticmethod
     def get_instance():
@@ -87,9 +82,10 @@ class Properties:
 
     def skip_boring(self):
         return self.properties["skip_boring"]
-
-    def get_property(self, key):
-        return self.properties[key]
+    
+    def get_property(self, key, default_value=None):
+        if key in self.properties: return self.properties[key]
+        else: return default_value
 
     def _generate_default_config(self, config_file):
         with importlib_resources.path("javacore_analyser", "config.ini") as config_ini_resource:

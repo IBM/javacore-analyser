@@ -15,12 +15,12 @@ import time
 from pathlib import Path
 
 from flask import Flask, render_template, request, send_from_directory, redirect
-from javacore_analyser.properties import Properties
 from waitress import serve
 
 import javacore_analyser.javacore_analyser_batch
-from javacore_analyser.constants import DEFAULT_REPORTS_DIR, DEFAULT_PORT, TEMP_DIR
+from javacore_analyser.constants import TEMP_DIR
 from javacore_analyser.logging_utils import create_console_logging, create_file_logging
+from javacore_analyser.properties import Properties
 
 """
 To run the application from cmd type:
@@ -28,7 +28,7 @@ To run the application from cmd type:
 flask --app javacore_analyser_web run
 """
 app = Flask(__name__, static_folder='data')
-reports_dir = DEFAULT_REPORTS_DIR
+reports_dir = 'reports' # This is default value. It will be changed in the constructor
 
 
 # Assisted by watsonx Code Assistant
@@ -136,24 +136,23 @@ def upload_file():
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--debug", help="Debug mode. Use only for development", default=False)
-    parser.add_argument("--port", help="Port to run application", default=DEFAULT_PORT)
-    parser.add_argument("--reports-dir", help="Directory where app reports are stored",
-                        default=DEFAULT_REPORTS_DIR)
-    parser.add_argument("--ai", help="Use AI to analyse the data", default=False)
-    parser.add_argument("--skip_boring", help='Skips drilldown page generation for threads that do not do anything', default=False)
+    parser.add_argument("--debug", help="Debug mode. Use only for development")
+    parser.add_argument("--port", help="Port to run application")
+    parser.add_argument("--reports-dir", help="Directory where app reports are stored")
+    parser.add_argument("--use_ai", help="Use AI to analyse the data")
+    parser.add_argument("--skip_boring", help='Skips drilldown page generation for threads that do not do anything')
+    parser.add_argument("--config_file", required=False, help="Configuration file", default="config.ini")
     args = parser.parse_args()
-    debug = args.debug
-    port = args.port
-    reports_directory = args.reports_dir
-    ai = args.ai
-    Properties.get_instance().ai = args.ai
-    Properties.get_instance().skip_boring = args.skip_boring != 'False'
+    Properties.get_instance().load_properties(args)
+    debug = Properties.get_instance().get_property("debug", False)
+    port = Properties.get_instance().get_property("port", 5000)
+    reports_directory = Properties.get_instance().get_property("reports_dir")
+    ai = Properties.get_instance().get_property("use_ai", False)
 
     run_web(debug, port, reports_directory, ai)
 
 
-def run_web(debug=False, port=5000, reports_directory=DEFAULT_REPORTS_DIR, ai=False):
+def run_web(debug=False, port=5000, reports_directory="reports", ai=False):
     global reports_dir
     reports_dir = os.path.abspath(reports_directory)
     create_console_logging()

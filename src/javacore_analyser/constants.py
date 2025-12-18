@@ -36,8 +36,7 @@ MIN_JAVACORE_SIZE = 5 * 1024  # Minimal Javacore size in bytes
 DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 # Web application constants
-DEFAULT_REPORTS_DIR = "reports"
-DEFAULT_PORT = 5000
 TEMP_DIR = "temp_data"  # Folder to store temporary data for creating reports
 
+# AI constants
 DEFAULT_LLM_MODEL = "ibm/granite4:latest" # https://ollama.com/ibm/granite4
