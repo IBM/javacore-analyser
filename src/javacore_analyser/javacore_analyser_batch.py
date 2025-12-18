@@ -85,7 +85,12 @@ def main():
 
     Properties.get_instance().load_properties(args)
 
-    batch_process(input_param, output_param)
+    try:
+        batch_process(input_param, output_param)
+    except Exception as e:
+        # Error is logged in batch_process
+        logging.fatal("As processing failed, exiting")
+        exit(13)
 
 
 def batch_process(input_param, output_param):
@@ -111,8 +116,7 @@ def batch_process(input_param, output_param):
         process_javacores_and_generate_report_data(files, output_param)
     except Exception as ex:
         logging.exception(ex)
-        logging.error("Processing was not successful. Correct the problem and try again. Exiting with error 13")
-        exit(13)
+        logging.error("Processing was not successful. Correct the problem and try again.")
 
 
 # Assisted by WCA@IBM
