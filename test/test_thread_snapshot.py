@@ -1,5 +1,5 @@
 #
-# Copyright IBM Corp. 2024 - 2024
+# Copyright IBM Corp. 2024 - 2025
 # SPDX-License-Identifier: Apache-2.0
 #
 
@@ -9,6 +9,7 @@ from xml.dom.minidom import parseString
 
 from javacore_analyser.java_thread import Thread
 from javacore_analyser.javacore import Javacore
+from javacore_analyser.javacore_set import JavacoreSet
 from javacore_analyser.stack_trace import StackTrace
 from javacore_analyser.stack_trace_element import StackTraceElement
 from javacore_analyser.thread_snapshot import ThreadSnapshot
@@ -56,7 +57,7 @@ class TestThreadSnapshot(unittest.TestCase):
         omrthread_t:0x000000A813EC05B8, java/lang/Thread:0x00000008008915F0, state:R, prio=5"'
         address = self.snapshot.get_thread_address(line)
         self.assertEqual(address, "0x00000008008915F0")
-        line = line = '3XMTHREADINFO      Anonymous native thread'
+        line = '3XMTHREADINFO      Anonymous native thread'
         address = self.snapshot.get_thread_address(line)
         self.assertEqual(address, "")
 
@@ -102,9 +103,9 @@ class TestThreadSnapshot(unittest.TestCase):
         element = self.snapshot.get_xml(self.doc, snapshot_element)
         line_elements = element.getElementsByTagName("line")
         count = len(line_elements)
-        assert(count == 1)
+        assert (count == 1)
         line_element = line_elements[0]
-        assert(line_element.getAttribute("kind") == "java")
+        assert (line_element.getAttribute("kind") == "java")
 
     def test_get_thread_name(self):
         snap = ThreadSnapshot()
@@ -133,7 +134,7 @@ class TestThreadSnapshot(unittest.TestCase):
         self.snapshot.cpu_usage_inc = None
         snap0 = ThreadSnapshot()
         snap0.cpu_usage = 100
-        thread = Thread()
+        thread = Thread(JavacoreSet('', {"use_ai": False, "skip_boring": True}))
         snap0.thread = thread
         self.snapshot.thread = thread
         self.snapshot.cpu_usage = 200
@@ -141,4 +142,3 @@ class TestThreadSnapshot(unittest.TestCase):
         thread.thread_snapshots.append(self.snapshot)
         inc = self.snapshot.get_cpu_usage_inc()
         self.assertEqual(inc, 100)
-

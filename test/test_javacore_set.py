@@ -1,5 +1,5 @@
 #
-# Copyright IBM Corp. 2024 - 2024
+# Copyright IBM Corp. 2024 - 2025
 # SPDX-License-Identifier: Apache-2.0
 #
 
@@ -14,19 +14,21 @@ class TestJavacoreSet(unittest.TestCase):
 
     @classmethod
     def setUpClass(self):
-        javacores_path = os.getcwd() + os.sep + 'test' + os.sep + 'data' + os.sep + 'javacores'
-        self.javacore_set_from_test_data = JavacoreSet(javacores_path)
-        self.javacore_set_from_test_data = self.javacore_set_from_test_data.create(javacores_path)
+        self.javacores_path = os.getcwd() + os.sep + 'test' + os.sep + 'data' + os.sep + 'javacores'
+        self.javacore_set_properties = {"use_ai": False, "skip_boring": True}
+        self.javacore_set_from_test_data = JavacoreSet(self.javacores_path, self.javacore_set_properties)
+        self.javacore_set_from_test_data = self.javacore_set_from_test_data.create(self.javacores_path,
+                                                                                   self.javacore_set_properties)
         self.javacore_set_from_test_data.generate_tips()
 
     def setUp(self):
-        self.dummy_javacore_set = JavacoreSet("")
+        self.dummy_javacore_set = JavacoreSet("", self.javacore_set_properties)
 
     def test_parse_mem_arg(self):
         line = "2CIUSERARG               -Xmx32g"
         mem = self.dummy_javacore_set.parse_mem_arg(line)
         self.assertEqual(mem, "32g")
-        #
+
         line = "2CIUSERARG               -Xmx"
         mem = self.dummy_javacore_set.parse_mem_arg(line)
         self.assertEqual(mem, UNKNOWN)
@@ -149,7 +151,8 @@ class TestJavacoreSet(unittest.TestCase):
         pass
 
     def test_parse_javacores_contain_valid_file(self):
-        self.assertTrue(self.javacore_set_from_test_data.files.index('javacore.20220606.114458.32888.0001.txt') >= 0) #Object is on the list
+        self.assertTrue(self.javacore_set_from_test_data.files.index('javacore.20220606.114458.32888.0001.txt') >=
+                        0)  # Object is on the list
 
     def test_parse_javacores_not_contain_wrong_file(self):
         # Check whether javacore.wrong.corr is in the list

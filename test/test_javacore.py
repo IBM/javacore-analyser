@@ -14,7 +14,7 @@ from javacore_analyser.thread_snapshot import ThreadSnapshot
 class TestJavacore(unittest.TestCase):
 
     def setUp(self):
-        self.javacore_set = JavacoreSet('data' + os.path.sep + 'javacores')
+        self.javacore_set = JavacoreSet('data' + os.path.sep + 'javacores', {"use_ai": False, "skip_boring": True})
         self.filename = 'test' + os.path.sep + 'data' + os.path.sep + 'javacores' + os.path.sep + 'javacore.20220606.114458.32888.0001.txt'
         self.javacore = Javacore()
         self.javacore.create(self.filename, self.javacore_set)
@@ -65,7 +65,7 @@ class TestJavacore(unittest.TestCase):
         self.assertEqual(self.javacore.basefilename(), 'javacore.20220606.114458.32888.0001.txt')
 
     def test_get_cpu_percentage_and_load(self):
-        jset = JavacoreSet("")
+        jset = JavacoreSet("", {"use_ai": False, "skip_boring": True})
         jset.number_of_cpus = 2
         javacore = Javacore()
         javacore.javacore_set = jset

@@ -1,5 +1,5 @@
 #
-# Copyright IBM Corp. 2024 - 2024
+# Copyright IBM Corp. 2024 - 2025
 # SPDX-License-Identifier: Apache-2.0
 #
 
@@ -16,6 +16,10 @@ from javacore_analyser.thread_snapshot import ThreadSnapshot
 
 
 class TestTips(unittest.TestCase):
+
+    def setUp(self):
+        self.javacoreset_properties = {"use_ai": False, "skip_boring": True}
+
     def test_TooFewJavacoresTip(self):
         jc1 = os.path.join("test", "data", "javacores", "javacore.20220606.114458.32888.0001.txt")
         jc2 = os.path.join("test", "data", "javacores", "javacore.20220606.114502.32888.0002.txt")
@@ -23,8 +27,8 @@ class TestTips(unittest.TestCase):
         temp_dir_path = temp_dir.name
         shutil.copy2(jc1, temp_dir_path)
         shutil.copy2(jc2, temp_dir_path)
-        javacore_set = JavacoreSet(temp_dir_path)
-        javacore_set.create(temp_dir_path)
+        javacore_set = JavacoreSet(temp_dir_path, self.javacoreset_properties)
+        javacore_set.create(temp_dir_path, self.javacoreset_properties)
         result = tips.TooFewJavacoresTip.generate(javacore_set)
         self.assertTrue(len(result) > 0, "Missing tip for too few javacores")
         temp_dir.cleanup()
@@ -40,8 +44,8 @@ class TestTips(unittest.TestCase):
         shutil.copy2(jc2, temp_dir_path)
         shutil.copy2(jc3, temp_dir_path)
         shutil.copy2(jc4, temp_dir_path)
-        javacore_set = JavacoreSet(temp_dir_path)
-        javacore_set = javacore_set.create(temp_dir_path)
+        javacore_set = JavacoreSet(temp_dir_path, self.javacoreset_properties)
+        javacore_set = javacore_set.create(temp_dir_path, self.javacoreset_properties)
         result = tips.ExcludedJavacoresTip.generate(javacore_set)
         self.assertEqual(2, len(result), "Wrong number of excluded javacores")
         self.assertRegex(result[0], "javacore.20220606.1149",  # Excluded files are generated at 11:49
@@ -55,8 +59,8 @@ class TestTips(unittest.TestCase):
         temp_dir_path = temp_dir.name
         shutil.copy2(jc1, temp_dir_path)
         shutil.copy2(jc2, temp_dir_path)
-        javacore_set = JavacoreSet(temp_dir_path)
-        javacore_set = javacore_set.create(temp_dir_path)
+        javacore_set = JavacoreSet(temp_dir_path, self.javacoreset_properties)
+        javacore_set = javacore_set.create(temp_dir_path, self.javacoreset_properties)
         result = tips.BlockingThreadsTip.generate(javacore_set)
         self.assertEqual(1, len(result), "Wrong number of tips for blocking threads")
         tip_text = result[0]
@@ -70,8 +74,8 @@ class TestTips(unittest.TestCase):
         temp_dir_path = temp_dir.name
         shutil.copy2(jc1, temp_dir_path)
         shutil.copy2(jc2, temp_dir_path)
-        javacore_set = JavacoreSet(temp_dir_path)
-        javacore_set = javacore_set.create(temp_dir_path)
+        javacore_set = JavacoreSet(temp_dir_path, self.javacoreset_properties)
+        javacore_set = javacore_set.create(temp_dir_path, self.javacoreset_properties)
         result = tips.BlockingThreadsTip.generate(javacore_set)
         self.assertEqual(5, len(result), "Wrong number of tips for blocking threads")
         temp_dir.cleanup()
@@ -83,8 +87,8 @@ class TestTips(unittest.TestCase):
         temp_dir_path = temp_dir.name
         shutil.copy2(jc1, temp_dir_path)
         shutil.copy2(jc2, temp_dir_path)
-        javacore_set = JavacoreSet(temp_dir_path)
-        javacore_set = javacore_set.create(temp_dir_path)
+        javacore_set = JavacoreSet(temp_dir_path, self.javacoreset_properties)
+        javacore_set = javacore_set.create(temp_dir_path, self.javacoreset_properties)
         javacore_set.populate_snapshot_collections()
         result = tips.HighCpuUsageTip.generate(javacore_set)
         self.assertEqual(6, len(result), "Wrong number of tips for high CPU usage")
@@ -100,21 +104,21 @@ class TestTips(unittest.TestCase):
                              "CPU usage tip but it is there")
         self.assertTrue(high_gc_usage_tip_found, "High CPU usage tip not found")
         self.assertTrue(qm_asynchronous_task_found,
-                            "\"qm: AsynchronousTaskRunner-12\" not found in high cpu usage tip")
+                        "\"qm: AsynchronousTaskRunner-12\" not found in high cpu usage tip")
         temp_dir.cleanup()
 
     def test_InvalidAccumulatedCpuTimeTip(self):
-        javacore_set = JavacoreSet("")
+        javacore_set = JavacoreSet('', {"use_ai": False, "skip_boring": True})
 
-        t1 = Thread()
+        t1 = Thread(javacore_set)
         t1.id = 1
         t1.name = "winword"
 
-        t2 = Thread()
+        t2 = Thread(javacore_set)
         t2.id = 2
         t2.name = "excel"
 
-        t3 = Thread()
+        t3 = Thread(javacore_set)
         t3.id = 3
         t3.name = "powerpnt"
 
@@ -123,7 +127,7 @@ class TestTips(unittest.TestCase):
         javacore_set.threads.snapshot_collections.append(t3)
 
         # test 1, no thread in javacore_set
-        result = tips.InvalidAccumulatedCpuTimeTip.generate(JavacoreSet(""))
+        result = tips.InvalidAccumulatedCpuTimeTip.generate(JavacoreSet("", self.javacoreset_properties))
         logging.debug("Test 1: %s" % result)
         expected_result = []
         failure_message = "There should be no tip as all threads are with valid total CPU"

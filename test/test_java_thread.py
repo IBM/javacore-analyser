@@ -8,6 +8,7 @@ import unittest
 
 from javacore_analyser.java_thread import Thread
 from javacore_analyser.javacore import Javacore
+from javacore_analyser.javacore_set import JavacoreSet
 from javacore_analyser.stack_trace import StackTrace
 from javacore_analyser.stack_trace_element import StackTraceElement
 from javacore_analyser.thread_snapshot import ThreadSnapshot
@@ -16,7 +17,8 @@ from javacore_analyser.thread_snapshot import ThreadSnapshot
 class TestJavaThread(unittest.TestCase):
 
     def setUp(self):
-        self.thread = Thread()
+        self.empty_javacore_set = JavacoreSet('', {"use_ai": False, "skip_boring": True})
+        self.thread = Thread(self.empty_javacore_set)
 
         self.javacore1 = Javacore()
         self.javacore1.timestamp = datetime.datetime.strptime("2022/06/06 at 11:44:58:407",
@@ -96,7 +98,7 @@ class TestJavaThread(unittest.TestCase):
         self.assertEqual(self.thread.get_avg_mem(), 53956.0)
 
     def test_is_interesting(self):
-        thread = Thread()
+        thread = Thread(self.empty_javacore_set)
         thread_snapshot1 = ThreadSnapshot()
         thread.thread_snapshots.append(thread_snapshot1)
         self.assertFalse(thread.is_interesting(),
@@ -106,7 +108,7 @@ class TestJavaThread(unittest.TestCase):
         thread.thread_snapshots.append(thread_snapshot2)
         self.assertTrue(thread.is_interesting(), "This thread consumes CPU")
 
-        thread = Thread()
+        thread = Thread(self.empty_javacore_set)
         thread_snapshot1 = ThreadSnapshot()
         thread_snapshot2 = ThreadSnapshot()
         thread_snapshot2.allocated_mem = 1024 * 1023 - 1 # just shy of a megabyte
@@ -115,7 +117,7 @@ class TestJavaThread(unittest.TestCase):
         self.assertFalse(thread.is_interesting(),
                          "This thread allocated less than a megabyte of memory so should be boring")
 
-        thread = Thread()
+        thread = Thread(self.empty_javacore_set)
         thread_snapshot1 = ThreadSnapshot()
         thread_snapshot2 = ThreadSnapshot()
         thread_snapshot2.allocated_mem = 1024 * 1024  # 1 megabyte
@@ -124,14 +126,14 @@ class TestJavaThread(unittest.TestCase):
         self.assertFalse(thread.is_interesting(),
                          "This thread allocated a megabyte of memory, so should be interesting")
 
-        thread = Thread()
+        thread = Thread(self.empty_javacore_set)
         thread_snapshot1 = ThreadSnapshot()
         thread_snapshot2 = ThreadSnapshot()
         thread.thread_snapshots.append(thread_snapshot1)
         thread_snapshot1.blocker = thread_snapshot2
         self.assertTrue(thread.is_interesting(), "This thread is blocked, so should be interesting")
 
-        thread = Thread()
+        thread = Thread(self.empty_javacore_set)
         thread_snapshot = ThreadSnapshot()
         stack_trace = StackTrace()
         for i in range(51):
@@ -142,7 +144,7 @@ class TestJavaThread(unittest.TestCase):
         self.assertTrue(thread.is_interesting(), "This thread has a tall stack, so should be interesting")
 
     def test_has_tall_stacks(self):
-        thread = Thread()
+        thread = Thread(self.empty_javacore_set)
         thread_snapshot = ThreadSnapshot()
         stack_trace = StackTrace()
         assert(not thread.has_tall_stacks())
