@@ -45,7 +45,7 @@ def _create_xml_xsl_for_collection(tmp_dir, templates_dir, xml_xsl_filename, col
             filename = output_file_prefix + "_" + str(element_id) + extension
             if filename.startswith("_"):
                 filename = filename[1:]
-            if element.is_interesting() or not Properties.get_instance().skip_boring:
+            if element.is_interesting() or not Properties.get_instance().skip_boring():
                 file = os.path.join(tmp_dir, filename)
                 logging.debug("Writing file " + file)
                 f = open(file, "w")
@@ -154,7 +154,7 @@ class JavacoreSet:
         os.mkdir(directory)
 
         for element in tqdm(collection, desc="Generating placeholder htmls", unit=" file"):
-            if element.is_interesting() or not Properties.get_instance().skip_boring:
+            if element.is_interesting() or not Properties.get_instance().skip_boring():
                 filename = file_prefix + "_" + element.get_id() + ".html"
                 if filename.startswith("_"):
                     filename = filename[1:]
