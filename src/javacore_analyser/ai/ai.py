@@ -4,13 +4,13 @@
 #
 
 import logging
+
 import markdown
-from ollama import chat
-from ollama import ChatResponse
 import ollama
+from ollama import ChatResponse
+from ollama import chat
 
-from javacore_analyser.constants import DEFAULT_LLM_MODEL
-
+from javacore_analyser.properties import Properties
 
 
 # prerequisites:
@@ -29,7 +29,7 @@ class Ai:
     def __init__(self, javacore_set):
         self.prompt = ""
         self.javacore_set = javacore_set
-        self.model = DEFAULT_LLM_MODEL
+        self.model = Properties.get_instance().get_property("llm_model", "ibm/granite4:latest")
         logging.info("Pulling model: " + self.model)
         ollama.pull(self.model)
         logging.info("Model pulled: " + self.model)
