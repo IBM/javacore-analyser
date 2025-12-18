@@ -154,7 +154,7 @@ class TestJavacoreAnalyser(unittest.TestCase):
             javacore_analyser_batch.main()
         self.assert_data_generated_and_not_empty()
 
-    # Checks whether report.xml and report.xsl have been generated.
+    # Checks whether report output files have been generated.
     def assert_data_generated_and_not_empty(self):
         self.assertTrue(os.path.exists("tmp/index.html"), "index.html not generated")
         self.assertTrue(os.path.getsize("tmp/index.html") > 0, "index.html file is empty")
