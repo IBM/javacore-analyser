@@ -20,7 +20,6 @@ import py7zr
 from importlib_resources.abc import Traversable
 
 from javacore_analyser import logging_utils
-from javacore_analyser.constants import DEFAULT_FILE_DELIMITER
 from javacore_analyser.javacore_set import JavacoreSet
 from javacore_analyser.properties import Properties
 
@@ -75,24 +74,21 @@ def main():
                                       "See doc: https://github.com/IBM/javacore-analyser/wiki")
     parser.add_argument("output", help="Name of directory where report will be generated")
     parser.add_argument("--separator",
-                        help='Input files separator (default "' + DEFAULT_FILE_DELIMITER + '")',
-                        default=DEFAULT_FILE_DELIMITER)
-    parser.add_argument("--skip_boring", help='Skips drilldown page generation for threads that do not do anything',
-                        default='True')
-    parser.add_argument("--use_ai", default="False", required=False, help="Use AI genereated analysis")
+                        help='Input files separator (default ";")')
+    parser.add_argument("--skip_boring", help='Skips drilldown page generation for threads that do not do anything',)
+    parser.add_argument("--use_ai", required=False, help="Use AI genereated analysis")
     parser.add_argument("--config_file", required=False, help="Configuration file", default="config.ini")
     args = parser.parse_args()
 
     input_param = args.input
     output_param = args.output
-    files_separator = args.separator
 
-    Properties.get_instance().read_properties(args)
+    Properties.get_instance().load_properties(args)
 
-    batch_process(input_param, output_param, files_separator)
+    batch_process(input_param, output_param)
 
 
-def batch_process(input_param, output_param, files_separator=DEFAULT_FILE_DELIMITER):
+def batch_process(input_param, output_param):
     logging_utils.create_console_logging()
     logging.info("IBM Javacore analyser")
     logging.info("Python version: " + sys.version)
@@ -104,6 +100,7 @@ def batch_process(input_param, output_param, files_separator=DEFAULT_FILE_DELIMI
     logging_utils.create_file_logging(output_param)
     # Check whether as input we got list of files or single file
     # Semicolon is separation mark for list of input files
+    files_separator = Properties.get_instance().get_property("separator")
     if files_separator in input_param or fnmatch.fnmatch(input_param, '*javacore*.txt'):
         # Process list of the files (copy all or them to output dir)
         files = input_param.split(files_separator)

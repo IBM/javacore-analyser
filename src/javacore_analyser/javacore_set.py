@@ -20,6 +20,9 @@ from lxml.etree import XMLSyntaxError
 from tqdm import tqdm
 
 from javacore_analyser import tips
+from javacore_analyser.ai.ai import Ai
+from javacore_analyser.ai.ai_overview_prompter import AiOverviewPrompter
+from javacore_analyser.ai.tips_prompter import TipsPrompter
 from javacore_analyser.code_snapshot_collection import CodeSnapshotCollection
 from javacore_analyser.constants import *
 from javacore_analyser.har_file import HarFile
@@ -29,10 +32,6 @@ from javacore_analyser.properties import Properties
 from javacore_analyser.snapshot_collection import SnapshotCollection
 from javacore_analyser.snapshot_collection_collection import SnapshotCollectionCollection
 from javacore_analyser.verbose_gc import VerboseGcParser
-
-from javacore_analyser.ai.ai import Ai
-from javacore_analyser.ai.ai_overview_prompter import AiOverviewPrompter
-from javacore_analyser.ai.tips_prompter import TipsPrompter
 
 
 def _create_xml_xsl_for_collection(tmp_dir, templates_dir, xml_xsl_filename, collection, output_file_prefix):
@@ -124,7 +123,7 @@ class JavacoreSet:
         jset.print_blockers()
         jset.print_thread_states()
         jset.generate_tips()
-        if Properties.get_instance().ai.lower() == 'true':
+        if Properties.get_instance().get_property("use_ai"):
             jset.add_ai()
         return jset
 

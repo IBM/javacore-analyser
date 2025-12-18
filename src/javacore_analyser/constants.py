@@ -30,7 +30,6 @@ ENCODING = '1TICHARSET'
 CMD_LINE = '1CICMDLINE'
 
 DATA_OUTPUT_SUBDIR = '/data/'
-DEFAULT_FILE_DELIMITER = ';'
 
 MIN_JAVACORE_SIZE = 5 * 1024  # Minimal Javacore size in bytes
 

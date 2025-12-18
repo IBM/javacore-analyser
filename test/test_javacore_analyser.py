@@ -44,7 +44,7 @@ class TestJavacoreAnalyser(unittest.TestCase):
         self.expateerror = ["javacore_analyser", "test/data/verboseGcJavacores", "tmp"]
         self.threadnameswithquotes = ["javacore_analyser", "test/data/quotationMarks", "tmp"]
         self.encoding = ["javacore_analyser", "test/data/encoding/javacore.20220606.114458.32888.0001.txt", "tmp"]
-        self.ai = ["javacore_analyser", "test/data/archives/javacores.7z", "tmp", "--ai=true"]
+        self.ai = ["javacore_analyser", "test/data/archives/javacores.7z", "tmp", "--use_ai=true"]
         rm_tmp_dir()
 
     def test_api(self):
