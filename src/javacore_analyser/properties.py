@@ -66,12 +66,13 @@ class Properties:
 
         # For each property change the type from String to Boolean or number
         for key, value in properties.items():
-            if value.lower() == "true":
-                properties[key] = True
-            elif value.lower() == "false":
-                properties[key] = False
-            elif value.isdigit():
-                properties[key] = int(value)
+            if isinstance(value, str):
+                if value.lower() == "true":
+                    properties[key] = True
+                elif value.lower() == "false":
+                    properties[key] = False
+                elif value.isdigit():
+                    properties[key] = int(value)
         self.properties = properties
 
     @staticmethod
