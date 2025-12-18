@@ -86,6 +86,7 @@ def main():
     input_param = args.input
     output_param = args.output
     files_separator = args.separator
+
     Properties.get_instance().read_properties(args)
 
     batch_process(input_param, output_param, files_separator)
