@@ -17,9 +17,7 @@ def main():
     common_utils.add_common_args(batch)
 
     web = subparsers.add_parser("web", description="Run web application")
-    web.add_argument("--debug", help="Debug mode. Use True only for app development")
-    web.add_argument("--port", help="Application port")
-    web.add_argument("--reports-dir", help="Directory to store reports data")
+    common_utils.add_web_args(web)
     common_utils.add_common_args(web)
 
     args = parser.parse_args()

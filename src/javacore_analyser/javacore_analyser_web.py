@@ -137,9 +137,7 @@ def upload_file():
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--debug", help="Debug mode. Use only for development")
-    parser.add_argument("--port", help="Port to run application")
-    parser.add_argument("--reports-dir", help="Directory where app reports are stored")
+    common_utils.add_web_args(parser)
     common_utils.add_common_args(parser)
     args = parser.parse_args()
     Properties.get_instance().load_properties(args)

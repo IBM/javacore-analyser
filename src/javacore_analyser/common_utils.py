@@ -33,3 +33,23 @@ def add_common_args(parser):
     parser.add_argument("--skip_boring", help='Skips drilldown page generation for threads that do not do anything', )
     parser.add_argument("--use_ai", required=False, help="Use AI genereated analysis")
     parser.add_argument("--config_file", required=False, help="Configuration file", default="config.ini")
+
+def add_web_args(parser):
+    """
+    Add web-specific command line arguments to the given parser object.
+
+    This function is designed to be used with the argparse module to add
+    command line arguments for a web application. The arguments added are:
+
+    --debug:
+        Enables debug mode. This should only be used during development.
+
+    --port:
+        Specifies the port number on which the application will run.
+
+    --reports-dir:
+        Specifies the directory where application reports will be stored.
+    """
+    parser.add_argument("--debug", help="Debug mode. Use only for development")
+    parser.add_argument("--port", help="Port to run application")
+    parser.add_argument("--reports-dir", help="Directory where app reports are stored")
