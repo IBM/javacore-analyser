@@ -33,6 +33,7 @@ def add_common_args(parser):
                         help='Input files separator (default ";")')
     parser.add_argument("--skip_boring", help='Skips drilldown page generation for threads that do not do anything', )
     parser.add_argument("--use_ai", required=False, help="Use AI genereated analysis")
+    parser.add_argument("--llm_model", required=False, help="LLM model to use")
     parser.add_argument("--config_file", required=False, help="Configuration file", default="config.ini")
 
 
