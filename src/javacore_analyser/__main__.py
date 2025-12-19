@@ -1,10 +1,10 @@
 #
-# Copyright IBM Corp. 2024 - 2024
+# Copyright IBM Corp. 2024 - 2025
 # SPDX-License-Identifier: Apache-2.0
 #
 import argparse
 
-from javacore_analyser import javacore_analyser_batch, constants, javacore_analyser_web
+from javacore_analyser import javacore_analyser_batch, javacore_analyser_web, common_utils
 
 
 def main():
@@ -14,13 +14,11 @@ def main():
     batch = subparsers.add_parser("batch", description="Run batch application")
     batch.add_argument("input", help="Input file(s) or directory")
     batch.add_argument("output", help="Destination report directory")
-    batch.add_argument("--separator", default=constants.DEFAULT_FILE_DELIMITER)
+    common_utils.add_common_args(batch)
 
     web = subparsers.add_parser("web", description="Run web application")
-    web.add_argument("--debug", help="Debug mode. Use True only for app development", default=False)
-    web.add_argument("--port", help="Application port", default=constants.DEFAULT_PORT)
-    web.add_argument("--reports-dir", help="Directory to store reports data",
-                     default=constants.DEFAULT_REPORTS_DIR)
+    common_utils.add_web_args(web)
+    common_utils.add_common_args(web)
 
     args = parser.parse_args()
 

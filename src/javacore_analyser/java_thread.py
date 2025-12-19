@@ -34,7 +34,7 @@ class Thread(AbstractSnapshotCollection):
         thread_node = super().get_xml(doc)
 
         thread_node.setAttribute("has_drill_down",
-                                 str(self.is_interesting() or not Properties.get_instance().skip_boring))
+                                 str(self.is_interesting() or not Properties.get_instance().skip_boring()))
 
         # thread ID
         id_node = doc.createElement("thread_id")

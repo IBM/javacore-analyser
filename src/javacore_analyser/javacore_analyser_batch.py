@@ -19,8 +19,7 @@ import importlib_resources
 import py7zr
 from importlib_resources.abc import Traversable
 
-from javacore_analyser import logging_utils
-from javacore_analyser.constants import DEFAULT_FILE_DELIMITER
+from javacore_analyser import common_utils
 from javacore_analyser.javacore_set import JavacoreSet
 from javacore_analyser.properties import Properties
 
@@ -74,25 +73,24 @@ def main():
                                       "when the javacores were collected can be added. "
                                       "See doc: https://github.com/IBM/javacore-analyser/wiki")
     parser.add_argument("output", help="Name of directory where report will be generated")
-    parser.add_argument("--separator",
-                        help='Input files separator (default "' + DEFAULT_FILE_DELIMITER + '")',
-                        default=DEFAULT_FILE_DELIMITER)
-    parser.add_argument("--skip_boring", help='Skips drilldown page generation for threads that do not do anything',
-                        default='True')
-    parser.add_argument("--ai", default='False', required=False, help="Use AI genereated analysis")
+    common_utils.add_common_args(parser)
     args = parser.parse_args()
 
     input_param = args.input
     output_param = args.output
-    files_separator = args.separator
-    Properties.get_instance().ai = args.ai
-    Properties.get_instance().skip_boring = args.skip_boring != 'False'
 
-    batch_process(input_param, output_param, files_separator)
+    Properties.get_instance().load_properties(args)
+
+    try:
+        batch_process(input_param, output_param)
+    except Exception as e:
+        # Error is logged in batch_process
+        logging.fatal("As processing failed, exiting")
+        exit(13)
 
 
-def batch_process(input_param, output_param, files_separator=DEFAULT_FILE_DELIMITER):
-    logging_utils.create_console_logging()
+def batch_process(input_param, output_param):
+    common_utils.create_console_logging()
     logging.info("IBM Javacore analyser")
     logging.info("Python version: " + sys.version)
     logging.info("Preferred encoding: " + locale.getpreferredencoding())
@@ -100,9 +98,10 @@ def batch_process(input_param, output_param, files_separator=DEFAULT_FILE_DELIMI
     logging.info("Report directory: " + output_param)
     output_param = os.path.normpath(output_param)
     # Needs to be created once output file structure is ready.
-    logging_utils.create_file_logging(output_param)
+    common_utils.create_file_logging(output_param)
     # Check whether as input we got list of files or single file
     # Semicolon is separation mark for list of input files
+    files_separator = Properties.get_instance().get_property("separator")
     if files_separator in input_param or fnmatch.fnmatch(input_param, '*javacore*.txt'):
         # Process list of the files (copy all or them to output dir)
         files = input_param.split(files_separator)
@@ -113,8 +112,7 @@ def batch_process(input_param, output_param, files_separator=DEFAULT_FILE_DELIMI
         process_javacores_and_generate_report_data(files, output_param)
     except Exception as ex:
         logging.exception(ex)
-        logging.error("Processing was not successful. Correct the problem and try again. Exiting with error 13")
-        exit(13)
+        logging.error("Processing was not successful. Correct the problem and try again.")
 
 
 # Assisted by WCA@IBM
