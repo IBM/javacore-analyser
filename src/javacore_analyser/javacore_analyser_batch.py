@@ -19,7 +19,7 @@ import importlib_resources
 import py7zr
 from importlib_resources.abc import Traversable
 
-from javacore_analyser import logging_utils
+from javacore_analyser import common_utils
 from javacore_analyser.javacore_set import JavacoreSet
 from javacore_analyser.properties import Properties
 
@@ -73,11 +73,7 @@ def main():
                                       "when the javacores were collected can be added. "
                                       "See doc: https://github.com/IBM/javacore-analyser/wiki")
     parser.add_argument("output", help="Name of directory where report will be generated")
-    parser.add_argument("--separator",
-                        help='Input files separator (default ";")')
-    parser.add_argument("--skip_boring", help='Skips drilldown page generation for threads that do not do anything',)
-    parser.add_argument("--use_ai", required=False, help="Use AI genereated analysis")
-    parser.add_argument("--config_file", required=False, help="Configuration file", default="config.ini")
+    common_utils.add_common_args(parser)
     args = parser.parse_args()
 
     input_param = args.input
@@ -94,7 +90,7 @@ def main():
 
 
 def batch_process(input_param, output_param):
-    logging_utils.create_console_logging()
+    common_utils.create_console_logging()
     logging.info("IBM Javacore analyser")
     logging.info("Python version: " + sys.version)
     logging.info("Preferred encoding: " + locale.getpreferredencoding())
@@ -102,7 +98,7 @@ def batch_process(input_param, output_param):
     logging.info("Report directory: " + output_param)
     output_param = os.path.normpath(output_param)
     # Needs to be created once output file structure is ready.
-    logging_utils.create_file_logging(output_param)
+    common_utils.create_file_logging(output_param)
     # Check whether as input we got list of files or single file
     # Semicolon is separation mark for list of input files
     files_separator = Properties.get_instance().get_property("separator")

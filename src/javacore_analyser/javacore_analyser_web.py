@@ -18,8 +18,9 @@ from flask import Flask, render_template, request, send_from_directory, redirect
 from waitress import serve
 
 import javacore_analyser.javacore_analyser_batch
+from javacore_analyser import common_utils
+from javacore_analyser.common_utils import create_console_logging, create_file_logging
 from javacore_analyser.constants import TEMP_DIR
-from javacore_analyser.logging_utils import create_console_logging, create_file_logging
 from javacore_analyser.properties import Properties
 
 """
@@ -139,9 +140,7 @@ def main():
     parser.add_argument("--debug", help="Debug mode. Use only for development")
     parser.add_argument("--port", help="Port to run application")
     parser.add_argument("--reports-dir", help="Directory where app reports are stored")
-    parser.add_argument("--use_ai", help="Use AI to analyse the data")
-    parser.add_argument("--skip_boring", help='Skips drilldown page generation for threads that do not do anything')
-    parser.add_argument("--config_file", required=False, help="Configuration file", default="config.ini")
+    common_utils.add_common_args(parser)
     args = parser.parse_args()
     Properties.get_instance().load_properties(args)
     debug = Properties.get_instance().get_property("debug", False)
