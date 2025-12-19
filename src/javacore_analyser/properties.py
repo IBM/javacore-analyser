@@ -31,7 +31,7 @@ class Properties:
         # the assertion below effectively makes the constructor private
         assert (create_key == Properties.__create_key), \
             "Properties objects must be created using Properties.create"
-        self.properties = {"skip_boring": True}
+
 
     def load_properties(self, args):
         """
