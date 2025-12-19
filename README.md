@@ -78,7 +78,13 @@ You can type the following command to obtain the help:
    The first parameter set the port to use by application. If not specified, 5000 will be used.  
    The second parameter sets where the reports need to be stored. If not set, then the `reports` dir will be created in current location.  
 
-Now you can type (http://localhost:5000/).  
+Now you can type (http://localhost:5000/).
+
+#### Configuring cmd and web application.
+Once you run the application the first time, there is `config.ini` file created in running directory. The application 
+uses this properties file to set configuration. You can modify the properties to adopt running the tool to your needs.
+There is `--config_file` command line parameter which you can use if you want to change the location of configuration 
+file.
 
 ### Running container image
 There is a Docker/Podman container managed by one of projects developers. Use the following command 
