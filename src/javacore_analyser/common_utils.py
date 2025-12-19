@@ -4,6 +4,7 @@
 #
 
 import logging
+import os
 import sys
 from pathlib import Path
 
@@ -11,7 +12,7 @@ LOGGING_FORMAT = '%(asctime)s [thread: %(thread)d][%(levelname)s][%(filename)s:%
 
 
 def create_file_logging(logging_file_dir):
-    logging_file = logging_file_dir + "/wait2-debug.log"
+    logging_file = os.path.join(logging_file_dir, "wait2-debug.log")
     Path(logging_file_dir).mkdir(parents=True, exist_ok=True)  # Sometimes the folder of logging might not exist
     file_handler = logging.FileHandler(logging_file, mode='w')
     file_handler.setLevel(logging.DEBUG)
