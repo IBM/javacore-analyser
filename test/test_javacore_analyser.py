@@ -44,11 +44,15 @@ class TestJavacoreAnalyser(unittest.TestCase):
         self.expateerror = ["javacore_analyser", "test/data/verboseGcJavacores", "tmp"]
         self.threadnameswithquotes = ["javacore_analyser", "test/data/quotationMarks", "tmp"]
         self.encoding = ["javacore_analyser", "test/data/encoding/javacore.20220606.114458.32888.0001.txt", "tmp"]
+
         self.ai = ["javacore_analyser", "test/data/archives/javacores.7z", "tmp", "--use_ai=true"]
         self.ollama = ["javacore_analyser", "test/data/archives/javacores.7z", "tmp", "--use_ai=true",
                        "--llm_method=ollama", "--llm_model=granite4:350m", "--llm_max_tokens=10", "--llm_temperature=1"]
         self.huggingface = ["javacore_analyser", "test/data/archives/javacores.7z", "tmp", "--use_ai=true",
                             "--llm_method=huggingface", "--llm_model=ibm-granite/granite-4.0-h-350M"]
+        self.ai_default_llm = ["javacore_analyser", "test/data/archives/javacores.7z", "tmp", "--use_ai=true"]
+        self.ai_custom_llm = ["javacore_analyser", "test/data/archives/javacores.7z", "tmp", "--use_ai=true", "--llm_model=granite4:350m"]
+
         rm_tmp_dir()
 
     def test_api(self):
@@ -102,8 +106,11 @@ class TestJavacoreAnalyser(unittest.TestCase):
     def test_run_two_javacores_custom_separator(self):
         self.runMainWithParams(self.twofilesargs_different_separator)
 
-    def test_run_ai(self):
-        self.runMainWithParams(self.ai)
+    def test_run_ai_default_model(self):
+        self.runMainWithParams(self.ai_default_llm)
+
+    def test_run_ai_default_params(self):
+        self.runMainWithParams(self.ai_custom_llm)
 
     def test_run_ollama(self):
         self.runMainWithParams(self.ollama)
