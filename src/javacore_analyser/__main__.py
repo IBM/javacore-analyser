@@ -4,7 +4,7 @@
 #
 import argparse
 
-from javacore_analyser import javacore_analyser_batch, constants, javacore_analyser_web, common_utils
+from javacore_analyser import javacore_analyser_batch, javacore_analyser_web, common_utils
 
 
 def main():
@@ -17,10 +17,10 @@ def main():
     common_utils.add_common_args(batch)
 
     web = subparsers.add_parser("web", description="Run web application")
-    web.add_argument("--debug", help="Debug mode. Use True only for app development", default=False)
-    web.add_argument("--port", help="Application port", default=constants.DEFAULT_PORT)
-    web.add_argument("--reports-dir", help="Directory to store reports data",
-                     default=constants.DEFAULT_REPORTS_DIR)
+    web.add_argument("--debug", help="Debug mode. Use True only for app development")
+    web.add_argument("--port", help="Application port")
+    web.add_argument("--reports-dir", help="Directory to store reports data")
+    common_utils.add_common_args(web)
 
     args = parser.parse_args()
 
