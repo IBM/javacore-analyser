@@ -37,7 +37,7 @@ class TestProperties(unittest.TestCase):
             properties.load_properties(args)
             self.assertTrue(properties.get_property("debug"), "debug should be True")
             self.assertEqual(properties.get_property("nonexistent", 5000), 5000, "Nonexistent property should be set to 1000")
-            self.assertFalse(properties.get_property("skip_boring"), "Default skip_boring should be False")
+            self.assertTrue(properties.get_property("skip_boring"), "Default skip_boring should be True")
         finally:
             os.remove(file_name)
 
