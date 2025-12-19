@@ -35,9 +35,9 @@ class Properties:
 
     def load_properties(self, args):
         """
-        Reads properties from a config file and command line arguments, converting string values to Boolean or numbers where applicable.
-        Args:
-            args (argparse.Namespace): Command line arguments containing optional properties.
+        Reads properties from a config file and command line arguments, converting string values to Boolean or
+        numbers where applicable. Args: args (argparse.Namespace): Command line arguments containing optional
+        properties.
         """
 
         properties = {}
