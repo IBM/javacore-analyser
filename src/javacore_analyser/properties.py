@@ -83,11 +83,14 @@ class Properties:
 
     def skip_boring(self):
         return self.properties["skip_boring"]
-    
-    def get_property(self, key, default_value=None):
-        if key in self.properties: return self.properties[key]
-        else: return default_value
 
-    def _generate_default_config(self, config_file):
+    def get_property(self, key, default_value=None):
+        if key in self.properties:
+            return self.properties[key]
+        else:
+            return default_value
+
+    @staticmethod
+    def _generate_default_config(config_file):
         with importlib_resources.path("javacore_analyser", "config.ini") as config_ini_resource:
             shutil.copy2(config_ini_resource, config_file)
