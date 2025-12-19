@@ -1,5 +1,5 @@
 #
-# Copyright IBM Corp. 2024 - 2024
+# Copyright IBM Corp. 2024 - 2025
 # SPDX-License-Identifier: Apache-2.0
 #
 
@@ -33,6 +33,7 @@ def add_common_args(parser):
     parser.add_argument("--skip_boring", help='Skips drilldown page generation for threads that do not do anything', )
     parser.add_argument("--use_ai", required=False, help="Use AI genereated analysis")
     parser.add_argument("--config_file", required=False, help="Configuration file", default="config.ini")
+
 
 def add_web_args(parser):
     """
