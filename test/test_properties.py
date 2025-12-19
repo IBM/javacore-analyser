@@ -49,10 +49,13 @@ class TestProperties(unittest.TestCase):
             file.write("serveraliveinterval = 45\n")
             file.write("compression = true\n")
         args = argparse.Namespace(config_file=file_name, compression = False, arg_property=True)
-        properties.load_properties(args)
-        self.assertEqual(properties.get_property("serveraliveinterval"), 45, "ServerAliveInterval should be 45")
-        self.assertFalse(properties.get_property("compression"), "Compression should be False")
-        self.assertTrue(properties.get_property("arg_property"), "arg_property should be True")
+        try:
+            properties.load_properties(args)
+            self.assertEqual(properties.get_property("serveraliveinterval"), 45, "ServerAliveInterval should be 45")
+            self.assertFalse(properties.get_property("compression"), "Compression should be False")
+            self.assertTrue(properties.get_property("arg_property"), "arg_property should be True")
+        finally:
+            os.remove(file_name)
 
     def test_fail_when_missing_config_file(self):
         properties = Properties.get_instance()
