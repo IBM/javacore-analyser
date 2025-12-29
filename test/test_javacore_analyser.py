@@ -45,6 +45,10 @@ class TestJavacoreAnalyser(unittest.TestCase):
         self.threadnameswithquotes = ["javacore_analyser", "test/data/quotationMarks", "tmp"]
         self.encoding = ["javacore_analyser", "test/data/encoding/javacore.20220606.114458.32888.0001.txt", "tmp"]
         self.ai = ["javacore_analyser", "test/data/archives/javacores.7z", "tmp", "--use_ai=true"]
+        self.ollama = ["javacore_analyser", "test/data/archives/javacores.7z", "tmp", "--use_ai=true",
+                       "--llm_method=ollama", "--llm_model=granite4:350m"]
+        self.huggingface = ["javacore_analyser", "test/data/archives/javacores.7z", "tmp", "--use_ai=true",
+                            "--llm_method=huggingface", "--llm_model=ibm-granite/granite-4.0-h-350M"]
         rm_tmp_dir()
 
     def test_api(self):
@@ -100,6 +104,12 @@ class TestJavacoreAnalyser(unittest.TestCase):
 
     def test_run_ai(self):
         self.runMainWithParams(self.ai)
+
+    def test_run_ollama(self):
+        self.runMainWithParams(self.ollama)
+
+    def test_run_hugging_face(self):
+        self.runMainWithParams(self.huggingface)
 
     def test_error_for_archive_without_javacores(self):
         # Run with params from https://stackoverflow.com/questions/18668947/how-do-i-set-sys-argv-so-i-can-unit-test-it
