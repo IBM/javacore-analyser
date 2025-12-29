@@ -6,6 +6,8 @@ before_install:
  - pip install -U build
  - pip install -U twine
  - curl -fsSL https://ollama.com/install.sh | sh
+ - curl -fsSL https://hf.co/cli/install.sh | bash
+ - hf download ibm-granite/granite-4.0-h-350m
 install:
  - pip install -r requirements.txt
  - pip install .
