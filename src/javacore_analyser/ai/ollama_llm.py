@@ -11,12 +11,13 @@ from ollama import ChatResponse
 from ollama import chat
 
 from javacore_analyser.properties import Properties
+from src.javacore_analyser.ai.llm import LLM
 
 
 # prerequisites:
 # install Ollama from https://ollama.com/download
 
-class Ai:
+class OllamaLLM(LLM):
     """
     A class representing an AI model infuser.
 
@@ -57,7 +58,8 @@ class Ai:
     def response_to_html(self, response):
         html = markdown.markdown(response)
         return html
-    
+
+
     def infuse_in_html(self, prompter):
         content = self.infuse(prompter)
         return self.response_to_html(content)
