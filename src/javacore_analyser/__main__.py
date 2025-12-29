@@ -29,7 +29,7 @@ def main():
         javacore_analyser_web.run_web(args.debug, args.port, args.reports_dir)
     elif app_type.lower() == "batch":
         print("Running batch application")
-        javacore_analyser_batch.batch_process(args.input, args.output, args.separator)
+        javacore_analyser_batch.main()
     else:
         print('Invalid application type. Available types: "batch" or "web"')
 

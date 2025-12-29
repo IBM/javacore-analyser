@@ -11,7 +11,7 @@ from ollama import ChatResponse
 from ollama import chat
 
 from javacore_analyser.properties import Properties
-from src.javacore_analyser.ai.llm import LLM
+from javacore_analyser.ai.llm import LLM
 
 
 # prerequisites:
