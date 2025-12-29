@@ -30,9 +30,12 @@ def create_console_logging():
 
 def add_common_args(parser):
     parser.add_argument("--separator",
-                        help='Input files separator (default ";")')
-    parser.add_argument("--skip_boring", help='Skips drilldown page generation for threads that do not do anything', )
+                        help='Input files separator (default ";")', required=False)
+    parser.add_argument("--skip_boring", help='Skips drilldown page generation for threads that do not do anything',
+                        required=False)
     parser.add_argument("--use_ai", required=False, help="Use AI genereated analysis")
+    parser.add_argument("--llm_method", help="LLM method to use", required=False)
+    parser.add_argument("--llm_model", help="LLM model to use", required=False)
     parser.add_argument("--config_file", required=False, help="Configuration file", default="config.ini")
 
 
