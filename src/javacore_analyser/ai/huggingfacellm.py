@@ -34,7 +34,7 @@ class HuggingFaceLLM(LLM):
         # tokenize the text
         input_tokens = self.tokenizer(chat, return_tensors="pt").to(self.device)
         # generate output tokens
-        output = self.model.generate(**input_tokens, max_new_tokens=100)
+        output = self.model.generate(**input_tokens, max_new_tokens=self.max_tokens, temperature=self.temperature)
         # decode output tokens into text
         output = self.tokenizer.batch_decode(output)
         logging.debug("Infuse finished")
