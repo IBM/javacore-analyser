@@ -5,7 +5,6 @@
 
 import logging
 
-import markdown
 import ollama
 from ollama import ChatResponse
 from ollama import chat
@@ -53,13 +52,4 @@ class OllamaLLM(LLM):
             logging.debug("Infused finished")
             content = response.message.content
         return content
-    
-    def response_to_html(self, response):
-        html = markdown.markdown(response)
-        return html
-
-
-    def infuse_in_html(self, prompter):
-        content = self.infuse(prompter)
-        return self.response_to_html(content)
         
