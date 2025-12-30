@@ -11,10 +11,10 @@ from javacore_analyser.properties import Properties
 class HuggingFaceLLM(LLM):
 
     def __init__(self, javacore_set):
+        super().__init__(javacore_set)
         logging.info("Loading HuggingFaceFace_LLM")
         self.device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
         logging.info(f"Using {self.device} device")
-        self.javacore_set = javacore_set
         self.model = Properties.get_instance().get_property("llm_model", "ibm/granite4:latest")
         self.tokenizer = AutoTokenizer.from_pretrained(self.model)
 

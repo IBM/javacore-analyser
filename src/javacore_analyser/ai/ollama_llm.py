@@ -28,11 +28,8 @@ class OllamaLLM(LLM):
     """
 
     def __init__(self, javacore_set):
-        self.prompt = ""
-        self.javacore_set = javacore_set
+        super().__init__(javacore_set)
         self.model = Properties.get_instance().get_property("llm_model", "ibm/granite4:latest")
-        self.temperature = Properties.get_instance().get_property("llm_temperature", 0.8)
-        self.max_tokens = Properties.get_instance().get_property("llm_max_tokens", 1000)
         logging.info("Pulling model: " + self.model)
         ollama.pull(self.model)
         logging.info("Model pulled: " + self.model)
