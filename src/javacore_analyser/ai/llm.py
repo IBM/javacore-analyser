@@ -4,11 +4,18 @@ from abc import ABC, abstractmethod
 
 import markdown
 
+from javacore_analyser.properties import Properties
+
 
 class LLM(ABC):
     """
     Abstract Base Class for Language Learning Model (LLM).
     """
+
+    def __init__(self, javacore_set):
+        self.javacore_set = javacore_set
+        self.temperature = Properties.get_instance().get_property("llm_temperature", 0.8)
+        self.max_tokens = Properties.get_instance().get_property("llm_max_tokens", 1000)
 
     @abstractmethod
     def infuse(self, prompter):
