@@ -8,7 +8,18 @@ from javacore_analyser.constants import ASSISTANT_ROLE, END_OF_TEXT
 from javacore_analyser.properties import Properties
 
 
+# Assisted by watsonx Code Assistant
+
 class HuggingFaceLLM(LLM):
+    """
+    HuggingFaceLLM class for loading and utilizing HuggingFace's language models.
+
+    Attributes:
+        javacore_set (set): Set of Java cores.
+        device (str): Device type ('cpu' or accelerator type).
+        model (AutoModelForCausalLM): HuggingFace's pre-trained model for causal language modeling.
+        tokenizer (AutoTokenizer): HuggingFace's tokenizer for the model.
+    """
 
     def __init__(self, javacore_set):
         super().__init__(javacore_set)
