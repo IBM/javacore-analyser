@@ -27,7 +27,7 @@ The tool analyzes Javacores and verbose gc logs and provides some reports like c
 
 ### Installation:
 The tool requires Python 3.9 or higher plus some packages - see more in [REQUIREMENTS](REQUIREMENTS.md). 
-Despite it is not mandatory, it is recommended in Python to use virtual environment to manage packages.
+Despite it is not mandatory, it is recommended in Python to use [virtual environment](https://docs.python.org/3/tutorial/venv.html) to manage packages.
 
 #### Installing from pip
 This is most common option which you will need in 99% of situations  
