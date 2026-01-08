@@ -12,6 +12,18 @@ LOGGING_FORMAT = '%(asctime)s [thread: %(thread)d][%(levelname)s][%(filename)s:%
 
 
 def create_file_logging(logging_file_dir):
+    """
+    Create a file logger for debugging purposes.
+
+    This function sets up a file handler for logging messages to a file named 'wait2-debug.log'
+    in the specified directory. If the directory does not exist, it will be created.
+
+    Args:
+        logging_file_dir (str): The directory where the log file will be created.
+
+    Returns:
+        None
+    """
     logging_file = os.path.join(logging_file_dir, "wait2-debug.log")
     Path(logging_file_dir).mkdir(parents=True, exist_ok=True)  # Sometimes the folder of logging might not exist
     file_handler = logging.FileHandler(logging_file, mode='w')
