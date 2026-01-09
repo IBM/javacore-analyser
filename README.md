@@ -12,6 +12,7 @@
 ![GitHub Issues or Pull Requests](https://img.shields.io/github/issues-pr/IBM/javacore-analyser)
 ![GitHub Issues or Pull Requests](https://img.shields.io/github/issues-pr-closed/IBM/javacore-analyser)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/javacore-analyser)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/IBM/javacore-analyser/badge)](https://scorecard.dev/viewer/?uri=github.com/IBM/javacore-analyser)
 
 
 <!-- Not always needed, but a scope helps the user understand in a short sentance like below, why this repo exists -->
@@ -27,7 +28,7 @@ The tool analyzes Javacores and verbose gc logs and provides some reports like c
 
 ### Installation:
 The tool requires Python 3.9 or higher plus some packages - see more in [REQUIREMENTS](REQUIREMENTS.md). 
-Despite it is not mandatory, it is recommended in Python to use virtual environment to manage packages.
+Despite it is not mandatory, it is recommended in Python to use [virtual environment](https://docs.python.org/3/tutorial/venv.html) to manage packages.
 
 #### Installing from pip
 This is most common option which you will need in 99% of situations  
