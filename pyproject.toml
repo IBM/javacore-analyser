@@ -50,6 +50,9 @@ dependencies = [
     "ollama",
     "pandas",
     "Markdown",
+    "torch", 
+    "transformers",
+    "accelerate"
 ]
 
 [project.scripts]
