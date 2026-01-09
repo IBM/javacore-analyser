@@ -14,5 +14,4 @@ markdown
 torch 
 torchvision 
 torchaudio
-accelerate
 transformers
