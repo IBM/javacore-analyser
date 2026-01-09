@@ -51,9 +51,8 @@ dependencies = [
     "pandas",
     "Markdown",
     "torch", 
-    "torchvision", 
-    "torchaudio",
-    "transformers"
+    "transformers",
+    "accelerate"
 ]
 
 [project.scripts]
