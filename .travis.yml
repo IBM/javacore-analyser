@@ -2,6 +2,7 @@ language: python
 python:
  - "3.9"
 before_install:
+ - sudo apt-get install -y zstd
  - pip install 'urllib3<2.0' #Enforce SSL version to be able to run twine
  - pip install -U build
  - pip install -U twine
