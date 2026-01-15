@@ -12,4 +12,3 @@ test/data/javacores-WAIT2/report.xsl
 dist
 src/javacore_analyser.egg-info
 reports
-.venv
