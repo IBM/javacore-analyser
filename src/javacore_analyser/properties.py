@@ -1,5 +1,5 @@
 #
-# Copyright IBM Corp. 2024 - 2025
+# Copyright IBM Corp. 2024 - 2026
 # SPDX-License-Identifier: Apache-2.0
 #
 import configparser
@@ -31,6 +31,7 @@ class Properties:
         # the assertion below effectively makes the constructor private
         assert (create_key == Properties.__create_key), \
             "Properties objects must be created using Properties.create"
+        self.properties = {}
 
 
     def load_properties(self, args):

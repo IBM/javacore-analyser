@@ -1,5 +1,5 @@
 #
-# Copyright IBM Corp. 2024 - 2025
+# Copyright IBM Corp. 2024 - 2026
 # SPDX-License-Identifier: Apache-2.0
 #
 
@@ -123,7 +123,7 @@ class JavacoreSet:
         jset.print_blockers()
         jset.print_thread_states()
         jset.generate_tips()
-        if Properties.get_instance().get_property("use_ai"):
+        if Properties.get_instance().get_property("use_ai", False):
             jset.add_ai()
         return jset
 
