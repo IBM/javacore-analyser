@@ -24,12 +24,14 @@ class HuggingFaceLLM(LLM):
     def __init__(self, javacore_set):
         super().__init__(javacore_set)
         logging.info("Loading HuggingFaceFace_LLM")
-        self.device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
+        # self.device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
+        self.device = "cpu"
         logging.info(f"Using {self.device} device")
         self.model = Properties.get_instance().get_property("llm_model", "ibm/granite4:latest")
         self.tokenizer = AutoTokenizer.from_pretrained(self.model)
 
-        self.model = AutoModelForCausalLM.from_pretrained(self.model, device_map=self.device)
+        #self.model = AutoModelForCausalLM.from_pretrained(self.model, device_map=self.device)
+        self.model = AutoModelForCausalLM.from_pretrained(self.model)
         self.model.eval()
 
         logging.info("Loading HuggingFaceFace_LLM finished")
