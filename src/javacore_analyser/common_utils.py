@@ -50,7 +50,6 @@ def add_common_args(parser):
     parser.add_argument("--llm_model", help="LLM model to use", required=False)
     parser.add_argument("--llm_max_tokens", help="LLM max tokens", required=False)
     parser.add_argument("--llm_temperature", help="LLM temperature", required=False)
-    parser.add_argument("--use_ai", required=False, help="Use AI genereated analysis")
     parser.add_argument("--config_file", required=False, help="Configuration file", default="config.ini")
 
 
