@@ -20,8 +20,9 @@ from lxml.etree import XMLSyntaxError
 from tqdm import tqdm
 
 from javacore_analyser import tips
-from javacore_analyser.ai.ai import Ai
 from javacore_analyser.ai.ai_overview_prompter import AiOverviewPrompter
+from javacore_analyser.ai.huggingfacellm import HuggingFaceLLM
+from javacore_analyser.ai.ollama_llm import OllamaLLM
 from javacore_analyser.ai.tips_prompter import TipsPrompter
 from javacore_analyser.code_snapshot_collection import CodeSnapshotCollection
 from javacore_analyser.constants import *
@@ -736,6 +737,10 @@ class JavacoreSet:
             self.tips.extend(tip_class.generate(self))
 
     def add_ai(self):
-        ai = Ai(self)
+        llm_method = Properties.get_instance().get_property("llm_method")
+        if llm_method.lower() == "huggingface": ai = HuggingFaceLLM(self)
+        elif llm_method.lower() == "ollama": ai = OllamaLLM(self)
+        else: raise Exception("Invalid LLM method: " + llm_method)
+            
         self.ai_overview = ai.infuse_in_html(AiOverviewPrompter(self))
         self.ai_tips = ai.infuse_in_html(TipsPrompter(self))
