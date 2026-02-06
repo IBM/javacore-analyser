@@ -11,6 +11,5 @@ pandas
 markdown
 
 #The requirements below are needed for huggingface LLM. See https://huggingface.co/ibm-granite/granite-4.0-micro
-accelerate
 torch 
 transformers
