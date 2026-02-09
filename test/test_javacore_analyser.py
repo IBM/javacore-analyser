@@ -14,9 +14,11 @@ from unittest.mock import patch
 from javacore_analyser import javacore_analyser_batch
 
 
-def rm_tmp_dir():
+def cleanup():
     if os.path.exists("tmp"):
         shutil.rmtree("tmp")
+    if os.path.exists("config.ini"):
+        os.remove("config.ini")
 
 
 class TestJavacoreAnalyser(unittest.TestCase):
@@ -53,7 +55,7 @@ class TestJavacoreAnalyser(unittest.TestCase):
         self.ai_default_llm = ["javacore_analyser", "test/data/archives/javacores.7z", "tmp", "--use_ai=true"]
         self.ai_custom_llm = ["javacore_analyser", "test/data/archives/javacores.7z", "tmp", "--use_ai=true", "--llm_model=granite4:350m"]
 
-        rm_tmp_dir()
+        cleanup()
 
     def test_api(self):
         javacore_analyser_batch.process_javacores_and_generate_report_data(["test/data/archives/javacores.zip"], "tmp")
@@ -194,4 +196,4 @@ class TestJavacoreAnalyser(unittest.TestCase):
             root.removeHandler(handler)
             handler.close()
 
-        rm_tmp_dir()
+        cleanup()
