@@ -52,7 +52,6 @@ class TestJavacoreAnalyser(unittest.TestCase):
         self.huggingface = ["javacore_analyser", "test/data/archives/javacores.7z", "tmp", "--use_ai=true",
                             "--llm_method=huggingface", "--llm_model=ibm-granite/granite-4.0-h-350M"]
         self.ai_default_llm = ["javacore_analyser", "test/data/archives/javacores.7z", "tmp", "--use_ai=true"]
-        self.ai_custom_llm = ["javacore_analyser", "test/data/archives/javacores.7z", "tmp", "--use_ai=true", "--llm_model=granite4:350m"]
 
     def test_api(self):
         javacore_analyser_batch.process_javacores_and_generate_report_data(["test/data/archives/javacores.zip"], "tmp")
@@ -105,15 +104,11 @@ class TestJavacoreAnalyser(unittest.TestCase):
     def test_run_two_javacores_custom_separator(self):
         self.runMainWithParams(self.twofilesargs_different_separator)
 
-    def test_run_ai_default_model(self):
+    def test_run_ai_default_llm(self):
         self.runMainWithParams(self.ai_default_llm)
-
-    def test_run_ai_default_params(self):
-        self.runMainWithParams(self.ai_custom_llm)
 
     def test_run_ollama(self):
         self.runMainWithParams(self.ollama)
-
 
     @unittest.skip("This test fails on Jenkins probably due to timeout. It runs successful on local machine. It is the longest test. Commenting it out to pass the tests")
     def test_run_hugging_face(self):

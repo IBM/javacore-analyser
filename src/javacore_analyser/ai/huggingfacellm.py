@@ -27,7 +27,7 @@ class HuggingFaceLLM(LLM):
         # self.device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
         self.device = "cpu"
         logging.info(f"Using {self.device} device")
-        self.model = Properties.get_instance().get_property("llm_model", "ibm/granite4:latest")
+        self.model = Properties.get_instance().get_property("llm_model", "ibm-granite/granite-4.0-micro")
         self.tokenizer = AutoTokenizer.from_pretrained(self.model)
 
         #self.model = AutoModelForCausalLM.from_pretrained(self.model, device_map=self.device)
