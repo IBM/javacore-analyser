@@ -5,18 +5,18 @@
 
 import logging
 
-import markdown
 import ollama
 from ollama import ChatResponse
 from ollama import chat
 
+from javacore_analyser.ai.llm import LLM
 from javacore_analyser.properties import Properties
 
 
 # prerequisites:
 # install Ollama from https://ollama.com/download
 
-class Ai:
+class OllamaLLM(LLM):
     """
     A class representing an AI model infuser.
 
@@ -27,8 +27,7 @@ class Ai:
     """
 
     def __init__(self, javacore_set):
-        self.prompt = ""
-        self.javacore_set = javacore_set
+        super().__init__(javacore_set)
         self.model = Properties.get_instance().get_property("llm_model", "ibm/granite4:latest")
         logging.info("Pulling model: " + self.model)
         ollama.pull(self.model)
@@ -49,16 +48,8 @@ class Ai:
                     'role': 'user',
                     'content': self.prompt,
                 },
-            ])
+            ], options={'temperature': self.temperature, 'num_ctx': self.max_tokens})
             logging.debug("Infused finished")
             content = response.message.content
         return content
-    
-    def response_to_html(self, response):
-        html = markdown.markdown(response)
-        return html
-    
-    def infuse_in_html(self, prompter):
-        content = self.infuse(prompter)
-        return self.response_to_html(content)
         
