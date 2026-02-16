@@ -511,12 +511,8 @@ class JavacoreSet:
         doc_node.appendChild(self.stacks.get_xml(self.doc))
         doc_node.appendChild(self.gc_parser.get_xml(self.doc))
 
-        self.doc.appendChild(doc_node)
-
-        stream = open(output_file, 'w')
-        self.doc.writexml(stream, indent="  ", addindent="  ", newl='\n', encoding="utf-8")
-        stream.close()
-        self.doc.unlink()
+        with open(output_file, 'w', encoding='utf-8') as stream:
+            self.doc.writexml(stream, indent="  ", addindent="  ", newl='\n', encoding="utf-8")
         self.report_xml_file = output_file
 
         logging.info("Finished generating report xml")
@@ -742,5 +738,5 @@ class JavacoreSet:
         elif llm_method.lower() == "ollama": ai = OllamaLLM(self)
         else: raise Exception("Invalid LLM method: " + llm_method)
             
-        self.ai_overview = ai.infuse_in_html(AiOverviewPrompter(self))
+        # self.ai_overview = ai.infuse_in_html(AiOverviewPrompter(self))
         self.ai_tips = ai.infuse_in_html(PerformanceRecommendationsPrompter(self))
