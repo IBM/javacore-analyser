@@ -1,5 +1,5 @@
 #
-# Copyright IBM Corp. 2024 - 2025
+# Copyright IBM Corp. 2024 - 2026
 # SPDX-License-Identifier: Apache-2.0
 #
 
@@ -76,7 +76,7 @@ class GcCollection:
         self.free_after = 0
         self.start_time_str = None
         self.__start_time = None
-        self.duration = 0
+        self.duration = 0.0
 
     def freed(self):
         return int(self.free_after) - int(self.free_before)
@@ -93,7 +93,7 @@ class GcCollection:
     def get_xml(self, doc):
         element = doc.createElement(GC_COLLECTION)
         element.setAttribute(TIMESTAMP, self.start_time_str)
-        element.setAttribute(DURATION, self.duration)
+        element.setAttribute(DURATION, str(self.duration))
         element.setAttribute(FREE_BEFORE, self.free_before)
         element.setAttribute(FREE_AFTER, self.free_after)
         element.setAttribute(FREED, str(self.freed()))
@@ -175,7 +175,7 @@ class VerboseGcFile:
                         if child.tagName == GC_START: raise GcVerboseCorruptedLogException()
                         if child.tagName == GC_END:
                             end_tag = child
-                            collect.duration = end_tag.getAttribute(DURATION)
+                            collect.duration = float(end_tag.getAttribute(DURATION))
                             mem_info = child.getElementsByTagName(MEM_INFO)[0]
                             collect.free_after = mem_info.getAttribute(FREE)
                     collects.append(collect)

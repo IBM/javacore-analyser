@@ -23,7 +23,7 @@ from javacore_analyser import tips
 from javacore_analyser.ai.ai_overview_prompter import AiOverviewPrompter
 from javacore_analyser.ai.huggingfacellm import HuggingFaceLLM
 from javacore_analyser.ai.ollama_llm import OllamaLLM
-from javacore_analyser.ai.tips_prompter import TipsPrompter
+from javacore_analyser.ai.performance_recommendations_prompter import PerformanceRecommendationsPrompter
 from javacore_analyser.code_snapshot_collection import CodeSnapshotCollection
 from javacore_analyser.constants import *
 from javacore_analyser.har_file import HarFile
@@ -43,7 +43,7 @@ def _create_xml_xsl_for_collection(tmp_dir, templates_dir, xml_xsl_filename, col
         file_full_path = os.path.normpath(os.path.join(templates_dir, xml_xsl_filename + extension))
         if not file_full_path.startswith(templates_dir):
             raise Exception("Security exception: Uncontrolled data used in path expression")
-        file_content = Path(file_full_path).read_text()
+        file_content: str = Path(file_full_path).read_text()
         for element in collection:
             element_id = element.get_id()
             filename = output_file_prefix + "_" + str(element_id) + extension
@@ -737,10 +737,10 @@ class JavacoreSet:
             self.tips.extend(tip_class.generate(self))
 
     def add_ai(self):
-        llm_method = Properties.get_instance().get_property("llm_method")
+        llm_method: str = Properties.get_instance().get_property("llm_method")
         if llm_method.lower() == "huggingface": ai = HuggingFaceLLM(self)
         elif llm_method.lower() == "ollama": ai = OllamaLLM(self)
         else: raise Exception("Invalid LLM method: " + llm_method)
             
         self.ai_overview = ai.infuse_in_html(AiOverviewPrompter(self))
-        self.ai_tips = ai.infuse_in_html(TipsPrompter(self))
+        self.ai_tips = ai.infuse_in_html(PerformanceRecommendationsPrompter(self))
