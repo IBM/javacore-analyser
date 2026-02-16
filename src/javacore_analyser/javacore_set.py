@@ -510,9 +510,12 @@ class JavacoreSet:
         doc_node.appendChild(self.threads.get_xml(self.doc))
         doc_node.appendChild(self.stacks.get_xml(self.doc))
         doc_node.appendChild(self.gc_parser.get_xml(self.doc))
+        
+        self.doc.appendChild(doc_node)
 
         with open(output_file, 'w', encoding='utf-8') as stream:
             self.doc.writexml(stream, indent="  ", addindent="  ", newl='\n', encoding="utf-8")
+        self.doc.unlink()
         self.report_xml_file = output_file
 
         logging.info("Finished generating report xml")
