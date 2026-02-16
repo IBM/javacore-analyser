@@ -20,7 +20,7 @@ from lxml.etree import XMLSyntaxError
 from tqdm import tqdm
 
 from javacore_analyser import tips
-from javacore_analyser.ai.ai_overview_prompter import AiOverviewPrompter
+# from javacore_analyser.ai.ai_overview_prompter import AiOverviewPrompter
 from javacore_analyser.ai.huggingfacellm import HuggingFaceLLM
 from javacore_analyser.ai.ollama_llm import OllamaLLM
 from javacore_analyser.ai.performance_recommendations_prompter import PerformanceRecommendationsPrompter
@@ -88,7 +88,7 @@ class JavacoreSet:
         self.stacks = SnapshotCollectionCollection(CodeSnapshotCollection)
         self.report_xml_file = None
 
-        self.ai_overview = ""
+        #self.ai_overview = ""
         self.ai_tips = ""
 
         self.doc = None
@@ -451,7 +451,7 @@ class JavacoreSet:
         tips_node.setAttribute("ai_tips", self.ai_tips)
 
         user_args_list_node = self.doc.createElement("user_args_list")
-        system_info_node.setAttribute("ai_overview", self.ai_overview)
+        #system_info_node.setAttribute("ai_overview", self.ai_overview)
         system_info_node.appendChild(user_args_list_node)
         for arg in self.user_args:
             arg_node = self.doc.createElement("user_arg")
