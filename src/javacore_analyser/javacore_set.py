@@ -741,5 +741,6 @@ class JavacoreSet:
         elif llm_method.lower() == "ollama": ai = OllamaLLM(self)
         else: raise Exception("Invalid LLM method: " + llm_method)
             
+        # TODO: Re-enable ai_overview once performance issues are resolved
         # self.ai_overview = ai.infuse_in_html(AiOverviewPrompter(self))
         self.ai_tips = ai.infuse_in_html(PerformanceRecommendationsPrompter(self))
