@@ -26,6 +26,7 @@ from javacore_analyser.ai.ollama_llm import OllamaLLM
 from javacore_analyser.ai.tips_prompter import TipsPrompter
 from javacore_analyser.code_snapshot_collection import CodeSnapshotCollection
 from javacore_analyser.constants import *
+from javacore_analyser.exceptions import InvalidLLMMethodError
 from javacore_analyser.har_file import HarFile
 from javacore_analyser.java_thread import Thread
 from javacore_analyser.javacore import Javacore
@@ -740,7 +741,7 @@ class JavacoreSet:
         llm_method = Properties.get_instance().get_property("llm_method")
         if llm_method.lower() == "huggingface": ai = HuggingFaceLLM(self)
         elif llm_method.lower() == "ollama": ai = OllamaLLM(self)
-        else: raise Exception("Invalid LLM method: " + llm_method)
+        else: raise InvalidLLMMethodError(llm_method)
             
         self.ai_overview = ai.infuse_in_html(AiOverviewPrompter(self))
         self.ai_tips = ai.infuse_in_html(TipsPrompter(self))
