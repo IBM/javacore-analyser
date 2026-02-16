@@ -27,19 +27,19 @@ class PerformanceRecommendationsPrompter(Prompter):
             str: Formatted prompt with performance data for LLM analysis
         """
         # Collect CPU usage over time from javacores
-        cpu_usage_data = self._get_cpu_usage_over_time()
+        cpu_usage_data: str = self._get_cpu_usage_over_time()
         
         # Collect memory information
-        memory_info = self._get_memory_info()
+        memory_info: str = self._get_memory_info()
         
         # Get application parameters
-        app_params = self._get_application_parameters()
+        app_params: str = self._get_application_parameters()
         
         # Get top CPU-consuming threads
-        top_cpu_threads = self._get_top_cpu_threads(5)
+        top_cpu_threads: str = self._get_top_cpu_threads(5)
         
         # Get top blocking threads
-        top_blocking_threads = self._get_top_blocking_threads(5)
+        top_blocking_threads: str = self._get_top_blocking_threads(5)
         
         # Get GC thread CPU usage
         gc_cpu_usage: str = self._get_gc_cpu_usage()
