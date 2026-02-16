@@ -38,6 +38,6 @@ DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 # Web application constants
 TEMP_DIR = "temp_data"  # Folder to store temporary data for creating reports
 
-# Used for extracting hugging face llm
+# Used for extracting hugging face llm. See more on https://huggingface.co/ibm-granite/granite-4.0-micro
 ASSISTANT_ROLE = '<|start_of_role|>assistant<|end_of_role|>'
 END_OF_TEXT = '<|end_of_text|>'
