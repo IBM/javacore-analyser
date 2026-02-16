@@ -48,9 +48,9 @@ class TestJavacoreAnalyser(unittest.TestCase):
         self.encoding = ["javacore_analyser", "test/data/encoding/javacore.20220606.114458.32888.0001.txt", "tmp"]
         self.ai_default_llm = ["javacore_analyser", "test/data/archives/javacores.7z", "tmp", "--use_ai=true"]
         self.ollama = ["javacore_analyser", "test/data/archives/javacores.7z", "tmp", "--use_ai=true",
-                       "--llm_method=ollama", "--llm_model=granite4:350m", "--llm_max_tokens=10", "--llm_temperature=1"]
+                       "--llm_method=ollama", "--llm=granite4:350m", "--llm_max_tokens=10", "--llm_temperature=1"]
         self.huggingface = ["javacore_analyser", "test/data/archives/javacores.7z", "tmp", "--use_ai=true",
-                            "--llm_method=huggingface", "--llm_model=ibm-granite/granite-4.0-h-350M"]
+                            "--llm_method=huggingface", "--llm=ibm-granite/granite-4.0-h-350M"]
 
     def test_api(self):
         javacore_analyser_batch.process_javacores_and_generate_report_data(["test/data/archives/javacores.zip"], "tmp")
