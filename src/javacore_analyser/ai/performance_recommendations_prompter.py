@@ -4,7 +4,6 @@
 #
 
 from javacore_analyser.ai.prompter import Prompter
-import javacore_analyser
 
 
 class PerformanceRecommendationsPrompter(Prompter):
