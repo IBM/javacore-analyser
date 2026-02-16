@@ -76,7 +76,16 @@ class TestJavacoreAnalyser(unittest.TestCase):
         self.runMainWithParams(self.encoding)
 
     def test_run_zip(self):
-        self.runMainWithParams(self.ziptestargs)
+        default_output = sys.stdout
+        captured_output = io.StringIO()  # Create StringIO object
+        sys.stdout = captured_output  # and redirect stdout.
+        try:
+            self.runMainWithParams(self.ziptestargs)
+            console_output = captured_output.getvalue()
+            self.assertNotRegex(console_output,
+                             "DEBUG")
+        finally:
+            sys.stdout = default_output  # Reset redirect.
 
     def test_expat_error(self):
         os.chmod(self.expateerror[1], 0o555)
