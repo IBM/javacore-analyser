@@ -334,10 +334,11 @@
                            href="javascript:expand_it(system_properties, toggle_system_properties)"
                            class="expandit">System Information</a></h3>
                     <div id="system_properties" style="display:none;">
-                        <xsl:if test="doc/system_info/@ai_overview != ''">
+                    <!--    <xsl:if test="doc/system_info/@ai_overview != ''">
                             <h4>AI Overview:</h4>
                                 <xsl:value-of select="doc/system_info/@ai_overview" disable-output-escaping="yes"/>
                         </xsl:if>
+                    -->
                         <h4>Basic JVM Configuration</h4>
                         <table id="sys_info_table" class="tablesorter">
                             <thead>
