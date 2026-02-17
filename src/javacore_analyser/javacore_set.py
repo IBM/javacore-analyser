@@ -738,9 +738,12 @@ class JavacoreSet:
 
     def add_ai(self):
         llm_method: str = Properties.get_instance().get_property("llm_method")
-        if llm_method.lower() == "huggingface": ai = HuggingFaceLLM(self)
-        elif llm_method.lower() == "ollama": ai = OllamaLLM(self)
-        else: raise InvalidLLMMethodError(llm_method)
+        if llm_method.lower() == "huggingface":
+            ai = HuggingFaceLLM(self)
+        elif llm_method.lower() == "ollama":
+            ai = OllamaLLM(self)
+        else:
+            raise InvalidLLMMethodError(llm_method)
             
         # We no longer want an ai overview
         # self.ai_overview = ai.infuse_in_html(AiOverviewPrompter(self))
