@@ -1,5 +1,5 @@
 #
-# Copyright IBM Corp. 2025 - 2025
+# Copyright IBM Corp. 2025 - 2026
 # SPDX-License-Identifier: Apache-2.0
 #
 
@@ -28,7 +28,7 @@ class OllamaLLM(LLM):
 
     def __init__(self, javacore_set):
         super().__init__(javacore_set)
-        self.model = Properties.get_instance().get_property("llm_model", "ibm/granite4:latest")
+        self.model = Properties.get_instance().get_property("llm", "ibm/granite4:latest")
         logging.info("Pulling model: " + self.model)
         ollama.pull(self.model)
         logging.info("Model pulled: " + self.model)
