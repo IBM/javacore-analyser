@@ -1,3 +1,8 @@
+#
+# Copyright IBM Corp. 2025 - 2026
+# SPDX-License-Identifier: Apache-2.0
+#
+
 import logging
 
 import torch
@@ -27,7 +32,7 @@ class HuggingFaceLLM(LLM):
         # self.device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
         self.device = "cpu"
         logging.info(f"Using {self.device} device")
-        self.model = Properties.get_instance().get_property("llm_model", "ibm-granite/granite-4.0-micro")
+        self.model = Properties.get_instance().get_property("llm", "ibm-granite/granite-4.0-micro")
         self.tokenizer = AutoTokenizer.from_pretrained(self.model)
 
         #self.model = AutoModelForCausalLM.from_pretrained(self.model, device_map=self.device)
