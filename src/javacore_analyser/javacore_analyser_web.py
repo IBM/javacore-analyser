@@ -1,5 +1,5 @@
 #
-# Copyright IBM Corp. 2024 - 2025
+# Copyright IBM Corp. 2024 - 2026
 # SPDX-License-Identifier: Apache-2.0
 #
 import argparse
@@ -14,7 +14,7 @@ import threading
 import time
 from pathlib import Path
 
-from flask import Flask, render_template, request, send_from_directory, redirect
+from flask import Flask, render_template, request, send_from_directory, redirect, url_for
 from waitress import serve
 
 import javacore_analyser.javacore_analyser_batch
@@ -83,11 +83,21 @@ def compress(path):
 def delete(path):
     # Checking if the report exists. This is to prevent attempt to delete any data by deleting any file outside
     # report dir if you prepare path variable.
-    # reports_list = os.listdir(reports_dir)
+    # Prevent deletion of TEMP_DIR and nested paths
+    if path == TEMP_DIR or '/' in path or '\\' in path:
+        logging.error(f"Invalid report path: {path}. Cannot delete system directories or nested paths.")
+        return "Cannot delete this directory.", 403
+
     report_location = os.path.normpath(os.path.join(reports_dir, path))
     if not report_location.startswith(reports_dir):
-        logging.error("Deleted report in report list. Not deleting")
-        return "Cannot delete the report.", 503
+        logging.error(f"Path traversal attempt detected: {path}")
+        return "Cannot delete the report.", 403
+
+    # Additional check: ensure it's a direct child
+    if os.path.dirname(report_location) != reports_dir:
+        logging.error(f"Attempt to delete non-direct child: {path}")
+        return "Cannot delete the report.", 403
+
     shutil.rmtree(report_location)
 
     return redirect("/")
@@ -117,7 +127,11 @@ def upload_file():
         input_files = []
         # Iterate for each file in the files List, and Save them
         for file in files:
-            file_name = os.path.join(javacores_temp_dir_name, file.filename)
+            # Sanitize filename to prevent path traversal
+            safe_filename = os.path.basename(file.filename) if file.filename else None
+            if not safe_filename:
+                continue  # Skip files with invalid names
+            file_name = os.path.join(javacores_temp_dir_name, safe_filename)
             file.save(file_name)
             input_files.append(file_name)
 
@@ -130,7 +144,8 @@ def upload_file():
         processing_thread.start()
 
         time.sleep(1)  # Give 1 second to generate index.html in processing_thread before redirecting
-        return redirect("/reports/" + report_name + "/index.html")
+        # Use url_for() to generate a safe redirect URL to prevent open redirect vulnerability
+        return redirect(url_for('dir_listing', path=f"{report_name}/index.html"))
     finally:
         shutil.rmtree(javacores_temp_dir_name, ignore_errors=True)
 
