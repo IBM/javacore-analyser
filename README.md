@@ -52,10 +52,10 @@ This is recommended for geeks only:
 
 ### Running the tool:
 
-#### Running cmd application: 
+#### Running cmd application:
 1. Install application if not done yet
-2. Activate your created virtual environment according to activate Virtual Environment according to [Creating virtual environments](https://docs.python.org/3/tutorial/venv.html#creating-virtual-environments)
-3. Run the following command from cmd:  
+2. Activate your created virtual environment according to [Creating virtual environments](https://docs.python.org/3/tutorial/venv.html#creating-virtual-environments)
+3. Run the following command from cmd:
 `javacore-analyser-batch <input-data> <generated-reports-dir>`  
 or  
 `python -m javacore_analyser batch <input-data> <generated-reports-dir>`  
@@ -121,7 +121,7 @@ or
 `./javacoreCollector.sh javaPid=12345 javacoresDir=/location/for/javacores` - for collecting diagnostic data from any java aplication.
 
 
-You can add the 'count' and 'interval' parameters to specify the number of javacores (default: 10) and interval between each of them (defaul: 30s).
+You can add the 'count' and 'interval' parameters to specify the number of javacores (default: 10) and interval between each of them (default: 30s).
 
 Type `./javacoreCollector.sh` to get more help.
 
