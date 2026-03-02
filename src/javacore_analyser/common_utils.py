@@ -32,8 +32,8 @@ def create_file_logging(logging_file_dir):
     logging.getLogger().addHandler(file_handler)
 
 
-def create_console_logging():
-    logging.getLogger().setLevel(logging.NOTSET)
+def create_console_logging() -> None:
+    logging.getLogger().setLevel(logging.INFO)
     console_handler = logging.StreamHandler(sys.stdout)
     console_handler.setLevel(logging.INFO)
     console_handler.setFormatter(logging.Formatter(LOGGING_FORMAT))
