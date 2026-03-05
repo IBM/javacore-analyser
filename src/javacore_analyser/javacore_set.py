@@ -20,10 +20,10 @@ from lxml.etree import XMLSyntaxError
 from tqdm import tqdm
 
 from javacore_analyser import tips
-from javacore_analyser.ai.ai_overview_prompter import AiOverviewPrompter
+# from javacore_analyser.ai.ai_overview_prompter import AiOverviewPrompter
 from javacore_analyser.ai.huggingfacellm import HuggingFaceLLM
 from javacore_analyser.ai.ollama_llm import OllamaLLM
-from javacore_analyser.ai.tips_prompter import TipsPrompter
+from javacore_analyser.ai.performance_recommendations_prompter import PerformanceRecommendationsPrompter
 from javacore_analyser.code_snapshot_collection import CodeSnapshotCollection
 from javacore_analyser.constants import *
 from javacore_analyser.exceptions import InvalidLLMMethodError
@@ -44,7 +44,7 @@ def _create_xml_xsl_for_collection(tmp_dir, templates_dir, xml_xsl_filename, col
         file_full_path = os.path.normpath(os.path.join(templates_dir, xml_xsl_filename + extension))
         if not file_full_path.startswith(templates_dir):
             raise Exception("Security exception: Uncontrolled data used in path expression")
-        file_content = Path(file_full_path).read_text()
+        file_content: str = Path(file_full_path).read_text()
         for element in collection:
             element_id = element.get_id()
             filename = output_file_prefix + "_" + str(element_id) + extension
@@ -89,7 +89,7 @@ class JavacoreSet:
         self.stacks = SnapshotCollectionCollection(CodeSnapshotCollection)
         self.report_xml_file = None
 
-        self.ai_overview = ""
+        #self.ai_overview = ""
         self.ai_tips = ""
 
         self.doc = None
@@ -452,7 +452,7 @@ class JavacoreSet:
         tips_node.setAttribute("ai_tips", self.ai_tips)
 
         user_args_list_node = self.doc.createElement("user_args_list")
-        system_info_node.setAttribute("ai_overview", self.ai_overview)
+        #system_info_node.setAttribute("ai_overview", self.ai_overview)
         system_info_node.appendChild(user_args_list_node)
         for arg in self.user_args:
             arg_node = self.doc.createElement("user_arg")
@@ -514,9 +514,8 @@ class JavacoreSet:
 
         self.doc.appendChild(doc_node)
 
-        stream = open(output_file, 'w')
-        self.doc.writexml(stream, indent="  ", addindent="  ", newl='\n', encoding="utf-8")
-        stream.close()
+        with open(output_file, 'w', encoding='utf-8') as stream:
+            self.doc.writexml(stream, indent="  ", addindent="  ", newl='\n', encoding="utf-8")
         self.doc.unlink()
         self.report_xml_file = output_file
 
@@ -738,10 +737,14 @@ class JavacoreSet:
             self.tips.extend(tip_class.generate(self))
 
     def add_ai(self):
-        llm_method = Properties.get_instance().get_property("llm_method")
-        if llm_method.lower() == "huggingface": ai = HuggingFaceLLM(self)
-        elif llm_method.lower() == "ollama": ai = OllamaLLM(self)
-        else: raise InvalidLLMMethodError(llm_method)
+        llm_method: str = Properties.get_instance().get_property("llm_method")
+        if llm_method.lower() == "huggingface":
+            ai = HuggingFaceLLM(self)
+        elif llm_method.lower() == "ollama":
+            ai = OllamaLLM(self)
+        else:
+            raise InvalidLLMMethodError(llm_method)
             
-        self.ai_overview = ai.infuse_in_html(AiOverviewPrompter(self))
-        self.ai_tips = ai.infuse_in_html(TipsPrompter(self))
+        # We no longer want an ai overview
+        # self.ai_overview = ai.infuse_in_html(AiOverviewPrompter(self))
+        self.ai_tips = ai.infuse_in_html(PerformanceRecommendationsPrompter(self))
