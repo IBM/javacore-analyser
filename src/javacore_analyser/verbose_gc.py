@@ -44,7 +44,7 @@ class VerboseGcParser:
     def add_file(self, file):
         self.__file_paths.append(file)
 
-    def parse_files(self, start_time, stop_time):
+    def parse_files(self, start_time=None, stop_time=None):
         logging.info("Started parsing GC files")
         for file_path in tqdm(self.__file_paths, desc="Parsing verbose gc", unit=" file"):
             try:
@@ -54,7 +54,11 @@ class VerboseGcParser:
                 collects = file.get_collects()
                 for collect in collects:
                     time = collect.get_start_time()
-                    if start_time <= time <= stop_time:
+                    # If no time constraints, include all collects
+                    if start_time is None or stop_time is None:
+                        self.__collects.append(collect)
+                        collects_from_time_range += 1
+                    elif start_time <= time <= stop_time:
                         self.__collects.append(collect)
                         collects_from_time_range += 1
                 file.set_number_of_collects(collects_from_time_range)

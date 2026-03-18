@@ -53,19 +53,21 @@
                                 No verbosegc logs were provided
                             </xsl:otherwise>
                         </xsl:choose>
-                    <h4>CPU Load</h4>
-                    <a id="togglecpuloaddoc" href="javascript:expand_it(cpuloaddoc,togglecpuloaddoc)" class="expandit">
-                        What does this chart tell me?</a>
-                    <div id="cpuloaddoc" style="display:none;">
-                        This chart shows the total CPU usage of all the threads in the javacore, expressed as percentage
-                        of all the processor cores. The maximum possible value is therefore 100%, which
-                        would indicate all the cores are completely busy. Each bar represents one javacore in the data set.
-                        This value is computed incrementally with relation to the previous javacore,
-                        hence it is not available for the first javacore file.
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="myChartCPUUsage" height="200"></canvas>
-                    </div>
+                    <xsl:if test="doc/data_types/type[text()='javacores']">
+                        <h4>CPU Load</h4>
+                        <a id="togglecpuloaddoc" href="javascript:expand_it(cpuloaddoc,togglecpuloaddoc)" class="expandit">
+                            What does this chart tell me?</a>
+                        <div id="cpuloaddoc" style="display:none;">
+                            This chart shows the total CPU usage of all the threads in the javacore, expressed as percentage
+                            of all the processor cores. The maximum possible value is therefore 100%, which
+                            would indicate all the cores are completely busy. Each bar represents one javacore in the data set.
+                            This value is computed incrementally with relation to the previous javacore,
+                            hence it is not available for the first javacore file.
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="myChartCPUUsage" height="200"></canvas>
+                        </div>
+                    </xsl:if>
                 </xsl:otherwise>
             </xsl:choose>
         </div>

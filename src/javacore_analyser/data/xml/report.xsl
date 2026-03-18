@@ -45,19 +45,25 @@
         </div>
         <div class="content">
             <h1>Javacore Analyser Report</h1>
-            <div class="margined">
-                from data between
-                <b><xsl:value-of select="doc/report_info/javacores_generation_time/starting_time"/></b> and
-                <b><xsl:value-of select="doc/report_info/javacores_generation_time/end_time"/></b>
-            </div>
+            <xsl:if test="doc/report_info/javacores_generation_time">
+                <div class="margined">
+                    from data between
+                    <b><xsl:value-of select="doc/report_info/javacores_generation_time/starting_time"/></b> and
+                    <b><xsl:value-of select="doc/report_info/javacores_generation_time/end_time"/></b>
+                </div>
+            </xsl:if>
             
             <xsl:call-template name="input_files"/>
-            <xsl:call-template name="system_information"/>
+            <xsl:if test="doc/data_types/type[text()='javacores']">
+                <xsl:call-template name="system_information"/>
+            </xsl:if>
             <xsl:call-template name="intelligent_tips"/>
             <xsl:call-template name="system_resources"/>
-            <xsl:call-template name="top_blockers"/>
-            <xsl:call-template name="all_threads"/>
-            <xsl:call-template name="all_code"/>
+            <xsl:if test="doc/data_types/type[text()='javacores']">
+                <xsl:call-template name="top_blockers"/>
+                <xsl:call-template name="all_threads"/>
+                <xsl:call-template name="all_code"/>
+            </xsl:if>
             <xsl:call-template name="http_calls"/>
             <xsl:call-template name="footer"/>
         </div>
