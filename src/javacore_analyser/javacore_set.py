@@ -12,7 +12,6 @@ import tempfile
 from datetime import datetime
 from multiprocessing.dummy import Pool
 from pathlib import Path
-from typing import Union
 from xml.dom.minidom import parseString
 
 import importlib_resources
@@ -636,92 +635,69 @@ class JavacoreSet:
         return fullpath
 
     @staticmethod
-    def __get_resource_path(*path_parts: str) -> Path:
-        """
-        Get path to a package resource file.
-        
-        Args:
-            *path_parts: Variable number of path components to join
-            
-        Returns:
-            Path: Resolved path to the resource file
-        """
-        resource = importlib_resources.files("javacore_analyser")
-        for part in path_parts:
-            resource = resource / part
-        return Path(str(resource))
-
-    @staticmethod
-    def __create_xslt_transformer(xsl_path: Path) -> etree.XSLT:
-        """
-        Create an XSLT transformer with proper URI resolution for xsl:include directives.
-        
-        Args:
-            xsl_path: Path to the XSLT file
-            
-        Returns:
-            Configured XSLT transformer
-        """
-        xsl_uri = xsl_path.resolve().as_uri()
-        logging.info(f"Report XSL path: {xsl_path}")
-        logging.info(f"Report XSL URI: {xsl_uri}")
-        
-        # Create parser with custom FileResolver for xsl:include directives
-        xslt_parser = etree.XMLParser()
-        xslt_parser.resolvers.add(FileResolver())
-        
-        # Parse XSLT with base URL for relative path resolution
-        xslt_doc = etree.parse(str(xsl_path), xslt_parser)
-        xslt_doc.docinfo.URL = xsl_uri
-        logging.debug(f"XSLT doc base URL set to: {xslt_doc.docinfo.URL}")
-        
-        return etree.XSLT(xslt_doc)
-
-    @staticmethod
-    def __create_index_html(input_dir: Union[str, Path], output_dir: Union[str, Path]) -> None:
-        """Generate index.html from XML using XSLT transformation."""
-        input_dir = Path(input_dir)
-        output_dir = Path(output_dir)
+    def __create_index_html(input_dir, output_dir):
 
         # Copy index.xml and report.xsl to temp - for index.html we don't need to generate anything. Copying is enough.
-        index_xml = JavacoreSet.__get_resource_path("data", "xml", "index.xml")
+        # index_xml = validate_uncontrolled_data_used_in_path([output_dir, "data", "xml", "index.xml"])
+        index_xml = os.path.normpath(str(importlib_resources.files("javacore_analyser") / "data" / "xml" / "index.xml"))
         shutil.copy2(index_xml, input_dir)
 
-        report_xsl = JavacoreSet.__get_resource_path("data", "xml", "report.xsl")
+        report_xsl = os.path.normpath(
+            str(importlib_resources.files("javacore_analyser") / "data" / "xml" / "report.xsl"))
         shutil.copy2(report_xsl, input_dir)
 
         # Copy sections directory containing modular XSL files
         # The report.xsl file uses <xsl:include> to reference these section files,
         # enabling a plugin architecture where sections can be added/removed independently
-        sections_dir = JavacoreSet.__get_resource_path("data", "xml", "sections")
-        sections_dest = Path(input_dir) / "sections"
+        sections_dir = os.path.normpath(
+            str(importlib_resources.files("javacore_analyser") / "data" / "xml" / "sections"))
+        sections_dest = os.path.join(input_dir, "sections")
         logging.debug(f"Sections source dir: {sections_dir}")
         logging.debug(f"Sections dest dir: {sections_dest}")
-        
-        try:
-            shutil.copytree(sections_dir, sections_dest, dirs_exist_ok=True)
+        logging.debug(f"Sections dir exists: {os.path.exists(sections_dir)}")
+        if os.path.exists(sections_dir):
+            shutil.copytree(sections_dir, sections_dest)
             logging.info(f"Copied sections directory to {sections_dest}")
-            
             # List files in sections directory for debugging
-            if sections_dest.exists():
-                section_files = [f.name for f in sections_dest.iterdir()]
-                logging.debug(f"Section files copied: {section_files}")
-        except FileNotFoundError:
+            if os.path.exists(sections_dest):
+                section_files = os.listdir(sections_dest)
+                logging.info(f"Section files copied: {section_files}")
+        else:
             logging.warning(f"Sections directory not found at {sections_dir}")
 
-        # Create XSLT transformer with proper URI resolution for xsl:include directives
-        report_xsl_path = Path(input_dir) / "report.xsl"
-        xslt_transformer = JavacoreSet.__create_xslt_transformer(report_xsl_path)
+        # Prepare XSLT file path and URI for processing
+        # The file:// URI scheme is required by lxml's XSLT processor to properly
+        # resolve relative paths in <xsl:include> directives
+        report_xsl_path = os.path.join(input_dir, "report.xsl")
+        report_xsl_uri = "file://" + os.path.abspath(report_xsl_path)
+        
+        logging.info(f"Report XSL path: {report_xsl_path}")
+        logging.info(f"Report XSL URI: {report_xsl_uri}")
+        
+        # Create XML parser with custom FileResolver to handle xsl:include directives
+        # The FileResolver intercepts URI resolution during XSLT parsing and converts
+        # file:// URIs to actual file system paths, allowing lxml to locate and include
+        # the modular section files referenced in report.xsl
+        xslt_parser = etree.XMLParser()
+        xslt_parser.resolvers.add(FileResolver())
+        
+        # Parse the XSLT document with the custom resolver
+        xslt_doc = etree.parse(report_xsl_path, xslt_parser)
+        # Set the base URL for the XSLT document to enable proper relative path resolution
+        xslt_doc.docinfo.URL = report_xsl_uri
+        logging.debug(f"XSLT doc base URL set to: {xslt_doc.docinfo.URL}")
+        # Create the XSLT transformer from the parsed document
+        xslt_transformer = etree.XSLT(xslt_doc)
 
         # Create separate parser for the XML source document that will be transformed
         # This parser is configured to resolve XML entities during parsing
         source_parser = etree.XMLParser(resolve_entities=True)
-        source_doc = etree.parse(str(Path(input_dir) / "index.xml"), source_parser)
+        source_doc = etree.parse(input_dir + "/index.xml", source_parser)
         output_doc = xslt_transformer(source_doc)
 
-        output_html_file = Path(output_dir) / "index.html"
-        logging.info(f"Generating file {output_html_file}")
-        output_doc.write(str(output_html_file), pretty_print=True)
+        output_html_file = output_dir + "/index.html"
+        logging.info("Generating file " + output_html_file)
+        output_doc.write(output_html_file, pretty_print=True)
 
     @staticmethod
     def generate_htmls_from_xmls_xsls(report_xml_file, data_input_dir, output_dir):
