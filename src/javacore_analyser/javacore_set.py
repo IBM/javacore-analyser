@@ -35,6 +35,50 @@ from javacore_analyser.snapshot_collection import SnapshotCollection
 from javacore_analyser.snapshot_collection_collection import SnapshotCollectionCollection
 from javacore_analyser.verbose_gc import VerboseGcParser
 
+class FileResolver(etree.Resolver):
+    """
+    Custom URI resolver for XSLT processing to handle xsl:include directives.
+    
+    This resolver enables lxml's XSLT processor to locate and include external XSL files
+    referenced via <xsl:include> elements in the main XSLT stylesheet. It handles file://
+    URIs by converting them to file system paths that lxml can access.
+    
+    The resolver is necessary because report.xsl has been modularized into separate section
+    files (header.xsl, footer.xsl, etc.) to support a plugin architecture. Without this
+    resolver, lxml would fail to locate the included files.
+    
+    See: https://lxml.de/resolvers.html for lxml resolver documentation
+    """
+
+    def __init__(self, temp_path=None):
+        super().__init__()
+        self.temp_path = temp_path
+
+
+    def resolve(self, url, id, context):
+        """
+        Resolve a URI to a file system path.
+        
+        Args:
+            url (str): The URI to resolve (may include file:// prefix)
+            id (str): The document identifier (unused)
+            context: The resolution context from lxml
+            
+        Returns:
+            The resolved file content if the file exists, None otherwise
+        """
+        # Remove file:// prefix if present to get the actual file path
+        if url.startswith('file://'):
+            url = url[7:]  # Remove 'file://' prefix
+        
+        # If the file exists on the file system, resolve it
+        if os.path.exists(url):
+            return self.resolve_filename(url, context)
+        else: 
+            return self.resolve_filename(self.temp_path + os.sep + url, context)
+        
+        # Return None if file not found (lxml will handle the error)
+        return None
 
 def _create_xml_xsl_for_collection(tmp_dir, templates_dir, xml_xsl_filename, collection, output_file_prefix):
     logging.info("Creating xmls and xsls in " + tmp_dir)
@@ -560,11 +604,53 @@ class JavacoreSet:
             str(importlib_resources.files("javacore_analyser") / "data" / "xml" / "report.xsl"))
         shutil.copy2(report_xsl, input_dir)
 
-        xslt_doc = etree.parse(input_dir + "/report.xsl")
+        # Copy sections directory containing modular XSL files
+        # The report.xsl file uses <xsl:include> to reference these section files,
+        # enabling a plugin architecture where sections can be added/removed independently
+        sections_dir = os.path.normpath(
+            str(importlib_resources.files("javacore_analyser") / "data" / "xml" / "sections"))
+        sections_dest = os.path.join(input_dir, "sections")
+        logging.debug(f"Sections source dir: {sections_dir}")
+        logging.debug(f"Sections dest dir: {sections_dest}")
+        logging.debug(f"Sections dir exists: {os.path.exists(sections_dir)}")
+        if os.path.exists(sections_dir):
+            shutil.copytree(sections_dir, sections_dest)
+            logging.info(f"Copied sections directory to {sections_dest}")
+            # List files in sections directory for debugging
+            if os.path.exists(sections_dest):
+                section_files = os.listdir(sections_dest)
+                logging.info(f"Section files copied: {section_files}")
+        else:
+            logging.warning(f"Sections directory not found at {sections_dir}")
+
+        # Prepare XSLT file path and URI for processing
+        # The file:// URI scheme is required by lxml's XSLT processor to properly
+        # resolve relative paths in <xsl:include> directives
+        report_xsl_path = os.path.join(input_dir, "report.xsl")
+        report_xsl_uri = "file://" + os.path.abspath(report_xsl_path)
+        
+        logging.info(f"Report XSL path: {report_xsl_path}")
+        logging.info(f"Report XSL URI: {report_xsl_uri}")
+        
+        # Create XML parser with custom FileResolver to handle xsl:include directives
+        # The FileResolver intercepts URI resolution during XSLT parsing and converts
+        # file:// URIs to actual file system paths, allowing lxml to locate and include
+        # the modular section files referenced in report.xsl
+        xslt_parser = etree.XMLParser()
+        xslt_parser.resolvers.add(FileResolver(temp_path=input_dir))
+        
+        # Parse the XSLT document with the custom resolver
+        xslt_doc = etree.parse(report_xsl_path, xslt_parser)
+        # Set the base URL for the XSLT document to enable proper relative path resolution
+        xslt_doc.docinfo.URL = report_xsl_uri
+        logging.debug(f"XSLT doc base URL set to: {xslt_doc.docinfo.URL}")
+        # Create the XSLT transformer from the parsed document
         xslt_transformer = etree.XSLT(xslt_doc)
 
-        parser = etree.XMLParser(resolve_entities=True)
-        source_doc = etree.parse(input_dir + "/index.xml", parser)
+        # Create separate parser for the XML source document that will be transformed
+        # This parser is configured to resolve XML entities during parsing
+        source_parser = etree.XMLParser(resolve_entities=True)
+        source_doc = etree.parse(input_dir + "/index.xml", source_parser)
         output_doc = xslt_transformer(source_doc)
 
         output_html_file = output_dir + "/index.html"
