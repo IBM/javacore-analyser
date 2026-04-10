@@ -45,6 +45,7 @@
         </div>
         <div class="content">
             <h1>Javacore Analyser Report</h1>
+
             <xsl:if test="doc/report_info/javacores_generation_time">
                 <div class="margined">
                     from data between
@@ -64,6 +65,7 @@
                 <xsl:call-template name="all_threads"/>
                 <xsl:call-template name="all_code"/>
             </xsl:if>
+
             <xsl:call-template name="http_calls"/>
             <xsl:call-template name="footer"/>
         </div>
