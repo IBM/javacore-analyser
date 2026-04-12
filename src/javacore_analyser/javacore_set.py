@@ -35,6 +35,7 @@ from javacore_analyser.snapshot_collection import SnapshotCollection
 from javacore_analyser.snapshot_collection_collection import SnapshotCollectionCollection
 from javacore_analyser.verbose_gc import VerboseGcParser
 
+
 class FileResolver(etree.Resolver):
     """
     Custom URI resolver for XSLT processing to handle xsl:include directives.
@@ -50,12 +51,9 @@ class FileResolver(etree.Resolver):
     See: https://lxml.de/resolvers.html for lxml resolver documentation
     """
 
-
     def __init__(self, temp_path=None):
         super().__init__()
         self.temp_path = temp_path
-
-
 
     def resolve(self, url, id, context):
         """
@@ -76,13 +74,12 @@ class FileResolver(etree.Resolver):
         # If the file exists on the file system, resolve it
         if os.path.exists(url):
             return self.resolve_filename(url, context)
-
         else: 
             return self.resolve_filename(self.temp_path + os.sep + url, context)
 
-        
         # Return None if file not found (lxml will handle the error)
         return None
+
 
 def _create_xml_xsl_for_collection(tmp_dir, templates_dir, xml_xsl_filename, collection, output_file_prefix):
     logging.info("Creating xmls and xsls in " + tmp_dir)
@@ -641,10 +638,8 @@ class JavacoreSet:
         # file:// URIs to actual file system paths, allowing lxml to locate and include
         # the modular section files referenced in report.xsl
         xslt_parser = etree.XMLParser()
-
         xslt_parser.resolvers.add(FileResolver(temp_path=input_dir))
 
-        
         # Parse the XSLT document with the custom resolver
         xslt_doc = etree.parse(report_xsl_path, xslt_parser)
         # Set the base URL for the XSLT document to enable proper relative path resolution
