@@ -117,7 +117,11 @@
                             <thead>
                                 <tr>
                                     <th class="sixty">File Name</th>
-                                    <th class="ten">Number of collections in javacore time limits</th>
+                                    <xsl:choose>
+                                        <xsl:when test="//doc/report_info/javacore_list">
+                                            <th class="ten">Number of collections in javacore time limits</th>
+                                        </xsl:when>
+                                    </xsl:choose>
                                     <th class="ten">Total number of collections in the file</th>
                                 </tr>
                             </thead>
@@ -125,7 +129,11 @@
                                 <xsl:for-each select="doc/report_info/verbose_gc_list/verbose_gc">
                                     <tr>
                                         <td class="left"><xsl:value-of select="verbose_gc_file_name"/></td>
-                                        <td class="left"><xsl:value-of select="verbose_gc_collects"/></td>
+                                        <xsl:choose>
+                                            <xsl:when test="//doc/report_info/javacore_list">
+                                                <td class="left"><xsl:value-of select="verbose_gc_collects"/></td>
+                                            </xsl:when>
+                                        </xsl:choose>
                                         <td class="left"><xsl:value-of select="verbose_gc_total_collects"/></td>
                                     </tr>
                                 </xsl:for-each>
