@@ -87,6 +87,12 @@ exclude = [
   "/test",
 ]
 
+[tool.hatch.build.targets.wheel]
+packages = ["src/javacore_analyser"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"src/javacore_analyser/data" = "javacore_analyser/data"
+
 [tool.hatch.version]
 source = "versioningit"
 
