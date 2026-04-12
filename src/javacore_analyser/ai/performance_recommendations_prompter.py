@@ -44,26 +44,18 @@ class PerformanceRecommendationsPrompter(Prompter):
         # Get GC thread CPU usage
         gc_cpu_usage: str = self._get_gc_cpu_usage()
         
-        # Construct the prompt
-        prompt: str = f"""Context:
-CPU usage of entire application over time: 
-{cpu_usage_data}
-Memory usage by the application: 
-{memory_info}
-Application parameters: 
-{app_params}
-
-Top threads using most of CPU: 
-{top_cpu_threads}
-Top 5 blocking threads: 
-{top_blocking_threads}
-GC Threads CPU usage: 
-{gc_cpu_usage}
-
-Based on that data search for potential bottlenecks and provide the recommendations how the performance can be improved.
-Limit to maximum 5 recommendations.
-Avoid providing generic recommendations, like using profilers.
-If you do not find the recommendations, write that you do not have any recommendations."""
+        # Load the prompt template from file
+        template: str = self._load_prompt_template('performance_recommendations_prompt.txt')
+        
+        # Format the template with collected data
+        prompt: str = template.format(
+            cpu_usage_data=cpu_usage_data,
+            memory_info=memory_info,
+            app_params=app_params,
+            top_cpu_threads=top_cpu_threads,
+            top_blocking_threads=top_blocking_threads,
+            gc_cpu_usage=gc_cpu_usage
+        )
 
         return prompt
 
