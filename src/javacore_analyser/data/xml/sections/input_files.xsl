@@ -10,78 +10,83 @@
     <xsl:template name="input_files">
         <h3><a id="togglejavacores" href="javascript:expand_it(javacores,togglejavacores)" class="expandit">Input Files</a></h3>
         <div id="javacores" style="display:none;">
-            <h4>Javacore Files</h4>
-            <a id="togglejavacoredoc" href="javascript:expand_it(javacoredoc,togglejavacoredoc)" class="expandit">What does this table tell me?</a>
-            <div id="javacoredoc" style="display:none;">
-                This table shows all the javacore files that are included in the data set.
-                <ul>
-                    <li>
-                        <strong>File Name</strong>
-                        is the name of the javacore file.
-                    </li>
-                    <li>
-                        <strong>Time Stamp</strong>
-                        is the time when the javacore was generated.
-                    </li>
-                    <li>
-                        <strong>CPU usage (%)</strong>
-                        is the total CPU usage of all the threads in the javacore. The maximum possible value is therefore 100%
-                        This value is computed incrementally
-                        with relation to the previous javacore, hence it is not available ("N/A") for the first
-                        javacore file.
-                        </li>
-                        <li>
-                            <strong>CPU Load</strong>
-                            is the total CPU usage of all the threads in the javacore.
-                            Load of 1 means that 1 core is fully used.
-                            The maximum possible value is therefore the number of cores
-                            This value is computed incrementally
-                            with relation to the previous javacore, hence it is not available ("N/A") for the first
-                            javacore file.
-                        </li>
-                    </ul>
-                </div>
-                <table id="javacores_files_table">
-                    <thead>
-                        <tr>
-                            <th class="fifty">File Name</th>
-                            <th class="thirty">Time Stamp</th>
-                            <th class="ten">CPU usage (%)</th>
-                            <th class="ten">CPU Load</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <xsl:for-each select="doc/report_info/javacore_list/javacore">
-                            <tr>
-                                <td class="left">
-                                    <a target="_blank">
-                                        <xsl:attribute name="href">
-                                            <xsl:value-of select="concat('javacores/', javacore_file_name, '.html')"/>
-                                        </xsl:attribute>
-                                    </a>
-                                    <xsl:value-of select="javacore_file_name"/>
-                                </td>
-                                <td class="left"><xsl:value-of select="javacore_file_time_stamp"/></td>
-                                <xsl:choose>
-                                    <xsl:when test="position()=1">
-                                        <td class="left">N/A</td>
-                                    </xsl:when>
-                                    <xsl:otherwise>
-                                        <td><xsl:value-of select="format-number(javacore_cpu_percentage, '0.##')"/></td>
-                                    </xsl:otherwise>
-                                </xsl:choose>
-                                <xsl:choose>
-                                    <xsl:when test="position()=1">
-                                        <td class="left">N/A</td>
-                                    </xsl:when>
-                                    <xsl:otherwise>
-                                        <td><xsl:value-of select="format-number(javacore_load, '0.##')"/></td>
-                                    </xsl:otherwise>
-                                </xsl:choose>
-                            </tr>
-                        </xsl:for-each>
-                    </tbody>
-                </table>
+            <xsl:choose>
+                <xsl:when test="doc/report_info/javacore_list">
+                    <h4>Javacore Files</h4>
+                    <a id="togglejavacoredoc" href="javascript:expand_it(javacoredoc,togglejavacoredoc)" class="expandit">What does this table tell me?</a>
+                    <div id="javacoredoc" style="display:none;">
+                        This table shows all the javacore files that are included in the data set.
+                        <ul>
+                            <li>
+                                <strong>File Name</strong>
+                                is the name of the javacore file.
+                            </li>
+                            <li>
+                                <strong>Time Stamp</strong>
+                                is the time when the javacore was generated.
+                            </li>
+                            <li>
+                                <strong>CPU usage (%)</strong>
+                                is the total CPU usage of all the threads in the javacore. The maximum possible value is therefore 100%
+                                This value is computed incrementally
+                                with relation to the previous javacore, hence it is not available ("N/A") for the first
+                                javacore file.
+                                </li>
+                                <li>
+                                    <strong>CPU Load</strong>
+                                    is the total CPU usage of all the threads in the javacore.
+                                    Load of 1 means that 1 core is fully used.
+                                    The maximum possible value is therefore the number of cores
+                                    This value is computed incrementally
+                                    with relation to the previous javacore, hence it is not available ("N/A") for the first
+                                    javacore file.
+                                </li>
+                            </ul>
+                        </div>
+                        <table id="javacores_files_table">
+                            <thead>
+                                <tr>
+                                    <th class="fifty">File Name</th>
+                                    <th class="thirty">Time Stamp</th>
+                                    <th class="ten">CPU usage (%)</th>
+                                    <th class="ten">CPU Load</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <xsl:for-each select="doc/report_info/javacore_list/javacore">
+                                    <tr>
+                                        <td class="left">
+                                            <a target="_blank">
+                                                <xsl:attribute name="href">
+                                                    <xsl:value-of select="concat('javacores/', javacore_file_name, '.html')"/>
+                                                </xsl:attribute>
+                                            </a>
+                                            <xsl:value-of select="javacore_file_name"/>
+                                        </td>
+                                        <td class="left"><xsl:value-of select="javacore_file_time_stamp"/></td>
+                                        <xsl:choose>
+                                            <xsl:when test="position()=1">
+                                                <td class="left">N/A</td>
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                <td><xsl:value-of select="format-number(javacore_cpu_percentage, '0.##')"/></td>
+                                            </xsl:otherwise>
+                                        </xsl:choose>
+                                        <xsl:choose>
+                                            <xsl:when test="position()=1">
+                                                <td class="left">N/A</td>
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                <td><xsl:value-of select="format-number(javacore_load, '0.##')"/></td>
+                                            </xsl:otherwise>
+                                        </xsl:choose>
+                                    </tr>
+                                </xsl:for-each>
+                            </tbody>
+                        </table>
+                    </xsl:when>
+                    <xsl:otherwise> No javacore files </xsl:otherwise>
+                </xsl:choose>
                 <br/>
                 <xsl:choose>
                     <xsl:when test="doc/report_info/verbose_gc_list/verbose_gc">
@@ -170,7 +175,7 @@
                             </tbody>
                         </table>
                     </xsl:when>
-                    <!-- xsl:otherwise> No HAR files </xsl:otherwise -->
+                    <xsl:otherwise> No HAR files </xsl:otherwise>
                 </xsl:choose>
             </div>
     </xsl:template>
