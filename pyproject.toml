@@ -1,5 +1,5 @@
 #
-# Copyright IBM Corp. 2024 - 2025
+# Copyright IBM Corp. 2024 - 2026
 # SPDX-License-Identifier: Apache-2.0
 #
 
@@ -19,10 +19,10 @@ authors = [
 description = "The tool to review IBM Javacore files"
 readme = "README.md"
 license = {file = "LICENSE"}
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 classifiers = [
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
+
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -43,15 +43,33 @@ dependencies = [
     "lxml",
     "pyana",
     "importlib-resources",
-    "flask",
-    "waitress",
     "tqdm",
     "haralyzer",
+]
+
+[project.optional-dependencies]
+web = [
+    "flask",
+    "waitress",
+]
+ollama = [
     "ollama",
+    "Markdown",
+]
+huggingface = [
+    "torch",
+    "transformers",
     "pandas",
     "Markdown",
-    "torch", 
-    "transformers"
+]
+full = [
+    "flask",
+    "waitress",
+    "ollama",
+    "Markdown",
+    "torch",
+    "transformers",
+    "pandas",
 ]
 
 [project.scripts]

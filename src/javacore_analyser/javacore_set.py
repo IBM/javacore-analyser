@@ -21,8 +21,6 @@ from tqdm import tqdm
 
 from javacore_analyser import tips
 # from javacore_analyser.ai.ai_overview_prompter import AiOverviewPrompter
-from javacore_analyser.ai.huggingfacellm import HuggingFaceLLM
-from javacore_analyser.ai.ollama_llm import OllamaLLM
 from javacore_analyser.ai.performance_recommendations_prompter import PerformanceRecommendationsPrompter
 from javacore_analyser.code_snapshot_collection import CodeSnapshotCollection
 from javacore_analyser.constants import *
@@ -826,9 +824,23 @@ class JavacoreSet:
     def add_ai(self):
         llm_method: str = Properties.get_instance().get_property("llm_method")
         if llm_method.lower() == "huggingface":
-            ai = HuggingFaceLLM(self)
+            try:
+                from javacore_analyser.ai.huggingfacellm import HuggingFaceLLM
+                ai = HuggingFaceLLM(self)
+            except ImportError as e:
+                raise ImportError(
+                    "HuggingFace dependencies not installed. "
+                    "Install with: pip install javacore_analyser[huggingface]"
+                ) from e
         elif llm_method.lower() == "ollama":
-            ai = OllamaLLM(self)
+            try:
+                from javacore_analyser.ai.ollama_llm import OllamaLLM
+                ai = OllamaLLM(self)
+            except ImportError as e:
+                raise ImportError(
+                    "Ollama dependencies not installed. "
+                    "Install with: pip install javacore_analyser[ollama]"
+                ) from e
         else:
             raise InvalidLLMMethodError(llm_method)
             
