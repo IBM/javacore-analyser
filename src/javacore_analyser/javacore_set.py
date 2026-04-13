@@ -311,8 +311,6 @@ class JavacoreSet:
                     file_size = os.path.getsize(full_path)
                     if file_size > MIN_JAVACORE_SIZE:
                         self.files.append(full_path)
-                        if not self.path:
-                            self.path = dirpath
                         logging.info("Javacore file found: " + file)
                     else:
                         logging.info(f"Excluding javacore file {file} with size {file_size} bytes")
@@ -321,13 +319,9 @@ class JavacoreSet:
                                                             file, file_size)})
                 if fnmatch.fnmatch(file, '*verbosegc*.txt*'):
                     self.gc_parser.add_file(dirpath + os.sep + file)
-                    if not self.path:
-                        self.path = dirpath
                     logging.info("VerboseGC file found: " + file)
                 if fnmatch.fnmatch(file, "*.har"):
                     self.har_files.append(HarFile(dirpath + os.sep + file))
-                    if not self.path:
-                        self.path = dirpath
                     logging.info("HAR file found: " + file)
 
         # sorting files by name.
