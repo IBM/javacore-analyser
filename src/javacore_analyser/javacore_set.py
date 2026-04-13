@@ -21,8 +21,6 @@ from tqdm import tqdm
 
 from javacore_analyser import tips
 # from javacore_analyser.ai.ai_overview_prompter import AiOverviewPrompter
-from javacore_analyser.ai.huggingfacellm import HuggingFaceLLM
-from javacore_analyser.ai.ollama_llm import OllamaLLM
 from javacore_analyser.ai.performance_recommendations_prompter import PerformanceRecommendationsPrompter
 from javacore_analyser.code_snapshot_collection import CodeSnapshotCollection
 from javacore_analyser.constants import *
@@ -34,6 +32,7 @@ from javacore_analyser.properties import Properties
 from javacore_analyser.snapshot_collection import SnapshotCollection
 from javacore_analyser.snapshot_collection_collection import SnapshotCollectionCollection
 from javacore_analyser.verbose_gc import VerboseGcParser
+
 
 class FileResolver(etree.Resolver):
     """
@@ -55,7 +54,6 @@ class FileResolver(etree.Resolver):
     def __init__(self, temp_path=None):
         super().__init__()
         self.temp_path = temp_path
-
 
     def resolve(self, url, id, context):
         """
@@ -80,9 +78,10 @@ class FileResolver(etree.Resolver):
         else: 
             return self.resolve_filename(self.temp_path + os.sep + url, context)
 
-        
+
         # Return None if file not found (lxml will handle the error)
         return None
+
 
 def _create_xml_xsl_for_collection(tmp_dir, templates_dir, xml_xsl_filename, collection, output_file_prefix):
     logging.info("Creating xmls and xsls in " + tmp_dir)
@@ -694,7 +693,7 @@ class JavacoreSet:
 
         xslt_parser.resolvers.add(FileResolver(temp_path=input_dir))
 
-        
+
         # Parse the XSLT document with the custom resolver
         xslt_doc = etree.parse(report_xsl_path, xslt_parser)
         # Set the base URL for the XSLT document to enable proper relative path resolution
@@ -881,9 +880,23 @@ class JavacoreSet:
     def add_ai(self):
         llm_method: str = Properties.get_instance().get_property("llm_method")
         if llm_method.lower() == "huggingface":
-            ai = HuggingFaceLLM(self)
+            try:
+                from javacore_analyser.ai.huggingfacellm import HuggingFaceLLM
+                ai = HuggingFaceLLM(self)
+            except ImportError as e:
+                raise ImportError(
+                    "HuggingFace dependencies not installed. "
+                    "Install with: pip install javacore_analyser[huggingface]"
+                ) from e
         elif llm_method.lower() == "ollama":
-            ai = OllamaLLM(self)
+            try:
+                from javacore_analyser.ai.ollama_llm import OllamaLLM
+                ai = OllamaLLM(self)
+            except ImportError as e:
+                raise ImportError(
+                    "Ollama dependencies not installed. "
+                    "Install with: pip install javacore_analyser[ollama]"
+                ) from e
         else:
             raise InvalidLLMMethodError(llm_method)
             
