@@ -49,6 +49,7 @@
                             of the first and the last javacore in the data set.
                             Garbage collections that happened before the first
                             or after the last javacore generation time are not included.
+                            If there are none or only one javacore provided, then the chart shows the data from all verbose GC log files.
                             <ul>
                                 <li><strong>Heap Usage</strong>
                                     is the available Java heap memory over time,
