@@ -4,6 +4,7 @@
 #
 
 from abc import ABC, abstractmethod
+import logging
 
 import markdown
 
@@ -44,6 +45,7 @@ class LLM(ABC):
             value = getattr(self, config_attr, None)
             if value is not None:
                 params[param_name] = value
+        logging.info(f"Built generation params: {params}")
         return params
 
     @abstractmethod
