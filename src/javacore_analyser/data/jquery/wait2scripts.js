@@ -205,6 +205,7 @@ const loadChartGC = function() {
   //        end with gc collection done after the last javacore was collected
   const inputData = [];
   const totalHeap = [];
+  const pauseTimeData = [];
   const labels = [];
 
   let dateTmp;
@@ -214,16 +215,20 @@ const loadChartGC = function() {
       // TODO - filter range
       //if( gcStartDate >= coresTimeRange['startTime'] && gcStartDate <= coresTimeRange['endTime']) {
 
+        const durationMs = Number(element['duration'].textContent);
+
         // before running GC
         inputData.push((HEAP_SIZE - Number(element['freeBefore'].textContent)) / MB_SIZE);
         totalHeap.push(HEAP_SIZE / MB_SIZE);
         labels.push(new Date(element['startTime'].textContent).valueOf());
+        pauseTimeData.push(durationMs);
 
         // result of GC execution
         inputData.push((HEAP_SIZE - Number(element['freeAfter'].textContent)) / MB_SIZE);
         totalHeap.push(HEAP_SIZE / MB_SIZE);
+        pauseTimeData.push(null);
         dateTmp = new Date(element['startTime'].textContent);
-        dateTmp.setMilliseconds(dateTmp.getMilliseconds() + Number(element['duration'].textContent.split('.')[0]));
+        dateTmp.setMilliseconds(dateTmp.getMilliseconds() + durationMs);
         labels.push(dateTmp.valueOf());
   })
 
@@ -240,7 +245,8 @@ const loadChartGC = function() {
           fillColor: 'rgba(255,99,132,0.5)',
           borderColor: 'rgba(255,99,132,1)',
           backgroundColor: 'rgba(255,99,132,0.5)',
-          pointRadius: 0.5
+          pointRadius: 0.5,
+          yAxisID: 'y'
         },
         {
           label: 'Total Heap (MB)',
@@ -249,7 +255,20 @@ const loadChartGC = function() {
           fillColor: "black",
           borderColor: "black",
           backgroundColor: "black",
-          pointRadius: 0.0
+          pointRadius: 0.0,
+          yAxisID: 'y'
+        },
+        {
+          label: 'Pause Time (ms)',
+          data: pauseTimeData,
+          type: 'bar',
+          borderWidth: 1,
+          borderColor: 'rgba(54,162,235,1)',
+          backgroundColor: 'rgba(54,162,235,0.5)',
+          yAxisID: 'yPause',
+          barPercentage: 1.0,
+          categoryPercentage: 1.0,
+          order: 1
         },
       ],
     },
@@ -257,7 +276,22 @@ const loadChartGC = function() {
       scales: {
         y: {
           beginAtZero: true,
-          suggestedMax: (HEAP_SIZE + 0.01*HEAP_SIZE) / MB_SIZE
+          suggestedMax: (HEAP_SIZE + 0.01*HEAP_SIZE) / MB_SIZE,
+          title: {
+            display: true,
+            text: 'Heap Usage (MB)'
+          }
+        },
+        yPause: {
+          beginAtZero: true,
+          position: 'right',
+          title: {
+            display: true,
+            text: 'Pause Time (ms)'
+          },
+          grid: {
+            drawOnChartArea: false
+          }
         },
         x: {
              type: 'time',
