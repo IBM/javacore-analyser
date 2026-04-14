@@ -33,9 +33,6 @@
                     </div>
                 </xsl:otherwise>
             </xsl:choose>
-            <h4>Garbage Collection Activity</h4>
-            <a id="togglememusagedoc" href="javascript:expand_it(memusagedoc,togglememusagedoc)" class="expandit">
-                What does this chart tell me?</a>
             <xsl:choose>
                 <xsl:when test="doc/report_info/verbose_gc_list/verbose_gc">
                     <xsl:choose>
@@ -44,6 +41,9 @@
                             There were no garbage collections withing the javacore time limits
                         </xsl:when>
                         <xsl:otherwise>
+                            <h4>Garbage Collection Activity</h4>
+                            <a id="togglememusagedoc" href="javascript:expand_it(memusagedoc,togglememusagedoc)" class="expandit">
+                                What does this chart tell me?</a>
                             <div id="memusagedoc" style="display:none;">
                             This chart shows all the garbage collections that happened between the time
                             of the first and the last javacore in the data set.
@@ -69,7 +69,7 @@
                 </xsl:when>
                 <xsl:otherwise>
                     <br/>
-                    No verbosegc logs were provided
+                    No verbosegc logs were provided, so verbose GC data cannot be shown.
                 </xsl:otherwise>
             </xsl:choose>
         </div>
