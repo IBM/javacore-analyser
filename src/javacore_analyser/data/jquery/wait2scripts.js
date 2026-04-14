@@ -268,6 +268,8 @@ const loadChartGC = function() {
           yAxisID: 'yPause',
           barPercentage: 1.0,
           categoryPercentage: 1.0,
+          barThickness: 6,
+          maxBarThickness: 9,
           order: 1
         },
       ],

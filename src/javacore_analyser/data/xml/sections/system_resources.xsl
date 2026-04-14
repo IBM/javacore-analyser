@@ -28,8 +28,8 @@
                         This value is computed incrementally with relation to the previous javacore,
                         hence it is not available for the first javacore file.
                     </div>
-                    <div class="chart-container">
-                        <canvas id="myChartCPUUsage" height="200"></canvas>
+                    <div class="chart-container" style="overflow-x:auto;">
+                        <canvas id="myChartCPUUsage" height="200" width="1400"></canvas>
                     </div>
                 </xsl:otherwise>
             </xsl:choose>
@@ -61,8 +61,8 @@
                                 </li>
                         </ul>
                     </div>
-                    <div id="systemresources_myChartGC" class="chart-container hide">
-                        <canvas id="myChartGC" height="200"></canvas>
+                    <div id="systemresources_myChartGC" class="chart-container hide" style="overflow-x:auto;">
+                        <canvas id="myChartGC" height="200" width="1400"></canvas>
                     </div>
                         </xsl:otherwise>
                     </xsl:choose>

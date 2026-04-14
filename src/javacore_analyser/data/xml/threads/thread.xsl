@@ -43,8 +43,8 @@
                             System resource utilization data cannot be calculated with only a single javacore.
                         </xsl:when>
                         <xsl:otherwise>
-                            <div class="chart-container" height="25%">
-                                <canvas id="myChart" height="100%"></canvas>
+                            <div class="chart-container" height="25%" style="overflow-x:auto;">
+                                <canvas id="myChart" height="300" width="1400"></canvas>
                             </div>
                         </xsl:otherwise>
                     </xsl:choose>
