@@ -49,6 +49,8 @@ class FileResolver(etree.Resolver):
     See: https://lxml.de/resolvers.html for lxml resolver documentation
     """
 
+
+
     def __init__(self, temp_path=None):
         super().__init__()
         self.temp_path = temp_path
@@ -72,8 +74,10 @@ class FileResolver(etree.Resolver):
         # If the file exists on the file system, resolve it
         if os.path.exists(url):
             return self.resolve_filename(url, context)
+
         else: 
             return self.resolve_filename(self.temp_path + os.sep + url, context)
+
 
         # Return None if file not found (lxml will handle the error)
         return None
@@ -136,6 +140,9 @@ class JavacoreSet:
         self.ai_tips = ""
 
         self.doc = None
+        
+        # Track what types of data files are present
+        self.data_types = set()
 
         '''
         List where each element is SnapshotCollection containing all threads blocked by given thread. 
@@ -258,14 +265,31 @@ class JavacoreSet:
     def create(path):
         jset = JavacoreSet(path)
         jset.populate_files_list()
-        if len(jset.files) < 1:
-            raise RuntimeError("No javacores found. You need at least one javacore. Exiting with error 13")
-        first_javacore = jset.get_one_javacore()
-        jset.parse_common_data(first_javacore)
-        jset.parse_javacores()
-        jset.parse_verbose_gc_files()
-        jset.sort_snapshots()
-        jset.__generate_blocked_snapshots_list()
+        
+        # Process javacores if available
+        if len(jset.files) > 0:
+            jset.data_types.add('javacores')
+            first_javacore = jset.get_one_javacore()
+            jset.parse_common_data(first_javacore)
+            jset.parse_javacores()
+            jset.sort_snapshots()
+            jset.__generate_blocked_snapshots_list()
+        else:
+            logging.info("No javacore files found. Continuing with other data types.")
+        
+        # Process verbose GC files if available
+        if len(jset.gc_parser.get_file_paths()) > 0:
+            jset.data_types.add('verbosegc')
+            jset.parse_verbose_gc_files()
+        
+        # Track HAR files if available
+        if len(jset.har_files) > 0:
+            jset.data_types.add('har')
+        
+        # Ensure at least one data type is present
+        if len(jset.data_types) == 0:
+            raise RuntimeError("No valid data files found (javacores, HAR files, or verbose GC files). Exiting with error 13")
+        
         return jset
 
     def get_one_javacore(self):
@@ -283,10 +307,10 @@ class JavacoreSet:
         for (dirpath, dirnames, filenames) in os.walk(self.path):
             for file in filenames:
                 if fnmatch.fnmatch(file, '*javacore*.txt'):
-                    file_size = os.path.getsize(os.path.join(dirpath, file))
+                    full_path = os.path.join(dirpath, file)
+                    file_size = os.path.getsize(full_path)
                     if file_size > MIN_JAVACORE_SIZE:
-                        self.files.append(file)
-                        self.path = dirpath
+                        self.files.append(full_path)
                         logging.info("Javacore file found: " + file)
                     else:
                         logging.info(f"Excluding javacore file {file} with size {file_size} bytes")
@@ -337,26 +361,31 @@ class JavacoreSet:
                     continue
         except Exception as ex:
             logging.exception(ex)
-            logging.error(f'Error during processing file: {file.name} \n'
-                          f'line number: {i} \n'
-                          f'line: {curr_line}\n'
-                          f'Check the exception below what happened')
+            if file is not None:
+                logging.error(f'Error during processing file: {file.name} \n'
+                              f'line number: {i} \n'
+                              f'line: {curr_line}\n'
+                              f'Check the exception below what happened')
         finally:
-            file.close()
+            if file is not None:
+                file.close()
 
     def parse_javacores(self):
         """ creates a Javacore object for each javacore...txt file in the given path """
         for filename in tqdm(self.files, "Parsing javacore files", unit=" file"):
-            filename = os.path.join(self.path, filename)
             javacore = Javacore()
             javacore.create(filename, self)
             self.javacores.append(javacore)
         self.javacores.sort(key=lambda x: x.timestamp)
 
     def parse_verbose_gc_files(self):
-        start = self.javacores[0].datetime
-        stop = self.javacores[-1].datetime
-        self.gc_parser.parse_files(start, stop)
+        if len(self.javacores) > 0:
+            start = self.javacores[0].datetime
+            stop = self.javacores[-1].datetime
+            self.gc_parser.parse_files(start, stop)
+        else:
+            # Parse all GC files without time constraints
+            self.gc_parser.parse_files()
 
     # def find_thread(self, thread_id):
     #     """ Checks if thread_name already existing in this javacore set """
@@ -419,6 +448,14 @@ class JavacoreSet:
         <?xml-stylesheet type="text/xsl" href="data/report.xsl"?><doc/>''')
 
         doc_node = self.doc.documentElement
+        
+        # Add data types information
+        data_types_node = self.doc.createElement("data_types")
+        doc_node.appendChild(data_types_node)
+        for data_type in self.data_types:
+            type_node = self.doc.createElement("type")
+            type_node.appendChild(self.doc.createTextNode(data_type))
+            data_types_node.appendChild(type_node)
 
         javacore_count_node = self.doc.createElement("javacore_count")
         javacore_count_node.appendChild(self.doc.createTextNode(str(len(self.javacores))))
@@ -429,34 +466,36 @@ class JavacoreSet:
         report_info_node.appendChild(generation_time_node)
         generation_time_node.appendChild(self.doc.createTextNode(str(datetime.now().strftime(DATE_FORMAT))))
 
-        generation_javacores_node = self.doc.createElement("javacores_generation_time")
-        report_info_node.appendChild(generation_javacores_node)
-        generation_javacores_node_starting_time = self.doc.createElement("starting_time")
-        generation_javacores_node.appendChild(generation_javacores_node_starting_time)
-        generation_javacores_node_starting_time.appendChild(
-            self.doc.createTextNode(str(self.javacores[0].datetime.strftime(DATE_FORMAT))))
-        generation_javacores_node_end_time = self.doc.createElement("end_time")
-        generation_javacores_node.appendChild(generation_javacores_node_end_time)
-        generation_javacores_node_end_time.appendChild(
-            self.doc.createTextNode(str(self.javacores[-1].datetime.strftime(DATE_FORMAT))))
+        # Only include javacore-specific data if javacores are present
+        if 'javacores' in self.data_types and len(self.javacores) > 0:
+            generation_javacores_node = self.doc.createElement("javacores_generation_time")
+            report_info_node.appendChild(generation_javacores_node)
+            generation_javacores_node_starting_time = self.doc.createElement("starting_time")
+            generation_javacores_node.appendChild(generation_javacores_node_starting_time)
+            generation_javacores_node_starting_time.appendChild(
+                self.doc.createTextNode(str(self.javacores[0].datetime.strftime(DATE_FORMAT))))
+            generation_javacores_node_end_time = self.doc.createElement("end_time")
+            generation_javacores_node.appendChild(generation_javacores_node_end_time)
+            generation_javacores_node_end_time.appendChild(
+                self.doc.createTextNode(str(self.javacores[-1].datetime.strftime(DATE_FORMAT))))
 
-        javacore_list_node = self.doc.createElement("javacore_list")
-        report_info_node.appendChild(javacore_list_node)
-        for jc in self.javacores:
-            javacore_node = self.doc.createElement("javacore")
-            javacore_list_node.appendChild(javacore_node)
-            javacore_file_node = self.doc.createElement("javacore_file_name")
-            javacore_node.appendChild(javacore_file_node)
-            javacore_file_node.appendChild(self.doc.createTextNode(jc.basefilename()))
-            javacore_file_time_stamp_node = self.doc.createElement("javacore_file_time_stamp")
-            javacore_node.appendChild(javacore_file_time_stamp_node)
-            javacore_file_time_stamp_node.appendChild(self.doc.createTextNode(str(jc.datetime.strftime(DATE_FORMAT))))
-            javacore_total_cpu_node = self.doc.createElement("javacore_cpu_percentage")
-            javacore_node.appendChild(javacore_total_cpu_node)
-            javacore_total_cpu_node.appendChild(self.doc.createTextNode(str(jc.get_cpu_percentage())))
-            javacore_load_node = self.doc.createElement("javacore_load")
-            javacore_node.appendChild(javacore_load_node)
-            javacore_load_node.appendChild(self.doc.createTextNode(str(jc.get_load())))
+            javacore_list_node = self.doc.createElement("javacore_list")
+            report_info_node.appendChild(javacore_list_node)
+            for jc in self.javacores:
+                javacore_node = self.doc.createElement("javacore")
+                javacore_list_node.appendChild(javacore_node)
+                javacore_file_node = self.doc.createElement("javacore_file_name")
+                javacore_node.appendChild(javacore_file_node)
+                javacore_file_node.appendChild(self.doc.createTextNode(jc.basefilename()))
+                javacore_file_time_stamp_node = self.doc.createElement("javacore_file_time_stamp")
+                javacore_node.appendChild(javacore_file_time_stamp_node)
+                javacore_file_time_stamp_node.appendChild(self.doc.createTextNode(str(jc.datetime.strftime(DATE_FORMAT))))
+                javacore_total_cpu_node = self.doc.createElement("javacore_cpu_percentage")
+                javacore_node.appendChild(javacore_total_cpu_node)
+                javacore_total_cpu_node.appendChild(self.doc.createTextNode(str(jc.get_cpu_percentage())))
+                javacore_load_node = self.doc.createElement("javacore_load")
+                javacore_node.appendChild(javacore_load_node)
+                javacore_load_node.appendChild(self.doc.createTextNode(str(jc.get_load())))
 
         verbose_gc_list_node = self.doc.createElement("verbose_gc_list")
         report_info_node.appendChild(verbose_gc_list_node)
@@ -483,8 +522,12 @@ class JavacoreSet:
             for har in self.har_files:
                 har_files_node.appendChild(har.get_xml(self.doc))
 
-        system_info_node = self.doc.createElement("system_info")
-        doc_node.appendChild(system_info_node)
+        # Only include system info if javacores are present
+        if 'javacores' in self.data_types:
+            system_info_node = self.doc.createElement("system_info")
+            doc_node.appendChild(system_info_node)
+        else:
+            system_info_node = None
 
         tips_node = self.doc.createElement("tips")
         report_info_node.appendChild(tips_node)
@@ -494,65 +537,70 @@ class JavacoreSet:
             tip_node.appendChild(self.doc.createTextNode(tip))
         tips_node.setAttribute("ai_tips", self.ai_tips)
 
-        user_args_list_node = self.doc.createElement("user_args_list")
-        #system_info_node.setAttribute("ai_overview", self.ai_overview)
-        system_info_node.appendChild(user_args_list_node)
-        for arg in self.user_args:
-            arg_node = self.doc.createElement("user_arg")
-            user_args_list_node.appendChild(arg_node)
-            arg_node.appendChild(self.doc.createTextNode(arg))
+        # Only add system info details if javacores are present
+        if system_info_node is not None:
+            user_args_list_node = self.doc.createElement("user_args_list")
+            #system_info_node.setAttribute("ai_overview", self.ai_overview)
+            system_info_node.appendChild(user_args_list_node)
+            for arg in self.user_args:
+                arg_node = self.doc.createElement("user_arg")
+                user_args_list_node.appendChild(arg_node)
+                arg_node.appendChild(self.doc.createTextNode(arg))
 
-        number_of_cpus_node = self.doc.createElement("number_of_cpus")
-        system_info_node.appendChild(number_of_cpus_node)
-        number_of_cpus_node.appendChild(self.doc.createTextNode(self.number_of_cpus))
+            number_of_cpus_node = self.doc.createElement("number_of_cpus")
+            system_info_node.appendChild(number_of_cpus_node)
+            number_of_cpus_node.appendChild(self.doc.createTextNode(self.number_of_cpus if self.number_of_cpus else ""))
 
-        xmx_node = self.doc.createElement("xmx")
-        system_info_node.appendChild(xmx_node)
-        xmx_node.appendChild(self.doc.createTextNode(self.xmx))
+            xmx_node = self.doc.createElement("xmx")
+            system_info_node.appendChild(xmx_node)
+            xmx_node.appendChild(self.doc.createTextNode(self.xmx))
 
-        xms_node = self.doc.createElement("xms")
-        system_info_node.appendChild(xms_node)
-        xms_node.appendChild(self.doc.createTextNode(self.xms))
+            xms_node = self.doc.createElement("xms")
+            system_info_node.appendChild(xms_node)
+            xms_node.appendChild(self.doc.createTextNode(self.xms))
 
-        xmn_node = self.doc.createElement("xmn")
-        system_info_node.appendChild(xmn_node)
-        xmn_node.appendChild(self.doc.createTextNode(self.xmn))
+            xmn_node = self.doc.createElement("xmn")
+            system_info_node.appendChild(xmn_node)
+            xmn_node.appendChild(self.doc.createTextNode(self.xmn))
 
-        verbose_gc_node = self.doc.createElement("verbose_gc")
-        system_info_node.appendChild(verbose_gc_node)
-        verbose_gc_node.appendChild(self.doc.createTextNode(str(self.verbose_gc)))
+            verbose_gc_node = self.doc.createElement("verbose_gc")
+            system_info_node.appendChild(verbose_gc_node)
+            verbose_gc_node.appendChild(self.doc.createTextNode(str(self.verbose_gc)))
 
-        gc_policy_node = self.doc.createElement("gc_policy")
-        system_info_node.appendChild(gc_policy_node)
-        gc_policy_node.appendChild(self.doc.createTextNode(self.gc_policy))
+            gc_policy_node = self.doc.createElement("gc_policy")
+            system_info_node.appendChild(gc_policy_node)
+            gc_policy_node.appendChild(self.doc.createTextNode(self.gc_policy))
 
-        compressed_refs_node = self.doc.createElement("compressed_refs")
-        system_info_node.appendChild(compressed_refs_node)
-        compressed_refs_node.appendChild(self.doc.createTextNode(str(self.compressed_refs)))
+            compressed_refs_node = self.doc.createElement("compressed_refs")
+            system_info_node.appendChild(compressed_refs_node)
+            compressed_refs_node.appendChild(self.doc.createTextNode(str(self.compressed_refs)))
 
-        architecture_node = self.doc.createElement("architecture")
-        system_info_node.appendChild(architecture_node)
-        architecture_node.appendChild(self.doc.createTextNode(self.architecture))
+            architecture_node = self.doc.createElement("architecture")
+            system_info_node.appendChild(architecture_node)
+            architecture_node.appendChild(self.doc.createTextNode(self.architecture))
 
-        java_version_node = self.doc.createElement("java_version")
-        system_info_node.appendChild(java_version_node)
-        java_version_node.appendChild(self.doc.createTextNode(self.java_version))
+            java_version_node = self.doc.createElement("java_version")
+            system_info_node.appendChild(java_version_node)
+            java_version_node.appendChild(self.doc.createTextNode(self.java_version))
 
-        os_level_node = self.doc.createElement("os_level")
-        system_info_node.appendChild(os_level_node)
-        os_level_node.appendChild(self.doc.createTextNode(self.os_level))
+            os_level_node = self.doc.createElement("os_level")
+            system_info_node.appendChild(os_level_node)
+            os_level_node.appendChild(self.doc.createTextNode(self.os_level))
 
-        jvm_startup_time = self.doc.createElement("jvm_start_time")
-        system_info_node.appendChild(jvm_startup_time)
-        jvm_startup_time.appendChild(self.doc.createTextNode(self.jvm_start_time))
+            jvm_startup_time = self.doc.createElement("jvm_start_time")
+            system_info_node.appendChild(jvm_startup_time)
+            jvm_startup_time.appendChild(self.doc.createTextNode(self.jvm_start_time))
 
-        cmd_line = self.doc.createElement("cmd_line")
-        system_info_node.appendChild(cmd_line)
-        cmd_line.appendChild(self.doc.createTextNode(self.cmd_line))
+            cmd_line = self.doc.createElement("cmd_line")
+            system_info_node.appendChild(cmd_line)
+            cmd_line.appendChild(self.doc.createTextNode(self.cmd_line))
 
-        doc_node.appendChild(self.get_blockers_xml())
-        doc_node.appendChild(self.threads.get_xml(self.doc))
-        doc_node.appendChild(self.stacks.get_xml(self.doc))
+        # Only add javacore-dependent data if javacores are present
+        if 'javacores' in self.data_types:
+            doc_node.appendChild(self.get_blockers_xml())
+            doc_node.appendChild(self.threads.get_xml(self.doc))
+            doc_node.appendChild(self.stacks.get_xml(self.doc))
+        
         doc_node.appendChild(self.gc_parser.get_xml(self.doc))
 
         self.doc.appendChild(doc_node)
@@ -636,7 +684,9 @@ class JavacoreSet:
         # file:// URIs to actual file system paths, allowing lxml to locate and include
         # the modular section files referenced in report.xsl
         xslt_parser = etree.XMLParser()
+
         xslt_parser.resolvers.add(FileResolver(temp_path=input_dir))
+
 
         # Parse the XSLT document with the custom resolver
         xslt_doc = etree.parse(report_xsl_path, xslt_parser)

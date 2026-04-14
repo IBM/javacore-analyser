@@ -1,5 +1,5 @@
 #
-# Copyright IBM Corp. 2024 - 2024
+# Copyright IBM Corp. 2024 - 2026
 # SPDX-License-Identifier: Apache-2.0
 #
 
@@ -149,7 +149,8 @@ class TestJavacoreSet(unittest.TestCase):
         pass
 
     def test_parse_javacores_contain_valid_file(self):
-        self.assertTrue(self.javacore_set_from_test_data.files.index('javacore.20220606.114458.32888.0001.txt') >= 0) #Object is on the list
+        # Check if any file in the list ends with the expected filename
+        self.assertTrue(any('javacore.20220606.114458.32888.0001.txt' in f for f in self.javacore_set_from_test_data.files))
 
     def test_parse_javacores_not_contain_wrong_file(self):
         # Check whether javacore.wrong.corr is in the list

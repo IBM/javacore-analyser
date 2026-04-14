@@ -94,7 +94,7 @@ const loadChartGC = function() {
 
   const gcTable = document.querySelector('gc-collections');
 
-  if(!gcTable.hasChildNodes()) {
+  if(!gcTable || !gcTable.hasChildNodes()) {
      return;
   }
 
@@ -107,31 +107,38 @@ const loadChartGC = function() {
 
   // 1. get the list of javacores with timestamps, to set the chart range (x range)
   const coresFiles = document.getElementById('javacores_files_table');
-  const coresNumber = document.getElementById('javacores_files_table').rows.length;
+  const coresNumber = coresFiles ? coresFiles.rows.length : 0;
 
   const coresTimestamps = [];
-  const coresTimeRange = {
-      'startTime': new Date(document.getElementById('javacores_files_table').rows[1].cells[1].innerHTML),
-      'endTime': new Date(document.getElementById('javacores_files_table').rows[1].cells[1].innerHTML)
-  };
+  let coresTimeRange = null;
+  let startingPoint = null;
+  let endingPoint = null;
 
-  let startingPoint = coresTimeRange['startTime'];
-  let endingPoint = coresTimeRange['endTime'];
+  // Only process javacore timestamps if javacores exist
+  if (coresNumber > 1) {
+    coresTimeRange = {
+        'startTime': new Date(coresFiles.rows[1].cells[1].innerHTML),
+        'endTime': new Date(coresFiles.rows[1].cells[1].innerHTML)
+    };
 
-  for(let i=2; i<coresNumber; i++){
-    let rowEl = document.getElementById('javacores_files_table').rows[i];
-    coresTimestamps.push(String(rowEl.cells[1].innerHTML));
+    startingPoint = coresTimeRange['startTime'];
+    endingPoint = coresTimeRange['endTime'];
 
-    let timestamp = new Date(rowEl.cells[1].innerHTML);
-    if(startingPoint > timestamp)
-       startingPoint = timestamp;
+    for(let i=2; i<coresNumber; i++){
+      let rowEl = coresFiles.rows[i];
+      coresTimestamps.push(String(rowEl.cells[1].innerHTML));
 
-    if(endingPoint < timestamp)
-        endingPoint = timestamp;
+      let timestamp = new Date(rowEl.cells[1].innerHTML);
+      if(startingPoint > timestamp)
+         startingPoint = timestamp;
+
+      if(endingPoint < timestamp)
+          endingPoint = timestamp;
+    }
+
+    coresTimeRange['startTime'] = startingPoint;
+    coresTimeRange['endTime'] = endingPoint;
   }
-
-  coresTimeRange['startTime'] = startingPoint;
-  coresTimeRange['endTime'] = endingPoint;
 
   // 2. get the list of gc collections with timestamps, to get the data to draw
   const gcCollectionsElms = document.querySelectorAll('gc-collection');
@@ -148,32 +155,49 @@ const loadChartGC = function() {
 
   // 3. find the HEAP_SIZE
   const MB_SIZE = Math.pow(1024, 2);
-  let heapAsString = document.getElementById('sys_info_table').rows[2].cells[1].innerHTML;
   let HEAP_SIZE;
-  let heapUnit = heapAsString.slice(-1).toLowerCase();
+  
+  // Try to get heap size from sys_info_table if it exists
+  const sysInfoTable = document.getElementById('sys_info_table');
+  if (sysInfoTable && sysInfoTable.rows.length > 2) {
+    let heapAsString = sysInfoTable.rows[2].cells[1].innerHTML;
+    let heapUnit = heapAsString.slice(-1).toLowerCase();
 
-  if(!isNaN(Number(heapUnit))) {
-     HEAP_SIZE = Number(heapAsString);
-  }
-  else {
-
-      switch (heapUnit) {
-        case "g":
-            HEAP_SIZE =
-                Number(heapAsString.slice(0, -1)) * MB_SIZE * 1024;
-        break;
-        case "m":
-            HEAP_SIZE =
-                Number(heapAsString.slice(0, -1)) * MB_SIZE;
-        break;
-        case "k":
-            HEAP_SIZE =
-                Number(heapAsString.slice(0, -1)) * 1024;
-        break;
-        default:
-            console.log("Hmm, what now .. heap unit undefined!");
-        break;
+    if(!isNaN(Number(heapUnit))) {
+       HEAP_SIZE = Number(heapAsString);
+    }
+    else {
+        switch (heapUnit) {
+          case "g":
+              HEAP_SIZE =
+                  Number(heapAsString.slice(0, -1)) * MB_SIZE * 1024;
+          break;
+          case "m":
+              HEAP_SIZE =
+                  Number(heapAsString.slice(0, -1)) * MB_SIZE;
+          break;
+          case "k":
+              HEAP_SIZE =
+                  Number(heapAsString.slice(0, -1)) * 1024;
+          break;
+          default:
+              console.log("Hmm, what now .. heap unit undefined!");
+          break;
+        }
+    }
+  } else {
+    // No sys_info_table - estimate heap size from GC data
+    // Find the maximum value of (freeBefore + freed) across all collections
+    let maxHeap = 0;
+    gcCollections.forEach(function (element) {
+      const freeBefore = Number(element['freeBefore'].textContent);
+      const freed = Number(element['freed'].textContent);
+      const estimatedHeap = freeBefore + freed;
+      if (estimatedHeap > maxHeap) {
+        maxHeap = estimatedHeap;
       }
+    });
+    HEAP_SIZE = maxHeap;
   }
 
   // 4. create input data for GC chart

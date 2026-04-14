@@ -1,5 +1,5 @@
 #
-# Copyright IBM Corp. 2024 - 2024
+# Copyright IBM Corp. 2024 - 2026
 # SPDX-License-Identifier: Apache-2.0
 #
 import logging
@@ -110,11 +110,16 @@ class TooFewJavacoresTip:
     might not be reliable. The minimal number of Javacores should be 5. The recommended number of Javacores 
     is at least 10."""
 
+    NO_JAVACORES_INFO = """[INFO] You ran the tool against no Javacores. The analysis is limited only to verbose GC 
+    data and har files"""
+
     @staticmethod
     def generate(javacore_set):
         jc_number = len(javacore_set.javacores)
         if jc_number == 1:
             return [TooFewJavacoresTip.ONE_JAVACORE_WARNING]
+        if jc_number == 0:
+            return [TooFewJavacoresTip.NO_JAVACORES_INFO]
         elif jc_number < TooFewJavacoresTip.MIN_NUMBER_OF_JAVACORES:
             return [TooFewJavacoresTip.NOT_ENOUGH_JAVACORES_MESSAGE.format(jc_number)]
         else:
