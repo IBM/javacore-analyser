@@ -1,5 +1,5 @@
 /*
-# Copyright IBM Corp. 2024 - 2024
+# Copyright IBM Corp. 2024 - 2026
 # SPDX-License-Identifier: Apache-2.0
 */
 
@@ -146,11 +146,19 @@ const loadChartGC = function() {
 
   //  timestamp="2022-06-06T11:45:13.841" durationms="15.881" free-before="3219388536" free-after="3709718896" freed="490330360"/>
   gcCollectionsElms.forEach(function (element) {
-    gcCollections.push( { 'startTime':  element.attributes[0],
-                          'duration':   element.attributes[1],
-                          'freeBefore': element.attributes[2],
-                          'freeAfter':  element.attributes[3],
-                          'freed':      element.attributes[4] })
+    gcCollections.push({
+      'startTime': element.getAttribute('timestamp'),
+      'duration': element.getAttribute('durationms'),
+      'freeBefore': element.getAttribute('free-before'),
+      'freeAfter': element.getAttribute('free-after'),
+      'freed': element.getAttribute('freed'),
+      'nurseryFreeBefore': element.getAttribute('nursery-free-before'),
+      'nurseryFreeAfter': element.getAttribute('nursery-free-after'),
+      'nurseryTotal': element.getAttribute('nursery-total'),
+      'tenureFreeBefore': element.getAttribute('tenure-free-before'),
+      'tenureFreeAfter': element.getAttribute('tenure-free-after'),
+      'tenureTotal': element.getAttribute('tenure-total')
+    });
   });
 
   // 3. find the HEAP_SIZE
@@ -190,8 +198,8 @@ const loadChartGC = function() {
     // Find the maximum value of (freeBefore + freed) across all collections
     let maxHeap = 0;
     gcCollections.forEach(function (element) {
-      const freeBefore = Number(element['freeBefore'].textContent);
-      const freed = Number(element['freed'].textContent);
+      const freeBefore = Number(element['freeBefore']);
+      const freed = Number(element['freed']);
       const estimatedHeap = freeBefore + freed;
       if (estimatedHeap > maxHeap) {
         maxHeap = estimatedHeap;
@@ -206,28 +214,44 @@ const loadChartGC = function() {
   const inputData = [];
   const totalHeap = [];
   const pauseTimeData = [];
+  const nurseryUsageData = [];
+  const tenureUsageData = [];
+  const nurseryTotalData = [];
+  const tenureTotalData = [];
   const labels = [];
 
   let dateTmp;
   gcCollections.forEach(function (element) {
-      let gcStartDate = new Date(element['startTime'].textContent);
+      let gcStartDate = new Date(element['startTime']);
 
       // TODO - filter range
       //if( gcStartDate >= coresTimeRange['startTime'] && gcStartDate <= coresTimeRange['endTime']) {
 
-        const durationMs = Number(element['duration'].textContent);
+        const durationMs = Number(element['duration']);
+
+        const gcStartTime = new Date(element['startTime']).valueOf();
+        const nurseryTotal = Number(element['nurseryTotal']);
+        const tenureTotal = Number(element['tenureTotal']);
 
         // before running GC
-        inputData.push((HEAP_SIZE - Number(element['freeBefore'].textContent)) / MB_SIZE);
+        inputData.push((HEAP_SIZE - Number(element['freeBefore'])) / MB_SIZE);
         totalHeap.push(HEAP_SIZE / MB_SIZE);
-        labels.push(new Date(element['startTime'].textContent).valueOf());
+        nurseryUsageData.push(nurseryTotal > 0 ? (nurseryTotal - Number(element['nurseryFreeBefore'])) / MB_SIZE : null);
+        tenureUsageData.push(tenureTotal > 0 ? (tenureTotal - Number(element['tenureFreeBefore'])) / MB_SIZE : null);
+        nurseryTotalData.push(nurseryTotal > 0 ? nurseryTotal / MB_SIZE : null);
+        tenureTotalData.push(tenureTotal > 0 ? tenureTotal / MB_SIZE : null);
+        labels.push(gcStartTime);
         pauseTimeData.push(durationMs);
 
         // result of GC execution
-        inputData.push((HEAP_SIZE - Number(element['freeAfter'].textContent)) / MB_SIZE);
+        inputData.push((HEAP_SIZE - Number(element['freeAfter'])) / MB_SIZE);
         totalHeap.push(HEAP_SIZE / MB_SIZE);
+        nurseryUsageData.push(nurseryTotal > 0 ? (nurseryTotal - Number(element['nurseryFreeAfter'])) / MB_SIZE : null);
+        tenureUsageData.push(tenureTotal > 0 ? (tenureTotal - Number(element['tenureFreeAfter'])) / MB_SIZE : null);
+        nurseryTotalData.push(nurseryTotal > 0 ? nurseryTotal / MB_SIZE : null);
+        tenureTotalData.push(tenureTotal > 0 ? tenureTotal / MB_SIZE : null);
         pauseTimeData.push(null);
-        dateTmp = new Date(element['startTime'].textContent);
+        dateTmp = new Date(element['startTime']);
         dateTmp.setMilliseconds(dateTmp.getMilliseconds() + durationMs);
         labels.push(dateTmp.valueOf());
   })
@@ -271,6 +295,48 @@ const loadChartGC = function() {
           barThickness: 6,
           maxBarThickness: 9,
           order: 1
+        },
+        {
+          label: 'Nursery Usage (MB)',
+          data: nurseryUsageData,
+          borderWidth: 1,
+          borderColor: 'rgba(75,192,192,1)',
+          backgroundColor: 'rgba(75,192,192,0.2)',
+          pointRadius: 0.5,
+          yAxisID: 'y',
+          hidden: true
+        },
+        {
+          label: 'Tenure Usage (MB)',
+          data: tenureUsageData,
+          borderWidth: 1,
+          borderColor: 'rgba(255,159,64,1)',
+          backgroundColor: 'rgba(255,159,64,0.2)',
+          pointRadius: 0.5,
+          yAxisID: 'y',
+          hidden: true
+        },
+        {
+          label: 'Nursery Total (MB)',
+          data: nurseryTotalData,
+          borderWidth: 1,
+          fillColor: 'rgba(46,139,87,1)',
+          borderColor: 'rgba(46,139,87,1)',
+          backgroundColor: 'rgba(46,139,87,1)',
+          pointRadius: 0.0,
+          yAxisID: 'y',
+          hidden: true
+        },
+        {
+          label: 'Tenure Total (MB)',
+          data: tenureTotalData,
+          borderWidth: 1,
+          fillColor: 'rgba(205,92,92,1)',
+          borderColor: 'rgba(205,92,92,1)',
+          backgroundColor: 'rgba(205,92,92,1)',
+          pointRadius: 0.0,
+          yAxisID: 'y',
+          hidden: true
         },
       ],
     },

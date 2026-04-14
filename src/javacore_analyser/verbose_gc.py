@@ -7,6 +7,7 @@ import logging
 import ntpath
 from datetime import datetime
 from pathlib import Path
+from typing import cast
 from xml.dom.minidom import Element, parseString
 
 from tqdm import tqdm
@@ -23,6 +24,16 @@ TIMESTAMP = "timestamp"
 DURATION = "durationms"
 GC_COLLECTION = "gc-collection"
 GC_COLLECTIONS = "gc-collections"
+MEM = "mem"
+TYPE = "type"
+NURSERY = "nursery"
+TENURE = "tenure"
+NURSERY_FREE_BEFORE = "nursery-free-before"
+NURSERY_FREE_AFTER = "nursery-free-after"
+NURSERY_TOTAL = "nursery-total"
+TENURE_FREE_BEFORE = "tenure-free-before"
+TENURE_FREE_AFTER = "tenure-free-after"
+TENURE_TOTAL = "tenure-total"
 
 
 class VerboseGcParser:
@@ -76,9 +87,15 @@ class VerboseGcParser:
 class GcCollection:
 
     def __init__(self):
-        self.free_before = 0
-        self.free_after = 0
-        self.start_time_str = None
+        self.free_before = "0"
+        self.free_after = "0"
+        self.nursery_free_before = "0"
+        self.nursery_free_after = "0"
+        self.nursery_total = "0"
+        self.tenure_free_before = "0"
+        self.tenure_free_after = "0"
+        self.tenure_total = "0"
+        self.start_time_str = ""
         self.__start_time = None
         self.duration = 0.0
 
@@ -101,6 +118,12 @@ class GcCollection:
         element.setAttribute(FREE_BEFORE, self.free_before)
         element.setAttribute(FREE_AFTER, self.free_after)
         element.setAttribute(FREED, str(self.freed()))
+        element.setAttribute(NURSERY_FREE_BEFORE, self.nursery_free_before)
+        element.setAttribute(NURSERY_FREE_AFTER, self.nursery_free_after)
+        element.setAttribute(NURSERY_TOTAL, self.nursery_total)
+        element.setAttribute(TENURE_FREE_BEFORE, self.tenure_free_before)
+        element.setAttribute(TENURE_FREE_AFTER, self.tenure_free_after)
+        element.setAttribute(TENURE_TOTAL, self.tenure_total)
         return element
 
 
@@ -154,34 +177,66 @@ class VerboseGcFile:
             self.__total_number_of_collects = 0
         return self.__total_number_of_collects
 
+    def __get_mem_by_type(self, mem_info, mem_type):
+        for mem in mem_info.getElementsByTagName(MEM):
+            if mem.parentNode == mem_info and mem.getAttribute(TYPE) == mem_type:
+                return mem
+        return None
+
     def get_collects(self):
         collects = []
         self.__total_number_of_collects = 0
+        if self.__root is None:
+            return collects
+
         children = self.__root.childNodes
         i = 0
-        while i < len(self.__root.childNodes):
+        while i < len(children):
             child = children[i]
             i += 1
-            if child.__class__ is not Element: continue
-            if child.tagName == GC_START:
+            if child.__class__ is not Element:
+                continue
+            child_element = cast(Element, child)
+            if child_element.tagName == GC_START:
                 try:
                     self.__total_number_of_collects += 1
-                    start_tag = child
+                    start_tag = child_element
                     collect = GcCollection()
                     collect.start_time_str = start_tag.getAttribute(TIMESTAMP)
                     mem_info = start_tag.getElementsByTagName(MEM_INFO)[0]
                     collect.free_before = mem_info.getAttribute(FREE)
+                    nursery_mem = self.__get_mem_by_type(mem_info, NURSERY)
+                    tenure_mem = self.__get_mem_by_type(mem_info, TENURE)
+                    if nursery_mem is not None:
+                        collect.nursery_free_before = nursery_mem.getAttribute(FREE)
+                        collect.nursery_total = nursery_mem.getAttribute("total")
+                    if tenure_mem is not None:
+                        collect.tenure_free_before = tenure_mem.getAttribute(FREE)
+                        collect.tenure_total = tenure_mem.getAttribute("total")
                     end_tag = None
                     while end_tag is None and i < len(children):
                         child = children[i]
                         i += 1
-                        if child.__class__ is not Element: continue
-                        if child.tagName == GC_START: raise GcVerboseCorruptedLogException()
-                        if child.tagName == GC_END:
-                            end_tag = child
+                        if child.__class__ is not Element:
+                            continue
+                        child_element = cast(Element, child)
+                        if child_element.tagName == GC_START:
+                            raise GcVerboseCorruptedLogException()
+                        if child_element.tagName == GC_END:
+                            end_tag = child_element
                             collect.duration = float(end_tag.getAttribute(DURATION))
-                            mem_info = child.getElementsByTagName(MEM_INFO)[0]
+                            mem_info = end_tag.getElementsByTagName(MEM_INFO)[0]
                             collect.free_after = mem_info.getAttribute(FREE)
+                            nursery_mem = self.__get_mem_by_type(mem_info, NURSERY)
+                            tenure_mem = self.__get_mem_by_type(mem_info, TENURE)
+                            if nursery_mem is not None:
+                                collect.nursery_free_after = nursery_mem.getAttribute(FREE)
+                                if not collect.nursery_total:
+                                    collect.nursery_total = nursery_mem.getAttribute("total")
+                            if tenure_mem is not None:
+                                collect.tenure_free_after = tenure_mem.getAttribute(FREE)
+                                if not collect.tenure_total:
+                                    collect.tenure_total = tenure_mem.getAttribute("total")
                     collects.append(collect)
                 except Exception as ex:
                     logging.error(ex)
