@@ -142,7 +142,8 @@
                     </xsl:when>
                     <xsl:otherwise> No verbose GC files </xsl:otherwise>
                 </xsl:choose>
-            <xsl:choose>
+                <br/>
+                <xsl:choose>
                     <xsl:when test="doc/har_files">
                         <h4>HAR files</h4>
                         <a id="togglehardoc" href="javascript:expand_it(hardoc,togglehardoc)" class="expandit">
