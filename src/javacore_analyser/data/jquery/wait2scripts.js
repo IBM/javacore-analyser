@@ -222,7 +222,7 @@ const loadChartGC = function() {
 
   let dateTmp;
   gcCollections.forEach(function (element) {
-      let gcStartDate = new Date(element['startTime']);
+      //let gcStartDate = new Date(element['startTime']);
 
       // TODO - filter range
       //if( gcStartDate >= coresTimeRange['startTime'] && gcStartDate <= coresTimeRange['endTime']) {
