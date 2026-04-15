@@ -40,9 +40,11 @@ All commits must follow these rules:
 ## Testing and Validation
 
 Before creating a pull request:
-1. **Run all tests**: Ensure all unit tests pass
+1. **Run all tests**: Ensure all unit tests pass (not required if only documentation is updated)
 2. **Manual testing**: Run the tool and review output to verify functionality
 3. **Code review**: Check for PEP 8 compliance and proper documentation
+
+**Note**: Tests are not required when only documentation files are updated.
 
 ## Testing
 
