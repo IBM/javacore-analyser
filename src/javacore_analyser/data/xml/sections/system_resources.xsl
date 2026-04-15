@@ -59,6 +59,26 @@
                                     is the maximum size of the Java heap, configured by using the Xmx Java argument,
                                     expressed in megabytes.
                                 </li>
+                                <li><strong>GC Pause Time</strong>
+                                    is the duration of each garbage collection pause in milliseconds,
+                                    indicating how long the application was stopped during garbage collection.
+                                </li>
+                                <li><strong>Nursery Usage</strong>
+                                    shows the free memory in the nursery (young generation) space before and after each garbage collection,
+                                    expressed in bytes. The nursery is where new objects are allocated.
+                                </li>
+                                <li><strong>Nursery Total</strong>
+                                    is the total size of the nursery (young generation) space,
+                                    expressed in bytes.
+                                </li>
+                                <li><strong>Tenure Usage</strong>
+                                    shows the free memory in the tenure (old generation) space before and after each garbage collection,
+                                    expressed in bytes. The tenure space holds long-lived objects.
+                                </li>
+                                <li><strong>Tenure Total</strong>
+                                    is the total size of the tenure (old generation) space,
+                                    expressed in bytes.
+                                </li>
                         </ul>
                     </div>
                     <div id="systemresources_myChartGC" class="chart-container hide" style="overflow-x:auto;">
