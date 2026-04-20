@@ -2,6 +2,50 @@
 
 This file provides guidance to agents when working with code in this repository.
 
+## Coding Standards
+
+The project follows **PEP 8** coding standard (https://peps.python.org/pep-0008/) with the following specifics:
+- **Maximum line length**: 120 characters
+- **Type hints**: Recommended for better readability and maintainability
+- Follow PEP 8 naming conventions (snake_case for functions/variables, PascalCase for classes)
+
+## Branching Strategy
+
+Each new feature or bug fix should be developed in a separate branch:
+- **Branch naming format**: `issue-<issue-id>-short-description-with-minus-as-space`
+- **Examples**:
+  - `issue-242-default-llm-options`
+  - `issue-239-update-chart-js-library`
+  - `issue-105-plugin-architecture`
+
+## Commit Guidelines
+
+All commits must follow these rules:
+- **Signed-off-by required**: Use `--signoff` flag with every commit
+- **Reference issue**: Include `Ref #<issue-id>` or `Fixes #<issue-id>` in commit message
+- **Example commands**:
+  ```bash
+  git commit --signoff -m "Fixes #243 Upgrading chart.js JS library"
+  git commit --signoff -m "Ref #243 Move setting LLM options to llm.py"
+  ```
+
+## Pull Request Guidelines
+
+- **PR title format**: `#<issue-id> Issue description`
+- **Examples**:
+  - `#242 Add support for default LLM options`
+  - `#1 Add more parameters for verbose gc chart`
+- **PR description**: Must contain `Fixes #<issue-id>` to auto-link and close the issue
+
+## Testing and Validation
+
+Before creating a pull request:
+1. **Run all tests**: Ensure all unit tests pass (not required if only documentation is updated)
+2. **Manual testing**: Run the tool and review output to verify functionality
+3. **Code review**: Check for PEP 8 compliance and proper documentation
+
+**Note**: Tests are not required when only documentation files are updated.
+
 ## Testing
 
 **CRITICAL**: Tests MUST be run from project root with `PYTHONPATH=src:test`:
