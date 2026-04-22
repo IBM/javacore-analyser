@@ -63,6 +63,14 @@ th.ten {
     width: 10%;
 }
 
+th.http-small {
+    width: 5%;
+}
+
+th.http-medium {
+    width: 12%;
+}
+
 td {
     text-align:right;
     word-wrap:break-word;
@@ -194,4 +202,56 @@ h3 {
 
 div.margined {
     margin: 10px;
+}
+
+/* HTTP call details styling */
+.http-show-button {
+    margin-top: 5px;
+    font-size: 0.9em;
+}
+
+.http-call-details {
+    width: 100%;
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.http-call-details h4 {
+    margin-top: 10px;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.http-call-details h4:first-child {
+    margin-top: 0;
+}
+
+.http-detail-section {
+    margin-bottom: 15px;
+}
+
+.http-detail-pre {
+    background-color: #f4f4f4;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.http-detail-pre.scrollable {
+    max-height: 400px;
+}
+
+.http_failure {
+    background-color: #ffcccc;
+    font-weight: bold;
 }

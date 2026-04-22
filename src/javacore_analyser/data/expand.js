@@ -1,5 +1,5 @@
 /*
-# Copyright IBM Corp. 2024 - 2024
+# Copyright IBM Corp. 2024 - 2026
 # SPDX-License-Identifier: Apache-2.0
 */
 
@@ -19,15 +19,19 @@ $('.show').click(function () {
 
 function expand_it(whichEl, link) {
     whichEl.style.display = (whichEl.style.display == "none") ? "" : "none";
-    //if (link) {
-    //    if (link.innerHTML) {
-    //       if (whichEl.style.display == "none") {
-    //            link.innerHTML = "[+]".concat(link.innerHTML.substring(3));
-    //       } else {
-    //            link.innerHTML = "[-]".concat(link.innerHTML.substring(3));
-    //       }
-    //    }
-    //}
+}
+
+function expand_http_details(whichEl, link) {
+    whichEl.style.display = (whichEl.style.display == "none") ? "" : "none";
+    if (link) {
+        if (link.innerHTML) {
+           if (whichEl.style.display == "none") {
+                link.innerHTML = "Details";
+           } else {
+                link.innerHTML = "Hide";
+           }
+        }
+    }
 }
 
 function expand_stack(whichEl, link) {
