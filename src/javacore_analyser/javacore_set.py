@@ -875,7 +875,7 @@ class JavacoreSet:
         llm_method: str = Properties.get_instance().get_property("llm_method")
         if llm_method.lower() == "huggingface":
             try:
-                from javacore_analyser.ai.huggingfacellm import HuggingFaceLLM
+                from javacore_analyser.ai.huggingface_llm import HuggingFaceLLM
                 ai = HuggingFaceLLM(self)
             except ImportError as e:
                 raise ImportError(

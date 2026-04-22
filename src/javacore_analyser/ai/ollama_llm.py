@@ -32,6 +32,12 @@ class OllamaLLM(LLM):
         logging.info("Pulling model: " + self.model)
         ollama.pull(self.model)
         logging.info("Model pulled: " + self.model)
+        
+        # Override params with Ollama-specific parameter names
+        self.params = self._build_generation_params(
+            temperature='temperature',
+            num_ctx='max_tokens'
+        )
 
 
     def set_model(self, model):
@@ -43,12 +49,13 @@ class OllamaLLM(LLM):
         self.prompt = prompter.construct_prompt()
         if self.prompt and len(self.prompt) > 0:
             logging.debug("Infusing prompt: " + self.prompt)
+            
             response: ChatResponse = chat(model=self.model, messages=[
                 {
                     'role': 'user',
                     'content': self.prompt,
                 },
-            ], options={'temperature': self.temperature, 'num_ctx': self.max_tokens})
+            ], options=self.params if self.params else None)
             logging.debug("Infused finished")
             content = response.message.content
         return content

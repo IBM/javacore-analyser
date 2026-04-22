@@ -40,6 +40,12 @@ class HuggingFaceLLM(LLM):
         self.model.eval()
 
         logging.info("Loading HuggingFaceFace_LLM finished")
+        
+        # Override params with HuggingFace-specific parameter names
+        self.params = self._build_generation_params(
+            max_new_tokens='max_tokens',
+            temperature='temperature'
+        )
 
 
     def infuse(self, prompter):
@@ -51,8 +57,9 @@ class HuggingFaceLLM(LLM):
         chat = self.tokenizer.apply_chat_template(chat, tokenize=False, add_generation_prompt=True)
         # tokenize the text
         input_tokens = self.tokenizer(chat, return_tensors="pt").to(self.device)
+        
         # generate output tokens
-        output = self.model.generate(**input_tokens, max_new_tokens=self.max_tokens, temperature=self.temperature)
+        output = self.model.generate(**input_tokens, **self.params)
         # decode output tokens into text
         output = self.tokenizer.batch_decode(output)
         logging.debug("Infuse finished")
