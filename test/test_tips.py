@@ -1,5 +1,5 @@
 #
-# Copyright IBM Corp. 2024 - 2024
+# Copyright IBM Corp. 2024 - 2026
 # SPDX-License-Identifier: Apache-2.0
 #
 
@@ -13,6 +13,8 @@ from javacore_analyser import tips
 from javacore_analyser.java_thread import Thread
 from javacore_analyser.javacore_set import JavacoreSet
 from javacore_analyser.thread_snapshot import ThreadSnapshot
+
+from javacore_analyser.verbose_gc import GcCollection
 
 
 class TestTips(unittest.TestCase):
@@ -175,3 +177,67 @@ class TestTips(unittest.TestCase):
         expected_result = []
         failure_message = "There should be no tip as all threads are with valid total CPU"
         self.assertTrue(result == expected_result, failure_message)
+
+
+    def test_LongGcPauseTip_no_verbose_gc(self):
+        """Test LongGcPauseTip when no verbose GC data is available"""
+        javacore_set = JavacoreSet("")
+        result = tips.LongGcPauseTip.generate(javacore_set)
+        self.assertEqual(0, len(result), "Should return empty list when no verbose GC data")
+
+    def test_LongGcPauseTip_no_long_pauses(self):
+        """Test LongGcPauseTip when all GC pauses are below threshold"""
+        from javacore_analyser.verbose_gc import GcCollection
+        
+        javacore_set = JavacoreSet("")
+        
+        # Create mock GC collections with short pauses
+        collect1 = GcCollection()
+        collect1.duration = 500.0  # 500ms - below threshold
+        collect1.start_time_str = "2023-04-25T11:04:13.857"
+        
+        collect2 = GcCollection()
+        collect2.duration = 800.0  # 800ms - below threshold
+        collect2.start_time_str = "2023-04-25T11:04:14.857"
+        
+        javacore_set.gc_parser._VerboseGcParser__collects = [collect1, collect2]
+        
+        result = tips.LongGcPauseTip.generate(javacore_set)
+        self.assertEqual(0, len(result), "Should return empty list when no long pauses")
+
+    def test_LongGcPauseTip_with_long_pauses(self):
+        """Test LongGcPauseTip when GC pauses exceed thresholds"""
+        
+        javacore_set = JavacoreSet("")
+        
+        # Create mock GC collections with long pauses
+        collect1 = GcCollection()
+        collect1.duration = 1200.0  # 1200ms - exceeds threshold 1
+        collect1.start_time_str = "2023-04-25T11:04:13.857"
+        
+        collect2 = GcCollection()
+        collect2.duration = 2500.0  # 2500ms - exceeds both thresholds
+        collect2.start_time_str = "2023-04-25T11:04:15.857"
+        
+        collect3 = GcCollection()
+        collect3.duration = 1500.0  # 1500ms - exceeds threshold 1
+        collect3.start_time_str = "2023-04-25T11:04:17.857"
+        
+        collect4 = GcCollection()
+        collect4.duration = 500.0  # 500ms - below threshold
+        collect4.start_time_str = "2023-04-25T11:04:18.857"
+        
+        javacore_set.gc_parser._VerboseGcParser__collects = [collect1, collect2, collect3, collect4]
+        
+        result = tips.LongGcPauseTip.generate(javacore_set)
+        self.assertEqual(1, len(result), "Should return one warning message")
+        
+        tip_text = result[0]
+        self.assertIn("[WARNING]", tip_text, "Tip should contain WARNING")
+        self.assertIn("3 GC pause(s) longer than 1000ms", tip_text, 
+                     "Should report 3 pauses over 1000ms threshold")
+        self.assertIn("1 GC pause(s) longer than 2000ms", tip_text,
+                     "Should report 1 pause over 2000ms threshold")
+        self.assertIn("2500", tip_text, "Should report longest pause of 2500ms")
+        self.assertIn("2023-04-25T11:04:15.857", tip_text, 
+                     "Should report timestamp of longest pause")
