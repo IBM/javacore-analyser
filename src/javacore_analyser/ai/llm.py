@@ -74,7 +74,6 @@ class LLM(ABC):
         :rtype: str
         """
         html = markdown.markdown(response, extensions=['nl2br'])
-        logging.info(f"Converted response to HTML: {html}")
         return html
 
     def infuse_in_html(self, prompter):
