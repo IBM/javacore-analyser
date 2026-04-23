@@ -1,17 +1,19 @@
 Context:
-CPU usage of entire application over time: 
+CPU usage of entire application over time:
 {cpu_usage_data}
-Memory usage by the application: 
+Memory usage by the application:
 {memory_info}
-Application parameters: 
+Application parameters:
 {app_params}
 
-Top threads using most of CPU: 
+Top threads using most of CPU:
 {top_cpu_threads}
-Top 5 blocking threads: 
+Top 5 blocking threads:
 {top_blocking_threads}
-GC Threads CPU usage: 
+GC Threads CPU usage:
 {gc_cpu_usage}
+GC Pause Times:
+{gc_pause_times}
 
 Based on that data search for potential bottlenecks and provide the recommendations how the performance can be improved.
 Limit to maximum 5 recommendations.

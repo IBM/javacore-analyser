@@ -4,6 +4,7 @@
 #
 
 from javacore_analyser.ai.prompter import Prompter
+from javacore_analyser.constants import GC_PAUSE_DETAIL_THRESHOLD
 
 
 class PerformanceRecommendationsPrompter(Prompter):
@@ -44,6 +45,9 @@ class PerformanceRecommendationsPrompter(Prompter):
         # Get GC thread CPU usage
         gc_cpu_usage: str = self._get_gc_cpu_usage()
         
+        # Get GC pause times
+        gc_pause_times: str = self._get_gc_pause_times()
+        
         # Load the prompt template from file
         template: str = self._load_prompt_template('performance_recommendations_prompt.txt')
         
@@ -54,7 +58,8 @@ class PerformanceRecommendationsPrompter(Prompter):
             app_params=app_params,
             top_cpu_threads=top_cpu_threads,
             top_blocking_threads=top_blocking_threads,
-            gc_cpu_usage=gc_cpu_usage
+            gc_cpu_usage=gc_cpu_usage,
+            gc_pause_times=gc_pause_times
         )
 
         return prompt
@@ -232,3 +237,53 @@ class PerformanceRecommendationsPrompter(Prompter):
         return ", ".join(gc_info)
 
 # Made with Bob
+
+
+    def _get_gc_pause_times(self):
+        """
+        Collects detailed GC pause time statistics including long pauses.
+        For small datasets (< 100 pauses), shows individual pause times.
+        For large datasets (>= 100 pauses), shows summary statistics.
+        
+        Returns:
+            str: Formatted GC pause time information
+        """
+        if not self.javacore_set.gc_parser or not self.javacore_set.gc_parser.get_collects():
+            return "No GC pause data available"
+        
+        collects = self.javacore_set.gc_parser.get_collects()
+        if not collects:
+            return "No GC collections recorded"
+        
+        # Threshold for switching between detailed and summary view
+        if len(collects) < GC_PAUSE_DETAIL_THRESHOLD:
+            # Show individual pause times with timestamps
+            pause_details = []
+            for collect in collects:
+                pause_details.append(f"{collect.start_time_str}:{collect.duration:.0f}ms")
+            return ", ".join(pause_details)
+        else:
+            # Show summary statistics for large datasets
+            pause_times = [c.duration for c in collects]
+            avg_pause = sum(pause_times) / len(pause_times)
+            max_pause = max(pause_times)
+            min_pause = min(pause_times)
+            
+            # Count pauses exceeding thresholds (1000ms and 2000ms)
+            pauses_over_1s = sum(1 for p in pause_times if p > 1000)
+            pauses_over_2s = sum(1 for p in pause_times if p > 2000)
+            
+            # Find the longest pause with timestamp
+            longest_collect = max(collects, key=lambda c: c.duration)
+            longest_pause_time = longest_collect.start_time_str
+            
+            pause_info = [
+                f"Total GC pauses: {len(collects)}",
+                f"Average GC pause: {avg_pause:.2f}ms",
+                f"Min GC pause: {min_pause:.2f}ms",
+                f"Max GC pause: {max_pause:.2f}ms at {longest_pause_time}",
+                f"Pauses > 1000ms: {pauses_over_1s}",
+                f"Pauses > 2000ms: {pauses_over_2s}"
+            ]
+            
+            return ", ".join(pause_info)
