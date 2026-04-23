@@ -210,7 +210,6 @@ class HighCpuUsageTip:
         return result
 
 
-
 class LongGcPauseTip:
     # Generates a tip when GC pauses exceed configurable thresholds
     
