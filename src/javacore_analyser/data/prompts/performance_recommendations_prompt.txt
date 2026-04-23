@@ -1,3 +1,7 @@
+Facts:
+The recommended maximum garbage collection (GC) pause time is typically set between 500 to 2000 milliseconds. 
+This range helps in managing application latency and throughput effectively.
+
 Context:
 CPU usage of entire application over time:
 {cpu_usage_data}
