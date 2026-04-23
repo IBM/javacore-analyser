@@ -66,13 +66,15 @@ class LLM(ABC):
         Convert the given response text into HTML format.
 
         This method uses the markdown library to convert plain text to HTML.
+        Line breaks in the input text are preserved as <br> tags in the output.
 
         :param response: The text to be converted to HTML.
         :type response: str
         :return: The HTML formatted string.
         :rtype: str
         """
-        html = markdown.markdown(response)
+        html = markdown.markdown(response, extensions=['nl2br'])
+        logging.info(f"Converted response to HTML: {html}")
         return html
 
     def infuse_in_html(self, prompter):
