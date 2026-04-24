@@ -51,4 +51,21 @@ Requirements:
 - If the provided data does not support any concrete recommendation, reply exactly:
   No evidence-based performance recommendations can be made from the provided data.
 - Display the recommendations in a clear, concise format.
-- Do not use markdown.
+
+Output Format:
+Each recommendation must follow this structure:
+
+**[PRIORITY] Recommendation Title**
+**Evidence:** [Quote specific data points from the provided context]
+**Action:** [Specific, actionable steps to address the issue]
+**Expected Impact:** [Quantifiable improvement expected]
+
+Example:
+**[HIGH] Reduce GC Pause Times**
+**Evidence:** GC pause times averaging 3500ms, exceeding recommended maximum of 2000ms
+**Action:** Increase heap size from 2GB to 4GB and enable G1GC with -XX:MaxGCPauseMillis=500
+**Expected Impact:** Reduce pause times by 60-70%, improving application responsiveness
+
+Priority levels: CRITICAL, HIGH, MEDIUM, LOW
+
+
