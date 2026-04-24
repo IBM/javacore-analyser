@@ -19,7 +19,8 @@ Top 5 blocking threads:
 {top_blocking_threads}
 
 GC threads CPU usage:
-=======
+{gc_cpu_usage}
+
 Memory usage by the application:
 {memory_info}
 Application parameters:
