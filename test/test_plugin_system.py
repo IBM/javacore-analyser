@@ -142,7 +142,7 @@ class TestPluginInterface(unittest.TestCase):
         self.assertEqual(plugin.get_plugin_name(), "mock_test_plugin")
         self.assertEqual(plugin.get_display_name(), "Mock Test Plugin")
         self.assertIsInstance(plugin.get_file_patterns(), list)
-        self.assertTrue(len(plugin.get_file_patterns()) > 0)
+        self.assertGreater(len(plugin.get_file_patterns()), 0)
 
         # Test can_process with a mock file
         with tempfile.NamedTemporaryFile(suffix='.testdata', delete=False) as f:
