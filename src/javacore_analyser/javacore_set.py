@@ -725,6 +725,53 @@ class JavacoreSet:
             raise Exception("Security exception: Uncontrolled data used in path expression")
         return fullpath
     @staticmethod
+    def generate_plugin_section_header(section_id: str, section_title: str, description: str) -> str:
+        """
+        Generate standardized HTML header for plugin sections.
+        
+        This method creates a collapsible section header with documentation that follows
+        the same pattern used throughout the javacore-analyser report. It provides a
+        consistent user experience across all plugin sections.
+        
+        The generated HTML includes:
+        - A collapsible section header (h3) with expand/collapse functionality
+        - A nested documentation section explaining what the section contains
+        - Proper CSS classes for styling consistency
+        
+        Args:
+            section_id: Unique identifier for the section (used in HTML IDs and JavaScript)
+            section_title: Human-readable title displayed in the section header
+            description: HTML content describing what the section shows (can include lists, paragraphs, etc.)
+        
+        Returns:
+            HTML string containing the section header and documentation wrapper
+            
+        Example:
+            >>> header = JavacoreSet.generate_plugin_section_header(
+            ...     "liberty_logs",
+            ...     "Liberty System Out",
+            ...     "This section shows analysis of Liberty log files."
+            ... )
+        """
+        from html import escape
+        
+        # Escape the title for safe HTML output
+        escaped_title = escape(section_title)
+        
+        # Generate the section header HTML
+        # Note: description is expected to be pre-formatted HTML, so it's not escaped
+        header_html = f'''<h3><a id="toggle_{section_id}" href="javascript:expand_it({section_id},toggle_{section_id})" class="expandit">{escaped_title}</a></h3>
+<div id="{section_id}" style="display:none;">
+    <a id="toggle{section_id}doc" href="javascript:expand_it({section_id}doc,toggle{section_id}doc)" class="expandit">
+        What does this section tell me?</a>
+    <div id="{section_id}doc" style="display:none;">
+        {description}
+    </div>
+
+'''
+        return header_html
+
+    @staticmethod
     def __generate_plugins_xsl(temp_dir: str, plugin_data: dict) -> Optional[str]:
         """
         Generate plugins.xsl file dynamically from loaded plugin HTML content.
@@ -780,12 +827,23 @@ class JavacoreSet:
                         html_content = plugin.generate_html(data)
                         
                         if html_content:
+                            # Generate section header with plugin description
+                            section_id = plugin_name.replace('_', '')
+                            section_header = JavacoreSet.generate_plugin_section_header(
+                                section_id=section_id,
+                                section_title=plugin.get_display_name(),
+                                description=plugin.get_description()
+                            )
+                            
+                            # Combine header with plugin content and close the section div
+                            full_html = section_header + html_content + '\n</div>\n'
+                            
                             # Wrap HTML content in CDATA with disable-output-escaping
                             # This allows the HTML to be injected directly into the report
                             plugins_xsl_content += f'''
         <!-- Plugin: {plugin.get_display_name()} -->
         <xsl:text disable-output-escaping="yes"><![CDATA[
-{html_content}
+{full_html}
         ]]></xsl:text>
 
 '''
