@@ -31,7 +31,6 @@ from __future__ import annotations
 import fnmatch
 import importlib.util
 import logging
-import os
 import sys
 from pathlib import Path
 from typing import Dict, List, Optional
