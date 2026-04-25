@@ -77,6 +77,16 @@ class MockValidPlugin(DataSourcePlugin):
 
         return root
 
+    def generate_html(self, data: Dict[str, Any]) -> str:
+        """Generate HTML representation of processed data."""
+        return f"""
+        <h3><a id="togglemock" href="javascript:expand_it(mock,togglemock)" class="expandit">Mock Plugin Data</a></h3>
+        <div id="mock" style="display:none;">
+            <p>Files processed: {data.get('files_processed', 0)}</p>
+            <p>Total size: {data.get('total_size', 0)} bytes</p>
+        </div>
+        """
+
     def get_summary_metrics(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """Return key summary metrics."""
         return {
@@ -92,14 +102,14 @@ class MockPluginWithOptionalMethods(MockValidPlugin):
     Tests that optional methods can be overridden and provide custom behavior.
     """
 
-    def get_xsl_template(self) -> Optional[str]:
-        """Return custom XSL template."""
-        return "<xsl:stylesheet>Custom XSL Content</xsl:stylesheet>"
-
     def get_time_range(self, data: Dict[str, Any]) -> Optional[tuple]:
         """Return time range for the data."""
         from datetime import datetime
         return (datetime(2024, 1, 1), datetime(2024, 1, 2))
+    
+    def get_description(self) -> str:
+        """Return custom description."""
+        return "Custom plugin description for testing"
 
 
 class IncompletePlugin(DataSourcePlugin):
@@ -159,21 +169,20 @@ class TestPluginInterface(unittest.TestCase):
         plugin = MockValidPlugin()
 
         # Test default implementations
-        self.assertIsNone(plugin.get_xsl_template())
         self.assertIsNone(plugin.get_time_range({}))
         # MockValidPlugin overrides get_summary_metrics, so test with base class behavior
         # by checking that the method exists and returns a dict
         metrics = plugin.get_summary_metrics({})
         self.assertIsInstance(metrics, dict)
+        # Test get_description has a default implementation
+        description = plugin.get_description()
+        self.assertIsInstance(description, str)
 
     def test_optional_methods_can_be_overridden(self):
         """Test that optional methods can be overridden."""
         plugin = MockPluginWithOptionalMethods()
 
         # Test overridden implementations
-        self.assertIsNotNone(plugin.get_xsl_template())
-        self.assertIn("Custom XSL Content", plugin.get_xsl_template())
-
         time_range = plugin.get_time_range({})
         self.assertIsNotNone(time_range)
         self.assertEqual(len(time_range), 2)
@@ -289,6 +298,9 @@ class TestPlugin(DataSourcePlugin):
     
     def generate_xml(self, doc: Document, data: Dict[str, Any]):
         return doc.createElement("test")
+    
+    def generate_html(self, data: Dict[str, Any]) -> str:
+        return "<div>Test Plugin</div>"
 ''')
 
         manager = PluginManager()
@@ -384,6 +396,9 @@ class NamedPlugin(DataSourcePlugin):
     
     def generate_xml(self, doc: Document, data: Dict[str, Any]):
         return doc.createElement("named")
+    
+    def generate_html(self, data: Dict[str, Any]) -> str:
+        return "<div>Named Plugin</div>"
 ''')
 
         manager = PluginManager()
@@ -442,6 +457,9 @@ class FileFinderPlugin(DataSourcePlugin):
     
     def generate_xml(self, doc: Document, data: Dict[str, Any]):
         return doc.createElement("finder")
+    
+    def generate_html(self, data: Dict[str, Any]) -> str:
+        return "<div>File Finder Plugin</div>"
 ''')
 
         # Create test data directory with matching files
@@ -529,6 +547,9 @@ class DuplicatePlugin(DataSourcePlugin):
     
     def generate_xml(self, doc: Document, data: Dict[str, Any]):
         return doc.createElement("dup")
+    
+    def generate_html(self, data: Dict[str, Any]) -> str:
+        return "<div>Duplicate Plugin</div>"
 ''')
 
         manager = PluginManager()
@@ -644,10 +665,5 @@ class TestPluginIntegration(unittest.TestCase):
         finally:
             for temp_file in temp_files:
                 os.unlink(temp_file)
-
-
-if __name__ == '__main__':
-    unittest.main()
-
 
 # Made with Bob
