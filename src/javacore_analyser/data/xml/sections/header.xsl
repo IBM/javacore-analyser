@@ -64,6 +64,15 @@
                     },
                 });
 
+                $('#plugin_files_table').tablesorter({
+                    theme : 'blue',
+                    headers: {
+                        0: { sorter: false },
+                        1: { sorter: false },
+                        2: { sorter: false }
+                    },
+                });
+
                 $('#java_arguments_table').tablesorter({
                     theme : 'blue',
                     widgets : ['zebra', 'columns'],
