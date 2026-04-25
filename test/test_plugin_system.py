@@ -226,7 +226,7 @@ class TestPluginManager(unittest.TestCase):
         """Test that plugin directory is created if it doesn't exist."""
         mock_home.return_value = Path(self.temp_dir)
 
-        manager = PluginManager()
+        PluginManager()
         expected_dir = Path(self.temp_dir) / ".javacore_analyser" / "plugins"
 
         self.assertTrue(expected_dir.exists())
