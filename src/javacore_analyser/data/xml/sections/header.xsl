@@ -23,8 +23,12 @@
 
         <script>
             $(function(){
+                // Set blue theme as default for all tablesorter instances
+                $.extend($.tablesorter.defaults, {
+                    theme: 'blue'
+                });
+
                 $('#sys_info_table').tablesorter({
-                    theme : 'blue',
                     headers: {
                         0: { sorter: false },
                         1: { sorter: false },
@@ -40,14 +44,12 @@
                 });
 
                 $('#javacores_files_table').tablesorter({
-                    theme : 'blue',
                     headers: {
                         1: { sorter: false },
                     },
                 });
 
                 $('#verbose_gc_files_table').tablesorter({
-                    theme : 'blue',
                     headers: {
                         0: { sorter: false },
                         1: { sorter: false },
@@ -56,7 +58,6 @@
                 });
 
                 $('#har_files_table').tablesorter({
-                    theme : 'blue',
                     headers: {
                         0: { sorter: false },
                         1: { sorter: false },
@@ -65,7 +66,6 @@
                 });
 
                 $('#plugin_files_table').tablesorter({
-                    theme : 'blue',
                     headers: {
                         0: { sorter: false },
                         1: { sorter: false },
@@ -74,7 +74,6 @@
                 });
 
                 $('#java_arguments_table').tablesorter({
-                    theme : 'blue',
                     widgets : ['zebra', 'columns'],
                     sortInitialOrder: 'desc',
                     usNumberFormat : false,
@@ -83,7 +82,6 @@
                 });
 
                 $('#sys_info_table').tablesorter({
-                    theme : 'blue',
                     widgets : ['zebra', 'columns'],
                     sortInitialOrder: 'desc',
                     usNumberFormat : false,
@@ -92,7 +90,6 @@
                 });
 
                 $('#top10_blocker_table').tablesorter({
-                    theme : 'blue',
                     // the default order
                     sortInitialOrder: 'asc',
                     // sorting order in the selected column
@@ -105,7 +102,6 @@
                 });
 
                 $('#all_threads_table').tablesorter({
-                    theme : 'blue',
                     widgets : ['zebra', 'columns'],
                     // initial sorting order
                     sortList: [
@@ -123,7 +119,6 @@
                 });
 
                 $('#allCodeTable').tablesorter({
-                    theme : 'blue',
                     widgets : ['zebra', 'columns'],
                     sortList: [
                       [2, 1]
@@ -138,7 +133,6 @@
                 });
 
                 $('#HttpCallTable').tablesorter({
-                    theme : 'blue',
                     widgets : ['zebra', 'columns'],
                     sortList: [
                       [2, 1]
