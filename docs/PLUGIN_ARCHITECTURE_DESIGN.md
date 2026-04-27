@@ -616,29 +616,6 @@ The main `report.xsl` file still includes a static reference to `plugins.xsl`, b
 </xsl:stylesheet>
 ```
 
-#### Rendering Flow
-
-```text
-plugin.process_files()
-        │
-        ▼
-plugin.generate_xml() ──────► report XML
-        │
-        ▼
-plugin.generate_html() ─────► HTML fragment
-        │
-        ▼
-__generate_plugins_xsl()
-        │ wraps HTML in xsl:text + disable-output-escaping
-        ▼
-plugins.xsl
-        │ included by
-        ▼
-report.xsl
-        │ injects
-        ▼
-final HTML report
-```
 
 **Key Points:**
 
