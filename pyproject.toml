@@ -10,7 +10,7 @@ build-backend = "hatchling.build"
 [project]
 dynamic = ["version"]
 name = "javacore_analyser"
-#version = "2.2rc1"
+# version = "3.0.1dev4"
 authors = [
     { name="Krzysztof Kazmierczyk", email="kazm@ibm.com" },
     { name="Piotr Aniola", email="Piotr.Aniola@ibm.com" },
@@ -89,9 +89,6 @@ exclude = [
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/javacore_analyser"]
-
-[tool.hatch.build.targets.wheel.force-include]
-"src/javacore_analyser/data" = "javacore_analyser/data"
 
 [tool.hatch.version]
 source = "versioningit"
