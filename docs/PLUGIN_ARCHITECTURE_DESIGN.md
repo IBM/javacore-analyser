@@ -25,7 +25,7 @@ Currently, the tool supports three data sources (javacores, verbose GC, HAR file
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│              Existing Core (Unchanged)                   │
+│              Existing Core (Unchanged)                  │
 │  - JavacoreSet                                          │
 │  - VerboseGcParser                                      │
 │  - HarFile                                              │
@@ -35,7 +35,7 @@ Currently, the tool supports three data sources (javacores, verbose GC, HAR file
                             │ extends
                             ▼
 ┌─────────────────────────────────────────────────────────┐
-│              Plugin System (New)                         │
+│              Plugin System (New)                        │
 │  - Plugin discovery                                     │
 │  - Plugin registration                                  │
 │  - Plugin lifecycle management                          │
@@ -45,7 +45,7 @@ Currently, the tool supports three data sources (javacores, verbose GC, HAR file
                             │ loads
                             ▼
 ┌─────────────────────────────────────────────────────────┐
-│              User Plugins (External)                     │
+│              User Plugins (External)                    │
 │  - Thread dump plugin                                   │
 │  - Heap dump plugin                                     │
 │  - Custom log plugin                                    │
