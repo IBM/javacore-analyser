@@ -36,6 +36,10 @@ All commits must follow these rules:
   - `#242 Add support for default LLM options`
   - `#1 Add more parameters for verbose gc chart`
 - **PR description**: Must contain `Fixes #<issue-id>` to auto-link and close the issue
+- **Testing summary**: Must include a "How it was tested" section with specific validation details:
+  - For code changes: Include test commands used (e.g., `PYTHONPATH=src:test python -m unittest discover` or `PYTHONPATH=src:test python -m unittest test.test_javacore_analyser.TestJavacoreAnalyser.test_zip`)
+  - For manual testing: Describe the steps and commands executed
+  - For documentation-only changes: State "Documentation-only change, no tests required"
 
 ## Testing and Validation
 
