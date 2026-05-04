@@ -41,3 +41,8 @@ TEMP_DIR = "temp_data"  # Folder to store temporary data for creating reports
 # Used for extracting hugging face llm. See more on https://huggingface.co/ibm-granite/granite-4.0-micro
 ASSISTANT_ROLE = '<|start_of_role|>assistant<|end_of_role|>'
 END_OF_TEXT = '<|end_of_text|>'
+
+# GC pause time reporting threshold
+# When number of GC pauses is below this threshold, individual pause times are displayed
+# When above, summary statistics are shown instead
+GC_PAUSE_DETAIL_THRESHOLD = 100

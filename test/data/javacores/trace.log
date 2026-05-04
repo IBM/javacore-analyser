@@ -1,0 +1,15 @@
+********************************************************************************
+product = WebSphere Application Server 23.0.0.6 (wlp-1.0.78.cl230620230612-1100)
+wlp.install.dir = C:/IBM/JazzTeamServer_7.0.3_for_upgrading/server/liberty/wlp/
+server.config.dir = C:/IBM/JazzTeamServer_7.0.3_for_upgrading/server/liberty/servers/clm/
+java.home = C:\IBM\JazzTeamServer_7.0.3_for_upgrading\server\jre
+java.version = 11.0.17
+java.runtime = IBM Semeru Runtime Certified Edition (11.0.17+8)
+os = Windows Server 2022 (10.0; amd64) (en_US)
+process = 8900@c22833v1
+Classpath = C:\IBM\JazzTeamServer_7.0.3_for_upgrading\server\liberty\wlp\bin\tools\ws-server.jar;C:\IBM\JazzTeamServer_7.0.3_for_upgrading\server\liberty\wlp\bin\tools\ws-javaagent.jar
+Java Library path = C:\IBM\JazzTeamServer_7.0.3_for_upgrading\server\jre\bin\default;C:\IBM\JazzTeamServer_7.0.3_for_upgrading\server\jre\bin;C:\Windows\system32;C:\Windows;C:\Users\Administrator\Downloads\WINDOWS.X64_193000_db_home\bin;C:\Program Files\Semeru\jdk-11.0.24.8-openj9\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files\ibm\gsk8\lib64;C:\Program Files (x86)\ibm\gsk8\lib;C:\IBM\SQLLIB\BIN;C:\IBM\SQLLIB\FUNCTION;C:\IBM\SQLLIB\SAMPLES\REPL;C:\Program Files\PuTTY\;C:\Program Files\Git\cmd;C:\Program Files\Git\mingw64\bin;C:\Program Files\Git\usr\bin;C:\Program Files\dotnet\;C:\Users\Administrator\AppData\Local\Microsoft\WindowsApps;;.
+trace.specification = *=info
+********************************************************************************
+[4/21/26, 10:07:55:246 CEST] 00000055 id=00000000 m.ibm.ws.container.service.app.deploy.ManifestClassPathUtils W SRVE9967W: The manifest class path pdq.jar can not be found in jar file file:/C:/IBM/JazzTeamServer_7.0.3_for_upgrading/server/liberty/servers/clm/apps/ldx.war/WEB-INF/lib/db2jcc4.jar or its parent.
+[4/21/26, 10:07:55:262 CEST] 00000052 id=00000000 m.ibm.ws.container.service.app.deploy.ManifestClassPathUtils W SRVE9967W: The manifest class path pdq.jar can not be found in jar file file:/C:/IBM/JazzTeamServer_7.0.3_for_upgrading/server/liberty/servers/clm/apps/lqe.war/WEB-INF/lib/db2jcc4.jar or its parent.

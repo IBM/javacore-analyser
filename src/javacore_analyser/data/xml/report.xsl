@@ -19,6 +19,8 @@
     <xsl:include href="sections/all_threads.xsl"/>
     <xsl:include href="sections/all_code.xsl"/>
     <xsl:include href="sections/http_calls.xsl"/>
+    <!-- plugins.xsl is generated dynamically at runtime and contains XSL templates from loaded plugins -->
+    <xsl:include href="plugins.xsl"/>
     <xsl:include href="sections/footer.xsl"/>
 
     <xsl:template match="index">
@@ -67,6 +69,7 @@
             </xsl:if>
 
             <xsl:call-template name="http_calls"/>
+            <xsl:call-template name="plugins"/>
             <xsl:call-template name="footer"/>
         </div>
     </xsl:template>
@@ -74,6 +77,6 @@
     <xsl:template name="expand_it">
         <script language="JavaScript"></script>
     </xsl:template>
-</xsl:stylesheet>
 
-<!-- Made with Bob -->
+    <!-- Made with Bob -->
+</xsl:stylesheet>
