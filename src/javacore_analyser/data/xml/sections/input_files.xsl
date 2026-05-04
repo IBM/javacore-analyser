@@ -186,6 +186,74 @@
                     </xsl:when>
                     <xsl:otherwise> No HAR files </xsl:otherwise>
                 </xsl:choose>
+                <br/>
+                <xsl:choose>
+                    <xsl:when test="doc/plugins/*">
+                        <h4>Plugin files</h4>
+                        <a id="toggleplugindoc" href="javascript:expand_it(plugindoc,toggleplugindoc)" class="expandit">
+                            What does this table tell me?</a>
+                        <div id="plugindoc" style="display:none;">
+                            This table shows all the files processed by custom plugins.
+                            <ul>
+                                <li>
+                                    <strong>Plugin Name</strong>
+                                    is the name of the plugin that processed the files.
+                                </li>
+                                <li>
+                                    <strong>File Name</strong>
+                                    is the name of the file processed by the plugin.
+                                </li>
+                                <li>
+                                    <strong>Message Count</strong>
+                                    is the number of messages or entries found in the file (if applicable).
+                                </li>
+                            </ul>
+                        </div>
+                        <table id="plugin_files_table">
+                            <thead>
+                                <tr>
+                                    <th class="forty">Plugin Name</th>
+                                    <th class="fifty">File Name</th>
+                                    <th class="ten">Message Count</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <xsl:for-each select="doc/plugins/*">
+                                    <xsl:variable name="plugin_name">
+                                        <xsl:choose>
+                                            <xsl:when test="local-name() = 'liberty_logs'">Liberty System Out</xsl:when>
+                                            <xsl:otherwise><xsl:value-of select="local-name()"/></xsl:otherwise>
+                                        </xsl:choose>
+                                    </xsl:variable>
+                                    <!-- Handle log_files/log_file structure (Liberty plugin) -->
+                                    <xsl:for-each select=".//log_files/log_file">
+                                        <tr>
+                                            <td class="left"><xsl:value-of select="$plugin_name"/></td>
+                                            <td class="left"><xsl:value-of select="@file"/></td>
+                                            <td class="left">
+                                                <xsl:choose>
+                                                    <xsl:when test="@message_count">
+                                                        <xsl:value-of select="@message_count"/>
+                                                    </xsl:when>
+                                                    <xsl:otherwise>N/A</xsl:otherwise>
+                                                </xsl:choose>
+                                            </td>
+                                        </tr>
+                                    </xsl:for-each>
+                                    <!-- Handle files/file structure (generic plugins) -->
+                                    <xsl:for-each select=".//files/file">
+                                        <tr>
+                                            <td class="left"><xsl:value-of select="$plugin_name"/></td>
+                                            <td class="left"><xsl:value-of select="@name"/></td>
+                                            <td class="left">N/A</td>
+                                        </tr>
+                                    </xsl:for-each>
+                                </xsl:for-each>
+                            </tbody>
+                        </table>
+                    </xsl:when>
+                    <xsl:otherwise> No plugin files </xsl:otherwise>
+                </xsl:choose>
             </div>
     </xsl:template>
 

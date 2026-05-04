@@ -12,6 +12,7 @@ import tempfile
 from datetime import datetime
 from multiprocessing.dummy import Pool
 from pathlib import Path
+from typing import Optional
 from xml.dom.minidom import parseString
 
 import importlib_resources
@@ -20,7 +21,6 @@ from lxml.etree import XMLSyntaxError
 from tqdm import tqdm
 
 from javacore_analyser import tips
-# from javacore_analyser.ai.ai_overview_prompter import AiOverviewPrompter
 from javacore_analyser.ai.performance_recommendations_prompter import PerformanceRecommendationsPrompter
 from javacore_analyser.code_snapshot_collection import CodeSnapshotCollection
 from javacore_analyser.constants import *
@@ -28,6 +28,7 @@ from javacore_analyser.exceptions import InvalidLLMMethodError
 from javacore_analyser.har_file import HarFile
 from javacore_analyser.java_thread import Thread
 from javacore_analyser.javacore import Javacore
+from javacore_analyser.plugin_manager import PluginManager
 from javacore_analyser.properties import Properties
 from javacore_analyser.snapshot_collection import SnapshotCollection
 from javacore_analyser.snapshot_collection_collection import SnapshotCollectionCollection
@@ -145,7 +146,7 @@ class JavacoreSet:
         self.data_types = set()
 
         '''
-        List where each element is SnapshotCollection containing all threads blocked by given thread. 
+        List where each element is SnapshotCollection containing all threads blocked by given thread.
         You can check the blocking thread by looking at snapshotCollection.get(0).get_blocker()
         '''
         # TODO this list is redundant with the data stored in Thread Snapshot. Should be removed in the future.
@@ -153,6 +154,10 @@ class JavacoreSet:
         self.tips = []
         self.gc_parser = VerboseGcParser()
         self.har_files = []
+        
+        # Plugin system attributes
+        self.plugin_data = {}  # Store plugin results
+        self.plugin_manager = None  # Will be set if plugins enabled
 
     # Assisted by WCA@IBM
     # Latest GenAI contribution: ibm/granite-8b-code-instruct
@@ -202,7 +207,7 @@ class JavacoreSet:
         self.__generate_placeholder_htmls(placeholder_filename,
                                           os.path.join(output_dir, "javacores"),
                                           self.javacores, "")
-        self.__create_index_html(temp_dir_name, output_dir)
+        self.__create_index_html(temp_dir_name, output_dir, self.plugin_data)
         self.__generate_htmls_for_threads(output_dir, temp_dir_name)
         self.__generate_htmls_for_javacores(output_dir, temp_dir_name)
 
@@ -286,11 +291,67 @@ class JavacoreSet:
         if len(jset.har_files) > 0:
             jset.data_types.add('har')
         
+        # Process plugins if enabled
+        if Properties.get_instance().get_property("enable_plugins", False):
+            jset._process_plugins()
+        
         # Ensure at least one data type is present
         if len(jset.data_types) == 0:
             raise RuntimeError("No valid data files found (javacores, HAR files, or verbose GC files). Exiting with error 13")
         
         return jset
+
+    def _process_plugins(self):
+        """
+        Process plugin data sources if plugins are enabled.
+        
+        This method:
+        1. Creates a PluginManager instance
+        2. Discovers and loads available plugins
+        3. Finds files matching each plugin's patterns
+        4. Processes files with each plugin
+        5. Stores results in self.plugin_data
+        
+        All errors are handled gracefully with logging to ensure plugin failures
+        don't break the main analysis workflow.
+        """
+        try:
+            logging.info("Plugin processing enabled, initializing plugin manager")
+            self.plugin_manager = PluginManager()
+            
+            # Discover and load plugins
+            self.plugin_manager.discover_plugins()
+            plugins = self.plugin_manager.get_all_plugins()
+            
+            if not plugins:
+                logging.info("No plugins found in plugin directory")
+                return
+            
+            logging.info(f"Found {len(plugins)} plugin(s), scanning for matching files")
+            
+            # Find files for each plugin
+            plugin_files = self.plugin_manager.find_files_for_plugins(self.path)
+            
+            if not plugin_files:
+                logging.info("No files found matching any plugin patterns")
+                return
+            
+            # Process files with each plugin
+            for plugin, files in plugin_files.items():
+                try:
+                    logging.info(f"Processing {len(files)} file(s) with plugin: {plugin.get_display_name()}")
+                    data = plugin.process_files(files)
+                    self.plugin_data[plugin.get_plugin_name()] = {
+                        'plugin': plugin,
+                        'data': data,
+                        'files': files
+                    }
+                    logging.info(f"Successfully processed files with plugin: {plugin.get_display_name()}")
+                except Exception as e:
+                    logging.error(f"Error processing files with plugin {plugin.get_display_name()}: {e}")
+                    
+        except Exception as e:
+            logging.error(f"Error during plugin processing: {e}")
 
     def get_one_javacore(self):
         """ finds one javacore file from the collection
@@ -602,6 +663,31 @@ class JavacoreSet:
             doc_node.appendChild(self.stacks.get_xml(self.doc))
         
         doc_node.appendChild(self.gc_parser.get_xml(self.doc))
+        
+        # Add plugin data to XML if plugins were processed
+        if self.plugin_data:
+            try:
+                logging.info("Adding plugin data to report XML")
+                plugins_node = self.doc.createElement("plugins")
+                doc_node.appendChild(plugins_node)
+                
+                for plugin_name, plugin_info in self.plugin_data.items():
+                    try:
+                        plugin = plugin_info['plugin']
+                        data = plugin_info['data']
+                        
+                        logging.debug(f"Generating XML for plugin: {plugin.get_display_name()}")
+                        plugin_xml = plugin.generate_xml(self.doc, data)
+                        plugins_node.appendChild(plugin_xml)
+                        logging.debug(f"Successfully added XML for plugin: {plugin.get_display_name()}")
+                        
+                    except Exception as e:
+                        logging.error(f"Error generating XML for plugin {plugin_name}: {e}")
+                        
+                logging.info(f"Successfully added {len(self.plugin_data)} plugin(s) to report XML")
+                
+            except Exception as e:
+                logging.error(f"Error adding plugin data to XML: {e}")
 
         self.doc.appendChild(doc_node)
 
@@ -638,9 +724,184 @@ class JavacoreSet:
         if not fullpath.startswith(path_params[0]):
             raise Exception("Security exception: Uncontrolled data used in path expression")
         return fullpath
+    @staticmethod
+    def generate_plugin_section_header(section_id: str, section_title: str, description: str) -> str:
+        """
+        Generate standardized HTML header for plugin sections.
+        
+        This method creates a collapsible section header with documentation that follows
+        the same pattern used throughout the javacore-analyser report. It provides a
+        consistent user experience across all plugin sections.
+        
+        The generated HTML includes:
+        - A collapsible section header (h3) with expand/collapse functionality
+        - A nested documentation section explaining what the section contains
+        - Proper CSS classes for styling consistency
+        
+        Args:
+            section_id: Unique identifier for the section (used in HTML IDs and JavaScript)
+            section_title: Human-readable title displayed in the section header
+            description: HTML content describing what the section shows (can include lists, paragraphs, etc.)
+        
+        Returns:
+            HTML string containing the section header and documentation wrapper
+            
+        Example:
+            >>> header = JavacoreSet.generate_plugin_section_header(
+            ...     "liberty_logs",
+            ...     "Liberty System Out",
+            ...     "This section shows analysis of Liberty log files."
+            ... )
+        """
+        from html import escape
+        
+        # Escape the title for safe HTML output
+        escaped_title = escape(section_title)
+        
+        # Generate the section header HTML
+        # Note: description is expected to be pre-formatted HTML, so it's not escaped
+        header_html = f'''<h3><a id="toggle_{section_id}" href="javascript:expand_it({section_id},toggle_{section_id})" class="expandit">{escaped_title}</a></h3>
+<div id="{section_id}" style="display:none;">
+    <a id="toggle{section_id}doc" href="javascript:expand_it({section_id}doc,toggle{section_id}doc)" class="expandit">
+        What does this section tell me?</a>
+    <div id="{section_id}doc" style="display:none;">
+        {description}
+    </div>
+
+'''
+        return header_html
 
     @staticmethod
-    def __create_index_html(input_dir, output_dir):
+    def __generate_plugins_xsl(temp_dir: str, plugin_data: dict) -> Optional[str]:
+        """
+        Generate plugins.xsl file dynamically from loaded plugin HTML content.
+        
+        This method creates a plugins.xsl file that wraps HTML content generated by plugins
+        into a single XSL template named "plugins". The generated file is used by report.xsl
+        to include plugin-specific content in the final HTML report.
+        
+        The method handles:
+        - Calling generate_html() on each plugin to get HTML content
+        - Wrapping HTML in CDATA sections with disable-output-escaping for proper injection
+        - Combining all plugin HTML into a single plugins.xsl file
+        - Creating a fallback empty template if no plugins are loaded or if errors occur
+        - Comprehensive error handling and logging for HTML generation failures
+        
+        :param temp_dir: Temporary directory where XSL files are stored
+        :type temp_dir: str
+        :param plugin_data: Dictionary of loaded plugin data, where keys are plugin names and values
+                           are dictionaries containing 'plugin' instances and 'data'
+        :type plugin_data: dict
+        :return: Path to generated plugins.xsl file, or None if generation fails
+        :rtype: Optional[str]
+        """
+        plugins_xsl_path = os.path.join(temp_dir, "plugins.xsl")
+        
+        try:
+            # Start building the plugins.xsl content
+            plugins_xsl_content = '''<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+# Copyright IBM Corp. 2024 - 2026
+# SPDX-License-Identifier: Apache-2.0
+#
+# This file is auto-generated during report creation.
+# It contains XSL templates for all loaded plugins.
+-->
+
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+
+    <xsl:template name="plugins">
+'''
+            
+            # Add plugin sections if plugins are loaded
+            if plugin_data:
+                logging.info("Generating plugins.xsl with plugin HTML content")
+                
+                for plugin_name, plugin_info in plugin_data.items():
+                    try:
+                        plugin = plugin_info['plugin']
+                        data = plugin_info.get('data', {})
+                        
+                        # Call generate_html() to get HTML content from the plugin
+                        html_content = plugin.generate_html(data)
+                        
+                        if html_content:
+                            # Generate section header with plugin description
+                            section_id = plugin_name.replace('_', '')
+                            section_header = JavacoreSet.generate_plugin_section_header(
+                                section_id=section_id,
+                                section_title=plugin.get_display_name(),
+                                description=plugin.get_description()
+                            )
+                            
+                            # Combine header with plugin content and close the section div
+                            full_html = section_header + html_content + '\n</div>\n'
+                            
+                            # Wrap HTML content in CDATA with disable-output-escaping
+                            # This allows the HTML to be injected directly into the report
+                            plugins_xsl_content += f'''
+        <!-- Plugin: {plugin.get_display_name()} -->
+        <xsl:text disable-output-escaping="yes"><![CDATA[
+{full_html}
+        ]]></xsl:text>
+
+'''
+                            logging.info(f"Added HTML content for plugin: {plugin.get_display_name()}")
+                        else:
+                            logging.debug(f"Plugin {plugin.get_display_name()} returned no HTML content")
+                            
+                    except Exception as e:
+                        logging.error(f"Error generating HTML for plugin {plugin_name}: {e}")
+                        logging.exception(e)
+                        # Add error message to report for debugging
+                        plugins_xsl_content += f'''
+        <!-- Plugin: {plugin_name} - Error generating HTML -->
+        <xsl:text disable-output-escaping="yes"><![CDATA[
+        <div class="error_row" style="padding: 10px; margin: 10px 0;">
+            <strong>Error in plugin {plugin_name}:</strong> {str(e).replace('<', '<').replace('>', '>')}
+        </div>
+        ]]></xsl:text>
+
+'''
+            else:
+                # No plugins loaded, create empty template
+                plugins_xsl_content += "        <!-- No plugins loaded -->\n"
+            
+            # Close the template and stylesheet
+            plugins_xsl_content += '''    </xsl:template>
+
+</xsl:stylesheet>
+
+<!-- Made with Bob -->
+'''
+            
+            # Write plugins.xsl file
+            with open(plugins_xsl_path, 'w', encoding='utf-8') as f:
+                f.write(plugins_xsl_content)
+            
+            logging.info(f"Generated plugins.xsl at {plugins_xsl_path}")
+            return plugins_xsl_path
+            
+        except Exception as e:
+            logging.error(f"Error generating plugins.xsl: {e}")
+            # Create empty plugins.xsl to prevent XSL errors
+            try:
+                with open(plugins_xsl_path, 'w', encoding='utf-8') as f:
+                    f.write('''<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+    <xsl:template name="plugins">
+        <!-- Error generating plugin templates -->
+    </xsl:template>
+</xsl:stylesheet>
+''')
+                return plugins_xsl_path
+            except Exception:
+                return None
+
+
+    @staticmethod
+    def __create_index_html(input_dir, output_dir, plugin_data=None):
 
         # Copy index.xml and report.xsl to temp - for index.html we don't need to generate anything. Copying is enough.
         # index_xml = validate_uncontrolled_data_used_in_path([output_dir, "data", "xml", "index.xml"])
@@ -669,6 +930,9 @@ class JavacoreSet:
                 logging.info(f"Section files copied: {section_files}")
         else:
             logging.warning(f"Sections directory not found at {sections_dir}")
+
+        # Generate plugins.xsl file dynamically
+        JavacoreSet.__generate_plugins_xsl(input_dir, plugin_data)
 
         # Prepare XSLT file path and URI for processing
         # The file:// URI scheme is required by lxml's XSLT processor to properly
@@ -894,6 +1158,4 @@ class JavacoreSet:
         else:
             raise InvalidLLMMethodError(llm_method)
             
-        # We no longer want an ai overview
-        # self.ai_overview = ai.infuse_in_html(AiOverviewPrompter(self))
         self.ai_tips = ai.infuse_in_html(PerformanceRecommendationsPrompter(self))

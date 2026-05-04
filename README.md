@@ -22,6 +22,31 @@ The tool analyzes Javacores and verbose gc logs and provides some reports like c
 * Set of Javacores from the same run. Optionally you can add verbose.gc log file
 * Single Javacore
 
+## Plugin Architecture
+
+Javacore Analyser supports a plugin system that allows you to extend the tool with custom data source plugins. This enables you to analyze additional diagnostic data types alongside javacores, verbose GC logs, and HAR files.
+
+### Features
+- Load custom plugins from `~/.javacore_analyser/plugins/`
+- Automatic plugin discovery and loading
+- Integrate custom data into analysis reports
+- No core code modifications required
+
+### Getting Started
+1. Enable plugins in `config.ini`:
+   ```ini
+   [plugins]
+   enable_plugins = true
+   ```
+
+2. Create your plugin in `~/.javacore_analyser/plugins/your_plugin/`
+
+3. See the [example plugin](docs/example_plugin/) for a complete reference implementation
+
+### Documentation
+- [Plugin Architecture Design](docs/PLUGIN_ARCHITECTURE_DESIGN.md) - Complete design and API reference
+- [Example Plugin](docs/example_plugin/) - Working example with detailed comments
+
   
 <!-- A more detailed Usage or detailed explanation of the repository here -->
 ## Installation and usage

@@ -36,6 +36,10 @@ All commits must follow these rules:
   - `#242 Add support for default LLM options`
   - `#1 Add more parameters for verbose gc chart`
 - **PR description**: Must contain `Fixes #<issue-id>` to auto-link and close the issue
+- **Testing summary**: Must include a "How it was tested" section with specific validation details:
+  - For code changes: Include test commands used (e.g., `PYTHONPATH=src:test python -m unittest discover` or `PYTHONPATH=src:test python -m unittest test.test_javacore_analyser.TestJavacoreAnalyser.test_zip`)
+  - For manual testing: Describe the steps and commands executed
+  - For documentation-only changes: State "Documentation-only change, no tests required"
 
 ## Testing and Validation
 
@@ -99,3 +103,29 @@ Supports: `.zip`, `.7z`, `.tar.gz`, `.tar.bz2`, `.tgz`
 - Properties class uses standard Python singleton pattern with `__new__()` method
 - String properties auto-convert to bool/int in `load_properties()` method
 - Uses `importlib_resources` for accessing package data files (not `__file__` paths)
+
+## Logging
+
+Use the standard `logging` module directly at module level. The project convention is to import `logging` and call
+`logging.info(...)`, `logging.warning(...)`, `logging.error(...)`, `logging.debug(...)`, and `logging.exception(...)`
+directly. Do not create module-local loggers with `logger = logging.getLogger(__name__)` unless there is a specific
+project-wide change introducing that pattern.
+
+### Correct pattern
+
+```python
+import logging
+
+logging.info("Starting plugin discovery")
+logging.debug(f"Scanning directory: {plugin_dir}")
+logging.warning(f"Plugin directory does not exist: {plugin_dir}")
+```
+
+### Avoid
+
+```python
+import logging
+
+logger = logging.getLogger(__name__)
+logger.info("Starting plugin discovery")
+```
