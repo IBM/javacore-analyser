@@ -13,3 +13,8 @@ markdown
 #The requirements below are needed for huggingface LLM. See https://huggingface.co/ibm-granite/granite-4.0-micro
 torch 
 transformers
+
+#Requiremnets for machine learning
+xgboost
+pandas
+scikit-learn
