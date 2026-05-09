@@ -1,5 +1,5 @@
 #
-# Copyright IBM Corp. 2024 - 2024
+# Copyright IBM Corp. 2024 - 2026
 # SPDX-License-Identifier: Apache-2.0
 #
 import logging
@@ -9,7 +9,7 @@ import logging
 
 # List of the tips on which run the tool
 TIPS_LIST = ["DifferentIssuesTip", "ExcludedJavacoresTip", "InvalidAccumulatedCpuTimeTip", "TooFewJavacoresTip",
-             "OOMEGenerationTip", "BlockingThreadsTip", "HighCpuUsageTip"]
+             "OOMEGenerationTip", "BlockingThreadsTip", "HighCpuUsageTip", "LongGcPauseTip"]
 
 
 class TestTip:
@@ -110,11 +110,16 @@ class TooFewJavacoresTip:
     might not be reliable. The minimal number of Javacores should be 5. The recommended number of Javacores 
     is at least 10."""
 
+    NO_JAVACORES_INFO = """[INFO] You ran the tool against no Javacores. The analysis is limited only to verbose GC 
+    data and har files"""
+
     @staticmethod
     def generate(javacore_set):
         jc_number = len(javacore_set.javacores)
         if jc_number == 1:
             return [TooFewJavacoresTip.ONE_JAVACORE_WARNING]
+        if jc_number == 0:
+            return [TooFewJavacoresTip.NO_JAVACORES_INFO]
         elif jc_number < TooFewJavacoresTip.MIN_NUMBER_OF_JAVACORES:
             return [TooFewJavacoresTip.NOT_ENOUGH_JAVACORES_MESSAGE.format(jc_number)]
         else:
@@ -203,3 +208,58 @@ class HighCpuUsageTip:
         if has_gc_performance_issues:
             result.append(HighCpuUsageTip.HIGH_GC_USAGE_TEXT)
         return result
+
+
+class LongGcPauseTip:
+    # Generates a tip when GC pauses exceed configurable thresholds
+    
+    # Configurable thresholds in milliseconds
+    THRESHOLD_1 = 1000  # 1 second
+    THRESHOLD_2 = 2000  # 2 seconds
+    
+    LONG_GC_PAUSE_WARNING = """[WARNING] Detected {0} GC pause(s) longer than {1}ms and {2} GC pause(s) longer than {3}ms.
+    The longest GC pause was {4:.0f}ms at {5}.
+    Long GC pauses can cause performance issues and application freezes."""
+    
+    NO_VERBOSE_GC_INFO = """[INFO] No verbose GC data available. Cannot analyze GC pause times."""
+    
+    @staticmethod
+    def generate(javacore_set):
+        # Get all GC collections from the parser
+        collects = javacore_set.gc_parser.get_collects()
+        
+        if not collects:
+            return []  # No verbose GC data, return empty tip
+        
+        # Count pauses exceeding thresholds
+        pauses_over_threshold_1 = 0
+        pauses_over_threshold_2 = 0
+        longest_pause = 0.0
+        longest_pause_time = ""
+        
+        for collect in collects:
+            duration = collect.duration
+            
+            if duration > LongGcPauseTip.THRESHOLD_1:
+                pauses_over_threshold_1 += 1
+            
+            if duration > LongGcPauseTip.THRESHOLD_2:
+                pauses_over_threshold_2 += 1
+            
+            if duration > longest_pause:
+                longest_pause = duration
+                longest_pause_time = collect.start_time_str
+        
+        # Generate warning if any pauses exceed threshold 1
+        if pauses_over_threshold_1 > 0:
+            msg = LongGcPauseTip.LONG_GC_PAUSE_WARNING.format(
+                pauses_over_threshold_1,
+                LongGcPauseTip.THRESHOLD_1,
+                pauses_over_threshold_2,
+                LongGcPauseTip.THRESHOLD_2,
+                longest_pause,
+                longest_pause_time
+            )
+            return [msg]
+        
+        return []  # No long pauses detected

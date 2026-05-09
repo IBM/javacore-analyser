@@ -15,15 +15,40 @@
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/IBM/javacore-analyser/badge)](https://scorecard.dev/viewer/?uri=github.com/IBM/javacore-analyser)
 
 
-<!-- Not always needed, but a scope helps the user understand in a short sentance like below, why this repo exists -->
+<!-- Not always needed, but a scope helps the user understand in a short sentence like below, why this repo exists -->
 ## Scope
 
 The tool analyzes Javacores and verbose gc logs and provides some reports like cpu/gc usage, blocked threads, some tips regarding the javacores. The tool can process the following data:
 * Set of Javacores from the same run. Optionally you can add verbose.gc log file
 * Single Javacore
 
+## Plugin Architecture
+
+Javacore Analyser supports a plugin system that allows you to extend the tool with custom data source plugins. This enables you to analyze additional diagnostic data types alongside javacores, verbose GC logs, and HAR files.
+
+### Features
+- Load custom plugins from `~/.javacore_analyser/plugins/`
+- Automatic plugin discovery and loading
+- Integrate custom data into analysis reports
+- No core code modifications required
+
+### Getting Started
+1. Enable plugins in `config.ini`:
+   ```ini
+   [plugins]
+   enable_plugins = true
+   ```
+
+2. Create your plugin in `~/.javacore_analyser/plugins/your_plugin/`
+
+3. See the [example plugin](docs/example_plugin/) for a complete reference implementation
+
+### Documentation
+- [Plugin Architecture Design](docs/PLUGIN_ARCHITECTURE_DESIGN.md) - Complete design and API reference
+- [Example Plugin](docs/example_plugin/) - Working example with detailed comments
+
   
-<!-- A more detailed Usage or detailed explaination of the repository here -->
+<!-- A more detailed Usage or detailed explanation of the repository here -->
 ## Installation and usage
 
 ### Installation:
@@ -52,10 +77,10 @@ This is recommended for geeks only:
 
 ### Running the tool:
 
-#### Running cmd application: 
+#### Running cmd application:
 1. Install application if not done yet
-2. Activate your created virtual environment according to activate Virtual Environment according to [Creating virtual environments](https://docs.python.org/3/tutorial/venv.html#creating-virtual-environments)
-3. Run the following command from cmd:  
+2. Activate your created virtual environment according to [Creating virtual environments](https://docs.python.org/3/tutorial/venv.html#creating-virtual-environments)
+3. Run the following command from cmd:
 `javacore-analyser-batch <input-data> <generated-reports-dir>`  
 or  
 `python -m javacore_analyser batch <input-data> <generated-reports-dir>`  
@@ -118,10 +143,10 @@ Perform the following steps to run the tool:
 
 or
 
-`./javacoreCollector.sh javaPid=12345 javacoresDir=/location/for/javacores` - for collecting diagnostic data from any java aplication.
+`./javacoreCollector.sh javaPid=12345 javacoresDir=/location/for/javacores` - for collecting diagnostic data from any java application.
 
 
-You can add the 'count' and 'interval' parameters to specify the number of javacores (default: 10) and interval between each of them (defaul: 30s).
+You can add the 'count' and 'interval' parameters to specify the number of javacores (default: 10) and interval between each of them (default: 30s).
 
 Type `./javacoreCollector.sh` to get more help.
 
@@ -182,9 +207,9 @@ If you would like to see the detailed LICENSE click [here](LICENSE).
 
 [issues]: https://github.com/IBM/javacore-analyser/issues/new
 
-## Another pages
+## Other pages
 
-Another useful pages:
+Other useful pages:
 * [LICENSE](LICENSE)
 * [README.md](README.md)
 * [CONTRIBUTING.md](CONTRIBUTING.md)

@@ -1,5 +1,5 @@
 #
-# Copyright IBM Corp. 2024 - 2024
+# Copyright IBM Corp. 2024 - 2026
 # SPDX-License-Identifier: Apache-2.0
 #
 
@@ -35,6 +35,6 @@ class TestGcCollection(unittest.TestCase):
         self.assertTrue(element.hasAttributes(), "No attributes")
         self.assertTrue(element.hasAttribute(DURATION), "Missing " + DURATION + " attribute")
         duration = element.getAttribute(DURATION)
-        self.assertEqual(duration, 100, "Wrong " + DURATION + " value")
+        self.assertEqual(duration, "100", "Wrong " + DURATION + " value")
 
 

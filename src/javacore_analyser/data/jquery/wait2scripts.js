@@ -1,5 +1,5 @@
 /*
-# Copyright IBM Corp. 2024 - 2024
+# Copyright IBM Corp. 2024 - 2026
 # SPDX-License-Identifier: Apache-2.0
 */
 
@@ -94,7 +94,7 @@ const loadChartGC = function() {
 
   const gcTable = document.querySelector('gc-collections');
 
-  if(!gcTable.hasChildNodes()) {
+  if(!gcTable || !gcTable.hasChildNodes()) {
      return;
   }
 
@@ -107,31 +107,38 @@ const loadChartGC = function() {
 
   // 1. get the list of javacores with timestamps, to set the chart range (x range)
   const coresFiles = document.getElementById('javacores_files_table');
-  const coresNumber = document.getElementById('javacores_files_table').rows.length;
+  const coresNumber = coresFiles ? coresFiles.rows.length : 0;
 
   const coresTimestamps = [];
-  const coresTimeRange = {
-      'startTime': new Date(document.getElementById('javacores_files_table').rows[1].cells[1].innerHTML),
-      'endTime': new Date(document.getElementById('javacores_files_table').rows[1].cells[1].innerHTML)
-  };
+  let coresTimeRange = null;
+  let startingPoint = null;
+  let endingPoint = null;
 
-  let startingPoint = coresTimeRange['startTime'];
-  let endingPoint = coresTimeRange['endTime'];
+  // Only process javacore timestamps if javacores exist
+  if (coresNumber > 1) {
+    coresTimeRange = {
+        'startTime': new Date(coresFiles.rows[1].cells[1].innerHTML),
+        'endTime': new Date(coresFiles.rows[1].cells[1].innerHTML)
+    };
 
-  for(let i=2; i<coresNumber; i++){
-    let rowEl = document.getElementById('javacores_files_table').rows[i];
-    coresTimestamps.push(String(rowEl.cells[1].innerHTML));
+    startingPoint = coresTimeRange['startTime'];
+    endingPoint = coresTimeRange['endTime'];
 
-    let timestamp = new Date(rowEl.cells[1].innerHTML);
-    if(startingPoint > timestamp)
-       startingPoint = timestamp;
+    for(let i=2; i<coresNumber; i++){
+      let rowEl = coresFiles.rows[i];
+      coresTimestamps.push(String(rowEl.cells[1].innerHTML));
 
-    if(endingPoint < timestamp)
-        endingPoint = timestamp;
+      let timestamp = new Date(rowEl.cells[1].innerHTML);
+      if(startingPoint > timestamp)
+         startingPoint = timestamp;
+
+      if(endingPoint < timestamp)
+          endingPoint = timestamp;
+    }
+
+    coresTimeRange['startTime'] = startingPoint;
+    coresTimeRange['endTime'] = endingPoint;
   }
-
-  coresTimeRange['startTime'] = startingPoint;
-  coresTimeRange['endTime'] = endingPoint;
 
   // 2. get the list of gc collections with timestamps, to get the data to draw
   const gcCollectionsElms = document.querySelectorAll('gc-collection');
@@ -139,41 +146,66 @@ const loadChartGC = function() {
 
   //  timestamp="2022-06-06T11:45:13.841" durationms="15.881" free-before="3219388536" free-after="3709718896" freed="490330360"/>
   gcCollectionsElms.forEach(function (element) {
-    gcCollections.push( { 'startTime':  element.attributes[0],
-                          'duration':   element.attributes[1],
-                          'freeBefore': element.attributes[2],
-                          'freeAfter':  element.attributes[3],
-                          'freed':      element.attributes[4] })
+    gcCollections.push({
+      'startTime': element.getAttribute('timestamp'),
+      'duration': element.getAttribute('durationms'),
+      'freeBefore': element.getAttribute('free-before'),
+      'freeAfter': element.getAttribute('free-after'),
+      'freed': element.getAttribute('freed'),
+      'nurseryFreeBefore': element.getAttribute('nursery-free-before'),
+      'nurseryFreeAfter': element.getAttribute('nursery-free-after'),
+      'nurseryTotal': element.getAttribute('nursery-total'),
+      'tenureFreeBefore': element.getAttribute('tenure-free-before'),
+      'tenureFreeAfter': element.getAttribute('tenure-free-after'),
+      'tenureTotal': element.getAttribute('tenure-total')
+    });
   });
 
   // 3. find the HEAP_SIZE
   const MB_SIZE = Math.pow(1024, 2);
-  let heapAsString = document.getElementById('sys_info_table').rows[2].cells[1].innerHTML;
   let HEAP_SIZE;
-  let heapUnit = heapAsString.slice(-1).toLowerCase();
+  
+  // Try to get heap size from sys_info_table if it exists
+  const sysInfoTable = document.getElementById('sys_info_table');
+  if (sysInfoTable && sysInfoTable.rows.length > 2) {
+    let heapAsString = sysInfoTable.rows[2].cells[1].innerHTML;
+    let heapUnit = heapAsString.slice(-1).toLowerCase();
 
-  if(!isNaN(Number(heapUnit))) {
-     HEAP_SIZE = Number(heapAsString);
-  }
-  else {
-
-      switch (heapUnit) {
-        case "g":
-            HEAP_SIZE =
-                Number(heapAsString.slice(0, -1)) * MB_SIZE * 1024;
-        break;
-        case "m":
-            HEAP_SIZE =
-                Number(heapAsString.slice(0, -1)) * MB_SIZE;
-        break;
-        case "k":
-            HEAP_SIZE =
-                Number(heapAsString.slice(0, -1)) * 1024;
-        break;
-        default:
-            console.log("Hmm, what now .. heap unit undefined!");
-        break;
+    if(!isNaN(Number(heapUnit))) {
+       HEAP_SIZE = Number(heapAsString);
+    }
+    else {
+        switch (heapUnit) {
+          case "g":
+              HEAP_SIZE =
+                  Number(heapAsString.slice(0, -1)) * MB_SIZE * 1024;
+          break;
+          case "m":
+              HEAP_SIZE =
+                  Number(heapAsString.slice(0, -1)) * MB_SIZE;
+          break;
+          case "k":
+              HEAP_SIZE =
+                  Number(heapAsString.slice(0, -1)) * 1024;
+          break;
+          default:
+              console.log("Hmm, what now .. heap unit undefined!");
+          break;
+        }
+    }
+  } else {
+    // No sys_info_table - estimate heap size from GC data
+    // Find the maximum value of (freeBefore + freed) across all collections
+    let maxHeap = 0;
+    gcCollections.forEach(function (element) {
+      const freeBefore = Number(element['freeBefore']);
+      const freed = Number(element['freed']);
+      const estimatedHeap = freeBefore + freed;
+      if (estimatedHeap > maxHeap) {
+        maxHeap = estimatedHeap;
       }
+    });
+    HEAP_SIZE = maxHeap;
   }
 
   // 4. create input data for GC chart
@@ -181,25 +213,46 @@ const loadChartGC = function() {
   //        end with gc collection done after the last javacore was collected
   const inputData = [];
   const totalHeap = [];
+  const pauseTimeData = [];
+  const nurseryUsageData = [];
+  const tenureUsageData = [];
+  const nurseryTotalData = [];
+  const tenureTotalData = [];
   const labels = [];
 
   let dateTmp;
   gcCollections.forEach(function (element) {
-      let gcStartDate = new Date(element['startTime'].textContent);
+      //let gcStartDate = new Date(element['startTime']);
 
       // TODO - filter range
       //if( gcStartDate >= coresTimeRange['startTime'] && gcStartDate <= coresTimeRange['endTime']) {
 
+        const durationMs = Number(element['duration']);
+
+        const gcStartTime = new Date(element['startTime']).valueOf();
+        const nurseryTotal = Number(element['nurseryTotal']);
+        const tenureTotal = Number(element['tenureTotal']);
+
         // before running GC
-        inputData.push((HEAP_SIZE - Number(element['freeBefore'].textContent)) / MB_SIZE);
+        inputData.push((HEAP_SIZE - Number(element['freeBefore'])) / MB_SIZE);
         totalHeap.push(HEAP_SIZE / MB_SIZE);
-        labels.push(new Date(element['startTime'].textContent).valueOf());
+        nurseryUsageData.push(nurseryTotal > 0 ? (nurseryTotal - Number(element['nurseryFreeBefore'])) / MB_SIZE : null);
+        tenureUsageData.push(tenureTotal > 0 ? (tenureTotal - Number(element['tenureFreeBefore'])) / MB_SIZE : null);
+        nurseryTotalData.push(nurseryTotal > 0 ? nurseryTotal / MB_SIZE : null);
+        tenureTotalData.push(tenureTotal > 0 ? tenureTotal / MB_SIZE : null);
+        labels.push(gcStartTime);
+        pauseTimeData.push(durationMs);
 
         // result of GC execution
-        inputData.push((HEAP_SIZE - Number(element['freeAfter'].textContent)) / MB_SIZE);
+        inputData.push((HEAP_SIZE - Number(element['freeAfter'])) / MB_SIZE);
         totalHeap.push(HEAP_SIZE / MB_SIZE);
-        dateTmp = new Date(element['startTime'].textContent);
-        dateTmp.setMilliseconds(dateTmp.getMilliseconds() + Number(element['duration'].textContent.split('.')[0]));
+        nurseryUsageData.push(nurseryTotal > 0 ? (nurseryTotal - Number(element['nurseryFreeAfter'])) / MB_SIZE : null);
+        tenureUsageData.push(tenureTotal > 0 ? (tenureTotal - Number(element['tenureFreeAfter'])) / MB_SIZE : null);
+        nurseryTotalData.push(nurseryTotal > 0 ? nurseryTotal / MB_SIZE : null);
+        tenureTotalData.push(tenureTotal > 0 ? tenureTotal / MB_SIZE : null);
+        pauseTimeData.push(null);
+        dateTmp = new Date(element['startTime']);
+        dateTmp.setMilliseconds(dateTmp.getMilliseconds() + durationMs);
         labels.push(dateTmp.valueOf());
   })
 
@@ -216,7 +269,8 @@ const loadChartGC = function() {
           fillColor: 'rgba(255,99,132,0.5)',
           borderColor: 'rgba(255,99,132,1)',
           backgroundColor: 'rgba(255,99,132,0.5)',
-          pointRadius: 0.5
+          pointRadius: 0.5,
+          yAxisID: 'y'
         },
         {
           label: 'Total Heap (MB)',
@@ -225,7 +279,64 @@ const loadChartGC = function() {
           fillColor: "black",
           borderColor: "black",
           backgroundColor: "black",
-          pointRadius: 0.0
+          pointRadius: 0.0,
+          yAxisID: 'y'
+        },
+        {
+          label: 'Pause Time (ms)',
+          data: pauseTimeData,
+          type: 'bar',
+          borderWidth: 1,
+          borderColor: 'rgba(54,162,235,1)',
+          backgroundColor: 'rgba(54,162,235,0.5)',
+          yAxisID: 'yPause',
+          barPercentage: 1.0,
+          categoryPercentage: 1.0,
+          barThickness: 6,
+          maxBarThickness: 9,
+          order: 1
+        },
+        {
+          label: 'Nursery Usage (MB)',
+          data: nurseryUsageData,
+          borderWidth: 1,
+          borderColor: 'rgba(75,192,192,1)',
+          backgroundColor: 'rgba(75,192,192,0.2)',
+          pointRadius: 0.5,
+          yAxisID: 'y',
+          hidden: true
+        },
+        {
+          label: 'Tenure Usage (MB)',
+          data: tenureUsageData,
+          borderWidth: 1,
+          borderColor: 'rgba(255,159,64,1)',
+          backgroundColor: 'rgba(255,159,64,0.2)',
+          pointRadius: 0.5,
+          yAxisID: 'y',
+          hidden: true
+        },
+        {
+          label: 'Nursery Total (MB)',
+          data: nurseryTotalData,
+          borderWidth: 1,
+          fillColor: 'rgba(46,139,87,1)',
+          borderColor: 'rgba(46,139,87,1)',
+          backgroundColor: 'rgba(46,139,87,1)',
+          pointRadius: 0.0,
+          yAxisID: 'y',
+          hidden: true
+        },
+        {
+          label: 'Tenure Total (MB)',
+          data: tenureTotalData,
+          borderWidth: 1,
+          fillColor: 'rgba(205,92,92,1)',
+          borderColor: 'rgba(205,92,92,1)',
+          backgroundColor: 'rgba(205,92,92,1)',
+          pointRadius: 0.0,
+          yAxisID: 'y',
+          hidden: true
         },
       ],
     },
@@ -233,7 +344,22 @@ const loadChartGC = function() {
       scales: {
         y: {
           beginAtZero: true,
-          suggestedMax: (HEAP_SIZE + 0.01*HEAP_SIZE) / MB_SIZE
+          suggestedMax: (HEAP_SIZE + 0.01*HEAP_SIZE) / MB_SIZE,
+          title: {
+            display: true,
+            text: 'Heap Usage (MB)'
+          }
+        },
+        yPause: {
+          beginAtZero: true,
+          position: 'right',
+          title: {
+            display: true,
+            text: 'Pause Time (ms)'
+          },
+          grid: {
+            drawOnChartArea: false
+          }
         },
         x: {
              type: 'time',
