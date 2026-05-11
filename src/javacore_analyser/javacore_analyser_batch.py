@@ -26,6 +26,21 @@ from javacore_analyser.properties import Properties
 SUPPORTED_ARCHIVES_FORMATS = {"zip", "gz", "tgz", "bz2", "lzma", "7z"}
 
 
+def _is_safe_path(base_path, file_path):
+    """Validate that file_path is within base_path to prevent path traversal."""
+    abs_base = os.path.abspath(base_path)
+    abs_file = os.path.abspath(os.path.join(base_path, file_path))
+    return abs_file.startswith(abs_base)
+
+
+def _safe_extract(archive_file, output_path, member_names):
+    """Validate paths and extract archive safely."""
+    for member in member_names:
+        if not _is_safe_path(output_path, member):
+            raise Exception(f"Unsafe path detected in archive: {member}")
+    archive_file.extractall(path=output_path)
+
+
 def extract_archive(input_archive_filename, output_path):
     """
 
@@ -41,24 +56,28 @@ def extract_archive(input_archive_filename, output_path):
     if input_archive_filename.endswith(".zip"):
         logging.info("Processing zip file")
         file = zipfile.ZipFile(input_archive_filename)
+        _safe_extract(file, output_path, file.namelist())
     elif input_archive_filename.endswith("tar.gz") or input_archive_filename.endswith(".tgz"):
         logging.info("Processing tar gz file")
         file = tarfile.open(input_archive_filename)
+        _safe_extract(file, output_path, [m.name for m in file.getmembers()])
     elif input_archive_filename.endswith("tar.bz2"):
         file = tarfile.open(input_archive_filename)
         logging.info("Processing bz2 file")
+        _safe_extract(file, output_path, [m.name for m in file.getmembers()])
     elif input_archive_filename.endswith(".lzma"):
         file = tarfile.open(input_archive_filename)
         logging.info("Processing lzma file")
+        _safe_extract(file, output_path, [m.name for m in file.getmembers()])
     elif input_archive_filename.endswith(".7z"):
         file = py7zr.SevenZipFile(input_archive_filename)
         logging.info("Processing 7z file")
+        _safe_extract(file, output_path, file.getnames())
     else:
         raise Exception("The format of file is not supported. "
                         "Currently we support only zip, tar.gz, tgz, tar.bz2 and 7z. "
                         "Cannot proceed.")
 
-    file.extractall(path=output_path)
     file.close()
 
     return output_path
