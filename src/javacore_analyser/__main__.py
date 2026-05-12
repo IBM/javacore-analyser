@@ -1,10 +1,10 @@
 #
-# Copyright IBM Corp. 2024 - 2025
+# Copyright IBM Corp. 2024 - 2026
 # SPDX-License-Identifier: Apache-2.0
 #
 import argparse
 
-from javacore_analyser import javacore_analyser_batch, common_utils, javacore_analyser_web
+from javacore_analyser import javacore_analyser_batch, common_utils
 from javacore_analyser.properties import Properties
 
 
@@ -29,7 +29,13 @@ def main():
 
     if app_type.lower() == "web":
         print("Running web application")
-        javacore_analyser_web.run_web(args.debug, args.port, args.reports_dir, ai=Properties.get_instance().get_property("use_ai"))
+        try:
+            from javacore_analyser import javacore_analyser_web
+            javacore_analyser_web.run_web(args.debug, args.port, args.reports_dir, ai=Properties.get_instance().get_property("use_ai"))
+        except ImportError as e:
+            print(f"Error: Web mode requires Flask. Install with: pip install javacore_analyser[web]")
+            print(f"Details: {e}")
+            exit(1)
     elif app_type.lower() == "batch":
         print("Running batch application")
         javacore_analyser_batch.batch_process(args.input, args.output)
