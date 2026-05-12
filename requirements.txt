@@ -13,3 +13,7 @@ markdown
 #The requirements below are needed for huggingface LLM. See https://huggingface.co/ibm-granite/granite-4.0-micro
 torch 
 transformers
+
+#The requirements below are needed for building the package
+build
+twine>=6.2.0
