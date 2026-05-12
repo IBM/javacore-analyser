@@ -1,5 +1,42 @@
 # Changelog
 
+## [3.0] - 2026-05-12
+
+### Main changes:
+* #205 Provide the option to share the tips through LLM model by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/207
+* #230 Introduce optional dependencies. It allows to reduce the number of dependencies if you do not use enhanced features like AI or web interface by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/231
+* #1 Add more parameters for verbose gc chart by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/241
+* #248 add more data for har files by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/249
+* #211: Add path validation to prevent Zip Slip vulnerability by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/212
+* #105 Design plugin architecture by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/257
+
+### Full changeset
+* #160 Generating learning dataset by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/163
+* #172 Added Ollama-based AI capability by @PiotrAniola82 in https://github.com/IBM/javacore-analyser/pull/171
+* #174 properties from file with singleton by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/176
+* #191 running csv dataset generator fails because properties are not initialised by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/192
+* #177 make llm model selection configurable in cmd by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/178
+* #179 generate llm response using the code from huggingface by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/180
+* #202: Create specific exception for invalid LLM method by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/204
+* #206 console logging level to prevent DEBUG messages in output by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/208
+* #205 Add AI-powered performance recommendations and improve type safety by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/207
+* #223 Divide report.xsl into sections for plugin architecture by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/224
+* #219 Store AI prompts in text files separately from code by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/225
+* #230: implement optional dependencies for packaging by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/231
+* #226 Make javacores optional in report generation by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/227
+* #1 Add more parameters for verbose gc chart by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/241
+* #246 Update agents.md by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/247
+* #242 Add support for default LLM options by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/243
+* #248 add more data for har files by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/249
+* #251 Add support for long GC pause detection by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/252
+* #253 Add gc pause time to ai prompt by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/254
+* #255 Enhance performance recommendations prompt  by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/256
+* #105 Design plugin architecture by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/257
+* #259 Upload dist fails with error 400 by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/260
+* #211: Add path validation to prevent Zip Slip vulnerability by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/212
+
+[3.0]: https://github.com/IBM/javacore-analyser/compare/2.5.0...3.0.0
+
 ## [2.5.0] - 2025-09-16
 * #130 script to generate javacore collector for linux by @sonaleegupta in https://github.com/IBM/javacore-analyser/pull/146
 * #167 add collector file to release assets by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/168
