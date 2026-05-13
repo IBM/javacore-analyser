@@ -33,11 +33,16 @@ def create_file_logging(logging_file_dir):
 
 
 def create_console_logging() -> None:
-    logging.getLogger().setLevel(logging.INFO)
+    root_logger = logging.getLogger()
+    # Remove any existing handlers (e.g., default lastResort handler)
+    root_logger.handlers.clear()
+    # Set root logger to DEBUG to allow DEBUG messages to reach file handler (added later)
+    # Console handler will filter to INFO level only
+    root_logger.setLevel(logging.DEBUG)
     console_handler = logging.StreamHandler(sys.stdout)
     console_handler.setLevel(logging.INFO)
     console_handler.setFormatter(logging.Formatter(LOGGING_FORMAT))
-    logging.getLogger().addHandler(console_handler)
+    root_logger.addHandler(console_handler)
 
 
 def add_common_args(parser):
