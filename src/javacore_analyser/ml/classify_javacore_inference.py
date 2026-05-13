@@ -17,13 +17,13 @@ Usage:
     
     # Make prediction
     result = classifier.predict(
-        name="WebContainer : 5",
-        cpu_usage=0.05,
-        allocated_mem=1024000,
-        state="R",
-        blocking_threads=0,
-        stack_trace="at java.lang.Thread.run(Thread.java:748)...",
-        stack_trace_depth=15
+        name = "WebContainer : 5",
+        cpu_usage = 0.05,
+        allocated_mem = 1024000,
+        state = "R",
+        blocking_threads = 0,
+        stack_trace = "at java.lang.Thread.run(Thread.java:748)...",
+        stack_trace_depth = 15
     )
     
     print(f"Predicted function: {result}")
@@ -38,12 +38,7 @@ from typing import Optional, Dict, List, Union
 from pathlib import Path
 from javacore_analyser.thread_snapshot import ThreadSnapshot
 from javacore_analyser.javacore_analyser_batch import generate_javecore_set_data
-
-try:
-    from importlib.resources import files
-except ImportError:
-    # Fallback for Python < 3.9
-    from importlib_resources import files
+from importlib.resources import files
 
 
 class JavacoreClassifier:
@@ -94,13 +89,10 @@ class JavacoreClassifier:
         self.input_params_path = input_params_path
         self.label_mapping_path = label_mapping_path
         self.case_insensitive = case_insensitive
-        
         # Initialize and load the XGBoost model
         self._load_model()
-        
         # Load input parameters and label mappings
         self._load_configurations()
-        
         # Extract vocabularies from input parameters
         self._extract_vocabularies()
     
@@ -113,35 +105,30 @@ class JavacoreClassifier:
         """
         # Initialize classifier with the same hyperparameters used during training
         self.model = XGBClassifier(
-            n_estimators=500,
-            learning_rate=0.05,
-            eval_metric="mlogloss",
-            early_stopping_rounds=5,
-            n_jobs=-1
+            n_estimators = 500,
+            learning_rate = 0.05,
+            eval_metric = "mlogloss",
+            early_stopping_rounds = 5,
+            n_jobs = -1
         )
-        
-        print("Loading model...")
-        
+    
         if self.model_path is not None:
             # Load from provided file path
             if not Path(self.model_path).exists():
                 raise FileNotFoundError(f"Model file not found: {self.model_path}")
-            print(f"Loading from file: {self.model_path}")
+            #print(f"Loading model from file: {self.model_path}")   #Uncomment for debug
             self.model.load_model(self.model_path)
         else:
             # Load from package resources
             ml_package = files('javacore_analyser.ml')
             model_file = ml_package / 'javacoreThreadsClassifierModel.ubj'
-            
             # XGBoost requires a file path, so we need to use as_file context manager
             from importlib.resources import as_file
             with as_file(model_file) as model_path:
-                print(f"Loading from package resources: {model_path}")
+                #print(f"Loading model from package resources: {model_path}")   #Uncomment for debug
                 self.model.load_model(str(model_path))
-        
-        print("Model loaded successfully")
+        #print("Model loaded successfully")   #Uncomment for debug
 
-    
     def _load_configurations(self) -> None:
         """
         Load input parameters and label encoder mappings from JSON files or package resources.
@@ -189,7 +176,6 @@ class JavacoreClassifier:
         """
         self.tn_vocabulary = []
         self.st_vocabulary = []
-        
         for item in self.model_input_parameters:
             if item.startswith("tn_"):
                 # Remove 'tn_' prefix
@@ -376,17 +362,12 @@ class JavacoreClassifier:
         
         # Map prediction to class label
         predicted_class = self.classes[prediction[0]]
-
-        
         return predicted_class
-
-
 
     def predict_thread_snapshot(
         self,
         snapshot: ThreadSnapshot
     ) -> str:
-
         """
         Predict the function of a thread based on its characteristics takning a ThreadSnapshot as parameter.
         """
@@ -413,13 +394,8 @@ class JavacoreClassifier:
             stack_trace=stack_trace,
             stack_trace_depth=stack_trace_depth
         )
-
         return predicted_class
     
-
-
-
-
 
 def main():
     """
@@ -434,7 +410,6 @@ def main():
     
     # Load sample data
     filename_data = 'test/data/ml/ML_test_data.csv'
-    
     try:
         data = pd.read_csv(filename_data, sep=';', index_col=0)
         print(f"\n✓ Loaded sample data from {filename_data}")
@@ -470,7 +445,6 @@ def main():
     sample_blocking_threads = data['blocking_threads'].iloc[sample_row]
     sample_stack_trace = data['stack_trace'].iloc[sample_row]
     sample_stack_trace_depth = data['stack_trace_depth'].iloc[sample_row]
-    
     print("\nInput parameters:")
     print(f"  - Name: {sample_name}")
     print(f"  - CPU Usage: {sample_cpu_usage}")
@@ -494,47 +468,36 @@ def main():
             stack_trace=sample_stack_trace,
             stack_trace_depth=sample_stack_trace_depth
         )
-        
         print("\n" + "=" * 60)
         print(f"✓ PREDICTION RESULT: {predicted_function}")
         print("=" * 60)
-        
     except Exception as e:
         print(f"\n✗ Error during prediction: {e}")
         import traceback
         traceback.print_exc()
 
-
-
-
-    #Test with ThreadSnapshot
-    
+    #Test with ThreadSnapshot    
     #Files to open
     input_files = [
         "./test/data/javacores/javacore.20220606.114458.32888.0001.txt",
         "./test/data/javacores/javacore.20220606.114502.32888.0002.txt"]
-
     print(f"Opening: {input_files}")
     javacore_set = generate_javecore_set_data(input_files)
 
     for thread in javacore_set.threads:
         for snapshot in thread.thread_snapshots:
-            
             print("\n" + "=" * 60)
             print(f"Running prediction on thread:\n {snapshot.name}")
-
             # Run prediction
             try:
                 predicted_function = classifier.predict_thread_snapshot(snapshot)
                 print("-" * 60)
                 print(f"✓ PREDICTION RESULT: {predicted_function}")
                 print("=" * 60)
-        
             except Exception as e:
                 print(f"\n✗ Error during prediction: {e}")
                 import traceback
                 traceback.print_exc()
-
 
 if __name__ == "__main__":
     main()
