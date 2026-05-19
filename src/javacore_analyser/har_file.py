@@ -48,8 +48,19 @@ class HarFile:
         """
         har_file_node = doc.createElement("har_file")
         har_file_node.setAttribute("filename", os.path.basename(self.path))
-        har_file_node.setAttribute("hostname", str(self.har.hostname))
-        har_file_node.setAttribute("browser", str(self.har.browser))
+        
+        # Handle cases where HAR file has no valid pages or missing browser info (issue #271)
+        try:
+            hostname = str(self.har.hostname)
+        except (IndexError, AttributeError, KeyError):
+            hostname = "unknown"
+        har_file_node.setAttribute("hostname", hostname)
+        
+        try:
+            browser = str(self.har.browser)
+        except (IndexError, AttributeError, KeyError):
+            browser = "unknown"
+        har_file_node.setAttribute("browser", browser)
         for page in self.har.pages:
             for entry in page.entries:
                 http_call = HttpCall(entry)
