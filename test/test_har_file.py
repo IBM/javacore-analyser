@@ -1,5 +1,5 @@
 #
-# Copyright IBM Corp. 2024 - 2025
+# Copyright IBM Corp. 2024 - 2026
 # SPDX-License-Identifier: Apache-2.0
 #
 import unittest
@@ -35,6 +35,25 @@ class TestHarFile(unittest.TestCase):
         self.assertEqual(http_call_node.attributes["size"].nodeValue, "1234")
         self.assertEqual(http_call_node.attributes["success"].nodeValue, 'False')
         self.assertEqual(http_call_node.attributes["duration"].nodeValue, "900")
+
+    def test_har_file_with_no_valid_pages(self):
+        """Test that HAR files with no valid pages are handled gracefully (issue #271)"""
+        empty_har_path = "test/data/empty_pages.har"
+        har_file = HarFile(empty_har_path)
+        element = har_file.get_xml(self.doc)
+        
+        self.assertTrue(element, "HAR file XML is None")
+        self.assertEqual(element.__class__, Element, "Wrong DOM object returned")
+        self.assertEqual(element.tagName, "har_file", "Wrong root element name")
+        
+        # Verify that hostname and browser are set to "unknown" when no valid pages exist
+        self.assertEqual(element.attributes["hostname"].nodeValue, "unknown",
+                        "Hostname should be 'unknown' for HAR with no valid pages")
+        self.assertEqual(element.attributes["browser"].nodeValue, "unknown",
+                        "Browser should be 'unknown' for HAR with no valid pages")
+        
+        # Verify no HTTP calls are present
+        self.assertEqual(len(element.childNodes), 0, "Should have no HTTP calls")
 
 
 
