@@ -94,6 +94,42 @@ class TestJavacoreAnalyser(unittest.TestCase):
                              "DEBUG")
         finally:
             sys.stdout = default_output  # Reset redirect.
+  
+    def test_logging_level_for_file_and_console(self):
+        """Test that wait2-debug.log contains DEBUG level messages while console does not (issue #269)"""
+        default_output = sys.stdout
+        captured_output = io.StringIO()  # Create StringIO object
+        sys.stdout = captured_output  # and redirect stdout.
+        try:
+            self.runMainWithParams(self.ziptestargs)
+            console_output = captured_output.getvalue()
+            
+            # Verify console output does NOT contain DEBUG messages
+            self.assertNotRegex(console_output, r'\[DEBUG\]',
+                               "Console output should NOT contain DEBUG level messages")
+            # Verify console output DOES contain INFO messages
+            self.assertRegex(console_output, r'\[INFO\]',
+                            "Console output should contain INFO level messages")
+        finally:
+            sys.stdout = default_output  # Reset redirect.
+        
+        # Read the debug log file
+        debug_log_path = "tmp/wait2-debug.log"
+        self.assertTrue(os.path.exists(debug_log_path), "wait2-debug.log should exist")
+        
+        with open(debug_log_path, 'r') as f:
+            debug_log_content = f.read()
+        
+        # Verify DEBUG messages are present in the log file
+        self.assertRegex(debug_log_content, r'\[DEBUG\]',
+                        "wait2-debug.log should contain DEBUG level messages")
+        # Verify INFO messages are also present
+        self.assertRegex(debug_log_content, r'\[INFO\]',
+                        "wait2-debug.log should contain INFO level messages")
+        # Verify the log format includes required fields
+        self.assertRegex(debug_log_content, r'\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}',
+                        "wait2-debug.log should include timestamp")
+
 
     def test_expat_error(self):
         os.chmod(self.expateerror[1], 0o555)
