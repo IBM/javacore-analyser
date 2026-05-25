@@ -2,10 +2,10 @@
 # Copyright IBM Corp. 2024 - 2026
 # SPDX-License-Identifier: Apache-2.0
 #
+import json
 import os
 
 from haralyzer import HarParser
-import json
 
 
 class HarFile:
@@ -30,8 +30,8 @@ class HarFile:
 
         """
         self.path = path
-        with open(path, 'r') as f:
-            self.har = HarParser(json.loads(f.read()))
+        with open(path, 'r', encoding='utf-8') as file:
+            self.har = HarParser(json.load(file, strict=False))
 
     def get_xml(self, doc):
         """
@@ -69,6 +69,9 @@ class HarFile:
 
 
 class HttpCall:
+    INVALID_XML_CHARACTERS = tuple(chr(code_point) for code_point in range(0x20)
+                                   if code_point not in (0x09, 0x0A, 0x0D))
+
     """
     Represents a single HTTP call extracted from a HAR file entry.
     
@@ -155,7 +158,9 @@ class HttpCall:
         header_lines = []
         for header in headers:
             if isinstance(header, dict) and 'name' in header and 'value' in header:
-                header_lines.append(f"{header['name']}: {header['value']}")
+                header_name = self.sanitize_xml_attribute_value(str(header['name']))
+                header_value = self.sanitize_xml_attribute_value(str(header['value']))
+                header_lines.append(f"{header_name}: {header_value}")
         return '\n'.join(header_lines)
 
     def get_cookies(self, cookies):
@@ -165,7 +170,9 @@ class HttpCall:
         cookie_lines = []
         for cookie in cookies:
             if isinstance(cookie, dict) and 'name' in cookie and 'value' in cookie:
-                cookie_lines.append(f"{cookie['name']}={cookie['value']}")
+                cookie_name = self.sanitize_xml_attribute_value(str(cookie['name']))
+                cookie_value = self.sanitize_xml_attribute_value(str(cookie['value']))
+                cookie_lines.append(f"{cookie_name}={cookie_value}")
         return '\n'.join(cookie_lines)
 
     def get_request_content(self, request):
@@ -186,7 +193,7 @@ class HttpCall:
         mime_type = post_data.get('mimeType', '')
         if mime_type and self.is_text_mime_type(mime_type):
             text = post_data.get('text', '')
-            return str(text) if text else ''
+            return self.sanitize_xml_attribute_value(str(text)) if text else ''
         
         return ''
 
@@ -208,7 +215,7 @@ class HttpCall:
         mime_type = content.get('mimeType', '')
         if mime_type and self.is_text_mime_type(mime_type):
             text = content.get('text', '')
-            return str(text) if text else ''
+            return self.sanitize_xml_attribute_value(str(text)) if text else ''
         
         return ''
 
@@ -219,6 +226,13 @@ class HttpCall:
             'application/x-www-form-urlencoded', 'application/xhtml+xml'
         ]
         return any(mime_type.startswith(t) for t in text_types)
+
+    def sanitize_xml_attribute_value(self, value):
+        """Remove characters that are invalid in XML attribute values."""
+        sanitized_value = value
+        for invalid_character in self.INVALID_XML_CHARACTERS:
+            sanitized_value = sanitized_value.replace(invalid_character, '')
+        return sanitized_value
 
     def get_xml(self, doc):
         """
@@ -234,14 +248,14 @@ class HttpCall:
             xml.dom.minidom.Element: An XML element representing the HTTP call
         """
         http_call_node = doc.createElement("http_call")
-        http_call_node.setAttribute("url", self.url)
-        http_call_node.setAttribute("method", self.method)
-        http_call_node.setAttribute("status", self.status)
-        http_call_node.setAttribute("start_time", self.start_time)
-        http_call_node.setAttribute("duration", self.duration)
-        http_call_node.setAttribute("timings", self.timings)
-        http_call_node.setAttribute("size", self.size)
-        http_call_node.setAttribute("success", self.success)
+        http_call_node.setAttribute("url", self.sanitize_xml_attribute_value(self.url))
+        http_call_node.setAttribute("method", self.sanitize_xml_attribute_value(self.method))
+        http_call_node.setAttribute("status", self.sanitize_xml_attribute_value(self.status))
+        http_call_node.setAttribute("start_time", self.sanitize_xml_attribute_value(self.start_time))
+        http_call_node.setAttribute("duration", self.sanitize_xml_attribute_value(self.duration))
+        http_call_node.setAttribute("timings", self.sanitize_xml_attribute_value(self.timings))
+        http_call_node.setAttribute("size", self.sanitize_xml_attribute_value(self.size))
+        http_call_node.setAttribute("success", self.sanitize_xml_attribute_value(self.success))
         http_call_node.setAttribute("request_headers", self.request_headers)
         http_call_node.setAttribute("request_cookies", self.request_cookies)
         http_call_node.setAttribute("request_content", self.request_content)
