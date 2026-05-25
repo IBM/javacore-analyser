@@ -14,6 +14,10 @@ markdown
 torch 
 transformers
 
+#The requirements below are needed for building the package
+build
+twine>=6.2.0
+
 #Requiremnets for machine learning
 xgboost
 pandas
