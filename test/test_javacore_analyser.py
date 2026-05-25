@@ -95,7 +95,7 @@ class TestJavacoreAnalyser(unittest.TestCase):
         finally:
             sys.stdout = default_output  # Reset redirect.
   
-    def test_appriopriate_logging_level_for_file_and_console(self):
+    def test_logging_level_for_file_and_console(self):
         """Test that wait2-debug.log contains DEBUG level messages while console does not (issue #269)"""
         default_output = sys.stdout
         captured_output = io.StringIO()  # Create StringIO object
