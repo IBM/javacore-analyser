@@ -59,6 +59,7 @@ class TestJavacoreAnalyser(unittest.TestCase):
         self.verbosegc_only_args = ["javacore_analyser", "test/data/verboseGc", "tmp"]
         self.har_only_args = ["javacore_analyser", "test/data/javacores/jazz.net_Archive [25-01-03 11-07-56].har", "tmp"]
         self.verbosegc_only_args = ["javacore_analyser", "test/data/verboseGc", "tmp"]
+        self.verbosegclog_args = ["javacore_analyser", "test/data/verboseGc/verbosegc.230105.19308.log", "tmp"]
 
     def test_api(self):
         javacore_analyser_batch.process_javacores_and_generate_report_data(["test/data/archives/javacores.zip"], "tmp")
@@ -193,6 +194,10 @@ class TestJavacoreAnalyser(unittest.TestCase):
     def test_process_verbose_gc_only(self):
         """Test processing verbose GC files without javacores"""
         self.runMainWithParams(self.verbosegc_only_args)
+
+    def test_process_verbosegclog(self):
+        """Test processing verbose GC files with 'log' extension"""
+        self.runMainWithParams(self.verbosegclog_args)
 
     def test_javacores_with_invalid_chars(self):
         default_output = sys.stdout
