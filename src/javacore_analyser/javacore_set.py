@@ -378,7 +378,7 @@ class JavacoreSet:
                         self.excluded_javacores.append({"file": file,
                                                         "reason": tips.ExcludedJavacoresTip.SMALL_SIZE_JAVACORES.format(
                                                             file, file_size)})
-                if fnmatch.fnmatch(file, '*verbosegc*.txt*'):
+                if fnmatch.fnmatch(file, '*verbosegc*'):
                     self.gc_parser.add_file(dirpath + os.sep + file)
                     logging.info("VerboseGC file found: " + file)
                 if fnmatch.fnmatch(file, "*.har"):
