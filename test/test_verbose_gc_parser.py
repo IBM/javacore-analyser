@@ -20,7 +20,7 @@ class TestVerboseGcParser(unittest.TestCase):
     def test_add_file(self):
         os.chmod("test/data/verboseGc/", 0o555)
         parser = VerboseGcParser()
-        parser.add_file("test/data/verboseGc/verbosegc.230105.19308.txt.001")
+        parser.add_file("test/data/verboseGc/verbosegc.230105.19308.log")
         parser.add_file("test/data/verboseGc/verbosegc.230413.19984.txt.001")
         parser.add_file("test/data/verboseGc/verbosegc.230420.33424.txt.001")
         self.assertEqual(len(parser.get_file_paths()), 3, "Wrong number of files")
@@ -28,7 +28,7 @@ class TestVerboseGcParser(unittest.TestCase):
     def test_parse_files(self):
         os.chmod("test/data/verboseGc/", 0o555)
         parser = VerboseGcParser()
-        parser.add_file("test/data/verboseGc/verbosegc.230105.19308.txt.001")
+        parser.add_file("test/data/verboseGc/verbosegc.230105.19308.log")
         parser.add_file("test/data/verboseGc/verbosegc.230413.19984.txt.001")
         parser.add_file("test/data/verboseGc/verbosegc.230420.33424.txt.001")
         start = datetime.strptime('2000-04-25T11:04:13.857', '%Y-%m-%dT%H:%M:%S.%f')
@@ -37,7 +37,7 @@ class TestVerboseGcParser(unittest.TestCase):
         self.assertEqual(len(parser.get_collects()), 39, "Not all GC collections parsed")
         # testing the time limits
         parser = VerboseGcParser()
-        parser.add_file("test/data/verboseGc/verbosegc.230105.19308.txt.001")
+        parser.add_file("test/data/verboseGc/verbosegc.230105.19308.log")
         parser.add_file("test/data/verboseGc/verbosegc.230413.19984.txt.001")
         parser.add_file("test/data/verboseGc/verbosegc.230420.33424.txt.001")
         start = datetime.strptime('2023-04-25T11:04:18.149', '%Y-%m-%dT%H:%M:%S.%f')
@@ -52,7 +52,7 @@ class TestVerboseGcParser(unittest.TestCase):
         parser = VerboseGcParser()
         element = parser.get_xml(self.doc)
         self.assertEqual(element.tagName, GC_COLLECTIONS, "Wrong XML element name")
-        parser.add_file("test/data/verboseGc/verbosegc.230105.19308.txt.001")
+        parser.add_file("test/data/verboseGc/verbosegc.230105.19308.log")
         parser.add_file("test/data/verboseGc/verbosegc.230413.19984.txt.001")
         parser.add_file("test/data/verboseGc/verbosegc.230420.33424.txt.001")
         start = datetime.strptime('2000-04-25T11:04:13.857', '%Y-%m-%dT%H:%M:%S.%f')
