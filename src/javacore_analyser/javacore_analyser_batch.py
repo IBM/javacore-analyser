@@ -61,11 +61,11 @@ def extract_archive(input_archive_filename, output_path):
         logging.info("Processing tar file")
         file = tarfile.open(input_archive_filename)
         _safe_extract(file, output_path, [m.name for m in file.getmembers()])
-    elif input_archive_filename.endswith("tar.gz") or input_archive_filename.endswith(".tgz"):
+    elif input_archive_filename.endswith(".tar.gz") or input_archive_filename.endswith(".tgz"):
         logging.info("Processing tar gz file")
         file = tarfile.open(input_archive_filename)
         _safe_extract(file, output_path, [m.name for m in file.getmembers()])
-    elif input_archive_filename.endswith("tar.bz2"):
+    elif input_archive_filename.endswith(".tar.bz2"):
         file = tarfile.open(input_archive_filename)
         logging.info("Processing bz2 file")
         _safe_extract(file, output_path, [m.name for m in file.getmembers()])
