@@ -1,5 +1,5 @@
 #
-# Copyright IBM Corp. 2024 - 2025
+# Copyright IBM Corp. 2024 - 2026
 # SPDX-License-Identifier: Apache-2.0
 #
 
@@ -23,7 +23,7 @@ from javacore_analyser import common_utils
 from javacore_analyser.javacore_set import JavacoreSet
 from javacore_analyser.properties import Properties
 
-SUPPORTED_ARCHIVES_FORMATS = {"zip", "gz", "tgz", "bz2", "lzma", "7z"}
+SUPPORTED_ARCHIVES_FORMATS = {"zip", "tar", "gz", "tgz", "bz2", "lzma", "7z"}
 
 
 def _is_safe_path(base_path, file_path):
@@ -57,6 +57,10 @@ def extract_archive(input_archive_filename, output_path):
         logging.info("Processing zip file")
         file = zipfile.ZipFile(input_archive_filename)
         _safe_extract(file, output_path, file.namelist())
+    elif input_archive_filename.endswith(".tar"):
+        logging.info("Processing tar file")
+        file = tarfile.open(input_archive_filename)
+        _safe_extract(file, output_path, [m.name for m in file.getmembers()])
     elif input_archive_filename.endswith("tar.gz") or input_archive_filename.endswith(".tgz"):
         logging.info("Processing tar gz file")
         file = tarfile.open(input_archive_filename)
@@ -75,7 +79,7 @@ def extract_archive(input_archive_filename, output_path):
         _safe_extract(file, output_path, file.getnames())
     else:
         raise Exception("The format of file is not supported. "
-                        "Currently we support only zip, tar.gz, tgz, tar.bz2 and 7z. "
+                        "Currently we support only zip, tar, tar.gz, tgz, tar.bz2 and 7z. "
                         "Cannot proceed.")
 
     file.close()
@@ -87,7 +91,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("input", help="Input javacore file(s) or directory with javacores. "
                                       "The javacores can be packed "
-                                      "into one of the supported archive formats: zip, gz, bz2, lzma, 7z. "
+                                      "into one of the supported archive formats: zip, tar, gz, bz2, lzma, 7z. "
                                       "Additional the verbose GC logs from the time "
                                       "when the javacores were collected can be added. "
                                       "See doc: https://github.com/IBM/javacore-analyser/wiki")
