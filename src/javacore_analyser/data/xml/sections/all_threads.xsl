@@ -53,6 +53,9 @@
                             <li><strong>Blocking information</strong>
                                 includes a list of links to threads which are blocking or being blocked by the given thread
                             </li>
+                            <li><strong>Classification</strong>
+                                Machine learning based classification of the thread activity
+                            </li>
                         </ul>
                     </div>
                     <table id="all_threads_table" class="tablesorter">
@@ -64,6 +67,7 @@
                                 <th>Average memory allocated since last GC (MB)</th>
                                 <th>Average stack depth</th>
                                 <th>Blocking information</th>
+                                <th>Classification</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -205,6 +209,9 @@
                                                 </xsl:for-each>
                                             </xsl:when>
                                          </xsl:choose>
+                                    </td>
+                                    <td>
+                                        <xsl:value-of select="@ml_classification" />
                                     </td>
                                 </tr>
                             </xsl:for-each>

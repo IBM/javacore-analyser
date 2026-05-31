@@ -12,6 +12,8 @@ class Thread(AbstractSnapshotCollection):
     def __init__(self):
         super().__init__()
         self.thread_address = ""
+        self._ml_classification = None
+        self._snaphot_classification = {}
 
     def create(self, thread_snapshot):
         super().create(thread_snapshot)
@@ -90,6 +92,9 @@ class Thread(AbstractSnapshotCollection):
             blocker_node.setAttribute("name", blocker.name)
         thread_node.appendChild(blockers_node)
 
+        # ml
+        thread_node.setAttribute("ml_classification", str(self.get_classification()))
+
         return thread_node
 
     def matches_snapshot(self, snapshot):
@@ -152,3 +157,20 @@ class Thread(AbstractSnapshotCollection):
             if snapshot.stack_trace and snapshot.stack_trace.get_java_stack_depth() > StackTrace.TRUNCATION_DEPTH:
                 return True
         return False
+    
+    def classify(self):
+        for snapshot in self.thread_snapshots:
+            key = snapshot.ml_classification
+            if key:
+                if key in self._snaphot_classification.keys():
+                    self._snaphot_classification[key] = self._snaphot_classification[key] + 1
+                else:
+                    self._snaphot_classification[key] = 1
+        sorted_classifications = dict(sorted(self._snaphot_classification.items(), reverse=True, key=lambda item: item[1]))
+        self._ml_classification = str(sorted_classifications)
+
+    def get_classification(self):
+        if self._ml_classification is None:
+            self.classify()
+        return self._ml_classification
+

@@ -32,6 +32,7 @@ class ThreadSnapshot:
         self.elapsed_time = None
         self.cpu_usage_inc = None
         self.blocking = set()  # set of snapshots blocking by this thread
+        self.ml_classification = None
 
     @staticmethod
     def create(line, file, javacore):
@@ -42,6 +43,7 @@ class ThreadSnapshot:
         snapshot.thread_address = snapshot.get_thread_address(line)
         snapshot.parse_state(line)
         snapshot.parse_snapshot_data()
+        snapshot.classify()
         return snapshot
 
     def parse_snapshot_data(self):
@@ -96,8 +98,8 @@ class ThreadSnapshot:
         return ""
 
     def get_thread_id(self):
-        if self.thread:
-            return self.thread.id
+        if self.get_thread():
+            return self.get_thread().id
         return 0
 
     def get_previous_snapshot(self):
@@ -249,6 +251,10 @@ class ThreadSnapshot:
         java_stack_depth_node = doc.createElement("stack_depth")
         java_stack_depth_node.appendChild(doc.createTextNode(str(self.get_stack_depth())))
         thread_snapshot_node.appendChild(java_stack_depth_node)
+        # ml
+        ml_classification_node = doc.createElement("ml_classification")
+        ml_classification_node.appendChild(doc.createTextNode(str(self.ml_classification)))
+        thread_snapshot_node.appendChild(ml_classification_node)
         # blocked by
         blocked_by_node = doc.createElement("blocked_by")
 
@@ -325,3 +331,12 @@ class ThreadSnapshot:
                 stack_trace.stack_trace_elements.append(stack_trace_element)
             line = self.file.readline()
         self.stack_trace = stack_trace
+
+    def classify(self):
+        #if self.thread and self.thread.is_interesting():
+        classifier = self.javacore.javacore_set.ml_classifier
+        try:
+            classification = classifier.predict_thread_snapshot(self)
+            self.ml_classification = classification
+        except Exception as ex:
+            logging.error(ex)

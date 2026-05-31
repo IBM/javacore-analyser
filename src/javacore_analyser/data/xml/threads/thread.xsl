@@ -59,6 +59,7 @@
                                     <th class='sixty'>Stack trace</th>
                                     <th>State</th>
                                     <th>Blocking</th>
+                                    <th>Classification</th>
                                 </tr>
                             </thead>
                             <!-- Snapshot starts here -->
@@ -199,6 +200,9 @@
                                                     </xsl:for-each>
                                                 </xsl:when>
                                              </xsl:choose>
+                                    </td>
+                                    <td>
+                                        <xsl:value-of select="ml_classification"/>
                                     </td>
                                 </tr>
                             </xsl:for-each>

@@ -33,6 +33,7 @@ from javacore_analyser.properties import Properties
 from javacore_analyser.snapshot_collection import SnapshotCollection
 from javacore_analyser.snapshot_collection_collection import SnapshotCollectionCollection
 from javacore_analyser.verbose_gc import VerboseGcParser
+from javacore_analyser.ml.classify_javacore_inference import JavacoreClassifier
 
 
 class FileResolver(etree.Resolver):
@@ -158,6 +159,9 @@ class JavacoreSet:
         # Plugin system attributes
         self.plugin_data = {}  # Store plugin results
         self.plugin_manager = None  # Will be set if plugins enabled
+
+        # machine learning
+        self.ml_classifier = JavacoreClassifier()
 
     # Assisted by WCA@IBM
     # Latest GenAI contribution: ibm/granite-8b-code-instruct
