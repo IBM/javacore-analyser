@@ -12,8 +12,7 @@ class Thread(AbstractSnapshotCollection):
     def __init__(self):
         super().__init__()
         self.thread_address = ""
-        self._ml_classification = None
-        self._snaphot_classification = {}
+        self._snaphot_classification = None
 
     def create(self, thread_snapshot):
         super().create(thread_snapshot)
@@ -93,7 +92,15 @@ class Thread(AbstractSnapshotCollection):
         thread_node.appendChild(blockers_node)
 
         # ml
-        thread_node.setAttribute("ml_classification", str(self.get_classification()))
+        ml_classification_node = doc.createElement("ml_classification")
+        thread_node.appendChild(ml_classification_node)
+        ml_classification = self.get_classification()
+        if ml_classification is not None:
+            for key in ml_classification.keys():
+                classification_entry_node = doc.createElement("classification_entry")
+                ml_classification_node.appendChild(classification_entry_node)
+                classification_entry_node.setAttribute("value", key)
+                classification_entry_node.setAttribute("occurrences", str(ml_classification[key]))
 
         return thread_node
 
@@ -159,18 +166,20 @@ class Thread(AbstractSnapshotCollection):
         return False
     
     def classify(self):
-        for snapshot in self.thread_snapshots:
-            key = snapshot.ml_classification
-            if key:
-                if key in self._snaphot_classification.keys():
-                    self._snaphot_classification[key] = self._snaphot_classification[key] + 1
-                else:
-                    self._snaphot_classification[key] = 1
-        sorted_classifications = dict(sorted(self._snaphot_classification.items(), reverse=True, key=lambda item: item[1]))
-        self._ml_classification = str(sorted_classifications)
+        self._snaphot_classification = {}
+        if self.is_interesting():
+            for snapshot in self.thread_snapshots:
+                key = snapshot.get_classification()
+                if key:
+                    if key in self._snaphot_classification.keys():
+                        self._snaphot_classification[key] = self._snaphot_classification[key] + 1
+                    else:
+                        self._snaphot_classification[key] = 1
+            self._snaphot_classification = dict(sorted(self._snaphot_classification.items(), reverse=True, key=lambda item: item[1]))
+            
 
     def get_classification(self):
-        if self._ml_classification is None:
+        if self._snaphot_classification is None:
             self.classify()
-        return self._ml_classification
+        return self._snaphot_classification
 

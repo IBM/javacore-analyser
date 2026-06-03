@@ -32,7 +32,7 @@ class ThreadSnapshot:
         self.elapsed_time = None
         self.cpu_usage_inc = None
         self.blocking = set()  # set of snapshots blocking by this thread
-        self.ml_classification = None
+        self._ml_classification = None
 
     @staticmethod
     def create(line, file, javacore):
@@ -43,7 +43,6 @@ class ThreadSnapshot:
         snapshot.thread_address = snapshot.get_thread_address(line)
         snapshot.parse_state(line)
         snapshot.parse_snapshot_data()
-        snapshot.classify()
         return snapshot
 
     def parse_snapshot_data(self):
@@ -98,8 +97,8 @@ class ThreadSnapshot:
         return ""
 
     def get_thread_id(self):
-        if self.get_thread():
-            return self.get_thread().id
+        if self.thread:
+            return self.thread.id
         return 0
 
     def get_previous_snapshot(self):
@@ -253,7 +252,7 @@ class ThreadSnapshot:
         thread_snapshot_node.appendChild(java_stack_depth_node)
         # ml
         ml_classification_node = doc.createElement("ml_classification")
-        ml_classification_node.appendChild(doc.createTextNode(str(self.ml_classification)))
+        ml_classification_node.appendChild(doc.createTextNode(str(self.get_classification())))
         thread_snapshot_node.appendChild(ml_classification_node)
         # blocked by
         blocked_by_node = doc.createElement("blocked_by")
@@ -332,11 +331,15 @@ class ThreadSnapshot:
             line = self.file.readline()
         self.stack_trace = stack_trace
 
-    def classify(self):
-        #if self.thread and self.thread.is_interesting():
+    def _classify(self):
+        if self.thread and not self.thread.is_interesting(): return
         classifier = self.javacore.javacore_set.ml_classifier
         try:
-            classification = classifier.predict_thread_snapshot(self)
-            self.ml_classification = classification
+            self._ml_classification = classifier.predict_thread_snapshot(self)
         except Exception as ex:
             logging.error(ex)
+            self._ml_classification = ""
+
+    def get_classification(self):
+        if self._ml_classification is None: self._classify()
+        return self._ml_classification
