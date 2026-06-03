@@ -54,7 +54,8 @@
                                 includes a list of links to threads which are blocking or being blocked by the given thread
                             </li>
                             <li><strong>Classification</strong>
-                                Machine learning based classification of the thread activity
+                                Machine learning based classification of the thread activity. 
+                                Entries are sorted by the number of occurrences in the thread.
                             </li>
                         </ul>
                     </div>
@@ -211,7 +212,10 @@
                                          </xsl:choose>
                                     </td>
                                     <td>
-                                        <xsl:value-of select="@ml_classification" />
+                                        <xsl:for-each select="ml_classification/classification_entry">
+                                            <xsl:value-of select="@value" />: 
+                                            <xsl:value-of select="@occurrences" />;
+                                        </xsl:for-each>
                                     </td>
                                 </tr>
                             </xsl:for-each>
