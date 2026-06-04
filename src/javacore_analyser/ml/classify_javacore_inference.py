@@ -201,6 +201,10 @@ class JavacoreClassifier:
         Returns:
             Dictionary mapping column names to word counts
         """
+        # Handle NaN values by converting to empty string
+        if isinstance(text, float) and pd.isna(text):
+            text = ""
+        
         counts = {}
         flags = re.IGNORECASE if self.case_insensitive else 0
         
@@ -246,27 +250,20 @@ class JavacoreClassifier:
     def _encode_state(self, state: str) -> Dict[str, int]:
         """
         One-hot encode the thread state.
-        
+
         Args:
-            state: Thread state (must be one of: R, CW, S, Z, P, B)
-            
+            state: Thread state
+
         Returns:
-            Dictionary mapping state column names to binary values
-            
-        Raises:
-            ValueError: If state is not in valid states list
+            Dictionary mapping state column names to binary values.
+            If state is not valid, all encoded values are 0.
         """
-        if state not in self.VALID_STATES:
-            raise ValueError(
-                f"Invalid state '{state}'. Must be one of: {self.VALID_STATES}"
-            )
-        
-        # Create one-hot encoding
+        # Create one-hot encoding. Invalid states produce all zeros.
         encoding = {}
         for valid_state in self.VALID_STATES:
             col_name = f"state_{valid_state}"
-            encoding[col_name] = 1 if state == valid_state else 0
-        
+            encoding[col_name] = 1 if state == valid_state and state in self.VALID_STATES else 0
+
         return encoding
     
     def predict(
@@ -433,7 +430,7 @@ def main():
         return
     
     # Select sample row
-    sample_row = 100
+    sample_row = 3711
     print("\n" + "-" * 60)
     print(f"Running prediction on row {sample_row}...")
     
