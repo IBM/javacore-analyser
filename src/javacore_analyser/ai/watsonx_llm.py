@@ -8,7 +8,6 @@ import logging
 from ibm_watsonx_ai import APIClient, Credentials
 from ibm_watsonx_ai.foundation_models import ModelInference
 from ibm_watsonx_ai.metanames import GenTextParamsMetaNames as GenParams
-from ibm_watsonx_ai.foundation_models.schema import TextChatParameters
 
 from javacore_analyser.ai.llm import LLM
 from javacore_analyser.properties import Properties
