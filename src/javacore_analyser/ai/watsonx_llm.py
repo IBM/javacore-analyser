@@ -8,6 +8,7 @@ import logging
 from ibm_watsonx_ai import APIClient, Credentials
 from ibm_watsonx_ai.foundation_models import ModelInference
 from ibm_watsonx_ai.metanames import GenTextParamsMetaNames as GenParams
+from ibm_watsonx_ai.foundation_models.schema import TextChatParameters
 
 from javacore_analyser.ai.llm import LLM
 from javacore_analyser.properties import Properties
@@ -28,6 +29,31 @@ class WatsonxLLM(LLM):
     """
 
     def __init__(self, javacore_set):
+        """
+        Initialize WatsonX LLM with authentication and model configuration.
+        
+        This method sets up the WatsonX AI client using IBM Cloud credentials and
+        initializes the model inference instance for generating AI responses.
+        
+        :param javacore_set: A set of Java cores to be analyzed by the AI model.
+        :type javacore_set: JavacoreSet
+        :raises ValueError: If watsonx_api_key or watsonx_project_id is not configured.
+        :raises InvalidCredentialsError: If the API key is invalid, expired, or is a JWT token.
+        
+        .. note::
+            **API Key Requirements:**
+            
+            - Must be a permanent IBM Cloud API key (not a JWT access token)
+            - JWT tokens which expire after 1 hour - these will NOT work
+            - Get your API key from: https://cloud.ibm.com/iam/apikeys
+            
+            **Common Authentication Errors:**
+            
+            - "Provided API key could not be found" - You're using a JWT token instead of an API key
+            - "API key expired" - Generate a new API key from IBM Cloud console
+            - "Invalid credentials" - Verify your API key is correct and has proper permissions
+
+        """
         super().__init__(javacore_set)
         
         # Get WatsonX configuration from properties
@@ -50,6 +76,7 @@ class WatsonxLLM(LLM):
         )
         
         self.api_client = APIClient(credentials)
+        self.project_id = project_id
         
         # Initialize model inference
         self.model_inference = ModelInference(
@@ -77,11 +104,7 @@ class WatsonxLLM(LLM):
         
         if self.max_tokens is not None:
             params[GenParams.MAX_NEW_TOKENS] = int(self.max_tokens)
-        
-        # Add default parameters if not specified
-        if GenParams.DECODING_METHOD not in params:
-            params[GenParams.DECODING_METHOD] = "greedy"
-        
+
         logging.info(f"Built WatsonX generation params: {params}")
         return params
 
@@ -101,21 +124,62 @@ class WatsonxLLM(LLM):
         self.prompt = prompter.construct_prompt()
         
         if self.prompt and len(self.prompt) > 0:
-            logging.debug("Infusing prompt with WatsonX")
+            logging.info(f"Infusing prompt with WatsonX (prompt length: {len(self.prompt)} chars)")
+            logging.debug(f"Full prompt:\n{self.prompt[:1000]}...")  # Log first 1000 chars
             
             try:
-                # Generate response using WatsonX
-                response = self.model_inference.generate_text(
-                    prompt=self.prompt,
+                # Use chat API for better results with modern models
+                # Format prompt as a chat message
+                messages = [
+                    {
+                        "role": "user",
+                        "content": self.prompt
+                    }
+                ]
+                
+                logging.debug("Using WatsonX chat API for inference")
+                
+                # Generate response using WatsonX chat API
+                response = self.model_inference.chat(
+                    messages=messages,
                     params=self.params if self.params else None
                 )
                 
-                logging.debug("WatsonX infusion finished")
-                content = response
+                logging.info("WatsonX infusion finished")
                 
+                # Extract content from chat response
+                if isinstance(response, dict) and 'choices' in response:
+                    content = response['choices'][0]['message']['content']
+                elif isinstance(response, str):
+                    content = response
+                else:
+                    content = str(response)
+                
+                logging.info(f"Generated response length: {len(content)} chars")
+                logging.debug(f"Full response:\n{content}")
+                
+                # Check if response seems incomplete
+                if len(content) < 100:
+                    logging.warning(f"Response seems unusually short ({len(content)} chars). This may indicate truncation or an issue with the model.")
+                
+            except AttributeError:
+                # Fallback to generate_text if chat is not available
+                logging.warning("Chat API not available, falling back to generate_text")
+                try:
+                    response = self.model_inference.generate_text(
+                        prompt=self.prompt,
+                        params=self.params if self.params else None
+                    )
+                    content = response
+                    logging.info(f"Generated response length: {len(content)} chars")
+                except Exception as e:
+                    logging.error(f"Error during WatsonX text generation: {str(e)}")
+                    raise
             except Exception as e:
                 logging.error(f"Error during WatsonX inference: {str(e)}")
                 raise
+        else:
+            logging.warning("Empty prompt provided to WatsonX LLM")
         
         return content
 
