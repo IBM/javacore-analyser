@@ -328,10 +328,10 @@ class PerformanceRecommendationsPrompter(Prompter):
         max_lines = 20
         for i, element in enumerate(main_thread.stack_trace.stack_trace_elements):
             if i >= max_lines:
-                stack_lines.append(f"... ({len(main_thread.stack_trace.stack_trace_elements) - max_lines} more lines)")
+                stack_lines.append(f"... ({len(main_thread.stack_trace.stack_trace_elements) - max_lines} more lines)".strip())
                 break
             # Format: at class.method(file:line)
-            stack_lines.append(f"  at {element}")
+            stack_lines.append(f"  at {element.get_line().strip() if element.get_line() else 'Unknown'}")
         
         return "\n".join(stack_lines) if stack_lines else "Empty stack trace"
 
@@ -346,7 +346,6 @@ class PerformanceRecommendationsPrompter(Prompter):
             return "Unknown - No javacores available"
         
         # Check all javacores for System.exit in any thread
-        shutdown_detected = False
         shutdown_javacore = None
         shutdown_thread = None
         
@@ -356,18 +355,11 @@ class PerformanceRecommendationsPrompter(Prompter):
                 # Check if stack trace contains System.exit
                 if snapshot.stack_trace and snapshot.stack_trace.stack_trace_elements:
                     for element in snapshot.stack_trace.stack_trace_elements:
-                        element_str = str(element)
+                        element_str = element.get_line()
                         if "System.exit" in element_str or "java.lang.System.exit" in element_str:
                             shutdown_detected = True
                             shutdown_javacore = javacore.basefilename()
                             shutdown_thread = snapshot.name if snapshot.name else "Unknown"
-                            break
-                if shutdown_detected:
-                    break
-            if shutdown_detected:
-                break
-        
-        if shutdown_detected:
-            return f"CRITICAL - Application is shutting down (System.exit detected in thread '{shutdown_thread}' in {shutdown_javacore})"
-        else:
-            return "OK - No shutdown detected"
+                            return f"""CRITICAL - Application is shutting down (System.exit detected in thread 
+                            '{shutdown_thread}' in {shutdown_javacore})"""
+        return "OK - No shutdown detected"
