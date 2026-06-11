@@ -357,7 +357,6 @@ class PerformanceRecommendationsPrompter(Prompter):
                     for element in snapshot.stack_trace.stack_trace_elements:
                         element_str = element.get_line()
                         if "System.exit" in element_str or "java.lang.System.exit" in element_str:
-                            shutdown_detected = True
                             shutdown_javacore = javacore.basefilename()
                             shutdown_thread = snapshot.name if snapshot.name else "Unknown"
                             return f"""CRITICAL - Application is shutting down (System.exit detected in thread 
