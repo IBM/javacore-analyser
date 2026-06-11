@@ -9,7 +9,8 @@ import logging
 
 # List of the tips on which run the tool
 TIPS_LIST = ["DifferentIssuesTip", "ExcludedJavacoresTip", "InvalidAccumulatedCpuTimeTip", "TooFewJavacoresTip",
-             "OOMEGenerationTip", "BlockingThreadsTip", "HighCpuUsageTip", "LongGcPauseTip"]
+             "OOMEGenerationTip", "BlockingThreadsTip", "HighCpuUsageTip", "LongGcPauseTip",
+             "SystemExitInMainThreadTip"]
 
 
 class TestTip:
@@ -263,3 +264,30 @@ class LongGcPauseTip:
             return [msg]
         
         return []  # No long pauses detected
+
+
+class SystemExitInMainThreadTip:
+    # Detects if the main thread's stack trace contains System.exit call
+
+    SYSTEM_EXIT_WARNING = """[WARNING] The main thread in javacore {0} contains System.exit call.
+    This indicates the application is shutting down."""
+
+    @staticmethod
+    def generate(javacore_set):
+        for jc in javacore_set.javacores:
+            # Find the main thread in this javacore
+            main_thread_snapshot = None
+            for snapshot in jc.snapshots:
+                if snapshot.name and "main" in snapshot.name.lower():
+                    main_thread_snapshot = snapshot
+                    break
+
+            # Check if main thread exists and has a stack trace
+            if main_thread_snapshot and main_thread_snapshot.stack_trace:
+                # Check if stack trace contains System.exit
+                stack_trace_str = main_thread_snapshot.stack_trace.to_string()
+                if "System.exit" in stack_trace_str:
+                    msg = SystemExitInMainThreadTip.SYSTEM_EXIT_WARNING.format(jc.basefilename())
+                    return [msg]
+
+        return []  # No System.exit detected in main thread
