@@ -337,7 +337,7 @@ class PerformanceRecommendationsPrompter(Prompter):
 
     def _get_shutdown_status(self):
         """
-        Checks if the application is shutting down by detecting System.exit in the main thread.
+        Checks if the application is shutting down by detecting System.exit in any thread.
         
         Returns:
             str: Shutdown status message (CRITICAL if System.exit detected, OK otherwise)
@@ -345,28 +345,29 @@ class PerformanceRecommendationsPrompter(Prompter):
         if not self.javacore_set.javacores:
             return "Unknown - No javacores available"
         
-        # Check all javacores for System.exit in main thread
+        # Check all javacores for System.exit in any thread
         shutdown_detected = False
         shutdown_javacore = None
+        shutdown_thread = None
         
         for javacore in self.javacore_set.javacores:
-            # Find the main thread
+            # Check all threads in this javacore
             for snapshot in javacore.snapshots:
-                if snapshot.name and "main" in snapshot.name.lower():
-                    # Check if stack trace contains System.exit
-                    if snapshot.stack_trace and snapshot.stack_trace.stack_trace_elements:
-                        for element in snapshot.stack_trace.stack_trace_elements:
-                            element_str = str(element)
-                            if "System.exit" in element_str or "java.lang.System.exit" in element_str:
-                                shutdown_detected = True
-                                shutdown_javacore = javacore.basefilename()
-                                break
-                    if shutdown_detected:
-                        break
+                # Check if stack trace contains System.exit
+                if snapshot.stack_trace and snapshot.stack_trace.stack_trace_elements:
+                    for element in snapshot.stack_trace.stack_trace_elements:
+                        element_str = str(element)
+                        if "System.exit" in element_str or "java.lang.System.exit" in element_str:
+                            shutdown_detected = True
+                            shutdown_javacore = javacore.basefilename()
+                            shutdown_thread = snapshot.name if snapshot.name else "Unknown"
+                            break
+                if shutdown_detected:
+                    break
             if shutdown_detected:
                 break
         
         if shutdown_detected:
-            return f"CRITICAL - Application is shutting down (System.exit detected in {shutdown_javacore})"
+            return f"CRITICAL - Application is shutting down (System.exit detected in thread '{shutdown_thread}' in {shutdown_javacore})"
         else:
             return "OK - No shutdown detected"
