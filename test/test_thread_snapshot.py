@@ -3,12 +3,14 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
+import os
 import time
 import unittest
 from xml.dom.minidom import parseString
 
 from javacore_analyser.java_thread import Thread
 from javacore_analyser.javacore import Javacore
+from javacore_analyser.javacore_set import JavacoreSet
 from javacore_analyser.stack_trace import StackTrace
 from javacore_analyser.stack_trace_element import StackTraceElement
 from javacore_analyser.thread_snapshot import ThreadSnapshot
@@ -142,3 +144,19 @@ class TestThreadSnapshot(unittest.TestCase):
         inc = self.snapshot.get_cpu_usage_inc()
         self.assertEqual(inc, 100)
 
+    def test_get_classification(self):
+        javacores_path = os.getcwd() + os.sep + 'test' + os.sep + 'data' + os.sep + 'javacores'
+        javacore_set = JavacoreSet.create(javacores_path)
+        javacore_set.populate_snapshot_collections()
+        for thread in javacore_set.threads:
+            for snapshot in thread.thread_snapshots:
+                if thread.is_interesting:
+                    classification = snapshot.get_classification()
+                    if classification is None or classification == "":
+                        print("ble")
+                    self.assertNotEqual(classification, "", "Classification should not be empty")
+                    self.assertNotEqual(classification, None, "Classification should not be empty")
+                else:
+                    # boring thread
+                    self.assertEqual(snapshot.get_classification(), "", "Boring threads should have an empty classification")
+            
