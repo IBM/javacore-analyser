@@ -6,6 +6,7 @@
 'use strict';
 
 const TOTAL_CPU_PERCENTAGE = 100;
+const HEAP_PADDING_PERCENTAGE = 0.01;
 
 $(function () {
   $('#all_threads_table_thread_xsl').tablesorter({
@@ -365,7 +366,7 @@ const loadChartGC = function() {
       scales: {
         y: {
           beginAtZero: true,
-          suggestedMax: (HEAP_SIZE + 0.01*HEAP_SIZE) / MB_SIZE,
+          suggestedMax: (HEAP_SIZE + HEAP_PADDING_PERCENTAGE * HEAP_SIZE) / MB_SIZE,
           title: {
             display: true,
             text: 'Heap Usage (MB)'
