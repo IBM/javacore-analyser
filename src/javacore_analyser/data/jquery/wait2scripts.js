@@ -94,16 +94,32 @@ const loadChartGC = function() {
 
   const gcTable = document.querySelector('gc-collections');
 
-  if(!gcTable || !gcTable.hasChildNodes()) {
+  if(!gcTable) {
+     console.log('gc-collections element not found');
+     return;
+  }
+
+  // Check for actual gc-collection child elements, not just any child nodes (which could be whitespace)
+  const gcCollectionElements = gcTable.querySelectorAll('gc-collection');
+  if(gcCollectionElements.length === 0) {
+     console.log('No gc-collection elements found');
      return;
   }
 
   const sysResourceE3Elem = document.getElementById('systemresources_myChartGC');
   if (sysResourceE3Elem) {
+    console.log('Removing hide class from chart container');
     sysResourceE3Elem.classList.remove('hide');
+  } else {
+    console.log('Chart container systemresources_myChartGC not found');
   }
 
   const ctx = document.getElementById('myChartGC');
+  if (!ctx) {
+    console.log('Canvas element myChartGC not found');
+    return;
+  }
+  console.log('Canvas element found, proceeding with chart creation');
 
   // 1. get the list of javacores with timestamps, to set the chart range (x range)
   const coresFiles = document.getElementById('javacores_files_table');
@@ -220,6 +236,9 @@ const loadChartGC = function() {
   const tenureTotalData = [];
   const labels = [];
 
+  console.log(`Processing ${gcCollections.length} GC collections`);
+  console.log(`HEAP_SIZE: ${HEAP_SIZE} bytes (${HEAP_SIZE / MB_SIZE} MB)`);
+  
   let dateTmp;
   gcCollections.forEach(function (element) {
       //let gcStartDate = new Date(element['startTime']);
@@ -364,14 +383,25 @@ const loadChartGC = function() {
         x: {
              type: 'time',
              time: {
-                   unit: 'second',
-                   parser: 'dd-MM-yy HH:mm:ss'
+                   // Let Chart.js automatically determine the best unit based on data range
+                   displayFormats: {
+                     millisecond: 'HH:mm:ss.SSS',
+                     second: 'HH:mm:ss',
+                     minute: 'HH:mm',
+                     hour: 'MMM dd HH:mm',
+                     day: 'MMM dd',
+                     week: 'MMM dd',
+                     month: 'MMM yyyy',
+                     quarter: 'MMM yyyy',
+                     year: 'yyyy'
+                   }
              }
         }
       },
     },
   });
-
+  
+  console.log('GC Chart created successfully');
 }
 
 const loadChart = function () {
