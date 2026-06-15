@@ -104,14 +104,14 @@ class HttpCall:
             call: A HAR entry object from haralyzer containing request/response data
         """
         self.call = call
-        self.url = call.url
-        self.method = str(call.request.method) if hasattr(call.request, 'method') else 'GET'
-        self.status = str(call.status)
-        self.start_time = str(call.startTime)
-        self.duration = str(self.get_total_time())
-        self.timings = str(call.timings)
-        self.size = str(call.response.bodySize)
-        self.success = str(self._calculate_success())
+        self.url = HttpCall.__sanitize_xml_attribute_value(call.url)
+        self.method = HttpCall.__sanitize_xml_attribute_value(str(call.request.method) if hasattr(call.request, 'method') else 'GET')
+        self.status = HttpCall.__sanitize_xml_attribute_value(str(call.status))
+        self.start_time = HttpCall.__sanitize_xml_attribute_value(str(call.startTime))
+        self.duration = HttpCall.__sanitize_xml_attribute_value(str(self.get_total_time()))
+        self.timings = HttpCall.__sanitize_xml_attribute_value(str(call.timings))
+        self.size = HttpCall.__sanitize_xml_attribute_value(str(call.response.bodySize))
+        self.success = HttpCall.__sanitize_xml_attribute_value(str(self._calculate_success()))
         
         # Request data
         self.request_headers = self.get_headers(call.request.headers) if hasattr(call.request, 'headers') else ''
@@ -249,14 +249,14 @@ class HttpCall:
             xml.dom.minidom.Element: An XML element representing the HTTP call
         """
         http_call_node = doc.createElement("http_call")
-        http_call_node.setAttribute("url", HttpCall.__sanitize_xml_attribute_value(self.url))
-        http_call_node.setAttribute("method", HttpCall.__sanitize_xml_attribute_value(self.method))
-        http_call_node.setAttribute("status", HttpCall.__sanitize_xml_attribute_value(self.status))
-        http_call_node.setAttribute("start_time", HttpCall.__sanitize_xml_attribute_value(self.start_time))
-        http_call_node.setAttribute("duration", HttpCall.__sanitize_xml_attribute_value(self.duration))
-        http_call_node.setAttribute("timings", HttpCall.__sanitize_xml_attribute_value(self.timings))
-        http_call_node.setAttribute("size", HttpCall.__sanitize_xml_attribute_value(self.size))
-        http_call_node.setAttribute("success", HttpCall.__sanitize_xml_attribute_value(self.success))
+        http_call_node.setAttribute("url", self.url)
+        http_call_node.setAttribute("method", self.method)
+        http_call_node.setAttribute("status", self.status)
+        http_call_node.setAttribute("start_time", self.start_time)
+        http_call_node.setAttribute("duration", self.duration)
+        http_call_node.setAttribute("timings", self.timings)
+        http_call_node.setAttribute("size", self.size)
+        http_call_node.setAttribute("success", self.success)
         http_call_node.setAttribute("request_headers", self.request_headers)
         http_call_node.setAttribute("request_cookies", self.request_cookies)
         http_call_node.setAttribute("request_content", self.request_content)
