@@ -26,6 +26,7 @@ class TestJavacoreAnalyser(unittest.TestCase):
     @classmethod
     def setUpClass(self):
         self.ziptestargs = ["javacore_analyser", "test/data/archives/javacores.zip", "tmp"]
+        self.tartestargs = ["javacore_analyser", "test/data/archives/javacores.tar", "tmp"]
         self.gztestargs = ["javacore_analyser", "test/data/archives/javacores.tar.gz", "tmp"]
         self.tgztestargs = ["javacore_analyser", "test/data/archives/javacores.tgz", "tmp"]
         self.bz2testargs = ["javacore_analyser", "test/data/archives/javacores.tar.bz2", "tmp"]
@@ -135,6 +136,9 @@ class TestJavacoreAnalyser(unittest.TestCase):
     def test_expat_error(self):
         os.chmod(self.expateerror[1], 0o555)
         self.runMainWithParams(self.expateerror)
+
+    def test_run_tar(self):
+        self.runMainWithParams(self.tartestargs)
 
     def test_run_tar_gz(self):
         self.runMainWithParams(self.gztestargs)
