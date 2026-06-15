@@ -1,5 +1,19 @@
 # Changelog
 
+## [3.0.1] - 2026-06-15
+#220 Adding Machine Learning feature for classifying javacore threads by @fchiossi in #261
+#265 Flask import error in batch mode when Flask not installed by @kkazmierczyk in #266
+#271 Processing har fails with IndexError: list index out of range by @kkazmierczyk in #272
+#269 Set root logger to DEBUG for wait2-debug.log by @kkazmierczyk in #270
+#268 jQuery tablesorter initialization for plugin-generated tables by @kkazmierczyk in #267
+#278 files called verbosegclog are not recognised by @PiotrAniola82 in #279
+#285 ML classification fails for thread snapshot in state UNKNOWN and issue #288 classify_javacore_inference causes a circular import. by @fchiossi in #287
+#280 support for tar files by @kkazmierczyk in #283
+#274 HAR file special characters handling by @kkazmierczyk in #275
+#290 detect system exit in main thread by @kkazmierczyk in #291
+
+[3.0.1]: https://github.com/IBM/javacore-analyser/compare/3.0.0...3.0.1
+
 ## [3.0] - 2026-05-12
 
 ### Main changes:
@@ -11,6 +25,7 @@
 * #105 Design plugin architecture by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/257
 
 ### Full changeset
+* #1 Add more parameters for verbose gc chart by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/241
 * #160 Generating learning dataset by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/163
 * #172 Added Ollama-based AI capability by @PiotrAniola82 in https://github.com/IBM/javacore-analyser/pull/171
 * #174 properties from file with singleton by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/176
@@ -24,7 +39,6 @@
 * #219 Store AI prompts in text files separately from code by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/225
 * #230: implement optional dependencies for packaging by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/231
 * #226 Make javacores optional in report generation by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/227
-* #1 Add more parameters for verbose gc chart by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/241
 * #246 Update agents.md by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/247
 * #242 Add support for default LLM options by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/243
 * #248 add more data for har files by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/249
