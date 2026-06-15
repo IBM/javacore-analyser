@@ -312,7 +312,7 @@ class PerformanceRecommendationsPrompter(Prompter):
         # Find the main thread
         main_thread = None
         for snapshot in latest_javacore.snapshots:
-            if snapshot.name and "main" in snapshot.name.lower():
+            if snapshot.name == "main":
                 main_thread = snapshot
                 break
         
