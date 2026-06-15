@@ -69,7 +69,7 @@ class HarFile:
 
 
 class HttpCall:
-    INVALID_XML_CHARACTERS = tuple(chr(code_point) for code_point in range(0x20)
+    INVALID_UTF_CHARACTERS = tuple(chr(code_point) for code_point in range(0x20)
                                    if code_point not in (0x09, 0x0A, 0x0D))
 
     """
@@ -230,7 +230,7 @@ class HttpCall:
     def sanitize_xml_attribute_value(self, value):
         """Remove characters that are invalid in XML attribute values."""
         sanitized_value = value
-        for invalid_character in self.INVALID_XML_CHARACTERS:
+        for invalid_character in self.INVALID_UTF_CHARACTERS:
             sanitized_value = sanitized_value.replace(invalid_character, '')
         return sanitized_value
 
