@@ -44,6 +44,7 @@ Requirements:
   memory, or thread evidence.
 - If the Server Shutdown Status indicates the application is shutting down (System.exit detected),
   this MUST be flagged as CRITICAL priority as it indicates the JVM is terminating.
+- Do NOT report on Server Shutdown Status if it indicates "ok" or normal operation.
 - If the provided data does not support any concrete recommendation, reply exactly:
   No evidence-based performance recommendations can be made from the provided data.
 - Display the recommendations in a clear, concise format.
