@@ -84,6 +84,27 @@ const loadChartCPUUsage = function() {
            }
         }
       },
+      plugins: {
+        zoom: {
+          zoom: {
+            wheel: {
+              enabled: true,
+            },
+            pinch: {
+              enabled: true
+            },
+            mode: 'xy',
+          },
+          pan: {
+            enabled: true,
+            mode: 'xy',
+          },
+          limits: {
+            x: {min: 'original', max: 'original'},
+            y: {min: 'original', max: 'original'}
+          }
+        }
+      }
     },
   });
 
@@ -369,6 +390,27 @@ const loadChartGC = function() {
              }
         }
       },
+      plugins: {
+        zoom: {
+          zoom: {
+            wheel: {
+              enabled: true,
+            },
+            pinch: {
+              enabled: true
+            },
+            mode: 'xy',
+          },
+          pan: {
+            enabled: true,
+            mode: 'xy',
+          },
+          limits: {
+            x: {min: 'original', max: 'original'},
+            y: {min: 'original', max: 'original'}
+          }
+        }
+      }
     },
   });
 
@@ -420,9 +462,9 @@ const loadChart = function () {
          }
       },
       legend: {
-	    display: true,
-		onClick: () => {}, // disable legend onClick functionality that filters datasets
-	  },
+     display: true,
+  onClick: () => {}, // disable legend onClick functionality that filters datasets
+   },
       scales: {
         y: {
           beginAtZero: true
@@ -435,6 +477,27 @@ const loadChart = function () {
             }
         }
       },
+      plugins: {
+        zoom: {
+          zoom: {
+            wheel: {
+              enabled: true,
+            },
+            pinch: {
+              enabled: true
+            },
+            mode: 'xy',
+          },
+          pan: {
+            enabled: true,
+            mode: 'xy',
+          },
+          limits: {
+            x: {min: 'original', max: 'original'},
+            y: {min: 'original', max: 'original'}
+          }
+        }
+      }
     },
   });
 };
