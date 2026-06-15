@@ -48,6 +48,12 @@ class PerformanceRecommendationsPrompter(Prompter):
         # Get GC pause times
         gc_pause_times: str = self._get_gc_pause_times()
         
+        # Get main thread stack trace
+        main_thread_stack: str = self._get_main_thread_stack_trace()
+        
+        # Get shutdown status
+        shutdown_status: str = self._get_shutdown_status()
+        
         # Load the prompt template from file
         template: str = self._load_prompt_template('performance_recommendations_prompt.txt')
         
@@ -59,7 +65,9 @@ class PerformanceRecommendationsPrompter(Prompter):
             top_cpu_threads=top_cpu_threads,
             top_blocking_threads=top_blocking_threads,
             gc_cpu_usage=gc_cpu_usage,
-            gc_pause_times=gc_pause_times
+            gc_pause_times=gc_pause_times,
+            main_thread_stack=main_thread_stack,
+            shutdown_status=shutdown_status
         )
 
         return prompt
@@ -287,3 +295,70 @@ class PerformanceRecommendationsPrompter(Prompter):
             ]
             
             return ", ".join(pause_info)
+
+    def _get_main_thread_stack_trace(self):
+        """
+        Retrieves the stack trace of the main thread from the most recent javacore.
+        
+        Returns:
+            str: Formatted main thread stack trace or message if not found
+        """
+        if not self.javacore_set.javacores:
+            return "No javacores available"
+        
+        # Get the most recent javacore (last one in the list)
+        latest_javacore = self.javacore_set.javacores[-1]
+        
+        # Find the main thread
+        main_thread = None
+        for snapshot in latest_javacore.snapshots:
+            if snapshot.name and "main" in snapshot.name.lower():
+                main_thread = snapshot
+                break
+        
+        if not main_thread:
+            return "Main thread not found in javacore"
+        
+        # Extract stack trace
+        if not main_thread.stack_trace or not main_thread.stack_trace.stack_trace_elements:
+            return "Main thread has no stack trace"
+        
+        # Format stack trace (limit to first 20 lines for readability)
+        stack_lines = []
+        max_lines = 20
+        for i, element in enumerate(main_thread.stack_trace.stack_trace_elements):
+            if i >= max_lines:
+                stack_lines.append(f"... ({len(main_thread.stack_trace.stack_trace_elements) - max_lines} more lines)".strip())
+                break
+            # Format: at class.method(file:line)
+            stack_lines.append(f"  at {element.get_line().strip() if element.get_line() else 'Unknown'}")
+        
+        return "\n".join(stack_lines) if stack_lines else "Empty stack trace"
+
+    def _get_shutdown_status(self):
+        """
+        Checks if the application is shutting down by detecting System.exit in any thread.
+        
+        Returns:
+            str: Shutdown status message (CRITICAL if System.exit detected, OK otherwise)
+        """
+        if not self.javacore_set.javacores:
+            return "Unknown - No javacores available"
+        
+        # Check all javacores for System.exit in any thread
+        shutdown_javacore = None
+        shutdown_thread = None
+        
+        for javacore in self.javacore_set.javacores:
+            # Check all threads in this javacore
+            for snapshot in javacore.snapshots:
+                # Check if stack trace contains System.exit
+                if snapshot.stack_trace and snapshot.stack_trace.stack_trace_elements:
+                    for element in snapshot.stack_trace.stack_trace_elements:
+                        element_str = element.get_line()
+                        if "System.exit" in element_str or "java.lang.System.exit" in element_str:
+                            shutdown_javacore = javacore.basefilename()
+                            shutdown_thread = snapshot.name if snapshot.name else "Unknown"
+                            return f"""CRITICAL - Application is shutting down (System.exit detected in thread 
+                            '{shutdown_thread}' in {shutdown_javacore})"""
+        return "OK - No shutdown detected"
