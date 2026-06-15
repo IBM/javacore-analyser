@@ -5,6 +5,8 @@
 
 'use strict';
 
+const TOTAL_CPU_PERCENTAGE = 100;
+
 $(function () {
   $('#all_threads_table_thread_xsl').tablesorter({
     theme: 'blue',
@@ -44,7 +46,7 @@ const loadChartCPUUsage = function() {
     inputData.push(Number(rowEl.cells[2].innerHTML));
     labels.push(new Date(rowEl.cells[1].innerHTML).valueOf());
 
-    totalCPUs.push(100);
+    totalCPUs.push(TOTAL_CPU_PERCENTAGE);
   }
 
   new Chart(ctx, {
