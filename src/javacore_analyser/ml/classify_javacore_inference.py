@@ -37,7 +37,6 @@ import re
 from typing import Optional, Dict, List, Union
 from pathlib import Path
 from javacore_analyser.thread_snapshot import ThreadSnapshot
-from javacore_analyser.javacore_analyser_batch import generate_javecore_set_data
 from importlib.resources import files
 
 
@@ -201,6 +200,10 @@ class JavacoreClassifier:
         Returns:
             Dictionary mapping column names to word counts
         """
+        # Handle NaN values by converting to empty string
+        if isinstance(text, float) and pd.isna(text):
+            text = ""
+        
         counts = {}
         flags = re.IGNORECASE if self.case_insensitive else 0
         
@@ -246,27 +249,20 @@ class JavacoreClassifier:
     def _encode_state(self, state: str) -> Dict[str, int]:
         """
         One-hot encode the thread state.
-        
+
         Args:
-            state: Thread state (must be one of: R, CW, S, Z, P, B)
-            
+            state: Thread state
+
         Returns:
-            Dictionary mapping state column names to binary values
-            
-        Raises:
-            ValueError: If state is not in valid states list
+            Dictionary mapping state column names to binary values.
+            If state is not valid, all encoded values are 0.
         """
-        if state not in self.VALID_STATES:
-            raise ValueError(
-                f"Invalid state '{state}'. Must be one of: {self.VALID_STATES}"
-            )
-        
-        # Create one-hot encoding
+        # Create one-hot encoding. Invalid states produce all zeros.
         encoding = {}
         for valid_state in self.VALID_STATES:
             col_name = f"state_{valid_state}"
-            encoding[col_name] = 1 if state == valid_state else 0
-        
+            encoding[col_name] = 1 if state == valid_state and state in self.VALID_STATES else 0
+
         return encoding
     
     def predict(
@@ -372,7 +368,7 @@ class JavacoreClassifier:
         Predict the function of a thread based on its characteristics takning a ThreadSnapshot as parameter.
         """
         #Extract the features from the ThreadSnapshot
-        name = snapshot.name
+        name = snapshot.name or ""
         cpu_usage = snapshot.cpu_usage
         allocated_mem = snapshot.allocated_mem
         state = snapshot.state
@@ -396,108 +392,3 @@ class JavacoreClassifier:
         )
         return predicted_class
     
-
-def main():
-    """
-    Example usage of the JavacoreClassifier.
-    Loads sample data and runs prediction on the first row.
-
-    ONLY RUN FOR LOCAL TESTING
-    """
-    print("=" * 60)
-    print("Javacore Thread Function Classifier - Example Usage")
-    print("=" * 60)
-    
-    # Load sample data
-    filename_data = 'test/data/ml/ML_test_data.csv'
-    try:
-        data = pd.read_csv(filename_data, sep=';', index_col=0)
-        print(f"\n✓ Loaded sample data from {filename_data}")
-        print(f"  Dataset shape: {data.shape}")
-    except FileNotFoundError:
-        print(f"\n✗ Sample data file not found: {filename_data}")
-        print("  Please ensure the data file exists in the current directory.")
-        return
-    
-    # Initialize classifier
-    try:
-        print("\n" + "-" * 60)
-        print("Initializing classifier...")
-        classifier = JavacoreClassifier()
-        print("✓ Classifier initialized successfully")
-        print(f"  - Model loaded from: {classifier.model_path}")
-        print(f"  - Thread name vocabulary size: {len(classifier.tn_vocabulary)}")
-        print(f"  - Stack trace vocabulary size: {len(classifier.st_vocabulary)}")
-    except Exception as e:
-        print(f"\n✗ Error initializing classifier: {e}")
-        return
-    
-    # Select sample row
-    sample_row = 100
-    print("\n" + "-" * 60)
-    print(f"Running prediction on row {sample_row}...")
-    
-    # Extract sample data
-    sample_name = data['name'].iloc[sample_row]
-    sample_cpu_usage = data['cpu_usage'].iloc[sample_row]
-    sample_allocated_mem = data['allocated_mem'].iloc[sample_row]
-    sample_state = data['state'].iloc[sample_row]
-    sample_blocking_threads = data['blocking_threads'].iloc[sample_row]
-    sample_stack_trace = data['stack_trace'].iloc[sample_row]
-    sample_stack_trace_depth = data['stack_trace_depth'].iloc[sample_row]
-    print("\nInput parameters:")
-    print(f"  - Name: {sample_name}")
-    print(f"  - CPU Usage: {sample_cpu_usage}")
-    print(f"  - Allocated Memory: {sample_allocated_mem}")
-    print(f"  - State: {sample_state}")
-    print(f"  - Blocking Threads: {sample_blocking_threads}")
-    print(f"  - Stack Trace Depth: {sample_stack_trace_depth}")
-    if isinstance(sample_stack_trace, str) and len(sample_stack_trace) > 100:
-        print(f"  - Stack Trace: {sample_stack_trace[:100]}...")
-    else:
-        print(f"  - Stack Trace: {sample_stack_trace}")
-    
-    # Run prediction
-    try:
-        predicted_function = classifier.predict(
-            name=sample_name,
-            cpu_usage=sample_cpu_usage,
-            allocated_mem=sample_allocated_mem,
-            state=sample_state,
-            blocking_threads=sample_blocking_threads,
-            stack_trace=sample_stack_trace,
-            stack_trace_depth=sample_stack_trace_depth
-        )
-        print("\n" + "=" * 60)
-        print(f"✓ PREDICTION RESULT: {predicted_function}")
-        print("=" * 60)
-    except Exception as e:
-        print(f"\n✗ Error during prediction: {e}")
-        import traceback
-        traceback.print_exc()
-
-    #Test with ThreadSnapshot    
-    #Files to open
-    input_files = [
-        "./test/data/javacores/javacore.20220606.114458.32888.0001.txt",
-        "./test/data/javacores/javacore.20220606.114502.32888.0002.txt"]
-    print(f"Opening: {input_files}")
-    javacore_set = generate_javecore_set_data(input_files)
-
-    for thread in javacore_set.threads:
-        for snapshot in thread.thread_snapshots:
-            print("\n" + "=" * 60)
-            print(f"Running prediction on thread:\n {snapshot.name}")
-            # Run prediction
-            try:
-                predicted_function = classifier.predict_thread_snapshot(snapshot)
-                print("-" * 60)
-                print(f"✓ PREDICTION RESULT: {predicted_function}")
-                print("=" * 60)
-            except Exception as e:
-                print(f"\n✗ Error during prediction: {e}")
-                import traceback
-                traceback.print_exc()
-
-if __name__ == "__main__":
-    main()
