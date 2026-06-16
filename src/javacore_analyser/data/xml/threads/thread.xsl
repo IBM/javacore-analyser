@@ -19,6 +19,8 @@
                 <script type="text/javascript" src="../data/jquery/jquery.tablesorter.widgets.min.js"> _ </script>
                 <script type="text/javascript" src="../data/jquery/chart.umd.min.js"> _ </script>
                 <script type="text/javascript" src="../data/jquery/chartjs-adapter-date-fns.bundle.min.js"> _ </script>
+                <script type="text/javascript" src="../data/jquery/hammer.min.js"> _ </script>
+                <script type="text/javascript" src="../data/jquery/chartjs-plugin-zoom.min.js"> _ </script>
                 <script type="text/javascript" src="../data/jquery/wait2scripts.js"> _ </script>
                 <script src="../data/jquery/jquery.mark.min.js"> _ </script>
                 <script type="text/javascript" src="../data/jquery/search.js"> _ </script>
