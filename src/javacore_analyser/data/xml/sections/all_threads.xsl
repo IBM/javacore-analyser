@@ -97,6 +97,7 @@
                                             <xsl:attribute name="id"><xsl:value-of select="concat('stack',$i)"/></xsl:attribute>
                                             java/lang/Thread:<xsl:value-of select="thread_address"/>
                                             <xsl:for-each select="*[starts-with(name(), 'stack')]">
+                                                    <br /><strong>Timestamp: <xsl:value-of select="timestamp"/></strong>
                                                 <div>
                                                     <xsl:choose>
                                                         <xsl:when test="stack_depth &gt; 0">

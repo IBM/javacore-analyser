@@ -2,10 +2,10 @@
 # Copyright IBM Corp. 2024 - 2026
 # SPDX-License-Identifier: Apache-2.0
 #
+import json
 import os
 
 from haralyzer import HarParser
-import json
 
 
 class HarFile:
@@ -30,8 +30,8 @@ class HarFile:
 
         """
         self.path = path
-        with open(path, 'r') as f:
-            self.har = HarParser(json.loads(f.read()))
+        with open(path, 'r', encoding='utf-8') as file:
+            self.har = HarParser(json.load(file, strict=False))
 
     def get_xml(self, doc):
         """
@@ -69,6 +69,9 @@ class HarFile:
 
 
 class HttpCall:
+    INVALID_UTF_CHARACTERS = tuple(chr(code_point) for code_point in range(0x20)
+                                   if code_point not in (0x09, 0x0A, 0x0D))
+
     """
     Represents a single HTTP call extracted from a HAR file entry.
     
@@ -101,14 +104,14 @@ class HttpCall:
             call: A HAR entry object from haralyzer containing request/response data
         """
         self.call = call
-        self.url = call.url
-        self.method = str(call.request.method) if hasattr(call.request, 'method') else 'GET'
-        self.status = str(call.status)
-        self.start_time = str(call.startTime)
-        self.duration = str(self.get_total_time())
-        self.timings = str(call.timings)
-        self.size = str(call.response.bodySize)
-        self.success = str(self.get_success())
+        self.url = HttpCall.__sanitize_xml_attribute_value(call.url)
+        self.method = HttpCall.__sanitize_xml_attribute_value(str(call.request.method) if hasattr(call.request, 'method') else 'GET')
+        self.status = HttpCall.__sanitize_xml_attribute_value(str(call.status))
+        self.start_time = HttpCall.__sanitize_xml_attribute_value(str(call.startTime))
+        self.duration = HttpCall.__sanitize_xml_attribute_value(str(self.get_total_time()))
+        self.timings = HttpCall.__sanitize_xml_attribute_value(str(call.timings))
+        self.size = HttpCall.__sanitize_xml_attribute_value(str(call.response.bodySize))
+        self.success = HttpCall.__sanitize_xml_attribute_value(str(self._calculate_success()))
         
         # Request data
         self.request_headers = self.get_headers(call.request.headers) if hasattr(call.request, 'headers') else ''
@@ -119,7 +122,7 @@ class HttpCall:
         self.response_headers = self.get_headers(call.response.headers) if hasattr(call.response, 'headers') else ''
         self.response_cookies = self.get_cookies(call.response.cookies) if hasattr(call.response, 'cookies') else ''
         self.response_content = self.get_response_content(call.response)
-
+    
     def get_total_time(self):
         """
         Calculate the total time taken for the HTTP call.
@@ -137,7 +140,7 @@ class HttpCall:
                     total += time
         return total
 
-    def get_success(self):
+    def _calculate_success(self):
         """
         Determine if the HTTP call was successful based on status code.
         
@@ -155,7 +158,9 @@ class HttpCall:
         header_lines = []
         for header in headers:
             if isinstance(header, dict) and 'name' in header and 'value' in header:
-                header_lines.append(f"{header['name']}: {header['value']}")
+                header_name = HttpCall.__sanitize_xml_attribute_value(str(header['name']))
+                header_value = HttpCall.__sanitize_xml_attribute_value(str(header['value']))
+                header_lines.append(f"{header_name}: {header_value}")
         return '\n'.join(header_lines)
 
     def get_cookies(self, cookies):
@@ -165,7 +170,9 @@ class HttpCall:
         cookie_lines = []
         for cookie in cookies:
             if isinstance(cookie, dict) and 'name' in cookie and 'value' in cookie:
-                cookie_lines.append(f"{cookie['name']}={cookie['value']}")
+                cookie_name = HttpCall.__sanitize_xml_attribute_value(str(cookie['name']))
+                cookie_value = HttpCall.__sanitize_xml_attribute_value(str(cookie['value']))
+                cookie_lines.append(f"{cookie_name}={cookie_value}")
         return '\n'.join(cookie_lines)
 
     def get_request_content(self, request):
@@ -186,7 +193,7 @@ class HttpCall:
         mime_type = post_data.get('mimeType', '')
         if mime_type and self.is_text_mime_type(mime_type):
             text = post_data.get('text', '')
-            return str(text) if text else ''
+            return HttpCall.__sanitize_xml_attribute_value(str(text)) if text else ''
         
         return ''
 
@@ -208,7 +215,7 @@ class HttpCall:
         mime_type = content.get('mimeType', '')
         if mime_type and self.is_text_mime_type(mime_type):
             text = content.get('text', '')
-            return str(text) if text else ''
+            return HttpCall.__sanitize_xml_attribute_value(str(text)) if text else ''
         
         return ''
 
@@ -219,6 +226,14 @@ class HttpCall:
             'application/x-www-form-urlencoded', 'application/xhtml+xml'
         ]
         return any(mime_type.startswith(t) for t in text_types)
+
+    @staticmethod
+    def __sanitize_xml_attribute_value(value):
+        """Remove characters that are invalid in XML attribute values."""
+        sanitized_value = value
+        for invalid_character in HttpCall.INVALID_UTF_CHARACTERS:
+            sanitized_value = sanitized_value.replace(invalid_character, '')
+        return sanitized_value
 
     def get_xml(self, doc):
         """

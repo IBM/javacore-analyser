@@ -21,20 +21,14 @@ Top 5 blocking threads:
 GC threads CPU usage:
 {gc_cpu_usage}
 
-Memory usage by the application:
-{memory_info}
-Application parameters:
-{app_params}
-
-Top threads using most of CPU:
-{top_cpu_threads}
-Top 5 blocking threads:
-{top_blocking_threads}
-GC Threads CPU usage:
-
-{gc_cpu_usage}
 GC Pause Times:
 {gc_pause_times}
+
+Main Thread Stack Trace:
+{main_thread_stack}
+
+Server Shutdown Status:
+{shutdown_status}
 
 Task:
 Identify concrete performance bottlenecks visible in the provided data and provide up to 5 specific
@@ -42,12 +36,15 @@ recommendations to improve performance.
 
 Requirements:
 - Provide only recommendations that are directly supported by the supplied data.
-- Avoid generic recommendations such as "use a profiler", "optimize the code", "add monitoring", 
+- Avoid generic recommendations such as "use a profiler", "optimize the code", "add monitoring",
   or "Review the application parameters" unless tied to a specific observed issue and target area.
 - Rank recommendations by likely impact.
 - Do not present assumptions as facts. If the root cause is uncertain, label it as a hypothesis.
 - If GC pressure is suspected, recommend GC or allocation-related actions only if supported by GC,
   memory, or thread evidence.
+- If the Server Shutdown Status indicates the application is shutting down (System.exit detected),
+  this MUST be flagged as CRITICAL priority as it indicates the JVM is terminating.
+- Do NOT report on Server Shutdown Status if it indicates "ok" or normal operation.
 - If the provided data does not support any concrete recommendation, reply exactly:
   No evidence-based performance recommendations can be made from the provided data.
 - Display the recommendations in a clear, concise format.
