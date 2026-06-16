@@ -1,5 +1,5 @@
 #
-# Copyright IBM Corp. 2024 - 2025
+# Copyright IBM Corp. 2024 - 2026
 # SPDX-License-Identifier: Apache-2.0
 #
 from javacore_analyser.abstract_snapshot_collection import AbstractSnapshotCollection
@@ -12,7 +12,7 @@ class Thread(AbstractSnapshotCollection):
     def __init__(self):
         super().__init__()
         self.thread_address = ""
-        self._snaphot_classification = None
+        self._snapshot_classification = None
 
     def create(self, thread_snapshot):
         super().create(thread_snapshot)
@@ -91,7 +91,7 @@ class Thread(AbstractSnapshotCollection):
             blocker_node.setAttribute("name", blocker.name)
         thread_node.appendChild(blockers_node)
 
-        # ml
+        # Add ML classification results - aggregated counts of predicted thread activities across all snapshots
         ml_classification_node = doc.createElement("ml_classification")
         thread_node.appendChild(ml_classification_node)
         ml_classification = self.get_classification()
@@ -166,18 +166,20 @@ class Thread(AbstractSnapshotCollection):
         return False
     
     def classify(self):
-        self._snaphot_classification = {}
+        """Compute thread classification by analyzing snapshot classifications."""
+        self._snapshot_classification = {}
         if self.is_interesting():
             for snapshot in self.thread_snapshots:
                 key = snapshot.get_classification()
                 if key:
-                    if key in self._snaphot_classification.keys():
-                        self._snaphot_classification[key] = self._snaphot_classification[key] + 1
+                    if key in self._snapshot_classification.keys():
+                        self._snapshot_classification[key] = self._snapshot_classification[key] + 1
                     else:
-                        self._snaphot_classification[key] = 1
-            self._snaphot_classification = dict(sorted(self._snaphot_classification.items(), reverse=True, key=lambda item: item[1]))
+                        self._snapshot_classification[key] = 1
+            self._snapshot_classification = dict(sorted(self._snapshot_classification.items(), reverse=True, key=lambda item: item[1]))
             
     def get_classification(self):
-        if self._snaphot_classification is None:
+        """Get thread classification. Returns cached result if already computed."""
+        if self._snapshot_classification is None:
             self.classify()
-        return self._snaphot_classification
+        return self._snapshot_classification

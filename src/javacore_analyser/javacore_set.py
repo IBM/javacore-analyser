@@ -255,6 +255,12 @@ class JavacoreSet:
             for s in tqdm(javacore.snapshots, desc="Populating snapshot collection", unit=" javacore"):
                 self.threads.add_snapshot(s)
                 self.stacks.add_snapshot(s)
+    
+    def classify_threads(self):
+        """Compute classifications for all threads upfront to improve report generation performance."""
+        logging.info("Computing thread classifications")
+        for thread in tqdm(self.threads, desc="Classifying threads", unit=" thread"):
+            thread.classify()
 
     def print_java_settings(self):
         logging.debug("number of CPUs: {}".format(self.number_of_cpus))
@@ -283,6 +289,7 @@ class JavacoreSet:
             jset.parse_javacores()
             jset.sort_snapshots()
             jset.__generate_blocked_snapshots_list()
+            jset.classify_threads()
         else:
             logging.info("No javacore files found. Continuing with other data types.")
         
