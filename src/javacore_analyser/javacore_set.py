@@ -1147,6 +1147,16 @@ class JavacoreSet:
             self.tips.extend(tip_class.generate(self))
 
     def add_ai(self):
+        """
+        Initialize LLM backend and generate AI-powered performance recommendations.
+
+        Supports 'huggingface' (local) or 'ollama' (server-based) methods configured via llm_method property.
+        Stores HTML-formatted recommendations in self.ai_tips.
+
+        Raises:
+            ImportError: If LLM dependencies are not installed.
+            InvalidLLMMethodError: If llm_method is invalid.
+        """
         llm_method: str = Properties.get_instance().get_property("llm_method")
         if llm_method.lower() == "huggingface":
             try:
