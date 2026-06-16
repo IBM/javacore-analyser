@@ -177,9 +177,7 @@ class Thread(AbstractSnapshotCollection):
                         self._snaphot_classification[key] = 1
             self._snaphot_classification = dict(sorted(self._snaphot_classification.items(), reverse=True, key=lambda item: item[1]))
             
-
     def get_classification(self):
         if self._snaphot_classification is None:
             self.classify()
         return self._snaphot_classification
-
