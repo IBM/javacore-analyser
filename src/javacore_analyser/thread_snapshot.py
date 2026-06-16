@@ -332,16 +332,22 @@ class ThreadSnapshot:
         self.stack_trace = stack_trace
 
     def _classify(self):
-        if self.thread and not self.thread.is_interesting(): 
-            self._ml_classification = ""
-            return
         classifier = self.javacore.javacore_set.ml_classifier
         try:
             self._ml_classification = classifier.predict_thread_snapshot(self)
         except Exception as ex:
-            logging.error(ex)
+            logging.error(
+                f"ML classification failed for thread '{self.name}' "
+                f"(ID: {self.thread_id}, Address: {self.thread_address}) "
+                f"in javacore '{self.javacore.filename if self.javacore else 'unknown'}': {ex}"
+            )
             self._ml_classification = ""
 
     def get_classification(self):
-        if self._ml_classification is None: self._classify()
+        if self._ml_classification is None:
+            if self.thread and not self.thread.is_interesting():
+                self._ml_classification = ""
+            else:
+                self._classify()
         return self._ml_classification
+        
