@@ -2,6 +2,10 @@
 
 This file provides guidance to agents when working with code in this repository.
 
+## Project Structure
+
+For a comprehensive overview of the project structure, file organization, and key workflows, see [PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md). This document helps AI coding assistants quickly understand the codebase without scanning all files.
+
 ## Coding Standards
 
 The project follows **PEP 8** coding standard (https://peps.python.org/pep-0008/) with the following specifics:
