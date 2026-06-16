@@ -31,7 +31,6 @@ Usage:
 
 # from javacore_analyser.javacore_set import JavacoreSet # If I import this one the model loading crashes
 import logging
-from math import log
 from xgboost import XGBClassifier
 import pandas as pd
 import json
