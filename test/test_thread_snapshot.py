@@ -8,7 +8,6 @@ import time
 import unittest
 from xml.dom.minidom import parseString
 
-from javacore_analyser.constants import UNKNOWN
 from javacore_analyser.java_thread import Thread
 from javacore_analyser.javacore import Javacore
 from javacore_analyser.javacore_set import JavacoreSet
