@@ -240,3 +240,114 @@ class TestTips(unittest.TestCase):
         self.assertIn("2500", tip_text, "Should report longest pause of 2500ms")
         self.assertIn("2023-04-25T11:04:15.857", tip_text, 
                      "Should report timestamp of longest pause")
+
+
+    def test_SystemExitInMainThreadTip_with_system_exit(self):
+        """Test SystemExitInMainThreadTip when System.exit is present in main thread"""
+        from javacore_analyser.javacore import Javacore
+        from javacore_analyser.stack_trace import StackTrace
+        from javacore_analyser.stack_trace_element import StackTraceElement
+
+        javacore_set = JavacoreSet("")
+
+        # Create a mock javacore
+        jc = Javacore()
+        jc.filename = "test_javacore.txt"
+        jc.datetime = None
+        jc.timestamp = 0
+        jc.siginfo = "test"
+
+        # Create a main thread snapshot with System.exit in stack trace
+        main_snapshot = ThreadSnapshot()
+        main_snapshot.name = "main"
+        main_snapshot.thread_id = "1"
+        main_snapshot.cpu_usage = 0
+
+        # Create stack trace with System.exit
+        stack_trace = StackTrace()
+        element = StackTraceElement()
+        element.line = "at java.lang.System.exit(System.java:123)"
+        stack_trace.append(element)
+        main_snapshot.stack_trace = stack_trace
+
+        jc.snapshots = [main_snapshot]
+        javacore_set.javacores = [jc]
+
+        result = tips.SystemExitInMainThreadTip.generate(javacore_set)
+        self.assertEqual(1, len(result), "Should return one warning message")
+        self.assertIn("[WARNING]", result[0], "Tip should contain WARNING")
+        self.assertIn("System.exit", result[0], "Tip should mention System.exit")
+        self.assertIn("test_javacore.txt", result[0], "Tip should mention the javacore filename")
+        self.assertIn("main", result[0], "Tip should mention the thread name")
+
+    def test_SystemExitInMainThreadTip_without_system_exit(self):
+        """Test SystemExitInMainThreadTip when System.exit is not present"""
+        from javacore_analyser.javacore import Javacore
+        from javacore_analyser.stack_trace import StackTrace
+        from javacore_analyser.stack_trace_element import StackTraceElement
+
+        javacore_set = JavacoreSet("")
+
+        # Create a mock javacore
+        jc = Javacore()
+        jc.filename = "test_javacore.txt"
+        jc.datetime = None
+        jc.timestamp = 0
+        jc.siginfo = "test"
+
+        # Create a main thread snapshot without System.exit
+        main_snapshot = ThreadSnapshot()
+        main_snapshot.name = "main"
+        main_snapshot.thread_id = "1"
+        main_snapshot.cpu_usage = 0
+
+        # Create stack trace without System.exit
+        stack_trace = StackTrace()
+        element = StackTraceElement()
+        element.line = "at com.example.MyClass.doWork(MyClass.java:45)"
+        stack_trace.append(element)
+        main_snapshot.stack_trace = stack_trace
+
+        jc.snapshots = [main_snapshot]
+        javacore_set.javacores = [jc]
+
+        result = tips.SystemExitInMainThreadTip.generate(javacore_set)
+        self.assertEqual(0, len(result), "Should return empty list when no System.exit")
+
+    def test_SystemExitInMainThreadTip_in_worker_thread(self):
+        """Test SystemExitInMainThreadTip when System.exit is in a worker thread"""
+        from javacore_analyser.javacore import Javacore
+        from javacore_analyser.stack_trace import StackTrace
+        from javacore_analyser.stack_trace_element import StackTraceElement
+
+        javacore_set = JavacoreSet("")
+
+        # Create a mock javacore
+        jc = Javacore()
+        jc.filename = "test_javacore.txt"
+        jc.datetime = None
+        jc.timestamp = 0
+        jc.siginfo = "test"
+
+        # Create a non-main thread snapshot with System.exit
+        worker_snapshot = ThreadSnapshot()
+        worker_snapshot.name = "Worker-Thread-1"
+        worker_snapshot.thread_id = "2"
+        worker_snapshot.cpu_usage = 0
+
+        # Create stack trace with System.exit
+        stack_trace = StackTrace()
+        element = StackTraceElement()
+        element.line = "at java.lang.System.exit(System.java:123)"
+        stack_trace.append(element)
+        worker_snapshot.stack_trace = stack_trace
+
+        jc.snapshots = [worker_snapshot]
+        javacore_set.javacores = [jc]
+
+        result = tips.SystemExitInMainThreadTip.generate(javacore_set)
+        self.assertEqual(1, len(result), "Should return one warning message")
+        self.assertIn("[WARNING]", result[0], "Tip should contain WARNING")
+        self.assertIn("System.exit", result[0], "Tip should mention System.exit")
+        self.assertIn("Worker-Thread-1", result[0], "Tip should mention the worker thread name")
+        self.assertIn("test_javacore.txt", result[0], "Tip should mention the javacore filename")
