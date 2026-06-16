@@ -153,10 +153,8 @@ class TestThreadSnapshot(unittest.TestCase):
         javacore_set.populate_snapshot_collections()
         for thread in javacore_set.threads:
             for snapshot in thread.thread_snapshots:
-                if thread.is_interesting and snapshot.state != UNKNOWN:
+                if thread.is_interesting:
                     classification = snapshot.get_classification()
-                    if classification is None or classification == "":
-                        print("ble")
                     self.assertNotEqual(classification, "", "Classification should not be empty")
                     self.assertNotEqual(classification, None, "Classification should not be empty")
                 else:
