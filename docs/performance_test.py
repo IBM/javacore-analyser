@@ -10,7 +10,6 @@ Performance testing script to compare execution times of javacore_analyser_batch
 """
 import subprocess
 import time
-import sys
 import os
 
 def run_command_with_timing(command, description):
