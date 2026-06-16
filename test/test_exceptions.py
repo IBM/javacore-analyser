@@ -14,14 +14,14 @@ class TestExceptions(unittest.TestCase):
     def test_invalid_llm_method_error_message(self):
         """Test that InvalidLLMMethodError generates the correct error message."""
         error = InvalidLLMMethodError("invalid_method")
-        expected_message = "Invalid LLM method: 'invalid_method'. Supported methods are: ollama, huggingface"
+        expected_message = "Invalid LLM method: 'invalid_method'. Supported methods are: ollama, huggingface, watsonx"
         self.assertEqual(str(error), expected_message)
 
     def test_invalid_llm_method_error_attributes(self):
         """Test that InvalidLLMMethodError stores the correct attributes."""
         error = InvalidLLMMethodError("invalid_method")
         self.assertEqual(error.llm_method, "invalid_method")
-        self.assertEqual(error.supported_methods, ['ollama', 'huggingface'])
+        self.assertEqual(error.supported_methods, ['ollama', 'huggingface', 'watsonx'])
 
     def test_invalid_llm_method_error_custom_supported_methods(self):
         """Test InvalidLLMMethodError with custom supported methods."""
