@@ -1200,6 +1200,15 @@ class JavacoreSet:
                     "Ollama dependencies not installed. "
                     "Install with: pip install javacore_analyser[ollama]"
                 ) from e
+        elif llm_method.lower() == "watsonx":
+            try:
+                from javacore_analyser.ai.watsonx_llm import WatsonxLLM
+                ai = WatsonxLLM(self)
+            except ImportError as e:
+                raise ImportError(
+                    "WatsonX dependencies not installed. "
+                    "Install with: pip install javacore_analyser[watsonx]"
+                ) from e
         else:
             raise InvalidLLMMethodError(llm_method)
             
