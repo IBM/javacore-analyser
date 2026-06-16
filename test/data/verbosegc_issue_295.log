@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<verbosegc xmlns="http://www.ibm.com/j9/verbosegc" version="R26_Java8_SR6_20200724_1158_B421796">
+
+<!-- GC event from May 17, 2026 -->
+<gc-start id="1" type="scavenge" contextid="0" timestamp="2026-05-17T09:19:52.867">
+  <mem-info id="2" free="6436086800" total="8589934592" percent="74">
+    <mem type="nursery" free="0" total="2147483648" percent="0" />
+    <mem type="tenure" free="6436086800" total="6442450944" percent="99" />
+  </mem-info>
+</gc-start>
+<gc-end id="3" type="scavenge" contextid="0" durationms="80.111" usertimems="156.000" systemtimems="0.000" stalltimems="79.889" timestamp="2026-05-17T09:19:52.947" activeThreads="2">
+  <mem-info id="4" free="7452574112" total="8589934592" percent="86">
+    <mem type="nursery" free="1016487312" total="2147483648" percent="47" />
+    <mem type="tenure" free="6436086800" total="6442450944" percent="99" />
+  </mem-info>
+</gc-end>
+
+<!-- GC event from June 15, 2026 (29 days later - this large time span caused the Chart.js error) -->
+<gc-start id="5" type="scavenge" contextid="0" timestamp="2026-06-15T13:18:42.809">
+  <mem-info id="6" free="4606186736" total="8589934592" percent="53">
+    <mem type="nursery" free="0" total="2147483648" percent="0" />
+    <mem type="tenure" free="4606186736" total="6442450944" percent="71" />
+  </mem-info>
+</gc-start>
+<gc-end id="7" type="scavenge" contextid="0" durationms="21.112" usertimems="41.000" systemtimems="0.000" stalltimems="20.889" timestamp="2026-06-15T13:18:42.830" activeThreads="2">
+  <mem-info id="8" free="6519734784" total="8589934592" percent="75">
+    <mem type="nursery" free="1915146936" total="2147483648" percent="89" />
+    <mem type="tenure" free="4604587848" total="6442450944" percent="71" />
+  </mem-info>
+</gc-end>
+
+</verbosegc>
