@@ -30,6 +30,8 @@ Usage:
 """
 
 # from javacore_analyser.javacore_set import JavacoreSet # If I import this one the model loading crashes
+import logging
+from math import log
 from xgboost import XGBClassifier
 import pandas as pd
 import json
@@ -84,6 +86,8 @@ class JavacoreClassifier:
             FileNotFoundError: If any of the required files are not found
             json.JSONDecodeError: If JSON files are malformed
         """
+        logging.info("Initializing JavacoreClassifier")
+        # Store configuration
         self.model_path = model_path
         self.input_params_path = input_params_path
         self.label_mapping_path = label_mapping_path
@@ -126,7 +130,9 @@ class JavacoreClassifier:
             with as_file(model_file) as model_path:
                 #print(f"Loading model from package resources: {model_path}")   #Uncomment for debug
                 self.model.load_model(str(model_path))
-        #print("Model loaded successfully")   #Uncomment for debug
+
+        logging.info("Model loaded successfully")
+
 
     def _load_configurations(self) -> None:
         """
@@ -368,6 +374,7 @@ class JavacoreClassifier:
         Predict the function of a thread based on its characteristics takning a ThreadSnapshot as parameter.
         """
         #Extract the features from the ThreadSnapshot
+        logging.debug(f"Predicting thread snapshot: {snapshot.name}")
         name = snapshot.name or ""
         cpu_usage = snapshot.cpu_usage
         allocated_mem = snapshot.allocated_mem
@@ -390,5 +397,6 @@ class JavacoreClassifier:
             stack_trace=stack_trace,
             stack_trace_depth=stack_trace_depth
         )
+        logging.debug(f"Predicted class: {predicted_class}")
         return predicted_class
     
