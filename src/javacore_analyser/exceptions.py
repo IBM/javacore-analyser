@@ -21,7 +21,7 @@ class InvalidLLMMethodError(ValueError):
             supported_methods: Optional list of supported LLM methods
         """
         self.llm_method = llm_method
-        self.supported_methods = supported_methods or ['ollama', 'huggingface']
+        self.supported_methods = supported_methods or ['ollama', 'huggingface', 'watsonx']
         
         message = f"Invalid LLM method: '{llm_method}'. Supported methods are: {', '.join(self.supported_methods)}"
         super().__init__(message)
