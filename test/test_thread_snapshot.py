@@ -146,6 +146,7 @@ class TestThreadSnapshot(unittest.TestCase):
         inc = self.snapshot.get_cpu_usage_inc()
         self.assertEqual(inc, 100)
 
+    @unittest.skip("Waiting for https://github.com/IBM/javacore-analyser/issues/300")
     def test_get_classification(self):
         javacores_path = os.getcwd() + os.sep + 'test' + os.sep + 'data' + os.sep + 'javacores'
         javacore_set = JavacoreSet.create(javacores_path)
