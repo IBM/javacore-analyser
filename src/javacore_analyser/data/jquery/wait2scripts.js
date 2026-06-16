@@ -23,9 +23,9 @@ $(function () {
 });
 
 // Needed for tooltips. See https://jqueryui.com/tooltip/
-$( function() {
-    $(document).tooltip();
-} );
+$(function() {
+  $(document).tooltip();
+});
 
 const loadChartCPUUsage = function() {
 
@@ -54,7 +54,7 @@ const loadChartCPUUsage = function() {
     type: 'bar',
     responsive: true,
     data: {
-     labels: labels,
+      labels: labels,
       datasets: [
         {
           label: '% CPU Usage',
@@ -81,12 +81,33 @@ const loadChartCPUUsage = function() {
           beginAtZero: true
         },
         x: {
-           type: 'time',
-           time: {
-              unit: 'second'
-           }
+          type: 'time',
+          time: {
+            unit: 'second'
+          }
         }
       },
+      plugins: {
+        zoom: {
+          zoom: {
+            wheel: {
+              enabled: true,
+            },
+            pinch: {
+              enabled: true
+            },
+            mode: 'xy',
+          },
+          pan: {
+            enabled: true,
+            mode: 'xy',
+          },
+          limits: {
+            x: {min: 'original', max: 'original'},
+            y: {min: 'original', max: 'original'}
+          }
+        }
+      }
     },
   });
 
@@ -136,8 +157,8 @@ const loadChartGC = function() {
   // Only process javacore timestamps if javacores exist
   if (coresNumber > 1) {
     coresTimeRange = {
-        'startTime': new Date(coresFiles.rows[1].cells[1].innerHTML),
-        'endTime': new Date(coresFiles.rows[1].cells[1].innerHTML)
+      'startTime': new Date(coresFiles.rows[1].cells[1].innerHTML),
+      'endTime': new Date(coresFiles.rows[1].cells[1].innerHTML)
     };
 
     startingPoint = coresTimeRange['startTime'];
@@ -149,10 +170,10 @@ const loadChartGC = function() {
 
       let timestamp = new Date(rowEl.cells[1].innerHTML);
       if(startingPoint > timestamp)
-         startingPoint = timestamp;
+        startingPoint = timestamp;
 
       if(endingPoint < timestamp)
-          endingPoint = timestamp;
+        endingPoint = timestamp;
     }
 
     coresTimeRange['startTime'] = startingPoint;
@@ -191,26 +212,26 @@ const loadChartGC = function() {
     let heapUnit = heapAsString.slice(-1).toLowerCase();
 
     if(!isNaN(Number(heapUnit))) {
-       HEAP_SIZE = Number(heapAsString);
+      HEAP_SIZE = Number(heapAsString);
     }
     else {
-        switch (heapUnit) {
-          case "g":
-              HEAP_SIZE =
-                  Number(heapAsString.slice(0, -1)) * MB_SIZE * 1024;
+      switch (heapUnit) {
+        case "g":
+          HEAP_SIZE =
+            Number(heapAsString.slice(0, -1)) * MB_SIZE * 1024;
           break;
-          case "m":
-              HEAP_SIZE =
-                  Number(heapAsString.slice(0, -1)) * MB_SIZE;
+        case "m":
+          HEAP_SIZE =
+            Number(heapAsString.slice(0, -1)) * MB_SIZE;
           break;
-          case "k":
-              HEAP_SIZE =
-                  Number(heapAsString.slice(0, -1)) * 1024;
+        case "k":
+          HEAP_SIZE =
+            Number(heapAsString.slice(0, -1)) * 1024;
           break;
-          default:
-              console.log("Hmm, what now .. heap unit undefined!");
+        default:
+          console.log("Hmm, what now .. heap unit undefined!");
           break;
-        }
+      }
     }
   } else {
     // No sys_info_table - estimate heap size from GC data
@@ -244,45 +265,45 @@ const loadChartGC = function() {
   
   let dateTmp;
   gcCollections.forEach(function (element) {
-      //let gcStartDate = new Date(element['startTime']);
+    //let gcStartDate = new Date(element['startTime']);
 
-      // TODO - filter range
-      //if( gcStartDate >= coresTimeRange['startTime'] && gcStartDate <= coresTimeRange['endTime']) {
+    // TODO - filter range
+    //if( gcStartDate >= coresTimeRange['startTime'] && gcStartDate <= coresTimeRange['endTime']) {
 
-        const durationMs = Number(element['duration']);
+    const durationMs = Number(element['duration']);
 
-        const gcStartTime = new Date(element['startTime']).valueOf();
-        const nurseryTotal = Number(element['nurseryTotal']);
-        const tenureTotal = Number(element['tenureTotal']);
+    const gcStartTime = new Date(element['startTime']).valueOf();
+    const nurseryTotal = Number(element['nurseryTotal']);
+    const tenureTotal = Number(element['tenureTotal']);
 
-        // before running GC
-        inputData.push((HEAP_SIZE - Number(element['freeBefore'])) / MB_SIZE);
-        totalHeap.push(HEAP_SIZE / MB_SIZE);
-        nurseryUsageData.push(nurseryTotal > 0 ? (nurseryTotal - Number(element['nurseryFreeBefore'])) / MB_SIZE : null);
-        tenureUsageData.push(tenureTotal > 0 ? (tenureTotal - Number(element['tenureFreeBefore'])) / MB_SIZE : null);
-        nurseryTotalData.push(nurseryTotal > 0 ? nurseryTotal / MB_SIZE : null);
-        tenureTotalData.push(tenureTotal > 0 ? tenureTotal / MB_SIZE : null);
-        labels.push(gcStartTime);
-        pauseTimeData.push(durationMs);
+    // before running GC
+    inputData.push((HEAP_SIZE - Number(element['freeBefore'])) / MB_SIZE);
+    totalHeap.push(HEAP_SIZE / MB_SIZE);
+    nurseryUsageData.push(nurseryTotal > 0 ? (nurseryTotal - Number(element['nurseryFreeBefore'])) / MB_SIZE : null);
+    tenureUsageData.push(tenureTotal > 0 ? (tenureTotal - Number(element['tenureFreeBefore'])) / MB_SIZE : null);
+    nurseryTotalData.push(nurseryTotal > 0 ? nurseryTotal / MB_SIZE : null);
+    tenureTotalData.push(tenureTotal > 0 ? tenureTotal / MB_SIZE : null);
+    labels.push(gcStartTime);
+    pauseTimeData.push(durationMs);
 
-        // result of GC execution
-        inputData.push((HEAP_SIZE - Number(element['freeAfter'])) / MB_SIZE);
-        totalHeap.push(HEAP_SIZE / MB_SIZE);
-        nurseryUsageData.push(nurseryTotal > 0 ? (nurseryTotal - Number(element['nurseryFreeAfter'])) / MB_SIZE : null);
-        tenureUsageData.push(tenureTotal > 0 ? (tenureTotal - Number(element['tenureFreeAfter'])) / MB_SIZE : null);
-        nurseryTotalData.push(nurseryTotal > 0 ? nurseryTotal / MB_SIZE : null);
-        tenureTotalData.push(tenureTotal > 0 ? tenureTotal / MB_SIZE : null);
-        pauseTimeData.push(null);
-        dateTmp = new Date(element['startTime']);
-        dateTmp.setMilliseconds(dateTmp.getMilliseconds() + durationMs);
-        labels.push(dateTmp.valueOf());
+    // result of GC execution
+    inputData.push((HEAP_SIZE - Number(element['freeAfter'])) / MB_SIZE);
+    totalHeap.push(HEAP_SIZE / MB_SIZE);
+    nurseryUsageData.push(nurseryTotal > 0 ? (nurseryTotal - Number(element['nurseryFreeAfter'])) / MB_SIZE : null);
+    tenureUsageData.push(tenureTotal > 0 ? (tenureTotal - Number(element['tenureFreeAfter'])) / MB_SIZE : null);
+    nurseryTotalData.push(nurseryTotal > 0 ? nurseryTotal / MB_SIZE : null);
+    tenureTotalData.push(tenureTotal > 0 ? tenureTotal / MB_SIZE : null);
+    pauseTimeData.push(null);
+    dateTmp = new Date(element['startTime']);
+    dateTmp.setMilliseconds(dateTmp.getMilliseconds() + durationMs);
+    labels.push(dateTmp.valueOf());
   })
 
   new Chart(ctx, {
     type: 'line',
     responsive: true,
     data: {
-     labels: labels,
+      labels: labels,
       datasets: [
         {
           label: 'Heap Usage (MB)',
@@ -401,6 +422,27 @@ const loadChartGC = function() {
              }
         }
       },
+      plugins: {
+        zoom: {
+          zoom: {
+            wheel: {
+              enabled: true,
+            },
+            pinch: {
+              enabled: true
+            },
+            mode: 'xy',
+          },
+          pan: {
+            enabled: true,
+            mode: 'xy',
+          },
+          limits: {
+            x: {min: 'original', max: 'original'},
+            y: {min: 'original', max: 'original'}
+          }
+        }
+      }
     },
   });
   
@@ -423,8 +465,8 @@ const loadChart = function () {
 
     // verify the input data
     if(!isNaN(value)){
-        inputData.push(Number(rowEl.cells[3].innerText));
-        labels.push(String(rowEl.cells[0].innerText));
+      inputData.push(Number(rowEl.cells[3].innerText));
+      labels.push(String(rowEl.cells[0].innerText));
     }
   }
 
@@ -432,7 +474,7 @@ const loadChart = function () {
     type: 'bar',
     responsive: true,
     data: {
-     labels: labels,
+      labels: labels,
       datasets: [
         {
           label: '% CPU Usage',
@@ -450,12 +492,12 @@ const loadChart = function () {
           right: 4,
           top: 0,
           bottom: 0
-         }
+        }
       },
       legend: {
-	    display: true,
-		onClick: () => {}, // disable legend onClick functionality that filters datasets
-	  },
+        display: true,
+        onClick: () => {}, // disable legend onClick functionality that filters datasets
+      },
       scales: {
         y: {
           beginAtZero: true
@@ -463,11 +505,32 @@ const loadChart = function () {
         x: {
           type: 'time',
           time: {
-              unit: 'second',
-              parser: 'dd-MM-yy HH:mm:ss'
-            }
+            unit: 'second',
+            parser: 'dd-MM-yy HH:mm:ss'
+          }
         }
       },
+      plugins: {
+        zoom: {
+          zoom: {
+            wheel: {
+              enabled: true,
+            },
+            pinch: {
+              enabled: true
+            },
+            mode: 'xy',
+          },
+          pan: {
+            enabled: true,
+            mode: 'xy',
+          },
+          limits: {
+            x: {min: 'original', max: 'original'},
+            y: {min: 'original', max: 'original'}
+          }
+        }
+      }
     },
   });
 };
