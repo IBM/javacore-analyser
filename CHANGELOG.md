@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.2] - 2026-06-18
+#132 Add timestamps to thread snapshots in All Threads section by @kkazmierczyk in #297
+#298 Add support for chart zoom functionality by @kkazmierczyk in #299
+#276 Implement integration with WatsonX LLM by @kkazmierczyk in #289
+
+[3.0.2]: https://github.com/IBM/javacore-analyser/compare/3.0.1...3.0.2
+
 ## [3.0.1] - 2026-06-15
 #220 Adding Machine Learning feature for classifying javacore threads by @fchiossi in #261
 #265 Flask import error in batch mode when Flask not installed by @kkazmierczyk in #266
