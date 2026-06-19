@@ -163,7 +163,8 @@ class JavacoreSet:
 
         # machine learning
         self.ml_classifier = None
-        if Properties.get_instance().get_property("use_ml", False):
+        self.use_ml = Properties.get_instance().get_property("use_ml", False)
+        if self.use_ml:
             self.ml_classifier = JavacoreClassifier()     
 
     # Assisted by WCA@IBM
@@ -205,7 +206,8 @@ class JavacoreSet:
         """
         # Ensure thread classifications are computed before generating XML
         # This allows parallel ML inference instead of sequential during XML generation
-        self.classify_threads()
+        if self.use_ml:
+            self.classify_threads()
         
         temp_dir = tempfile.TemporaryDirectory()
         temp_dir_name = temp_dir.name
@@ -563,7 +565,7 @@ class JavacoreSet:
         generation_time_node = self.doc.createElement("generation_time")
         report_info_node.appendChild(generation_time_node)
         generation_time_node.appendChild(self.doc.createTextNode(str(datetime.now().strftime(DATE_FORMAT))))
-        doc_node.setAttribute("use_ml", str(Properties.get_instance().get_property("use_ml", False)))
+        doc_node.setAttribute("use_ml", str(self.use_ml))
 
         # Only include javacore-specific data if javacores are present
         if 'javacores' in self.data_types and len(self.javacores) > 0:
