@@ -162,7 +162,9 @@ class JavacoreSet:
         self.plugin_manager = None  # Will be set if plugins enabled
 
         # machine learning
-        self.ml_classifier = JavacoreClassifier()
+        self.ml_classifier = None
+        if Properties.get_instance().get_property("use_ml", False):
+            self.ml_classifier = JavacoreClassifier()     
 
     # Assisted by WCA@IBM
     # Latest GenAI contribution: ibm/granite-8b-code-instruct
@@ -561,6 +563,7 @@ class JavacoreSet:
         generation_time_node = self.doc.createElement("generation_time")
         report_info_node.appendChild(generation_time_node)
         generation_time_node.appendChild(self.doc.createTextNode(str(datetime.now().strftime(DATE_FORMAT))))
+        doc_node.setAttribute("use_ml", str(Properties.get_instance().get_property("use_ml", False)))
 
         # Only include javacore-specific data if javacores are present
         if 'javacores' in self.data_types and len(self.javacores) > 0:

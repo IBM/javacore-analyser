@@ -61,7 +61,11 @@
                                     <th class='sixty'>Stack trace</th>
                                     <th>State</th>
                                     <th>Blocking</th>
-                                    <th>Classification</th>
+                                    <xsl:choose>
+                                        <xsl:when test="//@use_ml='True'">
+                                            <th>Classification</th>
+                                        </xsl:when>
+                                    </xsl:choose>
                                 </tr>
                             </thead>
                             <!-- Snapshot starts here -->
@@ -203,9 +207,11 @@
                                                 </xsl:when>
                                              </xsl:choose>
                                     </td>
-                                    <td>
-                                        <xsl:value-of select="ml_classification"/>
-                                    </td>
+                                    <xsl:choose>
+                                        <xsl:when test="//@use_ml='True'">
+                                            <td><xsl:value-of select="ml_classification"/></td>
+                                        </xsl:when>
+                                    </xsl:choose>
                                 </tr>
                             </xsl:for-each>
                         </table>
