@@ -53,10 +53,14 @@
                             <li><strong>Blocking information</strong>
                                 includes a list of links to threads which are blocking or being blocked by the given thread
                             </li>
-                            <li><strong>Classification</strong>
-                                Machine learning based classification of the thread activity. 
-                                Entries are sorted by the number of occurrences in the thread.
-                            </li>
+                            <xsl:choose>
+                                <xsl:when test="//@use_ml='True'">
+                                    <li><strong>Classification</strong>
+                                        Machine learning based classification of the thread activity. 
+                                        Entries are sorted by the number of occurrences in the thread.
+                                    </li>
+                                </xsl:when>
+                            </xsl:choose>
                         </ul>
                     </div>
                     <table id="all_threads_table" class="tablesorter">
@@ -68,7 +72,11 @@
                                 <th>Average memory allocated since last GC (MB)</th>
                                 <th>Average stack depth</th>
                                 <th>Blocking information</th>
-                                <th>Classification</th>
+                                <xsl:choose>
+                                    <xsl:when test="//@use_ml='True'">
+                                        <th>Classification</th>
+                                    </xsl:when>
+                                </xsl:choose>
                             </tr>
                         </thead>
                         <tbody>
@@ -212,18 +220,22 @@
                                             </xsl:when>
                                          </xsl:choose>
                                     </td>
-                                    <td>
-                                        <!-- Display classification as 'category: count;' pairs, sorted by occurrence count -->
-                                        <xsl:choose>
-                                            <xsl:when test="count(ml_classification/classification_entry) = 0">N/A</xsl:when>
-                                            <xsl:otherwise>
-                                                <xsl:for-each select="ml_classification/classification_entry">
-                                                    <xsl:value-of select="@value" />:
-                                                    <xsl:value-of select="@occurrences" />;
-                                                </xsl:for-each>
-                                            </xsl:otherwise>
-                                        </xsl:choose>
-                                    </td>
+                                    <xsl:choose>
+                                        <xsl:when test="//@use_ml='True'">
+                                            <td>
+                                                <!-- Display classification as 'category: count;' pairs, sorted by occurrence count -->
+                                                <xsl:choose>
+                                                    <xsl:when test="count(ml_classification/classification_entry) = 0">N/A</xsl:when>
+                                                    <xsl:otherwise>
+                                                        <xsl:for-each select="ml_classification/classification_entry">
+                                                            <xsl:value-of select="@value" />:
+                                                            <xsl:value-of select="@occurrences" />;
+                                                        </xsl:for-each>
+                                                    </xsl:otherwise>
+                                                </xsl:choose>
+                                            </td>
+                                        </xsl:when>
+                                    </xsl:choose>
                                 </tr>
                             </xsl:for-each>
                         </tbody>
