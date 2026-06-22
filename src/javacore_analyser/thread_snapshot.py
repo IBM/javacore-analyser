@@ -333,17 +333,16 @@ class ThreadSnapshot:
         self.stack_trace = stack_trace
 
     def _classify(self):
-        if Properties.get_instance().get_property("use_ml", False):
-            classifier = self.javacore.javacore_set.ml_classifier
-            try:
-                self._ml_classification = classifier.predict_thread_snapshot(self)
-            except Exception as ex:
-                logging.error(
-                    f"ML classification failed for thread '{self.name}' "
-                    f"(ID: {self.thread_id}, Address: {self.thread_address}) "
-                    f"in javacore '{self.javacore.filename if self.javacore else 'unknown'}': {ex}"
-                )
-                self._ml_classification = ""
+        classifier = self.javacore.javacore_set.ml_classifier
+        try:
+            self._ml_classification = classifier.predict_thread_snapshot(self)
+        except Exception as ex:
+            logging.error(
+                f"ML classification failed for thread '{self.name}' "
+                f"(ID: {self.thread_id}, Address: {self.thread_address}) "
+                f"in javacore '{self.javacore.filename if self.javacore else 'unknown'}': {ex}"
+            )
+            self._ml_classification = ""
 
     def get_classification(self):
         logging.debug(f"Getting classification for thread '{self.name}' (ID: {self.thread_id}, Address: {self.thread_address})")

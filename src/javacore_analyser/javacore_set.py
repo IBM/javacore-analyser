@@ -163,7 +163,8 @@ class JavacoreSet:
 
         # machine learning
         self.ml_classifier = None
-        if Properties.get_instance().get_property("use_ml", False):
+        self.use_ml = Properties.get_instance().get_property("use_ml", False)
+        if self.use_ml:
             self.ml_classifier = JavacoreClassifier()     
 
     # Assisted by WCA@IBM
@@ -205,7 +206,8 @@ class JavacoreSet:
         """
         # Ensure thread classifications are computed before generating XML
         # This allows parallel ML inference instead of sequential during XML generation
-        self.classify_threads()
+        if self.use_ml:
+            self.classify_threads()
         
         temp_dir = tempfile.TemporaryDirectory()
         temp_dir_name = temp_dir.name
@@ -287,6 +289,31 @@ class JavacoreSet:
             ))
         
         logging.info("Thread classification complete")
+    
+    def classify_threads(self):
+        """Compute classifications for all threads upfront to improve report generation performance."""
+        logging.info("Computing thread classifications")
+        num_workers = self.get_number_of_parallel_threads()
+        logging.debug(f"Using {num_workers} parallel threads for classification")
+        
+        # Convert to list for parallel processing
+        thread_list = list(self.threads)
+        
+        if not thread_list:
+            logging.info("No threads to classify")
+            return
+        
+        # Classify threads in parallel using Pool
+        with Pool(num_workers) as pool:
+            # Use tqdm with imap for progress tracking
+            list(tqdm(
+                pool.imap(lambda t: t.classify(), thread_list),
+                total=len(thread_list),
+                desc="Classifying threads",
+                unit=" thread"
+            ))
+        
+        logging.info("Thread classification complete")
 
     def print_java_settings(self):
         logging.debug("number of CPUs: {}".format(self.number_of_cpus))
@@ -315,6 +342,7 @@ class JavacoreSet:
             jset.parse_javacores()
             jset.sort_snapshots()
             jset.__generate_blocked_snapshots_list()
+            jset.classify_threads()
             jset.classify_threads()
         else:
             logging.info("No javacore files found. Continuing with other data types.")
@@ -563,7 +591,7 @@ class JavacoreSet:
         generation_time_node = self.doc.createElement("generation_time")
         report_info_node.appendChild(generation_time_node)
         generation_time_node.appendChild(self.doc.createTextNode(str(datetime.now().strftime(DATE_FORMAT))))
-        doc_node.setAttribute("use_ml", str(Properties.get_instance().get_property("use_ml", False)))
+        doc_node.setAttribute("use_ml", str(self.use_ml))
 
         # Only include javacore-specific data if javacores are present
         if 'javacores' in self.data_types and len(self.javacores) > 0:
