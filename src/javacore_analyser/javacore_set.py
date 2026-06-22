@@ -289,6 +289,31 @@ class JavacoreSet:
             ))
         
         logging.info("Thread classification complete")
+    
+    def classify_threads(self):
+        """Compute classifications for all threads upfront to improve report generation performance."""
+        logging.info("Computing thread classifications")
+        num_workers = self.get_number_of_parallel_threads()
+        logging.debug(f"Using {num_workers} parallel threads for classification")
+        
+        # Convert to list for parallel processing
+        thread_list = list(self.threads)
+        
+        if not thread_list:
+            logging.info("No threads to classify")
+            return
+        
+        # Classify threads in parallel using Pool
+        with Pool(num_workers) as pool:
+            # Use tqdm with imap for progress tracking
+            list(tqdm(
+                pool.imap(lambda t: t.classify(), thread_list),
+                total=len(thread_list),
+                desc="Classifying threads",
+                unit=" thread"
+            ))
+        
+        logging.info("Thread classification complete")
 
     def print_java_settings(self):
         logging.debug("number of CPUs: {}".format(self.number_of_cpus))
@@ -317,6 +342,7 @@ class JavacoreSet:
             jset.parse_javacores()
             jset.sort_snapshots()
             jset.__generate_blocked_snapshots_list()
+            jset.classify_threads()
             jset.classify_threads()
         else:
             logging.info("No javacore files found. Continuing with other data types.")

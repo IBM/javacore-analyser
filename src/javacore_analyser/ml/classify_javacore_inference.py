@@ -31,6 +31,7 @@ Usage:
 
 # from javacore_analyser.javacore_set import JavacoreSet # If I import this one the model loading crashes
 import logging
+import time
 from xgboost import XGBClassifier
 import pandas as pd
 import json
@@ -372,8 +373,11 @@ class JavacoreClassifier:
         """
         Predict the function of a thread based on its characteristics takning a ThreadSnapshot as parameter.
         """
-        #Extract the features from the ThreadSnapshot
-        logging.debug(f"Predicting thread snapshot: {snapshot.name}")
+        logging.debug(f"Predicting thread snapshot: {snapshot.name[:40]}")
+        # Predict the function of the thread
+        t0 = time.perf_counter()
+        
+        # Extract the features from the ThreadSnapshot
         name = snapshot.name or ""
         cpu_usage = snapshot.cpu_usage
         allocated_mem = snapshot.allocated_mem
@@ -386,7 +390,7 @@ class JavacoreClassifier:
         else:
             stack_trace = stack_trace.to_string().replace("\n", " ").replace("\r", " ")
 
-        #Predict the function of the thread
+    
         predicted_class = self.predict(
             name=name,
             cpu_usage=cpu_usage,
@@ -396,6 +400,7 @@ class JavacoreClassifier:
             stack_trace=stack_trace,
             stack_trace_depth=stack_trace_depth
         )
-        logging.debug(f"Predicted class: {predicted_class}")
+        elapsed_ms = (time.perf_counter() - t0) * 1000
+        logging.debug(f"Predicted '{name[:40]}': {predicted_class} ({elapsed_ms:.1f}ms)")
         return predicted_class
     
