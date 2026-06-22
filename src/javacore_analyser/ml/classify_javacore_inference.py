@@ -389,7 +389,6 @@ class JavacoreClassifier:
             stack_trace = ""
         else:
             stack_trace = stack_trace.to_string().replace("\n", " ").replace("\r", " ")
-
     
         predicted_class = self.predict(
             name=name,
