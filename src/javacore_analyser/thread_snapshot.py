@@ -345,12 +345,10 @@ class ThreadSnapshot:
             self._ml_classification = ""
 
     def get_classification(self):
-        logging.debug(f"Getting classification for thread '{self.name}' (ID: {self.thread_id}, Address: {self.thread_address})")
         if self._ml_classification is None:
             if self.thread and not self.thread.is_interesting():
                 self._ml_classification = ""
             else:
                 self._classify()
-        logging.debug("Classification done")
         return self._ml_classification
         
