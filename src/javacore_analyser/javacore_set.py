@@ -343,7 +343,6 @@ class JavacoreSet:
             jset.sort_snapshots()
             jset.__generate_blocked_snapshots_list()
             jset.classify_threads()
-            jset.classify_threads()
         else:
             logging.info("No javacore files found. Continuing with other data types.")
         
