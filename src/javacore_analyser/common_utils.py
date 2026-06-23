@@ -50,7 +50,8 @@ def add_common_args(parser):
                         help='Input files separator (default ";")', required=False)
     parser.add_argument("--skip_boring", help='Skips drilldown page generation for threads that do not do anything',
                         required=False)
-    parser.add_argument("--use_ai", required=False, help="Use AI generated analysis")
+    parser.add_argument("--use_ai", required=False, help="Use AI-generated analysis")
+    parser.add_argument("--use_ml", required=False, help="Use Machine Learning classification")
     parser.add_argument("--llm_method", help="LLM method to use (ollama, huggingface, or watsonx)", required=False)
     parser.add_argument("--llm", help="LLM model to use", required=False)
     parser.add_argument("--llm_max_tokens", help="LLM max tokens", required=False)
