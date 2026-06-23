@@ -8,7 +8,6 @@ import re
 from datetime import datetime
 
 from javacore_analyser.constants import *
-from javacore_analyser.properties import Properties
 from javacore_analyser.stack_trace import StackTrace
 from javacore_analyser.stack_trace_element import StackTraceElement
 from javacore_analyser.stack_trace_kind import StackTraceKind
