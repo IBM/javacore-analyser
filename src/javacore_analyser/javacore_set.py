@@ -183,6 +183,8 @@ class JavacoreSet:
         jset = JavacoreSet.create(input_path)
         jset.print_java_settings()
         jset.populate_snapshot_collections()
+        if jset.use_ml:
+            jset.classify_threads()
         jset.sort_snapshots()
         # jset.find_top_blockers()
         jset.print_blockers()
@@ -204,11 +206,6 @@ class JavacoreSet:
         Returns:
         - None
         """
-        # Ensure thread classifications are computed before generating XML
-        # This allows parallel ML inference instead of sequential during XML generation
-        if self.use_ml:
-            self.classify_threads()
-        
         temp_dir = tempfile.TemporaryDirectory()
         temp_dir_name = temp_dir.name
         logging.info("Created temp dir: " + temp_dir_name)
@@ -289,31 +286,6 @@ class JavacoreSet:
             ))
         
         logging.info("Thread classification complete")
-    
-    def classify_threads(self):
-        """Compute classifications for all threads upfront to improve report generation performance."""
-        logging.info("Computing thread classifications")
-        num_workers = self.get_number_of_parallel_threads()
-        logging.debug(f"Using {num_workers} parallel threads for classification")
-        
-        # Convert to list for parallel processing
-        thread_list = list(self.threads)
-        
-        if not thread_list:
-            logging.info("No threads to classify")
-            return
-        
-        # Classify threads in parallel using Pool
-        with Pool(num_workers) as pool:
-            # Use tqdm with imap for progress tracking
-            list(tqdm(
-                pool.imap(lambda t: t.classify(), thread_list),
-                total=len(thread_list),
-                desc="Classifying threads",
-                unit=" thread"
-            ))
-        
-        logging.info("Thread classification complete")
 
     def print_java_settings(self):
         logging.debug("number of CPUs: {}".format(self.number_of_cpus))
@@ -342,7 +314,6 @@ class JavacoreSet:
             jset.parse_javacores()
             jset.sort_snapshots()
             jset.__generate_blocked_snapshots_list()
-            jset.classify_threads()
         else:
             logging.info("No javacore files found. Continuing with other data types.")
         

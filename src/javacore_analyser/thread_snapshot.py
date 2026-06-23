@@ -332,7 +332,7 @@ class ThreadSnapshot:
             line = self.file.readline()
         self.stack_trace = stack_trace
 
-    def _classify(self):
+    def classify(self):
         classifier = self.javacore.javacore_set.ml_classifier
         try:
             self._ml_classification = classifier.predict_thread_snapshot(self)
@@ -346,9 +346,6 @@ class ThreadSnapshot:
 
     def get_classification(self):
         if self._ml_classification is None:
-            if self.thread and not self.thread.is_interesting():
-                self._ml_classification = ""
-            else:
-                self._classify()
+            self.classify()
         return self._ml_classification
         
