@@ -57,17 +57,17 @@ def main():
     tests = [
         {
             'name': 'Test 1: 7z archive',
-            'command': 'python src/javacore_analyser/javacore_analyser_batch.py test/data/archives/javacores.7z /tmp/javacores --use_ai=False',
+            'command': 'python src/javacore_analyser/javacore_analyser_batch.py test/data/archives/javacores.7z /tmp/javacores --use_ai=False --use_ml=True',
             'skip': False
         },
         {
             'name': 'Test 2: Directory with javacores',
-            'command': 'python src/javacore_analyser/javacore_analyser_batch.py test/data/javacores /tmp/javacores --use_ai=False',
+            'command': 'python src/javacore_analyser/javacore_analyser_batch.py test/data/javacores /tmp/javacores --use_ai=False --use_ml=True',
             'skip': False
         },
         {
             'name': 'Test 3: Large ZIP archive (waitData-reindex.zip)',
-            'command': f'python src/javacore_analyser/javacore_analyser_batch.py {waitdata_path} /tmp/javacores --use_ai=False',
+            'command': f'python src/javacore_analyser/javacore_analyser_batch.py {waitdata_path} /tmp/javacores --use_ai=False --use_ml=True',
             'skip': not waitdata_exists
         }
     ]
