@@ -47,31 +47,31 @@ class TestJavacoreClassifier(unittest.TestCase):
         """predict() should return a non-empty string for normal inputs."""
         result = self._predict()
         self.assertIsInstance(result, str)
-        self.assertTrue(len(result) > 0)
+        self.assertGreater(len(result), 0)
 
     def test_predict_none_stack_trace(self):
         """predict() should handle None stack_trace without error."""
         result = self._predict(stack_trace=None)
         self.assertIsInstance(result, str)
-        self.assertTrue(len(result) > 0)
+        self.assertGreater(len(result), 0)
 
     def test_predict_nan_stack_trace(self):
         """predict() should handle float('nan') stack_trace without error."""
         result = self._predict(stack_trace=float("nan"))
         self.assertIsInstance(result, str)
-        self.assertTrue(len(result) > 0)
+        self.assertGreater(len(result), 0)
 
     def test_predict_comma_cpu_usage(self):
         """predict() should handle a comma-delimited CPU usage string."""
         result = self._predict(cpu_usage="0,05")
         self.assertIsInstance(result, str)
-        self.assertTrue(len(result) > 0)
+        self.assertGreater(len(result), 0)
 
     def test_predict_unrecognised_state(self):
         """predict() should return a valid result for an unrecognised thread state."""
         result = self._predict(state="UNKNOWN")
         self.assertIsInstance(result, str)
-        self.assertTrue(len(result) > 0)
+        self.assertGreater(len(result), 0)
 
     # ------------------------------------------------------------------
     # Performance test  (Fixes #305)
