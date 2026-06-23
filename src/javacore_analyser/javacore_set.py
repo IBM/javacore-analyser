@@ -263,28 +263,38 @@ class JavacoreSet:
                 self.stacks.add_snapshot(s)
     
     def classify_threads(self):
-        """Compute classifications for all threads upfront to improve report generation performance."""
+        """Classify all thread snapshots upfront in a single batch model.predict() call.
+
+        Collecting every ThreadSnapshot into one numpy matrix and calling model.predict()
+        once eliminates the per-call XGBoost overhead that caused ~18 ms × N slowness.
+        After the batch run each Thread.classify() simply aggregates already-stored labels.
+        """
         logging.info("Computing thread classifications")
-        num_workers = self.get_number_of_parallel_threads()
-        logging.debug(f"Using {num_workers} parallel threads for classification")
-        
-        # Convert to list for parallel processing
+
+        # Collect every snapshot across all Thread objects into a flat list
         thread_list = list(self.threads)
-        
         if not thread_list:
             logging.info("No threads to classify")
             return
-        
-        # Classify threads in parallel using Pool
-        with Pool(num_workers) as pool:
-            # Use tqdm with imap for progress tracking
-            list(tqdm(
-                pool.imap(lambda t: t.classify(), thread_list),
-                total=len(thread_list),
-                desc="Classifying threads",
-                unit=" thread"
-            ))
-        
+
+        # Flatten: one list of every ThreadSnapshot across all Thread objects
+        all_snapshots = [s for thread in thread_list for s in thread.thread_snapshots]
+        if not all_snapshots:
+            logging.info("No snapshots to classify")
+            return
+
+        # One model.predict() call for the entire dataset
+        labels = self.ml_classifier.predict_snapshots_batch(all_snapshots)
+
+        # Pair each snapshot with its predicted label (same order as the batch input)
+        # and store it so snapshot.get_classification() returns immediately without re-predicting
+        for snapshot, label in zip(all_snapshots, labels):
+            snapshot._ml_classification = label
+
+        # Thread-level aggregation (counts labels per thread, no more predict calls)
+        for thread in tqdm(thread_list, desc="Classifying threads", unit=" thread"):
+            thread.classify()
+
         logging.info("Thread classification complete")
 
     def print_java_settings(self):
