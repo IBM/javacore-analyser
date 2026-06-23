@@ -8,7 +8,6 @@ import re
 from datetime import datetime
 
 from javacore_analyser.constants import *
-from javacore_analyser.properties import Properties
 from javacore_analyser.stack_trace import StackTrace
 from javacore_analyser.stack_trace_element import StackTraceElement
 from javacore_analyser.stack_trace_kind import StackTraceKind
@@ -332,7 +331,7 @@ class ThreadSnapshot:
             line = self.file.readline()
         self.stack_trace = stack_trace
 
-    def _classify(self):
+    def classify(self):
         classifier = self.javacore.javacore_set.ml_classifier
         try:
             self._ml_classification = classifier.predict_thread_snapshot(self)

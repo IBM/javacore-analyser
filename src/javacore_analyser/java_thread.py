@@ -180,6 +180,4 @@ class Thread(AbstractSnapshotCollection):
             
     def get_classification(self):
         """Get thread classification. Returns cached result if already computed."""
-        if self._snapshot_classification is None:
-            self.classify()
         return self._snapshot_classification
