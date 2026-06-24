@@ -223,13 +223,12 @@
                             <xsl:choose>
                                 <xsl:when test="//@use_ml='True'">
                                     <td>
-                                        <!-- Display classification as 'category: count;' pairs, sorted by occurrence count -->
+                                        <!-- Display classification as 'Category (count)' entries, sorted by occurrence count -->
                                         <xsl:choose>
                                             <xsl:when test="count(ml_classification/classification_entry) = 0">N/A</xsl:when>
                                             <xsl:otherwise>
                                                 <xsl:for-each select="ml_classification/classification_entry">
-                                                    <xsl:value-of select="@value" />:
-                                                    <xsl:value-of select="@occurrences" />;
+                                                    <xsl:value-of select="@value" /> (<xsl:value-of select="@occurrences" />)<xsl:if test="position() != last()"><br/></xsl:if>
                                                 </xsl:for-each>
                                             </xsl:otherwise>
                                         </xsl:choose>
