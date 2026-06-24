@@ -228,7 +228,24 @@
                                             <xsl:when test="count(ml_classification/classification_entry) = 0">N/A</xsl:when>
                                             <xsl:otherwise>
                                                 <xsl:for-each select="ml_classification/classification_entry">
-                                                    <xsl:value-of select="@value" /> (<xsl:value-of select="@occurrences" />)<xsl:if test="position() != last()"><br/></xsl:if>
+                                                    <span class="ml-badge">
+                                                        <xsl:attribute name="class">ml-badge <xsl:choose>
+                                                            <xsl:when test="@value='Computing'">ml-computing</xsl:when>
+                                                            <xsl:when test="@value='Display Graphics'">ml-display-graphics</xsl:when>
+                                                            <xsl:when test="@value='Java Internal'">ml-java-internal</xsl:when>
+                                                            <xsl:when test="@value='Liberty Internal'">ml-liberty-internal</xsl:when>
+                                                            <xsl:when test="@value='Read From Database'">ml-read-database</xsl:when>
+                                                            <xsl:when test="@value='Read From Disk'">ml-read-disk</xsl:when>
+                                                            <xsl:when test="@value='Read From Network'">ml-read-network</xsl:when>
+                                                            <xsl:when test="@value='Save To Disk'">ml-save-disk</xsl:when>
+                                                            <xsl:when test="@value='Wait For Condition'">ml-wait-condition</xsl:when>
+                                                            <xsl:when test="@value='Wait For Connection'">ml-wait-connection</xsl:when>
+                                                            <xsl:when test="@value='Write To Database'">ml-write-database</xsl:when>
+                                                            <xsl:when test="@value='Write To Network'">ml-write-network</xsl:when>
+                                                            <xsl:otherwise>ml-unknown</xsl:otherwise>
+                                                        </xsl:choose></xsl:attribute>
+                                                        <xsl:value-of select="@value" /> (<xsl:value-of select="@occurrences" />)
+                                                    </span><xsl:if test="position() != last()"><br/></xsl:if>
                                                 </xsl:for-each>
                                             </xsl:otherwise>
                                         </xsl:choose>
