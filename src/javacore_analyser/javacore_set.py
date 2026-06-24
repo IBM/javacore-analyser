@@ -10,7 +10,8 @@ import re
 import shutil
 import tempfile
 from datetime import datetime
-from multiprocessing.dummy import Pool
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from multiprocessing.dummy import Pool  # Keep for HTML generation compatibility
 from pathlib import Path
 from typing import Optional
 from xml.dom.minidom import parseString
@@ -33,6 +34,7 @@ from javacore_analyser.properties import Properties
 from javacore_analyser.snapshot_collection import SnapshotCollection
 from javacore_analyser.snapshot_collection_collection import SnapshotCollectionCollection
 from javacore_analyser.verbose_gc import VerboseGcParser
+from javacore_analyser.ml.classify_javacore_inference import JavacoreClassifier
 
 
 class FileResolver(etree.Resolver):
@@ -159,6 +161,12 @@ class JavacoreSet:
         self.plugin_data = {}  # Store plugin results
         self.plugin_manager = None  # Will be set if plugins enabled
 
+        # machine learning
+        self.ml_classifier = None
+        self.use_ml = Properties.get_instance().get_property("use_ml", False)
+        if self.use_ml:
+            self.ml_classifier = JavacoreClassifier()     
+
     # Assisted by WCA@IBM
     # Latest GenAI contribution: ibm/granite-8b-code-instruct
     @staticmethod
@@ -175,6 +183,8 @@ class JavacoreSet:
         jset = JavacoreSet.create(input_path)
         jset.print_java_settings()
         jset.populate_snapshot_collections()
+        if jset.use_ml:
+            jset.classify_threads()
         jset.sort_snapshots()
         # jset.find_top_blockers()
         jset.print_blockers()
@@ -251,6 +261,31 @@ class JavacoreSet:
             for s in tqdm(javacore.snapshots, desc="Populating snapshot collection", unit=" javacore"):
                 self.threads.add_snapshot(s)
                 self.stacks.add_snapshot(s)
+    
+    def classify_threads(self):
+        """Compute classifications for all threads upfront to improve report generation performance."""
+        logging.info("Computing thread classifications")
+        num_workers = self.get_number_of_parallel_threads()
+        logging.debug(f"Using {num_workers} parallel threads for classification")
+        
+        # Convert to list for parallel processing
+        thread_list = list(self.threads)
+        
+        if not thread_list:
+            logging.info("No threads to classify")
+            return
+        
+        # Classify threads in parallel using Pool
+        with Pool(num_workers) as pool:
+            # Use tqdm with imap for progress tracking
+            list(tqdm(
+                pool.imap(lambda t: t.classify(), thread_list),
+                total=len(thread_list),
+                desc="Classifying threads",
+                unit=" thread"
+            ))
+        
+        logging.info("Thread classification complete")
 
     def print_java_settings(self):
         logging.debug("number of CPUs: {}".format(self.number_of_cpus))
@@ -526,6 +561,7 @@ class JavacoreSet:
         generation_time_node = self.doc.createElement("generation_time")
         report_info_node.appendChild(generation_time_node)
         generation_time_node.appendChild(self.doc.createTextNode(str(datetime.now().strftime(DATE_FORMAT))))
+        doc_node.setAttribute("use_ml", str(self.use_ml))
 
         # Only include javacore-specific data if javacores are present
         if 'javacores' in self.data_types and len(self.javacores) > 0:
@@ -1136,6 +1172,16 @@ class JavacoreSet:
             self.tips.extend(tip_class.generate(self))
 
     def add_ai(self):
+        """
+        Initialize LLM backend and generate AI-powered performance recommendations.
+
+        Supports 'huggingface' (local) or 'ollama' (server-based) methods configured via llm_method property.
+        Stores HTML-formatted recommendations in self.ai_tips.
+
+        Raises:
+            ImportError: If LLM dependencies are not installed.
+            InvalidLLMMethodError: If llm_method is invalid.
+        """
         llm_method: str = Properties.get_instance().get_property("llm_method")
         if llm_method.lower() == "huggingface":
             try:

@@ -1,5 +1,5 @@
 #
-# Copyright IBM Corp. 2024 - 2024
+# Copyright IBM Corp. 2024 - 2026
 # SPDX-License-Identifier: Apache-2.0
 #
 import logging
@@ -32,6 +32,7 @@ class ThreadSnapshot:
         self.elapsed_time = None
         self.cpu_usage_inc = None
         self.blocking = set()  # set of snapshots blocking by this thread
+        self._ml_classification = None
 
     @staticmethod
     def create(line, file, javacore):
@@ -249,6 +250,10 @@ class ThreadSnapshot:
         java_stack_depth_node = doc.createElement("stack_depth")
         java_stack_depth_node.appendChild(doc.createTextNode(str(self.get_stack_depth())))
         thread_snapshot_node.appendChild(java_stack_depth_node)
+        # ml
+        ml_classification_node = doc.createElement("ml_classification")
+        ml_classification_node.appendChild(doc.createTextNode(str(self.get_classification())))
+        thread_snapshot_node.appendChild(ml_classification_node)
         # blocked by
         blocked_by_node = doc.createElement("blocked_by")
 
@@ -325,3 +330,21 @@ class ThreadSnapshot:
                 stack_trace.stack_trace_elements.append(stack_trace_element)
             line = self.file.readline()
         self.stack_trace = stack_trace
+
+    def classify(self):
+        classifier = self.javacore.javacore_set.ml_classifier
+        try:
+            self._ml_classification = classifier.predict_thread_snapshot(self)
+        except Exception as ex:
+            logging.error(
+                f"ML classification failed for thread '{self.name}' "
+                f"(ID: {self.thread_id}, Address: {self.thread_address}) "
+                f"in javacore '{self.javacore.filename if self.javacore else 'unknown'}': {ex}"
+            )
+            self._ml_classification = ""
+
+    def get_classification(self):
+        if self._ml_classification is None:
+            self.classify()
+        return self._ml_classification
+        

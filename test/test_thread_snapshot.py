@@ -1,14 +1,16 @@
 #
-# Copyright IBM Corp. 2024 - 2024
+# Copyright IBM Corp. 2024 - 2026
 # SPDX-License-Identifier: Apache-2.0
 #
 
+import os
 import time
 import unittest
 from xml.dom.minidom import parseString
 
 from javacore_analyser.java_thread import Thread
 from javacore_analyser.javacore import Javacore
+from javacore_analyser.javacore_set import JavacoreSet
 from javacore_analyser.stack_trace import StackTrace
 from javacore_analyser.stack_trace_element import StackTraceElement
 from javacore_analyser.thread_snapshot import ThreadSnapshot
@@ -97,6 +99,7 @@ class TestThreadSnapshot(unittest.TestCase):
         self.snapshot.stack_trace.append(stack_trace_element)
         self.snapshot.name = "test name"
         self.snapshot.javacore = Javacore()
+        self.snapshot.javacore.javacore_set = JavacoreSet("") # mock JavacoreSet object to be able to reach the classifier
         self.snapshot.javacore.timestamp = time.time()
         snapshot_element = self.doc.createElement("snapshot")
         element = self.snapshot.get_xml(self.doc, snapshot_element)
@@ -142,3 +145,18 @@ class TestThreadSnapshot(unittest.TestCase):
         inc = self.snapshot.get_cpu_usage_inc()
         self.assertEqual(inc, 100)
 
+    @unittest.skip("Waiting for https://github.com/IBM/javacore-analyser/issues/300")
+    def test_get_classification(self):
+        javacores_path = os.getcwd() + os.sep + 'test' + os.sep + 'data' + os.sep + 'javacores'
+        javacore_set = JavacoreSet.create(javacores_path)
+        javacore_set.populate_snapshot_collections()
+        for thread in javacore_set.threads:
+            for snapshot in thread.thread_snapshots:
+                if thread.is_interesting:
+                    classification = snapshot.get_classification()
+                    self.assertNotEqual(classification, "", "Classification should not be empty")
+                    self.assertNotEqual(classification, None, "Classification should not be empty")
+                else:
+                    # boring thread
+                    self.assertEqual(snapshot.get_classification(), "", "Boring threads should have an empty classification")
+            
