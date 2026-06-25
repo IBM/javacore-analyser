@@ -92,6 +92,74 @@
                     No verbosegc logs were provided, so verbose GC data cannot be shown.
                 </xsl:otherwise>
             </xsl:choose>
+
+            <!-- Thread Classification Over Time chart – only shown when ML is enabled
+                 and at least two javacores are present so there is a time dimension. -->
+            <xsl:if test="//@use_ml='True' and //javacore_count &gt; 1">
+                <h4>Thread Classification Over Time</h4>
+                <a id="toggleclassificationdoc" href="javascript:expand_it(classificationdoc,toggleclassificationdoc)" class="expandit">
+                    What does this chart tell me?</a>
+                <div id="classificationdoc" style="display:none;">
+                    This chart shows how the number of thread snapshots belonging to each
+                    machine-learning classification category changes over time.
+                    The X axis represents the javacore generation time and the Y axis shows
+                    the number of thread snapshots with that classification in each javacore.
+                    Each line corresponds to one classification category.
+                </div>
+                <div class="chart-container" style="overflow-x:auto;">
+                    <canvas id="myChartThreadClassifications" height="200" width="1400"></canvas>
+                </div>
+                <!-- Hidden data table consumed by loadChartThreadClassifications() in wait2scripts.js.
+                     Row 0 = header (timestamp + one cell per category).
+                     Rows 1..N = one row per javacore: ISO timestamp + counts per category. -->
+                <div style="display:none;">
+                    <table id="thread_classifications_data_table">
+                        <thead>
+                            <tr>
+                                <th>timestamp</th>
+                                <!-- Emit one header cell per distinct classification label found across all javacores. -->
+                                <xsl:for-each select="doc/report_info/javacore_list/javacore[1]/javacore_classifications/classification_entry">
+                                    <th><xsl:value-of select="@value"/></th>
+                                </xsl:for-each>
+                                <!-- Pick up any additional categories that may appear only in later javacores. -->
+                                <xsl:for-each select="doc/report_info/javacore_list/javacore[position() &gt; 1]/javacore_classifications/classification_entry[not(@value = //javacore_list/javacore[1]/javacore_classifications/classification_entry/@value)]">
+                                    <th><xsl:value-of select="@value"/></th>
+                                </xsl:for-each>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <xsl:for-each select="doc/report_info/javacore_list/javacore">
+                                <xsl:variable name="jc" select="."/>
+                                <tr>
+                                    <td><xsl:value-of select="javacore_file_time_stamp"/></td>
+                                    <!-- For every category known from the first javacore, output the count (0 if absent). -->
+                                    <xsl:for-each select="//javacore_list/javacore[1]/javacore_classifications/classification_entry">
+                                        <xsl:variable name="cat" select="@value"/>
+                                        <xsl:variable name="entry" select="$jc/javacore_classifications/classification_entry[@value=$cat]"/>
+                                        <td>
+                                            <xsl:choose>
+                                                <xsl:when test="$entry"><xsl:value-of select="$entry/@count"/></xsl:when>
+                                                <xsl:otherwise>0</xsl:otherwise>
+                                            </xsl:choose>
+                                        </td>
+                                    </xsl:for-each>
+                                    <!-- Extra categories that first appeared after javacore 1. -->
+                                    <xsl:for-each select="//javacore_list/javacore[position() &gt; 1]/javacore_classifications/classification_entry[not(@value = //javacore_list/javacore[1]/javacore_classifications/classification_entry/@value)]">
+                                        <xsl:variable name="cat" select="@value"/>
+                                        <xsl:variable name="entry" select="$jc/javacore_classifications/classification_entry[@value=$cat]"/>
+                                        <td>
+                                            <xsl:choose>
+                                                <xsl:when test="$entry"><xsl:value-of select="$entry/@count"/></xsl:when>
+                                                <xsl:otherwise>0</xsl:otherwise>
+                                            </xsl:choose>
+                                        </td>
+                                    </xsl:for-each>
+                                </tr>
+                            </xsl:for-each>
+                        </tbody>
+                    </table>
+                </div>
+            </xsl:if>
         </div>
     </xsl:template>
 
