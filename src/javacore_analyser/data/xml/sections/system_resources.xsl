@@ -7,6 +7,12 @@
 
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
+    <!-- Key used for Muenchian grouping to find distinct classification labels
+         across all javacore_classifications/classification_entry nodes. -->
+    <xsl:key name="classification-by-value"
+             match="doc/report_info/javacore_list/javacore/javacore_classifications/classification_entry"
+             use="@value"/>
+
     <xsl:template name="system_resources">
         <h3 id="system_resource_utilization_h3"><a id="toggleresourcesutil" href="javascript:expand_it(systemresources,toggleresourcesutil)" class="expandit">System resources utilization</a></h3>
         <div id="systemresources"  style="display:none;">
@@ -117,12 +123,9 @@
                         <thead>
                             <tr>
                                 <th>timestamp</th>
-                                <!-- Emit one header cell per distinct classification label found across all javacores. -->
-                                <xsl:for-each select="doc/report_info/javacore_list/javacore[1]/javacore_classifications/classification_entry">
-                                    <th><xsl:value-of select="@value"/></th>
-                                </xsl:for-each>
-                                <!-- Pick up any additional categories that may appear only in later javacores. -->
-                                <xsl:for-each select="doc/report_info/javacore_list/javacore[position() &gt; 1]/javacore_classifications/classification_entry[not(@value = //javacore_list/javacore[1]/javacore_classifications/classification_entry/@value)]">
+                                <!-- Muenchian grouping: emit exactly one header cell per distinct
+                                     classification label found across ALL javacore nodes. -->
+                                <xsl:for-each select="doc/report_info/javacore_list/javacore/javacore_classifications/classification_entry[generate-id() = generate-id(key('classification-by-value', @value)[1])]">
                                     <th><xsl:value-of select="@value"/></th>
                                 </xsl:for-each>
                             </tr>
@@ -132,19 +135,8 @@
                                 <xsl:variable name="jc" select="."/>
                                 <tr>
                                     <td><xsl:value-of select="javacore_file_time_stamp"/></td>
-                                    <!-- For every category known from the first javacore, output the count (0 if absent). -->
-                                    <xsl:for-each select="//javacore_list/javacore[1]/javacore_classifications/classification_entry">
-                                        <xsl:variable name="cat" select="@value"/>
-                                        <xsl:variable name="entry" select="$jc/javacore_classifications/classification_entry[@value=$cat]"/>
-                                        <td>
-                                            <xsl:choose>
-                                                <xsl:when test="$entry"><xsl:value-of select="$entry/@count"/></xsl:when>
-                                                <xsl:otherwise>0</xsl:otherwise>
-                                            </xsl:choose>
-                                        </td>
-                                    </xsl:for-each>
-                                    <!-- Extra categories that first appeared after javacore 1. -->
-                                    <xsl:for-each select="//javacore_list/javacore[position() &gt; 1]/javacore_classifications/classification_entry[not(@value = //javacore_list/javacore[1]/javacore_classifications/classification_entry/@value)]">
+                                    <!-- One cell per distinct category; look up this javacore's count (0 if absent). -->
+                                    <xsl:for-each select="//javacore_list/javacore/javacore_classifications/classification_entry[generate-id() = generate-id(key('classification-by-value', @value)[1])]">
                                         <xsl:variable name="cat" select="@value"/>
                                         <xsl:variable name="entry" select="$jc/javacore_classifications/classification_entry[@value=$cat]"/>
                                         <td>
