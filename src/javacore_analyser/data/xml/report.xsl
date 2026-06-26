@@ -31,7 +31,7 @@
             <body id="doc_body">
                 <xsl:call-template name="body_content"/>
             </body>
-            <script>loadChartGC();loadChartCPUUsage();</script>
+            <script>loadChartGC();loadChartCPUUsage();loadChartThreadClassifications();</script>
             <script type="text/javascript" src="data/expand.js"> _ <!-- underscore character is required to prevent converting to <script /> which does not work --> </script>
         </html>
         <xsl:call-template name="expand_it"/>

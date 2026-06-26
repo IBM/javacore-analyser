@@ -534,3 +534,133 @@ const loadChart = function () {
     },
   });
 };
+
+// Distinct colours for up to 13 classification categories (12 named + unknown).
+const CLASSIFICATION_COLOURS = [
+  'rgba(255,99,132,1)',
+  'rgba(54,162,235,1)',
+  'rgba(75,192,192,1)',
+  'rgba(255,159,64,1)',
+  'rgba(153,102,255,1)',
+  'rgba(46,139,87,1)',
+  'rgba(255,205,86,1)',
+  'rgba(205,92,92,1)',
+  'rgba(0,128,128,1)',
+  'rgba(128,0,128,1)',
+  'rgba(0,0,205,1)',
+  'rgba(210,105,30,1)',
+  'rgba(128,128,128,1)',
+];
+
+/**
+ * loadChartThreadClassifications – reads per-javacore classification counts
+ * from the hidden table emitted by system_resources.xsl and renders a
+ * multi-line Chart.js chart: X axis = javacore timestamp, Y axis = number of
+ * thread snapshots, one line per classification category.
+ */
+const loadChartThreadClassifications = function() {
+
+  const ctx = document.getElementById('myChartThreadClassifications');
+  if (!ctx) return;
+
+  // The hidden data table has one row per javacore; each row contains:
+  //   cells[0] = ISO timestamp, cells[1..] = counts for each category
+  // The header row (index 0) contains category names in cells[1..].
+  const dataTable = document.getElementById('thread_classifications_data_table');
+  if (!dataTable || dataTable.rows.length < 2) {
+    console.log('thread_classifications_data_table not found or empty');
+    return;
+  }
+
+  const headerRow = dataTable.rows[0];
+  // Collect category names from header columns (skip column 0 = "timestamp")
+  const categories = [];
+  for (let c = 1; c < headerRow.cells.length; c++) {
+    categories.push(headerRow.cells[c].innerHTML.trim());
+  }
+
+  if (categories.length === 0) {
+    console.log('No classification categories found in data table');
+    return;
+  }
+
+  const labels = [];
+  // One array of counts per category
+  const seriesData = categories.map(() => []);
+
+  for (let r = 1; r < dataTable.rows.length; r++) {
+    const row = dataTable.rows[r];
+    labels.push(new Date(row.cells[0].innerHTML.trim()).valueOf());
+    for (let c = 0; c < categories.length; c++) {
+      seriesData[c].push(Number(row.cells[c + 1].innerHTML.trim()) || 0);
+    }
+  }
+
+  const datasets = categories.map(function(cat, idx) {
+    const colour = CLASSIFICATION_COLOURS[idx % CLASSIFICATION_COLOURS.length];
+    return {
+      label: cat,
+      data: seriesData[idx],
+      borderColor: colour,
+      backgroundColor: colour.replace(',1)', ',0.15)'),
+      borderWidth: 2,
+      pointRadius: 3,
+      fill: false,
+    };
+  });
+
+  new Chart(ctx, {
+    type: 'line',
+    responsive: true,
+    data: {
+      labels: labels,
+      datasets: datasets,
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: 'Number of threads'
+          }
+        },
+        x: {
+          type: 'time',
+          time: {
+            displayFormats: {
+              millisecond: 'HH:mm:ss.SSS',
+              second: 'HH:mm:ss',
+              minute: 'HH:mm',
+              hour: 'MMM dd HH:mm',
+              day: 'MMM dd',
+              week: 'MMM dd',
+              month: 'MMM yyyy',
+              quarter: 'MMM yyyy',
+              year: 'yyyy'
+            }
+          }
+        }
+      },
+      plugins: {
+        zoom: {
+          zoom: {
+            wheel: { enabled: true },
+            pinch: { enabled: true },
+            mode: 'xy',
+          },
+          pan: {
+            enabled: true,
+            mode: 'xy',
+          },
+          limits: {
+            x: { min: 'original', max: 'original' },
+            y: { min: 'original', max: 'original' }
+          }
+        }
+      }
+    },
+  });
+
+  console.log('Thread classifications chart created successfully');
+};
