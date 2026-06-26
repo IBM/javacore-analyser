@@ -45,6 +45,8 @@ dependencies = [
     "importlib-resources",
     "tqdm",
     "haralyzer",
+    "numpy",
+    "xgboost",
 ]
 
 [project.optional-dependencies]
