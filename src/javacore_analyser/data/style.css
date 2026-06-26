@@ -255,3 +255,26 @@ div.margined {
     background-color: #ffcccc;
     font-weight: bold;
 }
+
+/* ML classification badge colours */
+.ml-badge {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 0.85em;
+    white-space: nowrap;
+}
+
+.ml-computing        { background-color: #cce5ff; color: #004085; }
+.ml-display-graphics { background-color: #d4edda; color: #155724; }
+.ml-java-internal    { background-color: #e2d9f3; color: #4a235a; }
+.ml-liberty-internal { background-color: #d6d6f5; color: #2c2c7a; }
+.ml-read-database    { background-color: #fff3cd; color: #856404; }
+.ml-read-disk        { background-color: #fde8c8; color: #7d4200; }
+.ml-read-network     { background-color: #fdd9b5; color: #6d3200; }
+.ml-save-disk        { background-color: #f8d7da; color: #842029; }
+.ml-wait-condition   { background-color: #f5c6cb; color: #721c24; }
+.ml-wait-connection  { background-color: #f1b0b7; color: #6f1117; }
+.ml-write-database   { background-color: #d1ecf1; color: #0c5460; }
+.ml-write-network    { background-color: #bee5eb; color: #0a4650; }
+.ml-unknown          { background-color: #e9ecef; color: #495057; }
