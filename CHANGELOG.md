@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.0.3.1] - 2026-06-26
+* #284 display ml classification of threads by @PiotrAniola82 in https://github.com/IBM/javacore-analyser/pull/301
+* #295 Display verbosegc chart when there is long timespan by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/296
+* #305 profile predict thread snapshot by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/307
+
+
+[3.0.3.1]: https://github.com/IBM/javacore-analyser/compare/3.0.2...3.0.3.1
+
 ## [3.0.2] - 2026-06-18
 * #132 Add timestamps to thread snapshots in All Threads section by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/297
 * #298 Add support for chart zoom functionality by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/299
