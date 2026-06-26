@@ -73,6 +73,12 @@ class TestJavacoreClassifier(unittest.TestCase):
         self.assertIsInstance(result, str)
         self.assertGreater(len(result), 0)
 
+    def test_predict_returns_title_case_label(self):
+        """predict() should return a Title Case classification label (Fixes #308)."""
+        result = self._predict()
+        # Each word of the label should start with an uppercase letter
+        self.assertEqual(result, result.title(), f"Expected Title Case label, got: {result!r}")
+
     # ------------------------------------------------------------------
     # Performance test  (Fixes #305)
     # ------------------------------------------------------------------
