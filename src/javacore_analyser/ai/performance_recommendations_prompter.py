@@ -53,7 +53,10 @@ class PerformanceRecommendationsPrompter(Prompter):
         
         # Get shutdown status
         shutdown_status: str = self._get_shutdown_status()
-        
+
+        # Get permanently blocked threads
+        permanently_blocked_threads: str = self._get_permanently_blocked_threads()
+
         # Load the prompt template from file
         template: str = self._load_prompt_template('performance_recommendations_prompt.txt')
         
@@ -67,7 +70,8 @@ class PerformanceRecommendationsPrompter(Prompter):
             gc_cpu_usage=gc_cpu_usage,
             gc_pause_times=gc_pause_times,
             main_thread_stack=main_thread_stack,
-            shutdown_status=shutdown_status
+            shutdown_status=shutdown_status,
+            permanently_blocked_threads=permanently_blocked_threads
         )
 
         return prompt
@@ -334,6 +338,30 @@ class PerformanceRecommendationsPrompter(Prompter):
             stack_lines.append(f"  at {element.get_line().strip() if element.get_line() else 'Unknown'}")
         
         return "\n".join(stack_lines) if stack_lines else "Empty stack trace"
+
+    def _get_permanently_blocked_threads(self):
+        """
+        Collects threads that are in blocked state (B) across all their snapshots,
+        indicating they never made progress and may be deadlocked or permanently starved.
+
+        Returns:
+            str: Formatted list of permanently blocked threads, or a message if none found
+        """
+        if not self.javacore_set.threads or not self.javacore_set.threads.snapshot_collections:
+            return "No thread data available"
+
+        from javacore_analyser.tips import PermanentlyBlockedThreadsTip
+        min_snapshots = PermanentlyBlockedThreadsTip.MIN_SNAPSHOTS
+
+        stuck = []
+        for thread in self.javacore_set.threads.snapshot_collections:
+            snapshots = thread.thread_snapshots
+            if len(snapshots) < min_snapshots:
+                continue
+            if all(s.state == "B" for s in snapshots):
+                stuck.append(f"{thread.name} (ID: {thread.id}): blocked in all {len(snapshots)} snapshots")
+
+        return "\n".join(stuck) if stuck else "No permanently blocked threads detected"
 
     def _get_shutdown_status(self):
         """
