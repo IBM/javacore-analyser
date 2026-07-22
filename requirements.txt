@@ -7,7 +7,6 @@ flask # WSGI server for development the code
 tqdm
 haralyzer
 ollama
-pandas
 markdown
 
 #The requirements below are needed for WatsonX LLM integration
