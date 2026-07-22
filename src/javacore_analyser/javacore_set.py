@@ -603,6 +603,23 @@ class JavacoreSet:
                 javacore_load_node = self.doc.createElement("javacore_load")
                 javacore_node.appendChild(javacore_load_node)
                 javacore_load_node.appendChild(self.doc.createTextNode(str(jc.get_load())))
+                # When ML classification is enabled, count how many thread snapshots in
+                # this javacore received each classification label.  The counts are
+                # stored as <classification_entry value="…" count="…"/> children so the
+                # thread-classification-over-time chart can read them per javacore.
+                if self.use_ml:
+                    classification_counts = {}
+                    for snapshot in jc.snapshots:
+                        label = snapshot.get_classification()
+                        if label:
+                            classification_counts[label] = classification_counts.get(label, 0) + 1
+                    jc_classifications_node = self.doc.createElement("javacore_classifications")
+                    javacore_node.appendChild(jc_classifications_node)
+                    for label, count in classification_counts.items():
+                        entry_node = self.doc.createElement("classification_entry")
+                        entry_node.setAttribute("value", label)
+                        entry_node.setAttribute("count", str(count))
+                        jc_classifications_node.appendChild(entry_node)
 
         verbose_gc_list_node = self.doc.createElement("verbose_gc_list")
         report_info_node.appendChild(verbose_gc_list_node)
