@@ -14,7 +14,7 @@ markdown
 ibm-watsonx-ai
 
 #The requirements below are needed for huggingface LLM. See https://huggingface.co/ibm-granite/granite-4.0-micro
-torch 
+torch>=2.13.0 #Enforcing version due to security vulnerability: https://github.com/IBM/javacore-analyser/actions/runs/29751461464/job/88384386377
 transformers
 
 #The requirements below are needed for building the package
@@ -25,3 +25,6 @@ twine>=6.2.0
 xgboost
 pandas
 scikit-learn
+
+#Fixing security vulnerabilities
+idna>=3.15 #https://github.com/IBM/javacore-analyser/actions/runs/29751461464/job/88384386377
