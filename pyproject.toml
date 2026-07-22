@@ -46,6 +46,8 @@ dependencies = [
     "tqdm",
     "haralyzer",
     "idna>=3.15",  # security floor: PYSEC-2026-215
+    "numpy",
+    "xgboost",
 ]
 
 [project.optional-dependencies]

@@ -351,3 +351,98 @@ class TestTips(unittest.TestCase):
         self.assertIn("System.exit", result[0], "Tip should mention System.exit")
         self.assertIn("Worker-Thread-1", result[0], "Tip should mention the worker thread name")
         self.assertIn("test_javacore.txt", result[0], "Tip should mention the javacore filename")
+
+    def _make_thread(self, name, thread_id, states):
+        """Helper: build a Thread with one ThreadSnapshot per state string."""
+        thread = Thread()
+        thread.name = name
+        thread.id = thread_id
+        for state in states:
+            s = ThreadSnapshot()
+            s.state = state
+            s.cpu_usage = 0
+            thread.thread_snapshots.append(s)
+        return thread
+
+    # ------------------------------------------------------------------
+    # PermanentlyBlockedThreadsTip
+    # ------------------------------------------------------------------
+
+    def test_PermanentlyBlockedThreadsTip_no_threads(self):
+        """Returns empty list when javacore_set has no threads."""
+        javacore_set = JavacoreSet("")
+        result = tips.PermanentlyBlockedThreadsTip.generate(javacore_set)
+        self.assertEqual([], result, "Should return empty list when no threads present")
+
+    def test_PermanentlyBlockedThreadsTip_no_blocked_threads(self):
+        """Returns empty list when all threads are running (state R)."""
+        javacore_set = JavacoreSet("")
+        javacore_set.threads.snapshot_collections.append(
+            self._make_thread("worker-1", "0x1", ["R", "R", "R"])
+        )
+        javacore_set.threads.snapshot_collections.append(
+            self._make_thread("worker-2", "0x2", ["R", "CW", "R"])
+        )
+        result = tips.PermanentlyBlockedThreadsTip.generate(javacore_set)
+        self.assertEqual([], result, "Should return empty list when no thread is permanently blocked")
+
+    def test_PermanentlyBlockedThreadsTip_one_blocked_thread(self):
+        """Returns one warning when exactly one thread is blocked in all snapshots."""
+        javacore_set = JavacoreSet("")
+        javacore_set.threads.snapshot_collections.append(
+            self._make_thread("stuck-thread", "0x10", ["B", "B", "B"])
+        )
+        javacore_set.threads.snapshot_collections.append(
+            self._make_thread("healthy-thread", "0x11", ["R", "R", "R"])
+        )
+        result = tips.PermanentlyBlockedThreadsTip.generate(javacore_set)
+        self.assertEqual(1, len(result), "Should return one warning for one permanently blocked thread")
+        self.assertIn("[WARNING]", result[0], "Tip should contain WARNING")
+        self.assertIn("stuck-thread", result[0], "Tip should contain the thread name")
+        self.assertIn("3", result[0], "Tip should mention the number of snapshots")
+
+    def test_PermanentlyBlockedThreadsTip_partially_blocked_thread(self):
+        """Returns empty list when a thread is blocked in some but not all snapshots."""
+        javacore_set = JavacoreSet("")
+        javacore_set.threads.snapshot_collections.append(
+            self._make_thread("sometimes-blocked", "0x20", ["B", "B", "R"])
+        )
+        result = tips.PermanentlyBlockedThreadsTip.generate(javacore_set)
+        self.assertEqual([], result, "Should not flag a thread that is only sometimes blocked")
+
+    def test_PermanentlyBlockedThreadsTip_below_min_snapshots(self):
+        """Returns empty list when thread appears in fewer snapshots than MIN_SNAPSHOTS."""
+        javacore_set = JavacoreSet("")
+        min_snaps = tips.PermanentlyBlockedThreadsTip.MIN_SNAPSHOTS
+        # Build a thread with one fewer snapshot than the minimum
+        states = ["B"] * (min_snaps - 1)
+        javacore_set.threads.snapshot_collections.append(
+            self._make_thread("short-lived-blocked", "0x30", states)
+        )
+        result = tips.PermanentlyBlockedThreadsTip.generate(javacore_set)
+        self.assertEqual([], result,
+                         "Should not flag a thread with fewer snapshots than MIN_SNAPSHOTS")
+
+    def test_PermanentlyBlockedThreadsTip_multiple_blocked_threads(self):
+        """Returns one warning per permanently blocked thread."""
+        javacore_set = JavacoreSet("")
+        for i in range(3):
+            javacore_set.threads.snapshot_collections.append(
+                self._make_thread(f"stuck-{i}", f"0x{i}", ["B", "B", "B", "B"])
+            )
+        result = tips.PermanentlyBlockedThreadsTip.generate(javacore_set)
+        self.assertEqual(3, len(result), "Should return one warning per permanently blocked thread")
+        for tip_text in result:
+            self.assertIn("[WARNING]", tip_text)
+
+    def test_PermanentlyBlockedThreadsTip_capped_at_max(self):
+        """Never returns more warnings than MAX_TIPS."""
+        javacore_set = JavacoreSet("")
+        max_tips = tips.PermanentlyBlockedThreadsTip.MAX_TIPS
+        for i in range(max_tips + 3):
+            javacore_set.threads.snapshot_collections.append(
+                self._make_thread(f"stuck-{i}", f"0x{i}", ["B", "B", "B"])
+            )
+        result = tips.PermanentlyBlockedThreadsTip.generate(javacore_set)
+        self.assertEqual(max_tips, len(result),
+                         f"Should cap output at MAX_TIPS ({max_tips})")
