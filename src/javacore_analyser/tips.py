@@ -10,7 +10,7 @@ import logging
 # List of the tips on which run the tool
 TIPS_LIST = ["DifferentIssuesTip", "ExcludedJavacoresTip", "InvalidAccumulatedCpuTimeTip", "TooFewJavacoresTip",
              "OOMEGenerationTip", "BlockingThreadsTip", "HighCpuUsageTip", "LongGcPauseTip",
-             "SystemExitInMainThreadTip"]
+             "SystemExitInMainThreadTip", "PermanentlyBlockedThreadsTip"]
 
 
 class TestTip:
@@ -264,6 +264,40 @@ class LongGcPauseTip:
             return [msg]
         
         return []  # No long pauses detected
+
+
+class PermanentlyBlockedThreadsTip:
+    # Detects threads that are in blocked state (B) across every javacore snapshot.
+    # A thread blocked 100% of the time never makes progress and is a strong indicator
+    # of a deadlock or permanent starvation.
+
+    # Minimum number of javacores a thread must appear in before it is considered
+    MIN_SNAPSHOTS = 3
+
+    PERMANENTLY_BLOCKED_TEXT = (
+        """[WARNING] Thread "{0}" is in blocked state (B) in all {1} javacores it appears in. """
+        """This thread never made progress and may be deadlocked or permanently starved. """
+        """Check what lock it is waiting for."""
+    )
+
+    MAX_TIPS = 5
+
+    @staticmethod
+    def generate(javacore_set):
+        result = []
+        for thread in javacore_set.threads.snapshot_collections:
+            snapshots = thread.thread_snapshots
+            if len(snapshots) < PermanentlyBlockedThreadsTip.MIN_SNAPSHOTS:
+                continue
+            if all(s.state == "B" for s in snapshots):
+                result.append(
+                    PermanentlyBlockedThreadsTip.PERMANENTLY_BLOCKED_TEXT.format(
+                        thread.name, len(snapshots)
+                    )
+                )
+                if len(result) >= PermanentlyBlockedThreadsTip.MAX_TIPS:
+                    break
+        return result
 
 
 class SystemExitInMainThreadTip:

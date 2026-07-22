@@ -30,6 +30,9 @@ Main Thread Stack Trace:
 Server Shutdown Status:
 {shutdown_status}
 
+Permanently Blocked Threads (blocked in every snapshot, never made progress):
+{permanently_blocked_threads}
+
 Task:
 Identify concrete performance bottlenecks visible in the provided data and provide up to 5 specific
 recommendations to improve performance.
@@ -45,6 +48,10 @@ Requirements:
 - If the Server Shutdown Status indicates the application is shutting down (System.exit detected),
   this MUST be flagged as CRITICAL priority as it indicates the JVM is terminating.
 - Do NOT report on Server Shutdown Status if it indicates "ok" or normal operation.
+- If any permanently blocked threads are listed, flag this as a HIGH or CRITICAL issue indicating
+  a likely deadlock or permanent starvation; recommend investigating the lock each thread is
+  waiting for and cross-referencing with the top blocking threads.
+- Do NOT report on permanently blocked threads if none are listed.
 - If the provided data does not support any concrete recommendation, reply exactly:
   No evidence-based performance recommendations can be made from the provided data.
 - Display the recommendations in a clear, concise format.
