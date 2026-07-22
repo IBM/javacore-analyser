@@ -45,6 +45,11 @@
                                     <th>Memory allocated since last GC (MB)</th>
                                     <th>Java stack depth</th>
                                     <th>Status</th>
+                                    <xsl:choose>
+                                        <xsl:when test="//@use_ml='True'">
+                                            <th>Classification</th>
+                                        </xsl:when>
+                                    </xsl:choose>
                                 </tr>
                             </thead>
                             <tbody>
@@ -154,10 +159,35 @@
                                             </td>
                                         </xsl:when>
                                         <xsl:otherwise>
-                                            <td><xsl:value-of select="state"/></td>
-                                        </xsl:otherwise>
-                                    </xsl:choose>
-                                </tr>
+                                             <td><xsl:value-of select="state"/></td>
+                                         </xsl:otherwise>
+                                     </xsl:choose>
+                                     <xsl:choose>
+                                         <xsl:when test="//@use_ml='True'">
+                                             <td>
+                                                 <xsl:variable name="cls" select="ml_classification"/>
+                                                 <span>
+                                                     <xsl:attribute name="class">ml-badge <xsl:choose>
+                                                         <xsl:when test="$cls='Computing'">ml-computing</xsl:when>
+                                                         <xsl:when test="$cls='Display Graphics'">ml-display-graphics</xsl:when>
+                                                         <xsl:when test="$cls='Java Internal'">ml-java-internal</xsl:when>
+                                                         <xsl:when test="$cls='Liberty Internal'">ml-liberty-internal</xsl:when>
+                                                         <xsl:when test="$cls='Read From Database'">ml-read-database</xsl:when>
+                                                         <xsl:when test="$cls='Read From Disk'">ml-read-disk</xsl:when>
+                                                         <xsl:when test="$cls='Read From Network'">ml-read-network</xsl:when>
+                                                         <xsl:when test="$cls='Save To Disk'">ml-save-disk</xsl:when>
+                                                         <xsl:when test="$cls='Wait For Condition'">ml-wait-condition</xsl:when>
+                                                         <xsl:when test="$cls='Wait For Connection'">ml-wait-connection</xsl:when>
+                                                         <xsl:when test="$cls='Write To Database'">ml-write-database</xsl:when>
+                                                         <xsl:when test="$cls='Write To Network'">ml-write-network</xsl:when>
+                                                         <xsl:otherwise>ml-unknown</xsl:otherwise>
+                                                     </xsl:choose></xsl:attribute>
+                                                     <xsl:value-of select="$cls"/>
+                                                 </span>
+                                             </td>
+                                         </xsl:when>
+                                     </xsl:choose>
+                                 </tr>
                             </xsl:for-each>
                             </tbody>
                         </table>
