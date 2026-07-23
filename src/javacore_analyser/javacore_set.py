@@ -11,10 +11,6 @@ import warnings
 
 from javacore_analyser.javacore_analyzer import JavacoreAnalyzer
 
-# Re-export FileResolver and the module-level helper so any code that imported
-# them directly from javacore_set keeps working.
-from javacore_analyser.file_resolver import FileResolver
-
 
 class JavacoreSet(JavacoreAnalyzer):
     """Backward-compatible alias for JavacoreAnalyzer. This is currently used in tests only.
