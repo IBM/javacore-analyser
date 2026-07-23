@@ -20,6 +20,7 @@ import py7zr
 from importlib_resources.abc import Traversable
 
 from javacore_analyser import common_utils
+from javacore_analyser.javacore_analyzer import JavacoreAnalyzer
 from javacore_analyser.javacore_set import JavacoreSet
 from javacore_analyser.properties import Properties
 
