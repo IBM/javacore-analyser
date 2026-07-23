@@ -14,7 +14,6 @@ from javacore_analyser.constants import (
 )
 from javacore_analyser.har_file import HarFile
 from javacore_analyser.jvm_config_parser import JvmConfigParser
-from javacore_analyser.verbose_gc import VerboseGcParser
 
 
 class FileDiscovery:
