@@ -45,9 +45,8 @@ def _create_xml_xsl_for_collection(tmp_dir, templates_dir, xml_xsl_filename, col
             if element.is_interesting() or not Properties.get_instance().skip_boring():
                 file = os.path.join(tmp_dir, filename)
                 logging.debug("Writing file " + file)
-                f = open(file, "w")
-                f.write(file_content.format(id=element_id))
-                f.close()
+                with open(file, "w") as f:
+                    f.write(file_content.format(id=element_id))
             else:
                 logging.debug("Skipping boring file: " + filename)
 
@@ -256,6 +255,5 @@ class HtmlReportGenerator:
                     filename = filename[1:]
                 file = os.path.join(tmp_dir, filename)
                 logging.debug("Writing file " + file)
-                f = open(file, "w")
-                f.write(file_content.format(id=element_id))
-                f.close()
+                with open(file, "w") as f:
+                    f.write(file_content.format(id=element_id))
