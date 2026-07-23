@@ -13,8 +13,7 @@ from javacore_analyser.javacore_analyzer import JavacoreAnalyzer
 
 # Re-export FileResolver and the module-level helper so any code that imported
 # them directly from javacore_set keeps working.
-from javacore_analyser.file_resolver import FileResolver  # noqa: F401
-from javacore_analyser.html_report_generator import _create_xml_xsl_for_collection  # noqa: F401
+from javacore_analyser.file_resolver import FileResolver
 
 
 class JavacoreSet(JavacoreAnalyzer):
