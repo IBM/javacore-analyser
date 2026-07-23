@@ -3,41 +3,43 @@
 # SPDX-License-Identifier: Apache-2.0
 */
 
+// 'use strict' opts this file into strict mode: undeclared variables, duplicate
+// parameter names, and other silent JavaScript mistakes become hard errors.
+'use strict';
+
 $(function() {
 
   // the input field
-  var $input = $("input[type='search']"),
-    // search button
-    $searchBtn = $("button[data-search='search']"),
-    // clear button
-    $clearBtn = $("button[data-search='clear']"),
-    // prev button
-    $prevBtn = $("button[data-search='prev']"),
-    // next button
-    $nextBtn = $("button[data-search='next']"),
-    // the context where to search
-    $content = $(".content"),
-    // jQuery object to save <mark> elements
-    $results,
-    // the class that will be appended to the current
-    // focused element
-    currentClass = "current",
-    // top offset for the jump (the search bar)
-    offsetTop = 50,
-    // the current index of the focused element
-    currentIndex = 0;
+  const $input = $("input[type='search']");
+  // search button
+  const $searchBtn = $("button[data-search='search']");
+  // clear button
+  const $clearBtn = $("button[data-search='clear']");
+  // prev button
+  const $prevBtn = $("button[data-search='prev']");
+  // next button
+  const $nextBtn = $("button[data-search='next']");
+  // the context where to search
+  const $content = $(".content");
+  // jQuery object to save <mark> elements
+  let $results;
+  // the class that will be appended to the current focused element
+  const currentClass = "current";
+  // top offset for the jump (the search bar)
+  const offsetTop = 50;
+  // the current index of the focused element
+  let currentIndex = 0;
 
   /**
    * Jumps to the element matching the currentIndex
    */
   function jumpTo() {
     if ($results.length) {
-      var position,
-        $current = $results.eq(currentIndex);
+      const $current = $results.eq(currentIndex);
       $results.removeClass(currentClass);
       if ($current.length) {
         $current.addClass(currentClass);
-        position = $current.offset().top - offsetTop;
+        const position = $current.offset().top - offsetTop;
         window.scrollTo(0, position - 100);
       }
     }
@@ -45,60 +47,58 @@ $(function() {
 
   function search(searchTerm) {
     console.log("searching for " + searchTerm);
-    rootNode = document.getElementById('doc_body');
+    const rootNode = document.getElementById('doc_body');
     searchInNode(rootNode, searchTerm);
   }
 
-    function processChild(child) {
-        try {
-            if (isDomNode(child) && child.classList.contains('toggle_expand')) {
-                for (i = 0; i < child.childNodes.length; ++i) {
-                    grandchild = child.childNodes[i];
-                    if (isDomNode(grandchild) && grandchild.text == '[+] Expand') {
-                        grandchild.text = '[-] Collapse';
-                    }
-                }
-            }
-        } catch(err) {
-            console.log(err);
+  function processChild(child) {
+    try {
+      if (isDomNode(child) && child.classList.contains('toggle_expand')) {
+        for (let i = 0; i < child.childNodes.length; ++i) {
+          const grandchild = child.childNodes[i];
+          if (isDomNode(grandchild) && grandchild.text === '[+] Expand') {
+            grandchild.text = '[-] Collapse';
+          }
         }
+      }
+    } catch (err) {
+      console.log(err);
     }
+  }
 
-    function searchInNode(node, searchTerm) {
-        if (!isDomNode(node)) return;
-        if (node.textContent.toUpperCase().match(searchTerm.toUpperCase())) {
-            // expand the node here
-            if (!node.classList.contains('show-all')) {
-                node.classList.add('show-all');
-                for (i = 0; i < node.childNodes.length; ++i) {
-                    child = node.childNodes[i];
-                    processChild(child);
-                }
-            }
-            if (node.getAttribute('style') && node.style.display == "none") {
-                node.style.display = "";
-            }
+  function searchInNode(node, searchTerm) {
+    if (!isDomNode(node)) return;
+    if (node.textContent.toUpperCase().match(searchTerm.toUpperCase())) {
+      // expand the node here
+      if (!node.classList.contains('show-all')) {
+        node.classList.add('show-all');
+        for (let i = 0; i < node.childNodes.length; ++i) {
+          processChild(node.childNodes[i]);
         }
-        for (var i = 0; i < node.childNodes.length; ++i) {
-            searchInNode(node.childNodes[i], searchTerm);
-        }
+      }
+      if (node.getAttribute('style') && node.style.display === "none") {
+        node.style.display = "";
+      }
     }
+    for (let i = 0; i < node.childNodes.length; ++i) {
+      searchInNode(node.childNodes[i], searchTerm);
+    }
+  }
 
-    function isDomNode(node) {
-        return (
-            typeof HTMLElement === "object" ?
-                node instanceof HTMLElement :
-                node && typeof node === "object" && node !== null && node.nodeType === 1 && typeof node.nodeName==="string"
-        );
-    }
+  function isDomNode(node) {
+    return (
+      typeof HTMLElement === "object"
+        ? node instanceof HTMLElement
+        : node && typeof node === "object" && node !== null && node.nodeType === 1 && typeof node.nodeName === "string"
+    );
+  }
 
   /**
-   * Searches for the entered keyword in the
-   * specified context on input
+   * Searches for the entered keyword in the specified context on input
    */
   $input.on("keypress", function(event) {
     if (event.key === "Enter") {
-        $searchBtn.click();
+      $searchBtn.click();
     }
   });
 
@@ -122,7 +122,7 @@ $(function() {
   });
 
   function performSearch() {
-    searchTerm = document.getElementById('search-input').value
+    const searchTerm = document.getElementById('search-input').value;
     search(searchTerm);
     highlight(searchTerm);
   }

@@ -3,6 +3,8 @@
 # SPDX-License-Identifier: Apache-2.0
 */
 
+// 'use strict' opts this file into strict mode: undeclared variables, duplicate
+// parameter names, and other silent JavaScript mistakes become hard errors.
 'use strict';
 
 $(function(){
@@ -11,7 +13,14 @@ $(function(){
         theme: 'blue'
     });
 
+    // sys_info_table: all columns are display-only, sorting is disabled.
+    // The zebra/columns widgets and sort options are set further below.
     $('#sys_info_table').tablesorter({
+        widgets: ['zebra', 'columns'],
+        sortInitialOrder: 'desc',
+        usNumberFormat: false,
+        sortReset: true,
+        sortRestart: true,
         headers: {
             0: { sorter: false },
             1: { sorter: false },
@@ -57,14 +66,6 @@ $(function(){
     });
 
     $('#java_arguments_table').tablesorter({
-        widgets : ['zebra', 'columns'],
-        sortInitialOrder: 'desc',
-        usNumberFormat : false,
-        sortReset : true,
-        sortRestart : true
-    });
-
-    $('#sys_info_table').tablesorter({
         widgets : ['zebra', 'columns'],
         sortInitialOrder: 'desc',
         usNumberFormat : false,
@@ -132,7 +133,7 @@ $(function(){
     // Initialize any remaining tables with tablesorter class that haven't been initialized yet
     // This handles plugin-generated tables and other dynamic content
     $('table.tablesorter').each(function() {
-        var $table = $(this);
+        const $table = $(this);
         // Check if table is already initialized by checking for tablesorter-specific classes
         if (!$table.hasClass('tablesorter-blue') && !$table.hasClass('tablesorter-default')) {
             $table.tablesorter({
