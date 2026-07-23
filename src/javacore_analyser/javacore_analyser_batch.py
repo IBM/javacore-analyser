@@ -20,6 +20,7 @@ import py7zr
 from importlib_resources.abc import Traversable
 
 from javacore_analyser import common_utils
+from javacore_analyser.javacore_analyzer import JavacoreAnalyzer
 from javacore_analyser.javacore_set import JavacoreSet
 from javacore_analyser.properties import Properties
 
@@ -164,7 +165,7 @@ def generate_javecore_set_data(files):
                     extract_archive(file, javacores_temp_dir_name)  # Extract archive to temp dir
                 else:
                     shutil.copy2(file, javacores_temp_dir_name)
-        return JavacoreSet.process_javacores(javacores_temp_dir_name)
+        return JavacoreAnalyzer.process_javacores(javacores_temp_dir_name)
     finally:
         javacores_temp_dir.cleanup()
 
