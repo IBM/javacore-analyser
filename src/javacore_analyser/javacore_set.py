@@ -18,7 +18,7 @@ from javacore_analyser.html_report_generator import _create_xml_xsl_for_collecti
 
 
 class JavacoreSet(JavacoreAnalyzer):
-    """Backward-compatible alias for JavacoreAnalyzer.
+    """Backward-compatible alias for JavacoreAnalyzer. This is currently used in tests only.
 
     .. deprecated::
         Use :class:`~javacore_analyser.javacore_analyzer.JavacoreAnalyzer` instead.
