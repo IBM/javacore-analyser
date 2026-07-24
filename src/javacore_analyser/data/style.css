@@ -1,5 +1,5 @@
 /*
-Copyright IBM Corp. 2024 - 2025
+Copyright IBM Corp. 2024 - 2026
 SPDX-License-Identifier: Apache-2.0
 */
 
@@ -163,6 +163,13 @@ td {
   width: 100%;
   bottom: 0;
   background-color: black;
+}
+
+.search-counter {
+  color: white;
+  margin-left: 10px;
+  font-size: 14px;
+  vertical-align: middle;
 }
 
 .content {

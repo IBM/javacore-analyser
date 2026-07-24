@@ -1,5 +1,5 @@
 /*
-# Copyright IBM Corp. 2024 - 2024
+# Copyright IBM Corp. 2024 - 2026
 # SPDX-License-Identifier: Apache-2.0
 */
 
@@ -25,7 +25,20 @@ $(function() {
     // top offset for the jump (the search bar)
     offsetTop = 50,
     // the current index of the focused element
-    currentIndex = 0;
+    currentIndex = 0,
+    // the counter display element
+    $counter = $("#search-counter");
+
+  /**
+   * Updates the search counter display
+   */
+  function updateCounter() {
+    if ($results && $results.length > 0) {
+      $counter.text((currentIndex + 1) + "/" + $results.length);
+    } else {
+      $counter.text("");
+    }
+  }
 
   /**
    * Jumps to the element matching the currentIndex
@@ -40,6 +53,7 @@ $(function() {
         position = $current.offset().top - offsetTop;
         window.scrollTo(0, position - 100);
       }
+      updateCounter();
     }
   }
 
@@ -111,6 +125,7 @@ $(function() {
             $results = $content.find("mark");
             currentIndex = 0;
             jumpTo();
+            updateCounter();
           }
         });
       }
@@ -133,6 +148,7 @@ $(function() {
   $clearBtn.on("click", function() {
     $content.unmark();
     $input.val("").focus();
+    $counter.text("");
   });
 
   /**

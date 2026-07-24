@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
-# Copyright IBM Corp. 2024 - 2025
+# Copyright IBM Corp. 2024 - 2026
 # SPDX-License-Identifier: Apache-2.0
 -->
 
@@ -31,6 +31,7 @@
                     <button data-search="next">Next</button>
                     <button data-search="prev">Prev</button>
                     <button data-search="clear">✖</button>
+                    <span id="search-counter" class="search-counter"></span>
                 </div>
                 <div class="content">
                     <p class="right"><a href="../index.html"> Back to Main page </a></p>
