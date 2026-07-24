@@ -71,13 +71,33 @@ class TestJavacoreClassifier(unittest.TestCase):
         """predict() should return a valid result for an unrecognised thread state."""
         result = self._predict(state="UNKNOWN")
         self.assertIsInstance(result, str)
-        self.assertGreater(len(result), 0)
+        self.assertGreater(len(result), 0, "Classifier returned empty string for UNKNOWN state")
+
+    def test_predict_unknown_state(self):
+        """predict() should return a valid result for 'Unknown' thread state (case-sensitive)."""
+        result = self._predict(state="Unknown")
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0, "Classifier returned empty string for Unknown state")
 
     def test_predict_returns_title_case_label(self):
         """predict() should return a Title Case classification label (Fixes #308)."""
         result = self._predict()
         # Each word of the label should start with an uppercase letter
         self.assertEqual(result, result.title(), f"Expected Title Case label, got: {result!r}")
+
+    def test_classes_mapping_has_no_nan(self):
+        """The classes mapping should not contain NaN values that result in empty classifications."""
+        # Check that all class labels are valid strings
+        for idx, class_label in enumerate(self.classifier.classes):
+            self.assertIsNotNone(class_label, f"Class at index {idx} is None")
+            # Check if it's NaN (float NaN)
+            if isinstance(class_label, float):
+                import math
+                self.assertFalse(math.isnan(class_label), f"Class at index {idx} is NaN")
+            # Convert to string and check it's not empty
+            class_str = str(class_label)
+            self.assertNotEqual(class_str.lower(), "nan", f"Class at index {idx} is 'nan' string")
+            self.assertGreater(len(class_str), 0, f"Class at index {idx} converts to empty string")
 
     # ------------------------------------------------------------------
     # Performance test  (Fixes #305)
