@@ -13,6 +13,66 @@ TIPS_LIST = ["DifferentIssuesTip", "ExcludedJavacoresTip", "InvalidAccumulatedCp
              "SystemExitInMainThreadTip", "PermanentlyBlockedThreadsTip"]
 
 
+def _get_thread_link(javacore_set, thread_name):
+    """
+    Generate an HTML link to a thread's drill-down page if it exists.
+    
+    Args:
+        javacore_set: The JavacoreSet containing thread information
+        thread_name: The name of the thread to link to
+        
+    Returns:
+        str: HTML link if thread has drill-down page, plain thread name otherwise
+    """
+    from javacore_analyser.properties import Properties
+    
+    # Find the thread by name
+    for thread in javacore_set.threads.snapshot_collections:
+        if thread.name == thread_name:
+            # Check if thread has a drill-down page
+            # Use try-except to handle mock threads in tests that may not have all methods
+            try:
+                skip_boring = Properties.get_instance().skip_boring()
+            except (KeyError, AttributeError):
+                # If skip_boring is not configured, assume False (show all threads)
+                skip_boring = False
+            
+            try:
+                has_drill_down = thread.is_interesting() or not skip_boring
+            except (ZeroDivisionError, AttributeError):
+                # If is_interesting() fails (e.g., mock thread), assume no drill-down
+                has_drill_down = False
+            
+            if has_drill_down:
+                thread_hash = thread.get_hash()
+                return f'<a href="threads/thread_{thread_hash}.html">{thread_name}</a>'
+            break
+    
+    # Return plain text if no drill-down page exists
+    return thread_name
+
+
+def _get_javacore_link(javacore_set, javacore_filename):
+    """
+    Generate an HTML link to a javacore's drill-down page.
+    
+    Args:
+        javacore_set: The JavacoreSet containing javacore information
+        javacore_filename: The base filename of the javacore to link to
+        
+    Returns:
+        str: HTML link to javacore drill-down page
+    """
+    # Find the javacore by filename
+    for jc in javacore_set.javacores:
+        if jc.basefilename() == javacore_filename:
+            javacore_id = jc.get_id()
+            return f'<a href="javacores/{javacore_id}.html">{javacore_filename}</a>'
+    
+    # Return plain text if javacore not found
+    return javacore_filename
+
+
 class TestTip:
     # This is tip for testing purposes
 
@@ -25,10 +85,10 @@ class TestTip:
 class InvalidAccumulatedCpuTimeTip:
     # Usually the javacores should not have thread with accumulated CPU time < 0ms
 
-    ONE_BAD_THREAD_WARNING = '''[WARNING] The CPU usage data is invalid for thread \"{0}\". 
+    ONE_BAD_THREAD_WARNING = '''[WARNING] The CPU usage data is invalid for thread {0}.
                               Probably one or more javacore files are corrupted.'''
 
-    MANY_THREADS_WARNING = '''[WARNING] {0} threads have invalid accumulated CPU. 
+    MANY_THREADS_WARNING = '''[WARNING] {0} threads have invalid accumulated CPU.
                                 Probably one or more javacore files are corrupted.'''
 
     @staticmethod
@@ -39,8 +99,9 @@ class InvalidAccumulatedCpuTimeTip:
                 bad_thread.append(thread)
         if bad_thread:
             if len(bad_thread) == 1:
-                # only 1 bad thread, display it thread name
-                return [InvalidAccumulatedCpuTimeTip.ONE_BAD_THREAD_WARNING.format(bad_thread[0].name)]
+                # only 1 bad thread, display it thread name with link if available
+                thread_link = _get_thread_link(javacore_set, bad_thread[0].name)
+                return [InvalidAccumulatedCpuTimeTip.ONE_BAD_THREAD_WARNING.format(thread_link)]
             else:
                 # more than 1 bad threads, display the number of bad threads
                 return [InvalidAccumulatedCpuTimeTip.MANY_THREADS_WARNING.format(len(bad_thread))]
@@ -62,7 +123,8 @@ class OOMEGenerationTip:
         for jc in javacore_set.javacores:
             siginfo = jc.siginfo
             if OOMEGenerationTip.OUT_OF_MEMORY_ERROR in siginfo:
-                msg = OOMEGenerationTip.SIG_INFO_TEXT.format(jc.basefilename(), jc.siginfo)
+                javacore_link = _get_javacore_link(javacore_set, jc.basefilename())
+                msg = OOMEGenerationTip.SIG_INFO_TEXT.format(javacore_link, jc.siginfo)
                 return [msg]
         return []  # no issues with generation signal. Returning empty tip
 
@@ -72,9 +134,9 @@ class DifferentIssuesTip:
     # If the interval is higher, then it is probably from different issue.
 
     MAX_INTERVAL_FOR_JAVACORES = 330  # 330 seconds (5 minutes and a little more time)
-    DIFFERENT_ISSUES_MESSAGE = """[WARNING] The time interval between javacore {0} and {1} is {2:.0f} seconds, while 
+    DIFFERENT_ISSUES_MESSAGE = """[WARNING] The time interval between javacore {0} and {1} is {2:.0f} seconds, while
     the recommended maximum interval between two javacores is 300 seconds (5 minutes). It is likely that these
-    two javacores do not correspond to one occurrence of a single issue. Please review the list of javacores 
+    two javacores do not correspond to one occurrence of a single issue. Please review the list of javacores
     and the tool only against the ones that are applicable for the issue you are investigating. """
 
     @staticmethod
@@ -92,8 +154,9 @@ class DifferentIssuesTip:
                     max_interval_jc_base_filename = jc.basefilename()
             previous_jc = jc
         if max_interval > DifferentIssuesTip.MAX_INTERVAL_FOR_JAVACORES:
-            msg = DifferentIssuesTip.DIFFERENT_ISSUES_MESSAGE.format(max_interval_previous_jc_base_filename,
-                                                                     max_interval_jc_base_filename, max_interval)
+            jc1_link = _get_javacore_link(javacore_set, max_interval_previous_jc_base_filename)
+            jc2_link = _get_javacore_link(javacore_set, max_interval_jc_base_filename)
+            msg = DifferentIssuesTip.DIFFERENT_ISSUES_MESSAGE.format(jc1_link, jc2_link, max_interval)
             return [msg]
         else:
             return []
@@ -144,7 +207,7 @@ class ExcludedJavacoresTip:
 class BlockingThreadsTip:
     # Generates the tip that one or more threads are blocking many another threads
 
-    BLOCKING_THREADS_TEXT = """[TIP] a thread \"{0}\" is blocking on average {1:.1f} another threads per javacore. 
+    BLOCKING_THREADS_TEXT = """[TIP] a thread {0} is blocking on average {1:.1f} another threads per javacore.
     This lock might cause performance degradation."""
 
     MAX_BLOCKING_THREADS_NO = 5
@@ -157,12 +220,13 @@ class BlockingThreadsTip:
             blocked_size = len(blocked.get_threads_set())
             blocker_name = blocked.get(0).blocker.name
 
-            """ 
+            """
             Explicitly deciding, that if the threads blocks more threads totally, than there are javacores,
             then this is potential blocker.
             """
             if blocked_size > javacores_no:
-                result.append(BlockingThreadsTip.BLOCKING_THREADS_TEXT.format(blocker_name,
+                blocker_link = _get_thread_link(javacore_set, blocker_name)
+                result.append(BlockingThreadsTip.BLOCKING_THREADS_TEXT.format(blocker_link,
                                                                               blocked_size / javacores_no))
                 if len(result) >= BlockingThreadsTip.MAX_BLOCKING_THREADS_NO:
                     break
@@ -179,10 +243,10 @@ class HighCpuUsageTip:
 
     MAX_NUMBER_OF_HIGH_CPU_USAGE_THREADS = 5
 
-    HIGH_CPU_USAGE_TEXT = """[TIP] The following thread is using {0:.0f}% CPU: \"{1}\". 
+    HIGH_CPU_USAGE_TEXT = """[TIP] The following thread is using {0:.0f}% CPU: {1}.
     This thread might cause performance issues. Consider checking what this thread is doing"""
 
-    HIGH_GC_USAGE_TEXT = """[TIP] The verbose GC threads are using high CPU. You are likely having memory issues. 
+    HIGH_GC_USAGE_TEXT = """[TIP] The verbose GC threads are using high CPU. You are likely having memory issues.
     Consider revieving verbose GC for further investigation."""
 
     @staticmethod
@@ -201,7 +265,8 @@ class HighCpuUsageTip:
             else:
                 if cpu_percent_usage > HighCpuUsageTip.CRITICAL_CPU_USAGE:
                     if high_blocking_threads_no < HighCpuUsageTip.MAX_NUMBER_OF_HIGH_CPU_USAGE_THREADS:
-                        result.append(HighCpuUsageTip.HIGH_CPU_USAGE_TEXT.format(cpu_percent_usage, thread_name))
+                        thread_link = _get_thread_link(javacore_set, thread_name)
+                        result.append(HighCpuUsageTip.HIGH_CPU_USAGE_TEXT.format(cpu_percent_usage, thread_link))
                         high_blocking_threads_no += 1
                     else:
                         continue
@@ -275,7 +340,7 @@ class PermanentlyBlockedThreadsTip:
     MIN_SNAPSHOTS = 3
 
     PERMANENTLY_BLOCKED_TEXT = (
-        """[WARNING] Thread "{0}" is in blocked state (B) in all {1} javacores it appears in. """
+        """[WARNING] Thread {0} is in blocked state (B) in all {1} javacores it appears in. """
         """This thread never made progress and may be deadlocked or permanently starved. """
         """Check what lock it is waiting for."""
     )
@@ -290,9 +355,10 @@ class PermanentlyBlockedThreadsTip:
             if len(snapshots) < PermanentlyBlockedThreadsTip.MIN_SNAPSHOTS:
                 continue
             if all(s.state == "B" for s in snapshots):
+                thread_link = _get_thread_link(javacore_set, thread.name)
                 result.append(
                     PermanentlyBlockedThreadsTip.PERMANENTLY_BLOCKED_TEXT.format(
-                        thread.name, len(snapshots)
+                        thread_link, len(snapshots)
                     )
                 )
                 if len(result) >= PermanentlyBlockedThreadsTip.MAX_TIPS:
@@ -317,8 +383,9 @@ class SystemExitInMainThreadTip:
                     stack_trace_str = snapshot.stack_trace.to_string()
                     if "System.exit" in stack_trace_str:
                         thread_name = snapshot.name if snapshot.name else "Unknown"
+                        javacore_link = _get_javacore_link(javacore_set, jc.basefilename())
                         msg = SystemExitInMainThreadTip.SYSTEM_EXIT_WARNING.format(
-                            thread_name, jc.basefilename())
+                            thread_name, javacore_link)
                         return [msg]
 
         return []  # No System.exit detected in any thread
