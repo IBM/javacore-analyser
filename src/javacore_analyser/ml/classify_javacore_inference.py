@@ -168,12 +168,21 @@ class JavacoreClassifier:
                     f"Label mapping file not found: {self.label_mapping_path}"
                 )
             with open(self.label_mapping_path, 'r') as f:
-                self.classes = json.load(f)
+                raw_classes = json.load(f)
         else:
             # Load from package resources
             ml_package = files('javacore_analyser.ml')
             mapping_file = ml_package / 'javacoreThreadsClassifierLabelEncoderMapping.json'
-            self.classes = json.loads(mapping_file.read_text())
+            raw_classes = json.loads(mapping_file.read_text())
+        
+        # Clean up NaN values in class labels - replace with "Unknown"
+        self.classes = []
+        for idx, class_label in enumerate(raw_classes):
+            if class_label is None or (isinstance(class_label, float) and np.isnan(class_label)):
+                logging.warning(f"Class label at index {idx} is NaN/None, replacing with 'Unknown'")
+                self.classes.append("Unknown")
+            else:
+                self.classes.append(class_label)
 
     def _extract_vocabularies(self) -> None:
         """
