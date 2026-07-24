@@ -1,5 +1,5 @@
 /*
-Copyright IBM Corp. 2024 - 2025
+Copyright IBM Corp. 2024 - 2026
 SPDX-License-Identifier: Apache-2.0
 */
 
@@ -37,6 +37,7 @@ th {
     width: 10%;
     position: sticky;
     top: 0;
+    z-index: 10;
 }
 
 th.ninety {
@@ -163,6 +164,7 @@ td {
   width: 100%;
   bottom: 0;
   background-color: black;
+  z-index: 100;
 }
 
 .content {
