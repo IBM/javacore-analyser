@@ -147,7 +147,7 @@ class TestTips(unittest.TestCase):
         t3.total_cpu = 40
         result = tips.InvalidAccumulatedCpuTimeTip.generate(javacore_set)
         logging.debug("Test 3: %s" % result)
-        expected_result = '[WARNING] The CPU usage data is invalid for thread "excel". '
+        expected_result = '[WARNING] The CPU usage data is invalid for thread excel.'
         failure_message = "Wrong tip is displayed"
         self.assertTrue(expected_result in result[0], failure_message)
 
@@ -157,7 +157,7 @@ class TestTips(unittest.TestCase):
         t3.total_cpu = -2
         result = tips.InvalidAccumulatedCpuTimeTip.generate(javacore_set)
         logging.debug("Test 4: %s" % result)
-        expected_result = '[WARNING] 2 threads have invalid accumulated CPU. '
+        expected_result = '[WARNING] 2 threads have invalid accumulated CPU.'
         failure_message = "Wrong tip is displayed"
         self.assertTrue(expected_result in result[0], failure_message)
 

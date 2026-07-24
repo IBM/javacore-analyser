@@ -19,7 +19,7 @@
                         <xsl:when test="doc/report_info/tips/tip">
                             <ul>
                                 <xsl:for-each select="doc/report_info/tips/tip">
-                                    <li><xsl:value-of select="current()"/></li>
+                                    <li><xsl:value-of select="current()" disable-output-escaping="yes"/></li>
                                 </xsl:for-each>
                             </ul>
                         </xsl:when>
