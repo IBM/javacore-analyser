@@ -4,6 +4,8 @@
 #
 import logging
 
+from javacore_analyser.properties import Properties
+
 # This is a module containing list of the tips.
 # Each tip has to implement dynamic method generate(javacore_set)
 
@@ -24,8 +26,6 @@ def _get_thread_link(javacore_set, thread_name):
     Returns:
         str: HTML link if thread has drill-down page, plain thread name otherwise
     """
-    from javacore_analyser.properties import Properties
-    
     # Find the thread by name
     for thread in javacore_set.threads.snapshot_collections:
         if thread.name == thread_name:
