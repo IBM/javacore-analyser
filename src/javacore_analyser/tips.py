@@ -29,25 +29,13 @@ def _get_thread_link(javacore_set, thread_name):
     # Find the thread by name
     for thread in javacore_set.threads.snapshot_collections:
         if thread.name == thread_name:
-            # Check if thread has a drill-down page
-            # Use try-except to handle mock threads in tests that may not have all methods
-            try:
-                skip_boring = Properties.get_instance().skip_boring()
-            except (KeyError, AttributeError):
-                # If skip_boring is not configured, assume False (show all threads)
-                skip_boring = False
-            
-            try:
-                has_drill_down = thread.is_interesting() or not skip_boring
-            except (ZeroDivisionError, AttributeError):
-                # If is_interesting() fails (e.g., mock thread), assume no drill-down
-                has_drill_down = False
-            
+            skip_boring = Properties.get_instance().skip_boring()
+            has_drill_down = thread.is_interesting() or not skip_boring
             if has_drill_down:
                 thread_hash = thread.get_hash()
                 return f'<a href="threads/thread_{thread_hash}.html">{thread_name}</a>'
             break
-    
+
     # Return plain text if no drill-down page exists
     return thread_name
 

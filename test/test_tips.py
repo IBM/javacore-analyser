@@ -59,10 +59,12 @@ class TestTips(unittest.TestCase):
         shutil.copy2(jc2, temp_dir_path)
         javacore_set = JavacoreSet(temp_dir_path)
         javacore_set = javacore_set.create(temp_dir_path)
+        javacore_set.populate_snapshot_collections()
         result = tips.BlockingThreadsTip.generate(javacore_set)
         self.assertEqual(1, len(result), "Wrong number of tips for blocking threads")
         tip_text = result[0]
         self.assertIn("JTS Status check", tip_text, "Tip text does not contain blocking thread name")
+        self.assertIn('<a href=', tip_text, "Tip text does not contain a hyperlink for the blocking thread")
         temp_dir.cleanup()
 
     def test_blockingThreadsTipManyBlockingThreads(self):
@@ -74,8 +76,10 @@ class TestTips(unittest.TestCase):
         shutil.copy2(jc2, temp_dir_path)
         javacore_set = JavacoreSet(temp_dir_path)
         javacore_set = javacore_set.create(temp_dir_path)
+        javacore_set.populate_snapshot_collections()
         result = tips.BlockingThreadsTip.generate(javacore_set)
         self.assertEqual(5, len(result), "Wrong number of tips for blocking threads")
+        self.assertTrue(all('<a href=' in t for t in result), "All blocking thread tips should contain hyperlinks")
         temp_dir.cleanup()
 
     def test_highCpuUsageTip(self):
@@ -92,17 +96,21 @@ class TestTips(unittest.TestCase):
         self.assertEqual(6, len(result), "Wrong number of tips for high CPU usage")
         high_gc_usage_tip_found = False
         qm_asynchronous_task_found = False
+        qm_asynchronous_task_link_found = False
         for tip in result:
             if "The verbose GC threads are using high CPU" in tip:
                 high_gc_usage_tip_found = True
             elif "qm: AsynchronousTaskRunner-12" in tip:
                 qm_asynchronous_task_found = True
+                qm_asynchronous_task_link_found = '<a href=' in tip
             self.assertFalse("dcc: AsynchronousTaskRunner-10" in tip,
                              "The thread \"dcc: AsynchronousTaskRunner-10\" should not appear in high "
                              "CPU usage tip but it is there")
         self.assertTrue(high_gc_usage_tip_found, "High CPU usage tip not found")
         self.assertTrue(qm_asynchronous_task_found,
                             "\"qm: AsynchronousTaskRunner-12\" not found in high cpu usage tip")
+        self.assertTrue(qm_asynchronous_task_link_found,
+                        "\"qm: AsynchronousTaskRunner-12\" tip does not contain a hyperlink")
         temp_dir.cleanup()
 
     def test_InvalidAccumulatedCpuTimeTip(self):

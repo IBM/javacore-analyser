@@ -83,7 +83,7 @@ class Properties:
         return Properties.__instance
 
     def skip_boring(self):
-        return self.properties["skip_boring"]
+        return self.get_property("skip_boring", True)
 
     def get_property(self, key, default_value=None):
         if key in self.properties:
