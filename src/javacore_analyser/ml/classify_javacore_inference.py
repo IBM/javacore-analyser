@@ -308,7 +308,7 @@ class JavacoreClassifier:
         encoding = {}
         for valid_state in self.VALID_STATES:
             col_name = f"state_{valid_state}"
-            encoding[col_name] = 1 if state == valid_state and state in self.VALID_STATES else 0
+            encoding[col_name] = 1 if state == valid_state else 0
 
         return encoding
     
