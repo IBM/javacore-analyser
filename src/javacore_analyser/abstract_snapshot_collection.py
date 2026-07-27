@@ -142,6 +142,9 @@ class AbstractSnapshotCollection(abc.ABC):
             return 0
 
     def compute_avg_mem(self):
+        if not self.thread_snapshots:
+            self.avg_mem = 0
+            return
         mem_sum = 0
         for snapshot in self.thread_snapshots:
             mem_sum += snapshot.allocated_mem
