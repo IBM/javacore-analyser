@@ -125,7 +125,6 @@ $(function() {
             $results = $content.find("mark");
             currentIndex = 0;
             jumpTo();
-            updateCounter();
           }
         });
       }
