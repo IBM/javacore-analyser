@@ -167,7 +167,8 @@ class TestJavacoreSet(unittest.TestCase):
                             self.javacore_set_from_test_data.tips))
 
     # Note: the test below rely on the javacores stored in test directory
-    def test_generate_blocked_snapshots_list(self):
-        self.assertEqual(len(self.javacore_set_from_test_data.blocked_snapshots), 7,
+    def test_get_blocked_snapshots(self):
+        blocked = self.javacore_set_from_test_data.get_blocked_snapshots()
+        self.assertEqual(len(blocked), 7,
                          "The javacores from test dir have different number of blocking threads")
-        self.assertEqual(len(self.javacore_set_from_test_data.blocked_snapshots[0].get_threads_set()), 14)
+        self.assertEqual(len(blocked[0].get_threads_set()), 14)

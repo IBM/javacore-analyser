@@ -19,38 +19,6 @@ from javacore_analyser.plugin_coordinator import PluginCoordinator
 from javacore_analyser.properties import Properties
 
 
-def _create_xml_xsl_for_collection(tmp_dir, templates_dir, xml_xsl_filename, collection, output_file_prefix):
-    """Create per-element XML and XSL files in *tmp_dir* from a template in *templates_dir*.
-
-    Args:
-        tmp_dir (str): Destination directory (will be created).
-        templates_dir (str): Directory containing the template files.
-        xml_xsl_filename (str): Base filename (without extension) of the template files.
-        collection: Iterable of elements that expose ``get_id()`` and ``is_interesting()``.
-        output_file_prefix (str): Prefix prepended to each output filename.
-    """
-    logging.info("Creating xmls and xsls in " + tmp_dir)
-    os.mkdir(tmp_dir)
-    extensions = [".xsl", ".xml"]
-    for extension in tqdm(extensions, desc="Creating xml/xsl files", unit=" file"):
-        file_full_path = os.path.normpath(os.path.join(templates_dir, xml_xsl_filename + extension))
-        if not file_full_path.startswith(templates_dir):
-            raise Exception("Security exception: Uncontrolled data used in path expression")
-        file_content: str = Path(file_full_path).read_text()
-        for element in collection:
-            element_id = element.get_id()
-            filename = output_file_prefix + "_" + str(element_id) + extension
-            if filename.startswith("_"):
-                filename = filename[1:]
-            if element.is_interesting() or not Properties.get_instance().skip_boring():
-                file = os.path.join(tmp_dir, filename)
-                logging.debug("Writing file " + file)
-                with open(file, "w") as f:
-                    f.write(file_content.format(id=element_id))
-            else:
-                logging.debug("Skipping boring file: " + filename)
-
-
 class HtmlReportGenerator:
     """Generates HTML reports from XML data and XSL stylesheets.
 
@@ -60,6 +28,45 @@ class HtmlReportGenerator:
     - Copying static resources
     - Plugin-specific XSL and HTML generation
     """
+
+    @staticmethod
+    def generate_html_reports(javacore_analyzer, temp_dir_name, output_dir):
+        """Generate all HTML report files for threads and javacores.
+
+        Args:
+            javacore_analyzer: A JavacoreAnalyzer instance providing threads, javacores,
+                report_xml_file and plugin_data.
+            temp_dir_name (str): Temporary directory used to stage XML/XSL files.
+            output_dir (str): Root output directory for the generated HTML report.
+        """
+        placeholder_filename = os.path.join(output_dir, "data", "html", "processing_data.html")
+        HtmlReportGenerator.generate_placeholder_htmls(
+            placeholder_filename,
+            os.path.join(output_dir, "threads"),
+            javacore_analyzer.threads, "thread")
+        HtmlReportGenerator.generate_placeholder_htmls(
+            placeholder_filename,
+            os.path.join(output_dir, "javacores"),
+            javacore_analyzer.javacores, "")
+        HtmlReportGenerator.create_index_html(temp_dir_name, output_dir, javacore_analyzer.plugin_data)
+        HtmlReportGenerator._create_xml_xsl_for_collection(os.path.join(temp_dir_name, "threads"),
+                                                            os.path.join(output_dir, "data", "xml", "threads"),
+                                                            "thread",
+                                                            javacore_analyzer.threads,
+                                                            "thread")
+        HtmlReportGenerator.generate_htmls_from_xmls_xsls(
+            javacore_analyzer.report_xml_file,
+            os.path.join(temp_dir_name, "threads"),
+            os.path.join(output_dir, "threads"))
+        HtmlReportGenerator._create_xml_xsl_for_collection(os.path.join(temp_dir_name, "javacores"),
+                                                            os.path.join(output_dir, "data", "xml", "javacores"),
+                                                            "javacore",
+                                                            javacore_analyzer.javacores,
+                                                            "")
+        HtmlReportGenerator.generate_htmls_from_xmls_xsls(
+            javacore_analyzer.report_xml_file,
+            os.path.join(temp_dir_name, "javacores"),
+            os.path.join(output_dir, "javacores"))
 
     @staticmethod
     def generate_placeholder_htmls(placeholder_file, directory, collection, file_prefix):
@@ -229,6 +236,38 @@ class HtmlReportGenerator:
         logging.debug("Generating file " + html_file)
         output_doc.write(html_file, pretty_print=True)
         progress_bar.update(1)
+
+    @staticmethod
+    def _create_xml_xsl_for_collection(tmp_dir, templates_dir, xml_xsl_filename, collection, output_file_prefix):
+        """Create per-element XML and XSL files in *tmp_dir* from a template in *templates_dir*.
+
+        Args:
+            tmp_dir (str): Destination directory (will be created).
+            templates_dir (str): Directory containing the template files.
+            xml_xsl_filename (str): Base filename (without extension) of the template files.
+            collection: Iterable of elements that expose ``get_id()`` and ``is_interesting()``.
+            output_file_prefix (str): Prefix prepended to each output filename.
+        """
+        logging.info("Creating xmls and xsls in " + tmp_dir)
+        os.mkdir(tmp_dir)
+        extensions = [".xsl", ".xml"]
+        for extension in tqdm(extensions, desc="Creating xml/xsl files", unit=" file"):
+            file_full_path = os.path.normpath(os.path.join(templates_dir, xml_xsl_filename + extension))
+            if not file_full_path.startswith(templates_dir):
+                raise Exception("Security exception: Uncontrolled data used in path expression")
+            file_content: str = Path(file_full_path).read_text()
+            for element in collection:
+                element_id = element.get_id()
+                filename = output_file_prefix + "_" + str(element_id) + extension
+                if filename.startswith("_"):
+                    filename = filename[1:]
+                if element.is_interesting() or not Properties.get_instance().skip_boring():
+                    file = os.path.join(tmp_dir, filename)
+                    logging.debug("Writing file " + file)
+                    with open(file, "w") as f:
+                        f.write(file_content.format(id=element_id))
+                else:
+                    logging.debug("Skipping boring file: " + filename)
 
     @staticmethod
     def create_xml_xsl_for_collection(tmp_dir, xml_xsls_prefix_path, collection, output_file_prefix):

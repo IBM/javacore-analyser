@@ -188,12 +188,12 @@ class PerformanceRecommendationsPrompter(Prompter):
         Returns:
             str: Formatted list of top blocking threads
         """
-        if not self.javacore_set.blocked_snapshots:
+        blocked_data = self.javacore_set.get_blocked_snapshots()
+        if not blocked_data:
             return "No blocking thread data available"
-        
+
         # Count how many threads each blocker is blocking
         blocker_counts = {}
-        blocked_data = self.javacore_set.blocked_snapshots
         for blocked_collection in blocked_data:
             blocked_collection_snapshots = blocked_collection.snapshots
             if len(blocked_collection_snapshots) > 0:

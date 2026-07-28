@@ -11,12 +11,12 @@ from tqdm import tqdm
 
 from javacore_analyser import tips
 from javacore_analyser.ai.performance_recommendations_prompter import PerformanceRecommendationsPrompter
-from javacore_analyser.blocking_analyzer import BlockingAnalyzer
 from javacore_analyser.code_snapshot_collection import CodeSnapshotCollection
 from javacore_analyser.constants import *
+from javacore_analyser.snapshot_collection import SnapshotCollection
 from javacore_analyser.exceptions import InvalidLLMMethodError
 from javacore_analyser.file_discovery import FileDiscovery
-from javacore_analyser.html_report_generator import HtmlReportGenerator, _create_xml_xsl_for_collection
+from javacore_analyser.html_report_generator import HtmlReportGenerator
 from javacore_analyser.java_thread import Thread
 from javacore_analyser.javacore import Javacore
 from javacore_analyser.plugin_coordinator import PluginCoordinator
@@ -69,12 +69,6 @@ class JavacoreAnalyzer:
         # Track what types of data files are present
         self.data_types = set()
 
-        '''
-        List where each element is SnapshotCollection containing all threads blocked by given thread.
-        You can check the blocking thread by looking at snapshotCollection.get(0).get_blocker()
-        '''
-        # TODO this list is redundant with the data stored in Thread Snapshot. Should be removed in the future.
-        self.blocked_snapshots = []
         self.tips = []
         self.gc_parser = VerboseGcParser()
         self.har_files = []
@@ -126,32 +120,7 @@ class JavacoreAnalyzer:
         temp_dir_name = temp_dir.name
         logging.info("Created temp dir: " + temp_dir_name)
         XmlReportGenerator.create_report_xml(self, temp_dir_name + "/report.xml")
-        placeholder_filename = os.path.join(output_dir, "data", "html", "processing_data.html")
-        HtmlReportGenerator.generate_placeholder_htmls(
-            placeholder_filename,
-            os.path.join(output_dir, "threads"),
-            self.threads, "thread")
-        HtmlReportGenerator.generate_placeholder_htmls(
-            placeholder_filename,
-            os.path.join(output_dir, "javacores"),
-            self.javacores, "")
-        HtmlReportGenerator.create_index_html(temp_dir_name, output_dir, self.plugin_data)
-        _create_xml_xsl_for_collection(os.path.join(temp_dir_name, "threads"),
-                                       os.path.join(output_dir, "data", "xml", "threads"), "thread",
-                                       self.threads,
-                                       "thread")
-        HtmlReportGenerator.generate_htmls_from_xmls_xsls(
-            self.report_xml_file,
-            os.path.join(temp_dir_name, "threads"),
-            os.path.join(output_dir, "threads"))
-        _create_xml_xsl_for_collection(os.path.join(temp_dir_name, "javacores"),
-                                       os.path.join(output_dir, "data", "xml", "javacores"), "javacore",
-                                       self.javacores,
-                                       "")
-        HtmlReportGenerator.generate_htmls_from_xmls_xsls(
-            self.report_xml_file,
-            os.path.join(temp_dir_name, "javacores"),
-            os.path.join(output_dir, "javacores"))
+        HtmlReportGenerator.generate_html_reports(self, temp_dir_name, output_dir)
 
     def populate_snapshot_collections(self):
         """Populate thread and stack snapshot collections from all parsed javacores."""
@@ -229,7 +198,7 @@ class JavacoreAnalyzer:
             _file_discovery.parse_common_data(jset, first_javacore)
             jset.parse_javacores()
             jset.sort_snapshots()
-            BlockingAnalyzer.generate_blocked_snapshots_list(jset)
+            jset.populate_blocking()
         else:
             logging.info("No javacore files found. Continuing with other data types.")
 
@@ -357,25 +326,37 @@ class JavacoreAnalyzer:
         """
         return PluginCoordinator.generate_plugin_section_header(section_id, section_title, description)
 
-    def blocked_collection(self, blocker):
-        """Return the SnapshotCollection for *blocker*, or None if not found.
+    def populate_blocking(self):
+        """Populate ThreadSnapshot.blocking for every blocker snapshot found in javacores."""
+        for javacore in self.javacores:
+            for snapshot in javacore.snapshots:
+                blocker = snapshot.get_blocker()
+                if blocker:
+                    blocker.blocking.add(snapshot)
 
-        Delegates to :class:`~javacore_analyser.blocking_analyzer.BlockingAnalyzer`.
+    def get_blocked_snapshots(self):
+        """Derive the list of blocked SnapshotCollections from ThreadSnapshot.blocking.
 
-        Args:
-            blocker: The blocking thread snapshot to look up.
-
-        Returns:
-            SnapshotCollection or None
+        Returns a list of SnapshotCollection objects, one per blocker thread snapshot,
+        sorted descending by the number of distinct blocked thread IDs.
         """
-        return BlockingAnalyzer.blocked_collection(self.blocked_snapshots, blocker)
+        seen = {}  # blocker.thread_id -> SnapshotCollection
+        for thread in self.threads:
+            for snapshot in thread.thread_snapshots:
+                for blocked_snapshot in snapshot.blocking:
+                    blocker_id = snapshot.thread_id
+                    if blocker_id not in seen:
+                        seen[blocker_id] = SnapshotCollection()
+                    seen[blocker_id].add(blocked_snapshot)
+        result = list(seen.values())
+        result.sort(reverse=True, key=lambda col: len(col.get_threads_set()))
+        return result
 
     def print_blockers(self):
-        """Log debug information about blocking threads.
-
-        Delegates to :class:`~javacore_analyser.blocking_analyzer.BlockingAnalyzer`.
-        """
-        BlockingAnalyzer.print_blockers(self)
+        """Log debug information about blocking threads."""
+        logging.debug("List of blockers")
+        for blocked in self.get_blocked_snapshots():
+            logging.debug(blocked.get(0).blocker.name + ": " + str(blocked.size()))
 
     def generate_tips(self):
         """Generate analysis tips based on the collected data."""

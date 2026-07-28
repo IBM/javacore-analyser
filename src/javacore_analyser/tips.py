@@ -204,7 +204,7 @@ class BlockingThreadsTip:
     def generate(javacore_set):
         javacores_no = len(javacore_set.javacores)
         result = []
-        for blocked in javacore_set.blocked_snapshots:
+        for blocked in javacore_set.get_blocked_snapshots():
             blocked_size = len(blocked.get_threads_set())
             blocker_name = blocked.get(0).blocker.name
 

@@ -244,7 +244,7 @@ class XmlReportGenerator:
         """
         blockers_node = doc.createElement("blockers")
         count = 0
-        for blocked in javacore_analyzer.blocked_snapshots:
+        for blocked in javacore_analyzer.get_blocked_snapshots():
             blocker_node = doc.createElement("blocker")
             blocker_id_node = doc.createElement("blocker_id")
             blocker_node.appendChild(blocker_id_node)
