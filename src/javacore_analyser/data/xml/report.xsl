@@ -44,6 +44,7 @@
             <button data-search="next">Next</button>
             <button data-search="prev">Prev</button>
             <button data-search="clear">✖</button>
+            <span id="search-counter" class="search-counter"></span>
         </div>
         <div class="content">
             <h1>Javacore Analyser Report</h1>

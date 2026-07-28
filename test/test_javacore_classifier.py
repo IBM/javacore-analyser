@@ -71,13 +71,26 @@ class TestJavacoreClassifier(unittest.TestCase):
         """predict() should return a valid result for an unrecognised thread state."""
         result = self._predict(state="UNKNOWN")
         self.assertIsInstance(result, str)
-        self.assertGreater(len(result), 0)
+        self.assertGreater(len(result), 0, "Classifier returned empty string for UNKNOWN state")
+
+    def test_predict_unknown_state(self):
+        """predict() should return a valid result for 'Unknown' thread state (case-sensitive)."""
+        result = self._predict(state="Unknown")
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0, "Classifier returned empty string for Unknown state")
 
     def test_predict_returns_title_case_label(self):
         """predict() should return a Title Case classification label (Fixes #308)."""
         result = self._predict()
         # Each word of the label should start with an uppercase letter
         self.assertEqual(result, result.title(), f"Expected Title Case label, got: {result!r}")
+
+    def test_classes_mapping_has_no_nan(self):
+        """The classes mapping should not contain NaN values that result in empty classifications."""
+        for idx, class_label in enumerate(self.classifier.classes):
+            self.assertIsInstance(class_label, str, f"Class at index {idx} is not a string: {class_label!r}")
+            self.assertNotEqual(class_label.lower(), "nan", f"Class at index {idx} is 'nan'")
+            self.assertGreater(len(class_label), 0, f"Class at index {idx} is empty")
 
     # ------------------------------------------------------------------
     # Performance test  (Fixes #305)
