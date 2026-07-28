@@ -154,6 +154,7 @@ class HtmlReportGenerator:
         output_html_file = output_dir + "/index.html"
         logging.info("Generating file " + output_html_file)
         output_doc.write(output_html_file, pretty_print=True)
+        logging.info("File generated")
 
     @staticmethod
     def generate_htmls_from_xmls_xsls(report_xml_file, data_input_dir, output_dir):
