@@ -13,7 +13,7 @@ from javacore_analyser.constants import (
     MIN_JAVACORE_SIZE
 )
 from javacore_analyser.har_file import HarFile
-from javacore_analyser.jvm_config_parser import JvmConfigParser
+from javacore_analyser.javacore import Javacore
 
 
 class FileDiscovery:
@@ -65,10 +65,11 @@ class FileDiscovery:
                 javacore file to read.
         """
         filename = os.path.join(javacore_analyzer.path, filename)
+        javacore = Javacore()
+        javacore.javacore_set = javacore_analyzer
         curr_line = ""
         i = 0
         file = None
-        jvm_parser = JvmConfigParser()
         try:
             file = open(filename, 'r')
             for line in file:
@@ -77,7 +78,7 @@ class FileDiscovery:
                     javacore_analyzer.number_of_cpus = line.split()[-1]
                     continue
                 elif line.startswith(USER_ARGS):
-                    jvm_parser.parse_user_args(line)
+                    javacore.parse_user_args(line)
                     continue
                 elif line.startswith(OS_LEVEL):
                     javacore_analyzer.os_level = line[line.rfind(":") + 1:].strip()
@@ -106,5 +107,3 @@ class FileDiscovery:
         finally:
             if file is not None:
                 file.close()
-
-        jvm_parser.apply_to(javacore_analyzer)

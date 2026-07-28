@@ -22,7 +22,6 @@ from javacore_analyser.javacore import Javacore
 from javacore_analyser.plugin_coordinator import PluginCoordinator
 from javacore_analyser.properties import Properties
 from javacore_analyser.snapshot_collection_collection import SnapshotCollectionCollection
-from javacore_analyser.jvm_config_parser import JvmConfigParser
 from javacore_analyser.verbose_gc import VerboseGcParser
 from javacore_analyser.xml_report_generator import XmlReportGenerator
 from javacore_analyser.ml.classify_javacore_inference import JavacoreClassifier
@@ -426,57 +425,3 @@ class JavacoreAnalyzer:
             raise InvalidLLMMethodError(llm_method)
 
         self.ai_tips = ai.infuse_in_html(PerformanceRecommendationsPrompter(self))
-
-    # -------------------------------------------------------------------------
-    # JVM config parsing helpers
-    # -------------------------------------------------------------------------
-
-    def parse_xmx(self, line):
-        """Parse Xmx value from *line* and store it in self.xmx."""
-        self.xmx = JvmConfigParser.parse_mem_arg(line)
-
-    def parse_xms(self, line):
-        """Parse Xms value from *line* and store it in self.xms."""
-        self.xms = JvmConfigParser.parse_mem_arg(line)
-
-    def parse_xmn(self, line):
-        """Parse Xmn value from *line* and store it in self.xmn."""
-        self.xmn = JvmConfigParser.parse_mem_arg(line)
-
-    def parse_gc_policy(self, line):
-        """Parse GC policy from *line* and store it in self.gc_policy."""
-        self.gc_policy = line[line.rfind(":") + 1:].strip()
-
-    def parse_compressed_refs(self, line):
-        """Parse compressed refs flag from *line* and update self.compressed_refs."""
-        if COMPRESSED_REFS in line:
-            self.compressed_refs = True
-        if NO_COMPRESSED_REFS in line:
-            self.compressed_refs = False
-
-    def parse_verbose_gc(self, line):
-        """Set self.verbose_gc = True if *line* contains the verbose:gc flag."""
-        if VERBOSE_GC in line:
-            self.verbose_gc = True
-
-    def add_user_arg(self, line):
-        """Append the JVM user arg from *line* to self.user_args."""
-        arg = line[line.find('-'):].rstrip()
-        logging.debug("User arg: " + arg)
-        self.user_args.append(arg)
-
-    def parse_user_args(self, line):
-        """Parse all JVM user-arg fields from *line* and update self attributes."""
-        self.add_user_arg(line)
-        if XMX in line:
-            self.parse_xmx(line)
-        if XMS in line:
-            self.parse_xms(line)
-        if XMN in line:
-            self.parse_xmn(line)
-        if GC_POLICY in line:
-            self.parse_gc_policy(line)
-        if COMPRESSED_REFS in line or NO_COMPRESSED_REFS in line:
-            self.parse_compressed_refs(line)
-        if VERBOSE_GC in line:
-            self.parse_verbose_gc(line)
