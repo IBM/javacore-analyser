@@ -167,6 +167,13 @@ td {
   z-index: 100;
 }
 
+.search-counter {
+  color: white;
+  margin-left: 10px;
+  font-size: 14px;
+  vertical-align: middle;
+}
+
 .content {
    padding-bottom: 30px
 }
