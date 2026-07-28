@@ -22,6 +22,7 @@ from javacore_analyser.javacore import Javacore
 from javacore_analyser.plugin_coordinator import PluginCoordinator
 from javacore_analyser.properties import Properties
 from javacore_analyser.snapshot_collection_collection import SnapshotCollectionCollection
+from javacore_analyser.jvm_config_parser import JvmConfigParser
 from javacore_analyser.verbose_gc import VerboseGcParser
 from javacore_analyser.xml_report_generator import XmlReportGenerator
 from javacore_analyser.ml.classify_javacore_inference import JavacoreClassifier
@@ -433,53 +434,20 @@ class JavacoreAnalyzer:
         self.ai_tips = ai.infuse_in_html(PerformanceRecommendationsPrompter(self))
 
     # -------------------------------------------------------------------------
-    # Static helpers kept for backward compatibility
-    # -------------------------------------------------------------------------
-
-    @staticmethod
-    def generate_htmls_from_xmls_xsls(report_xml_file, data_input_dir, output_dir):
-        """Delegate to :class:`~javacore_analyser.html_report_generator.HtmlReportGenerator`."""
-        HtmlReportGenerator.generate_htmls_from_xmls_xsls(report_xml_file, data_input_dir, output_dir)
-
-    @staticmethod
-    def get_number_of_parallel_threads():
-        """Delegate to :class:`~javacore_analyser.html_report_generator.HtmlReportGenerator`."""
-        return HtmlReportGenerator.get_number_of_parallel_threads()
-
-    @staticmethod
-    def generate_html_from_xml_xsl_files(args):
-        """Delegate to :class:`~javacore_analyser.html_report_generator.HtmlReportGenerator`."""
-        HtmlReportGenerator.generate_html_from_xml_xsl_files(args)
-
-    @staticmethod
-    def create_xml_xsl_for_collection(tmp_dir, xml_xsls_prefix_path, collection, output_file_prefix):
-        """Delegate to :class:`~javacore_analyser.html_report_generator.HtmlReportGenerator`."""
-        HtmlReportGenerator.create_xml_xsl_for_collection(
-            tmp_dir, xml_xsls_prefix_path, collection, output_file_prefix)
-
-    @staticmethod
-    def parse_mem_arg(line):
-        """Delegate to :class:`~javacore_analyser.jvm_config_parser.JvmConfigParser`."""
-        from javacore_analyser.jvm_config_parser import JvmConfigParser
-        return JvmConfigParser.parse_mem_arg(line)
-
-    # -------------------------------------------------------------------------
-    # JVM config parsing helpers — kept as instance methods so that tests and
-    # any existing callers that do ``obj.parse_xmx(line)`` still work and the
-    # result is reflected in the object's own fields.
+    # JVM config parsing helpers
     # -------------------------------------------------------------------------
 
     def parse_xmx(self, line):
         """Parse Xmx value from *line* and store it in self.xmx."""
-        self.xmx = self.parse_mem_arg(line)
+        self.xmx = JvmConfigParser.parse_mem_arg(line)
 
     def parse_xms(self, line):
         """Parse Xms value from *line* and store it in self.xms."""
-        self.xms = self.parse_mem_arg(line)
+        self.xms = JvmConfigParser.parse_mem_arg(line)
 
     def parse_xmn(self, line):
         """Parse Xmn value from *line* and store it in self.xmn."""
-        self.xmn = self.parse_mem_arg(line)
+        self.xmn = JvmConfigParser.parse_mem_arg(line)
 
     def parse_gc_policy(self, line):
         """Parse GC policy from *line* and store it in self.gc_policy."""
