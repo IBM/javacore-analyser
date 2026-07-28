@@ -137,10 +137,6 @@ class JavacoreAnalyzer:
             os.path.join(output_dir, "javacores"),
             self.javacores, "")
         HtmlReportGenerator.create_index_html(temp_dir_name, output_dir, self.plugin_data)
-        self.__generate_htmls_for_threads(output_dir, temp_dir_name)
-        self.__generate_htmls_for_javacores(output_dir, temp_dir_name)
-
-    def __generate_htmls_for_threads(self, output_dir, temp_dir_name):
         _create_xml_xsl_for_collection(os.path.join(temp_dir_name, "threads"),
                                        os.path.join(output_dir, "data", "xml", "threads"), "thread",
                                        self.threads,
@@ -149,8 +145,6 @@ class JavacoreAnalyzer:
             self.report_xml_file,
             os.path.join(temp_dir_name, "threads"),
             os.path.join(output_dir, "threads"))
-
-    def __generate_htmls_for_javacores(self, output_dir, temp_dir_name):
         _create_xml_xsl_for_collection(os.path.join(temp_dir_name, "javacores"),
                                        os.path.join(output_dir, "data", "xml", "javacores"), "javacore",
                                        self.javacores,
