@@ -103,7 +103,7 @@ $(function() {
     return (
       typeof HTMLElement === "object"
         ? node instanceof HTMLElement
-        : node && typeof node === "object" && node !== null && node.nodeType === 1 && typeof node.nodeName === "string"
+        : node && typeof node === "object" && node.nodeType === 1 && typeof node.nodeName === "string"
     );
   }
 
