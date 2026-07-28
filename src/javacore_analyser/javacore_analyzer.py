@@ -341,8 +341,8 @@ class JavacoreAnalyzer:
         sorted descending by the number of distinct blocked thread IDs.
         """
         seen = {}  # blocker.thread_id -> SnapshotCollection
-        for thread in self.threads:
-            for snapshot in thread.thread_snapshots:
+        for javacore in self.javacores:
+            for snapshot in javacore.snapshots:
                 for blocked_snapshot in snapshot.blocking:
                     blocker_id = snapshot.thread_id
                     if blocker_id not in seen:
