@@ -133,3 +133,15 @@ import logging
 logger = logging.getLogger(__name__)
 logger.info("Starting plugin discovery")
 ```
+
+## Releasing a New Version
+
+For the full release procedure see [CONTRIBUTING.md — Releasing a new version](CONTRIBUTING.md#releasing-a-new-version).
+
+Summary of steps:
+1. Ensure you are on `main` and the branch is clean.
+2. Create and push a version tag: `git tag <version> && git push --tags`
+3. Build distribution packages: `pip install build && python -m build`
+4. Upload to PyPI: `pip install twine && twine upload dist/*` (use `__token__` as username, PyPI API token as password)
+5. Create a GitHub release attaching the dist files: `gh release create <version> dist/* --repo IBM/javacore-analyser --generate-notes --title "<version>"`
+6. Copy release notes to [CHANGELOG.md](CHANGELOG.md).
