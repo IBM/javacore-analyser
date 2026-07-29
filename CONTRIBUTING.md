@@ -173,7 +173,14 @@ Here are the steps to release a new version:
    python -m build
    ```
    This produces the distribution files in `dist/`.
-5. Create and publish a GitHub release with auto-generated notes, attaching the distribution files:
+5. Upload the distribution packages to PyPI using `twine`:
+   ```commandline
+   pip install twine
+   twine upload dist/*
+   ```
+   You will be prompted for your PyPI credentials. Use `__token__` as the username and your PyPI API token
+   (generated at https://pypi.org/manage/account/token/) as the password.
+6. Create and publish a GitHub release with auto-generated notes, attaching the distribution files:
    ```commandline
    gh release create 2.1 dist/* --repo IBM/javacore-analyser --generate-notes --title "2.1"
    ```
@@ -186,8 +193,7 @@ Here are the steps to release a new version:
    ```commandline
    gh release edit 2.1 --draft=false --repo IBM/javacore-analyser
    ```
-   Publishing the release triggers the GitHub Actions workflow that uploads the package to PyPI automatically.
-6. Copy release notes to [CHANGELOG.md](CHANGELOG.md) file. You can retrieve the release notes with:
+7. Copy release notes to [CHANGELOG.md](CHANGELOG.md) file. You can retrieve the release notes with:
    ```commandline
    gh release view 2.1 --json body --jq '.body' --repo IBM/javacore-analyser
    ```
