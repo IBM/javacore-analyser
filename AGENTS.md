@@ -13,6 +13,34 @@ The project follows **PEP 8** coding standard (https://peps.python.org/pep-0008/
 - **Type hints**: Recommended for better readability and maintainability
 - Follow PEP 8 naming conventions (snake_case for functions/variables, PascalCase for classes)
 
+## Imports
+
+All `import` statements should be placed at the top of the file, just after any module comments and docstrings, and
+before module globals and constants. Avoid placing imports inside functions or methods unless there is a specific reason
+(e.g. avoiding circular imports or deferring an expensive optional dependency). This follows PEP 8 conventions.
+
+### Correct pattern
+
+```python
+import os
+import logging
+
+from javacore_analyser.properties import Properties
+
+
+def my_function():
+    logging.info("doing something")
+```
+
+### Avoid
+
+```python
+def my_function():
+    import os      # avoid: import inside a function without a specific reason
+    import logging
+    logging.info("doing something")
+```
+
 ## Branching Strategy
 
 Each new feature or bug fix should be developed in a separate branch:
