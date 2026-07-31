@@ -9,6 +9,7 @@ import logging
 import markdown
 
 from javacore_analyser.properties import Properties
+from javacore_analyser.tips import linkify_ai_response
 
 
 class LLM(ABC):
@@ -89,4 +90,5 @@ class LLM(ABC):
         :rtype: str
         """
         content = self.infuse(prompter)
+        content = linkify_ai_response(self.javacore_set, content)
         return self.response_to_html(content)
