@@ -158,51 +158,45 @@ podman manifest push javacore-analyser:2.1 docker://ghcr.io/ibm/javacore-analyse
 ```
 
 ## Releasing a new version
-Release a new version is partially automated by Travis. Here are the steps:  
+Here are the steps to release a new version:
 1. Make sure you are on `main` branch in your repository.
-2. Create a new tag e.g:  
+2. Create a new tag e.g:
    `git tag 2.1`
-3. Push the tag to Github:  
-  `git push --tags`  
-  alternatively you can perform this operation from Pycharm UI (**Git** -> **Push** -> Select **Push Tags** -> 
-  Click **Push**)  
-   
-   Creating a new tag invokes a build operation which is doing the following:
-   * The following code 
-      ```yaml
-     deploy:
-      - provider: script
-        #script: python -m twine upload --skip-existing --verbose --password $TWINE_TEST_TOKEN --repository testpypi dist/* #test instance
-        script: python -m twine upload --skip-existing --verbose --password $TWINE_PROD_TOKEN dist/* #production instance.  
-        on:  
-        # all_branches: true # uncomment for testing purposes
-          branch: prod # uncomment on production
-          tags: true # We need to consider if we want to publish all versions or every build (which should not be an issue
-     ```
-     Is publishing pip package to pip repository. You are setting all passwords here: 
-     https://app.travis-ci.com/github/IBM/javacore-analyser/settings section **Environmental Variables**.
-     **TWINE_USERNAME** should be set to **__token__** and **TWINE_PROD_TOKEN** or **TWINE_TEST_TOKEN** are the tokens
-     set on pipy page (https://pypi.org/manage/account/token/ or https://test.pypi.org/manage/account/token/).
-   * The following code:
-     ```yaml
-      - provider: releases
-        edge: true
-        draft: true
-        file: dist/*
-        on:
-          # all_branches: true # uncomment for testing purposes
-          branch: prod # uncomment on production
-          tags: true # We need to consider if we want to publish all versions or every build (which should not be an issue
-     ```  
-     Generates the new **Draft** release on Github and adds distribution files (They are located in `dist/*`).
-     This code requires setting **GITHUB_TOKEN** variable in 
-     https://app.travis-ci.com/github/IBM/javacore-analyser/settings. You can generate github token on 
-https://github.com/settings/tokens/new
-4. Navigate in Github to the new Draft release page. You can easily find it on 
-   https://github.com/IBM/javacore-analyser/releases
-5. Click on Edit pen and then click on **Generate release notes** and edit them before saving.
-6. Publish release.
-7. Copy release notes to [CHANGELOG.md](CHANGELOG.md) file.
+3. Push the tag to Github:
+   `git push --tags`
+   alternatively you can perform this operation from Pycharm UI (**Git** -> **Push** -> Select **Push Tags** ->
+   Click **Push**)
+4. Build the distribution packages locally following
+   [Packaging projects](https://packaging.python.org/en/latest/tutorials/packaging-projects/):
+   ```commandline
+   pip install build
+   python -m build
+   ```
+   This produces the distribution files in `dist/`.
+5. Upload the distribution packages to PyPI using `twine`:
+   ```commandline
+   pip install twine
+   twine upload dist/*
+   ```
+   You will be prompted for your PyPI credentials. Use `__token__` as the username and your PyPI API token
+   (generated at https://pypi.org/manage/account/token/) as the password.
+6. Create and publish a GitHub release with auto-generated notes, attaching the distribution files:
+   ```commandline
+   gh release create 2.1 dist/* --repo IBM/javacore-analyser --generate-notes --title "2.1"
+   ```
+   If you want to review and edit the release notes before publishing, create a draft first:
+   ```commandline
+   gh release create 2.1 dist/* --repo IBM/javacore-analyser --generate-notes --title "2.1" --draft
+   gh release view 2.1 --web --repo IBM/javacore-analyser
+   ```
+   then publish it once the notes look good:
+   ```commandline
+   gh release edit 2.1 --draft=false --repo IBM/javacore-analyser
+   ```
+7. Copy release notes to [CHANGELOG.md](CHANGELOG.md) file. You can retrieve the release notes with:
+   ```commandline
+   gh release view 2.1 --json body --jq '.body' --repo IBM/javacore-analyser
+   ```
 
 
 ## Testing
