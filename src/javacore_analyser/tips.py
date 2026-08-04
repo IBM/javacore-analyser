@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 import logging
+import re
 
 from javacore_analyser.properties import Properties
 
@@ -15,7 +16,7 @@ TIPS_LIST = ["DifferentIssuesTip", "ExcludedJavacoresTip", "InvalidAccumulatedCp
              "SystemExitInMainThreadTip", "PermanentlyBlockedThreadsTip"]
 
 
-def _get_thread_link(javacore_set, thread_name):
+def get_thread_link(javacore_set, thread_name):
     """
     Generate an HTML link to a thread's drill-down page if it exists.
     
@@ -40,7 +41,7 @@ def _get_thread_link(javacore_set, thread_name):
     return thread_name
 
 
-def _get_javacore_link(javacore_set, javacore_filename):
+def get_javacore_link(javacore_set, javacore_filename):
     """
     Generate an HTML link to a javacore's drill-down page.
     
@@ -59,6 +60,68 @@ def _get_javacore_link(javacore_set, javacore_filename):
     
     # Return plain text if javacore not found
     return javacore_filename
+
+
+def linkify_ai_response(javacore_set, text):
+    """
+    Replace mentions of known thread names and javacore filenames in AI-generated
+    text with drill-down links, using the same helpers standard tips use.
+
+    Only the first mention of each name is linked, to avoid flooding the AI
+    response with repeated links. Names are matched longest-first, and all match
+    spans are computed against the original text before any substitution happens.
+    This matters because a shorter name (e.g. "Worker") can be a substring of a
+    longer one (e.g. "Worker-2") that was already replaced with a link: searching
+    the progressively-edited text would incorrectly match "Worker" inside the
+    href/link text just inserted, producing nested, broken HTML.
+
+    Args:
+        javacore_set: The JavacoreSet containing thread and javacore information
+        text: The raw AI-generated text (before markdown-to-HTML conversion)
+
+    Returns:
+        str: The text with known names replaced by HTML links where found
+    """
+    names = sorted(
+        {thread.name for thread in javacore_set.threads.snapshot_collections if thread.name}
+        | {jc.basefilename() for jc in javacore_set.javacores if jc.basefilename()},
+        key=len, reverse=True
+    )
+
+    claimed_spans = []
+
+    def overlaps_claimed(start, end):
+        return any(start < c_end and end > c_start for c_start, c_end in claimed_spans)
+
+    replacements = []
+    for name in names:
+        pattern = re.compile(r'\b' + re.escape(name) + r'\b')
+        # Use finditer, not search: a name can appear as a rejected, overlapping
+        # match inside another name's already-claimed span (e.g. "worker" inside
+        # "worker-2", since "-" is a non-word char so \b still matches there).
+        # search() would stop at that first, overlapping hit and miss a later,
+        # legitimate standalone mention of the same name.
+        match = next(
+            (m for m in pattern.finditer(text) if not overlaps_claimed(m.start(), m.end())),
+            None
+        )
+        if not match:
+            continue
+
+        link = get_thread_link(javacore_set, name)
+        if link == name:  # not a known thread, try javacore filenames
+            link = get_javacore_link(javacore_set, name)
+        if link == name:  # no drill-down page available, leave text as-is
+            continue
+
+        replacements.append((match.start(), match.end(), link))
+        claimed_spans.append((match.start(), match.end()))
+
+    # Apply back-to-front so earlier offsets stay valid as the string grows/shrinks
+    for start, end, link in sorted(replacements, key=lambda r: r[0], reverse=True):
+        text = text[:start] + link + text[end:]
+
+    return text
 
 
 class TestTip:
@@ -88,7 +151,7 @@ class InvalidAccumulatedCpuTimeTip:
         if bad_thread:
             if len(bad_thread) == 1:
                 # only 1 bad thread, display it thread name with link if available
-                thread_link = _get_thread_link(javacore_set, bad_thread[0].name)
+                thread_link = get_thread_link(javacore_set, bad_thread[0].name)
                 return [InvalidAccumulatedCpuTimeTip.ONE_BAD_THREAD_WARNING.format(thread_link)]
             else:
                 # more than 1 bad threads, display the number of bad threads
@@ -111,7 +174,7 @@ class OOMEGenerationTip:
         for jc in javacore_set.javacores:
             siginfo = jc.siginfo
             if OOMEGenerationTip.OUT_OF_MEMORY_ERROR in siginfo:
-                javacore_link = _get_javacore_link(javacore_set, jc.basefilename())
+                javacore_link = get_javacore_link(javacore_set, jc.basefilename())
                 msg = OOMEGenerationTip.SIG_INFO_TEXT.format(javacore_link, jc.siginfo)
                 return [msg]
         return []  # no issues with generation signal. Returning empty tip
@@ -142,8 +205,8 @@ class DifferentIssuesTip:
                     max_interval_jc_base_filename = jc.basefilename()
             previous_jc = jc
         if max_interval > DifferentIssuesTip.MAX_INTERVAL_FOR_JAVACORES:
-            jc1_link = _get_javacore_link(javacore_set, max_interval_previous_jc_base_filename)
-            jc2_link = _get_javacore_link(javacore_set, max_interval_jc_base_filename)
+            jc1_link = get_javacore_link(javacore_set, max_interval_previous_jc_base_filename)
+            jc2_link = get_javacore_link(javacore_set, max_interval_jc_base_filename)
             msg = DifferentIssuesTip.DIFFERENT_ISSUES_MESSAGE.format(jc1_link, jc2_link, max_interval)
             return [msg]
         else:
@@ -213,7 +276,7 @@ class BlockingThreadsTip:
             then this is potential blocker.
             """
             if blocked_size > javacores_no:
-                blocker_link = _get_thread_link(javacore_set, blocker_name)
+                blocker_link = get_thread_link(javacore_set, blocker_name)
                 result.append(BlockingThreadsTip.BLOCKING_THREADS_TEXT.format(blocker_link,
                                                                               blocked_size / javacores_no))
                 if len(result) >= BlockingThreadsTip.MAX_BLOCKING_THREADS_NO:
@@ -253,7 +316,7 @@ class HighCpuUsageTip:
             else:
                 if cpu_percent_usage > HighCpuUsageTip.CRITICAL_CPU_USAGE:
                     if high_blocking_threads_no < HighCpuUsageTip.MAX_NUMBER_OF_HIGH_CPU_USAGE_THREADS:
-                        thread_link = _get_thread_link(javacore_set, thread_name)
+                        thread_link = get_thread_link(javacore_set, thread_name)
                         result.append(HighCpuUsageTip.HIGH_CPU_USAGE_TEXT.format(cpu_percent_usage, thread_link))
                         high_blocking_threads_no += 1
                     else:
@@ -343,7 +406,7 @@ class PermanentlyBlockedThreadsTip:
             if len(snapshots) < PermanentlyBlockedThreadsTip.MIN_SNAPSHOTS:
                 continue
             if all(s.state == "B" for s in snapshots):
-                thread_link = _get_thread_link(javacore_set, thread.name)
+                thread_link = get_thread_link(javacore_set, thread.name)
                 result.append(
                     PermanentlyBlockedThreadsTip.PERMANENTLY_BLOCKED_TEXT.format(
                         thread_link, len(snapshots)
@@ -371,7 +434,7 @@ class SystemExitInMainThreadTip:
                     stack_trace_str = snapshot.stack_trace.to_string()
                     if "System.exit" in stack_trace_str:
                         thread_name = snapshot.name if snapshot.name else "Unknown"
-                        javacore_link = _get_javacore_link(javacore_set, jc.basefilename())
+                        javacore_link = get_javacore_link(javacore_set, jc.basefilename())
                         msg = SystemExitInMainThreadTip.SYSTEM_EXIT_WARNING.format(
                             thread_name, javacore_link)
                         return [msg]

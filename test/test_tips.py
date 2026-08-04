@@ -11,6 +11,7 @@ import unittest
 
 from javacore_analyser import tips
 from javacore_analyser.java_thread import Thread
+from javacore_analyser.javacore import Javacore
 from javacore_analyser.javacore_set import JavacoreSet
 from javacore_analyser.thread_snapshot import ThreadSnapshot
 
@@ -372,6 +373,30 @@ class TestTips(unittest.TestCase):
             thread.thread_snapshots.append(s)
         return thread
 
+    def _make_interesting_thread(self, name, thread_id):
+        """Helper: build a Thread with rising CPU usage across snapshots, so
+        is_interesting() is True and get_thread_link() returns a real <a> link
+        (see Thread.is_interesting: total CPU > 0 is one of the criteria).
+        Snapshots must reference their owning thread so get_previous_snapshot()
+        can compute the CPU delta; _make_thread doesn't wire that up.
+        """
+        thread = Thread()
+        thread.name = name
+        thread.id = thread_id
+        for cpu in (0, 10, 20):
+            s = ThreadSnapshot()
+            s.state = "R"
+            s.cpu_usage = cpu
+            s.thread = thread
+            thread.thread_snapshots.append(s)
+        return thread
+
+    def _make_javacore(self, filename):
+        """Helper: build a Javacore with just a filename, bypassing file parsing."""
+        jc = Javacore()
+        jc.filename = filename
+        return jc
+
     # ------------------------------------------------------------------
     # PermanentlyBlockedThreadsTip
     # ------------------------------------------------------------------
@@ -454,3 +479,83 @@ class TestTips(unittest.TestCase):
         result = tips.PermanentlyBlockedThreadsTip.generate(javacore_set)
         self.assertEqual(max_tips, len(result),
                          f"Should cap output at MAX_TIPS ({max_tips})")
+
+    # ------------------------------------------------------------------
+    # linkify_ai_response
+    # ------------------------------------------------------------------
+
+    def test_linkify_ai_response_links_known_thread(self):
+        """Replaces a mentioned, drill-down-eligible thread name with a link."""
+        javacore_set = JavacoreSet("")
+        javacore_set.threads.snapshot_collections.append(
+            self._make_interesting_thread("worker-pool-1", "0x1")
+        )
+        text = "The thread worker-pool-1 is consuming high CPU."
+        result = tips.linkify_ai_response(javacore_set, text)
+        self.assertIn('<a href="threads/thread_', result)
+        self.assertIn(">worker-pool-1</a>", result)
+
+    def test_linkify_ai_response_links_javacore_filename(self):
+        """Replaces a mentioned javacore filename with a link."""
+        javacore_set = JavacoreSet("")
+        javacore_set.javacores.append(self._make_javacore("core.20260101.001.txt"))
+        text = "See core.20260101.001.txt for the failing snapshot."
+        result = tips.linkify_ai_response(javacore_set, text)
+        self.assertIn('<a href="javacores/core.20260101.001.txt.html">', result)
+
+    def test_linkify_ai_response_only_links_first_mention(self):
+        """Only the first occurrence of a name is linked, not every repeat."""
+        javacore_set = JavacoreSet("")
+        javacore_set.threads.snapshot_collections.append(
+            self._make_interesting_thread("worker-pool-1", "0x1")
+        )
+        text = "worker-pool-1 is blocked. worker-pool-1 has been blocked for a while."
+        result = tips.linkify_ai_response(javacore_set, text)
+        self.assertEqual(1, result.count("<a href="), "Should only link the first mention")
+        self.assertIn("worker-pool-1 has been blocked for a while", result,
+                       "Second mention should remain plain text")
+
+    def test_linkify_ai_response_no_known_names_untouched(self):
+        """Text with no known thread/javacore names is returned unchanged."""
+        javacore_set = JavacoreSet("")
+        javacore_set.threads.snapshot_collections.append(
+            self._make_interesting_thread("worker-pool-1", "0x1")
+        )
+        text = "General recommendation: consider increasing heap size."
+        result = tips.linkify_ai_response(javacore_set, text)
+        self.assertEqual(text, result)
+
+    def test_linkify_ai_response_boring_thread_stays_plain(self):
+        """A thread without a drill-down page is left as plain text, not linked."""
+        javacore_set = JavacoreSet("")
+        javacore_set.threads.snapshot_collections.append(
+            self._make_thread("idle-thread", "0x1", ["R", "R", "R"])  # cpu_usage=0, not interesting
+        )
+        text = "idle-thread is not a concern."
+        result = tips.linkify_ai_response(javacore_set, text)
+        self.assertEqual(text, result)
+
+    def test_linkify_ai_response_substring_name_collision(self):
+        """A shorter name that is a substring of an already-linked longer name
+        must not be re-matched inside the inserted link's HTML (regression test
+        for a bug found while implementing this: naive sequential re.sub matches
+        against the progressively-edited text, not the original, so "worker"
+        would incorrectly match inside the "<a ...>worker-2</a>" just inserted).
+        """
+        javacore_set = JavacoreSet("")
+        javacore_set.threads.snapshot_collections.append(
+            self._make_interesting_thread("worker-2", "0x2")
+        )
+        javacore_set.threads.snapshot_collections.append(
+            self._make_interesting_thread("worker", "0x1")
+        )
+        text = "worker-2 is blocking worker."
+        result = tips.linkify_ai_response(javacore_set, text)
+        # Exactly two well-formed links, no link nested inside another link's text
+        self.assertEqual(2, result.count("<a href="))
+        self.assertEqual(2, result.count("</a>"))
+        # No anchor tag appears between another anchor's open and close
+        first_open = result.index("<a href=")
+        first_close = result.index("</a>", first_open) + len("</a>")
+        self.assertNotIn("<a href=", result[first_open + len("<a href="):first_close],
+                          "A link must not be nested inside another link's text")
