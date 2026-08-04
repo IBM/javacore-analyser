@@ -13,6 +13,34 @@ The project follows **PEP 8** coding standard (https://peps.python.org/pep-0008/
 - **Type hints**: Recommended for better readability and maintainability
 - Follow PEP 8 naming conventions (snake_case for functions/variables, PascalCase for classes)
 
+## Imports
+
+All `import` statements should be placed at the top of the file, just after any module comments and docstrings, and
+before module globals and constants. Avoid placing imports inside functions or methods unless there is a specific reason
+(e.g. avoiding circular imports or deferring an expensive optional dependency). This follows PEP 8 conventions.
+
+### Correct pattern
+
+```python
+import os
+import logging
+
+from javacore_analyser.properties import Properties
+
+
+def my_function():
+    logging.info("doing something")
+```
+
+### Avoid
+
+```python
+def my_function():
+    import os      # avoid: import inside a function without a specific reason
+    import logging
+    logging.info("doing something")
+```
+
 ## Branching Strategy
 
 Each new feature or bug fix should be developed in a separate branch:
@@ -133,3 +161,15 @@ import logging
 logger = logging.getLogger(__name__)
 logger.info("Starting plugin discovery")
 ```
+
+## Releasing a New Version
+
+For the full release procedure see [CONTRIBUTING.md — Releasing a new version](CONTRIBUTING.md#releasing-a-new-version).
+
+Summary of steps:
+1. Ensure you are on `main` and the branch is clean.
+2. Create and push a version tag: `git tag <version> && git push --tags`
+3. Build distribution packages: `pip install build && python -m build`
+4. Upload to PyPI: `pip install twine && twine upload dist/*` (use `__token__` as username, PyPI API token as password)
+5. Create a GitHub release attaching the dist files: `gh release create <version> dist/* --repo IBM/javacore-analyser --generate-notes --title "<version>"`
+6. Copy release notes to [CHANGELOG.md](CHANGELOG.md).
