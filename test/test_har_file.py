@@ -35,6 +35,13 @@ class TestHarFile(unittest.TestCase):
         self.assertEqual(http_call_node.attributes["size"].nodeValue, "1234")
         self.assertEqual(http_call_node.attributes["success"].nodeValue, 'False')
         self.assertEqual(http_call_node.attributes["duration"].nodeValue, "900")
+        self.assertEqual(http_call_node.attributes["timing_blocked"].nodeValue, "-1")
+        self.assertEqual(http_call_node.attributes["timing_dns"].nodeValue, "0")
+        self.assertEqual(http_call_node.attributes["timing_connect"].nodeValue, "0")
+        self.assertEqual(http_call_node.attributes["timing_ssl"].nodeValue, "0")
+        self.assertEqual(http_call_node.attributes["timing_send"].nodeValue, "400")
+        self.assertEqual(http_call_node.attributes["timing_wait"].nodeValue, "500")
+        self.assertEqual(http_call_node.attributes["timing_receive"].nodeValue, "0")
 
     def test_har_file_with_no_valid_pages(self):
         """Test that HAR files with no valid pages are handled gracefully (issue #271)"""

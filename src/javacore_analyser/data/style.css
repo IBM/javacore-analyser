@@ -288,3 +288,43 @@ div.margined {
 .ml-write-database   { background-color: #d1ecf1; color: #0c5460; }
 .ml-write-network    { background-color: #bee5eb; color: #0a4650; }
 .ml-unknown          { background-color: #e9ecef; color: #495057; }
+
+
+/* Traffic timing breakdown table */
+.timing-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 15px;
+    font-size: 13px;
+}
+
+.timing-table th,
+.timing-table td {
+    border: 1px solid #ddd;
+    padding: 5px 8px;
+    text-align: left;
+}
+
+.timing-table th {
+    background-color: #f0f0f0;
+    font-weight: bold;
+}
+
+.timing-bar-cell {
+    width: 50%;
+    min-width: 120px;
+}
+
+.timing-bar {
+    height: 14px;
+    border-radius: 3px;
+    min-width: 2px;
+}
+
+.timing-blocked  { background-color: #aaaaaa; }
+.timing-dns      { background-color: #9b59b6; }
+.timing-connect  { background-color: #e67e22; }
+.timing-ssl      { background-color: #27ae60; }
+.timing-send     { background-color: #3498db; }
+.timing-wait     { background-color: #e74c3c; }
+.timing-receive  { background-color: #1abc9c; }
