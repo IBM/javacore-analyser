@@ -1,5 +1,27 @@
 # Changelog
 
+## [4.0] - 2026-08-05
+* #310 add classification to javacore details by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/311
+* #308 improve classification lookup display by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/309
+* #312 thread classification chart by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/313
+* #314 Add numpy and xgboost to core dependencies by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/315
+* #317 detect permanently blocked threads by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/318
+* #319 Fixed security vulnerabilities for torch and idna by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/320
+* #322 removed duplicated pandas requirement from requirements.txt by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/323
+* Update ossf/scorecard-action action to v2.4.4 by @renovate[bot] in https://github.com/IBM/javacore-analyser/pull/328
+* #218 Add clickable thread and javacore links in tips by @PiotrAniola82 in https://github.com/IBM/javacore-analyser/pull/329
+* #331 Fix searchbar z-index overlap with floating table headers by @PiotrAniola82 in https://github.com/IBM/javacore-analyser/pull/332
+* #65 Add search occurrence counter to report search bar by @PiotrAniola82 in https://github.com/IBM/javacore-analyser/pull/330
+* #300 Fix ML classifier returning empty classifications by @PiotrAniola82 in https://github.com/IBM/javacore-analyser/pull/333
+* #325 Corrected inconsistencies in config.ini by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/326
+* #335 update releasing new version doc by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/336
+* #19 refactor js code by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/327
+* #337 Added scikit-learn dependency to pyproject.toml by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/338
+* #339 Add guidance to place imports at the top of the file by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/340
+* #334 Make AI-generated tips' thread/javacore names clickable by @sileshidev-lab in https://github.com/IBM/javacore-analyser/pull/342
+
+[4.0]: https://github.com/IBM/javacore-analyser/compare/3.0.3.1...4.0
+
 ## [3.0.3.1] - 2026-06-26
 * #284 display ml classification of threads by @PiotrAniola82 in https://github.com/IBM/javacore-analyser/pull/301
 * #295 Display verbosegc chart when there is long timespan by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/296
