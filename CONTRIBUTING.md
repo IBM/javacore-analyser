@@ -158,45 +158,69 @@ podman manifest push javacore-analyser:2.1 docker://ghcr.io/ibm/javacore-analyse
 ```
 
 ## Releasing a new version
-Here are the steps to release a new version:
-1. Make sure you are on `main` branch in your repository.
-2. Create a new tag e.g:
-   `git tag 2.1`
-3. Push the tag to Github:
-   `git push --tags`
-   alternatively you can perform this operation from Pycharm UI (**Git** -> **Push** -> Select **Push Tags** ->
-   Click **Push**)
-4. Build the distribution packages locally following
-   [Packaging projects](https://packaging.python.org/en/latest/tutorials/packaging-projects/):
+
+Use the [`release.sh`](release.sh) script from the project root. It automates all release steps and
+requires `git`, `pip`, `twine`, and the [GitHub CLI (`gh`)](https://cli.github.com/) to be installed
+and authenticated.
+
+### Quick start
+
+```bash
+bash release.sh <VERSION>
+```
+
+For example:
+
+```bash
+bash release.sh 4.0
+bash release.sh 4.0beta2
+```
+
+### Resuming a failed release
+
+If a step fails, fix the problem and re-run from that step using `--from`:
+
+```bash
+bash release.sh <VERSION> --from <STEP>
+```
+
+For example, to retry only the PyPI upload after a network error:
+
+```bash
+bash release.sh 4.0 --from 4
+```
+
+### What the script does
+
+| Step | Action |
+|------|--------|
+| 1 | Verify you are on `main` with a clean working tree |
+| 2 | Create and push the git tag (`git tag <VERSION> && git push --tags`) |
+| 3 | Build distribution packages (`python -m build`) into `dist/` |
+| 4 | Upload packages to PyPI (`twine upload dist/*`) — prompts for `__token__` and your PyPI API token |
+| 5 | Create a **draft** GitHub release with auto-generated notes attached |
+| 6 | Prepend the release notes to [CHANGELOG.md](CHANGELOG.md) |
+
+### After the script finishes
+
+1. Review the draft release notes:
    ```commandline
-   pip install build
-   python -m build
+   gh release view <VERSION> --web --repo IBM/javacore-analyser
    ```
-   This produces the distribution files in `dist/`.
-5. Upload the distribution packages to PyPI using `twine`:
+2. Publish the draft once the notes look good:
    ```commandline
-   pip install twine
-   twine upload dist/*
+   gh release edit <VERSION> --draft=false --repo IBM/javacore-analyser
    ```
-   You will be prompted for your PyPI credentials. Use `__token__` as the username and your PyPI API token
-   (generated at https://pypi.org/manage/account/token/) as the password.
-6. Create and publish a GitHub release with auto-generated notes, attaching the distribution files:
+3. Review, then commit the CHANGELOG update:
    ```commandline
-   gh release create 2.1 dist/* --repo IBM/javacore-analyser --generate-notes --title "2.1"
+   git add CHANGELOG.md && git commit --signoff -m "Ref #release Add <VERSION> release notes"
    ```
-   If you want to review and edit the release notes before publishing, create a draft first:
-   ```commandline
-   gh release create 2.1 dist/* --repo IBM/javacore-analyser --generate-notes --title "2.1" --draft
-   gh release view 2.1 --web --repo IBM/javacore-analyser
-   ```
-   then publish it once the notes look good:
-   ```commandline
-   gh release edit 2.1 --draft=false --repo IBM/javacore-analyser
-   ```
-7. Copy release notes to [CHANGELOG.md](CHANGELOG.md) file. You can retrieve the release notes with:
-   ```commandline
-   gh release view 2.1 --json body --jq '.body' --repo IBM/javacore-analyser
-   ```
+
+### Prerequisites
+
+- A PyPI API token — generate one at https://pypi.org/manage/account/token/
+  When prompted by `twine`, use `__token__` as the username and the token as the password.
+- GitHub CLI authenticated (`gh auth login`) with `write:packages` scope.
 
 
 ## Testing
