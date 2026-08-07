@@ -46,6 +46,7 @@ dependencies = [
     "tqdm",
     "haralyzer",
     "idna>=3.15",  # security floor: PYSEC-2026-215
+    "filelock>=3.20.3",  # security floor: PYSEC-2026-1374, PYSEC-2026-1375
     "numpy",
     "xgboost",
     "scikit-learn"
