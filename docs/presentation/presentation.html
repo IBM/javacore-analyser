@@ -37,11 +37,11 @@ body {
   flex-shrink: 0;
 }
 .tag {
-  color: #0062FF; font-size: 9px; font-weight: bold;
+  color: #0062FF; font-size: 11.25px; font-weight: bold;
   letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px;
 }
 .slide-header h2 {
-  color: #fff; font-size: clamp(17px, 2.2vw, 24px);
+  color: #fff; font-size: clamp(21.25px, 2.75vw, 30px);
   font-weight: bold; margin: 0;
 }
 .body {
@@ -54,18 +54,18 @@ body {
 .right { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 10px; }
 
 /* ── Text elements ── */
-.desc { color: #8BACD9; font-size: 11px; line-height: 1.55; }
+.desc { color: #8BACD9; font-size: 13.75px; line-height: 1.55; }
 .section-label {
-  color: #0062FF; font-size: 8.5px; font-weight: bold;
+  color: #0062FF; font-size: 10.625px; font-weight: bold;
   text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 5px;
 }
 ul.pts { list-style: none; padding: 0; }
 ul.pts li {
-  color: #C9D8F0; font-size: 10.5px; line-height: 1.5;
+  color: #C9D8F0; font-size: 13.125px; line-height: 1.5;
   padding: 2.5px 0 2.5px 14px; position: relative;
 }
 ul.pts li::before {
-  content: "▶"; color: #0062FF; font-size: 7px;
+  content: "▶"; color: #0062FF; font-size: 8.75px;
   position: absolute; left: 0; top: 4px;
 }
 
@@ -74,8 +74,8 @@ ul.pts li::before {
   background: #0D1E32; border-left: 3px solid #0062FF;
   border-radius: 5px; padding: 10px 13px;
 }
-.card-title { color: #fff; font-size: 10.5px; font-weight: bold; margin-bottom: 4px; }
-.card p { color: #8BACD9; font-size: 9.5px; line-height: 1.45; }
+.card-title { color: #fff; font-size: 13.125px; font-weight: bold; margin-bottom: 4px; }
+.card p { color: #8BACD9; font-size: 11.875px; line-height: 1.45; }
 
 /* ── Screenshot frame ── */
 .ss-wrap {
@@ -88,7 +88,7 @@ ul.pts li::before {
   display: block;
 }
 .ss-caption {
-  color: #57748a; font-size: 8px; text-align: center;
+  color: #57748a; font-size: 10px; text-align: center;
   padding-top: 4px; font-style: italic;
 }
 
@@ -97,7 +97,7 @@ ul.pts li::before {
 .pill {
   background: #162236; border: 1px solid #0062FF;
   border-radius: 3px; padding: 2px 8px;
-  color: #8BACD9; font-size: 8px;
+  color: #8BACD9; font-size: 10px;
 }
 
 /* ── Title slide ── */
@@ -112,18 +112,18 @@ ul.pts li::before {
   padding-bottom: 40px;
 }
 #slide-1 h1 {
-  color: #fff; font-size: clamp(28px, 4vw, 42px);
+  color: #fff; font-size: clamp(35px, 5vw, 52.5px);
   font-weight: bold; line-height: 1.15; margin-bottom: 10px;
 }
 #slide-1 .subtitle {
-  color: #8BACD9; font-size: 14px; line-height: 1.5; margin-bottom: 26px;
+  color: #8BACD9; font-size: 17.5px; line-height: 1.5; margin-bottom: 26px;
 }
 #slide-1 .divider { width: 60px; height: 3px; background: #0062FF; margin-bottom: 22px; }
 #slide-1 .footer-pills { display: grid; grid-template-columns: repeat(3, auto); justify-content: start; gap: 8px; }
 #slide-1 .footer-pill {
   background: #162236; border: 1px solid #0062FF;
   border-radius: 4px; padding: 5px 13px;
-  color: #8BACD9; font-size: 9px;
+  color: #8BACD9; font-size: 11.25px;
 }
 
 /* ── Summary slide ── */
@@ -135,9 +135,9 @@ ul.pts li::before {
   background: #0D1E32; border-radius: 6px; padding: 14px 15px;
   border-top: 3px solid #0062FF;
 }
-#slide-8 .sum-num { color: #0062FF; font-size: 24px; font-weight: bold; }
-#slide-8 .sum-title { color: #fff; font-size: 11px; font-weight: bold; margin: 4px 0 6px; }
-#slide-8 .sum-card p { color: #8BACD9; font-size: 9.5px; line-height: 1.45; }
+#slide-8 .sum-num { color: #0062FF; font-size: 30px; font-weight: bold; }
+#slide-8 .sum-title { color: #fff; font-size: 13.75px; font-weight: bold; margin: 4px 0 6px; }
+#slide-8 .sum-card p { color: #8BACD9; font-size: 11.875px; line-height: 1.45; }
 
 /* ── Navigation ── */
 #nav {
@@ -151,13 +151,13 @@ ul.pts li::before {
 #nav button {
   background: none; border: 1px solid #0062FF; color: #0062FF;
   border-radius: 50%; width: 30px; height: 30px; cursor: pointer;
-  font-size: 14px; display: flex; align-items: center; justify-content: center;
+  font-size: 17.5px; display: flex; align-items: center; justify-content: center;
   transition: background 0.15s;
 }
 #nav button:hover { background: #0062FF; color: #fff; }
 #nav button:disabled { border-color: #2a3a55; color: #2a3a55; cursor: default; }
 #nav button:disabled:hover { background: none; color: #2a3a55; }
-#counter { color: #8BACD9; font-size: 11px; min-width: 48px; text-align: center; }
+#counter { color: #8BACD9; font-size: 13.75px; min-width: 48px; text-align: center; }
 .dot-row { display: flex; gap: 6px; }
 .dot {
   width: 7px; height: 7px; border-radius: 50%;
@@ -180,8 +180,8 @@ ul.pts li::before {
       <div class="divider"></div>
       <p class="subtitle">Recently added capabilities for faster performance investigations</p>
       <div style="margin-bottom: 22px;">
-        <p style="color:#8BACD9; font-size:11px; margin-bottom:2px;">Chris Kazmierczyk</p>
-        <p style="color:#57748a; font-size:10px;">August 2026</p>
+        <p style="color:#8BACD9; font-size:13.75px; margin-bottom:2px;">Chris Kazmierczyk</p>
+        <p style="color:#57748a; font-size:12.5px;">August 2026</p>
       </div>
       <div class="footer-pills">
         <span class="footer-pill">Verbose GC Analysis</span>
@@ -237,7 +237,6 @@ ul.pts li::before {
           <li>Identify slow external calls that cause thread wait states</li>
           <li>Detect high-latency endpoints behind application hangs</li>
           <li>Spot HTTP 5xx errors indicating back-end overload</li>
-          <li>Match timestamps of long calls to javacore snapshots</li>
         </ul>
         <div class="card" style="margin-top:6px">
           <p class="card-title">Typical scenario</p>
@@ -350,13 +349,13 @@ ul.pts li::before {
     </div>
     <div class="body">
       <div class="left">
-        <p class="desc">A plugin system lets you extend the tool with custom data source processors — without touching core code. Drop a plugin folder into <code style="color:#7EC8E3;font-size:9px">~/.javacore_analyser/plugins/</code> and it auto-loads.</p>
+        <p class="desc">A plugin system lets you extend the tool with custom data source processors — without touching core code. Drop a plugin folder into <code style="color:#7EC8E3;font-size:11.25px">~/.javacore_analyser/plugins/</code> and it auto-loads.</p>
         <p class="section-label">Why it matters</p>
         <ul class="pts">
           <li>Process custom diagnostic file types (e.g. Liberty server logs, JMX exports)</li>
           <li>Inject custom HTML sections into the report</li>
           <li>No core modifications — zero risk to existing functionality</li>
-          <li>Reference implementation included in <code style="color:#7EC8E3;font-size:9px">docs/example_plugin/</code></li>
+          <li>Reference implementation included in <code style="color:#7EC8E3;font-size:11.25px">docs/example_plugin/</code></li>
         </ul>
       </div>
       <div class="right">
@@ -405,32 +404,32 @@ ul.pts li::before {
     </div>
     <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; flex:1; padding: 4px 44px 20px 44px; min-height:0;">
       <div class="card" style="border-left: none; border-top: 3px solid #0062FF;">
-        <p style="color:#0062FF; font-size:18px; font-weight:bold; margin-bottom:4px;">01</p>
+        <p style="color:#0062FF; font-size:22.5px; font-weight:bold; margin-bottom:4px;">01</p>
         <p class="card-title">Verbose GC Support</p>
         <p>GC activity chart with heap, pause times and frequency. Long STW pauses automatically flagged in Tips.</p>
       </div>
       <div class="card" style="border-left: none; border-top: 3px solid #0062FF;">
-        <p style="color:#0062FF; font-size:18px; font-weight:bold; margin-bottom:4px;">02</p>
+        <p style="color:#0062FF; font-size:22.5px; font-weight:bold; margin-bottom:4px;">02</p>
         <p class="card-title">HAR File Support</p>
         <p>HTTP call durations, status codes and payload sizes — correlated with javacore timestamps to reveal slow downstream calls.</p>
       </div>
       <div class="card" style="border-left: none; border-top: 3px solid #0062FF;">
-        <p style="color:#0062FF; font-size:18px; font-weight:bold; margin-bottom:4px;">03</p>
+        <p style="color:#0062FF; font-size:22.5px; font-weight:bold; margin-bottom:4px;">03</p>
         <p class="card-title">AI-Based Thread Classification</p>
         <p>Pre-trained model classifies every thread snapshot. Workload trends visible in the Thread Classification Over Time chart.</p>
       </div>
       <div class="card" style="border-left: none; border-top: 3px solid #0062FF;">
-        <p style="color:#0062FF; font-size:18px; font-weight:bold; margin-bottom:4px;">04</p>
+        <p style="color:#0062FF; font-size:22.5px; font-weight:bold; margin-bottom:4px;">04</p>
         <p class="card-title">Tips Enhancements</p>
         <p>AI tips ranked HIGH/MEDIUM/LOW with Evidence, Action and Expected Impact. Thread &amp; javacore names are clickable links.</p>
       </div>
       <div class="card" style="border-left: none; border-top: 3px solid #0062FF;">
-        <p style="color:#0062FF; font-size:18px; font-weight:bold; margin-bottom:4px;">05</p>
+        <p style="color:#0062FF; font-size:22.5px; font-weight:bold; margin-bottom:4px;">05</p>
         <p class="card-title">Plugin Architecture</p>
-        <p>Extend the tool with custom file processors. Drop a plugin into <code style="color:#7EC8E3; font-size:9px">~/.javacore_analyser/plugins/</code> — no core changes needed.</p>
+        <p>Extend the tool with custom file processors. Drop a plugin into <code style="color:#7EC8E3; font-size:11.25px">~/.javacore_analyser/plugins/</code> — no core changes needed.</p>
       </div>
       <div class="card" style="border-left: none; border-top: 3px solid #4a90e2;">
-        <p style="color:#4a90e2; font-size:18px; font-weight:bold; margin-bottom:4px;">🔮</p>
+        <p style="color:#4a90e2; font-size:22.5px; font-weight:bold; margin-bottom:4px;">🔮</p>
         <p class="card-title">WatsonX AI Integration (planned)</p>
         <p>Natural language search over tips, interactive Q&amp;A over diagnostics data, and automatic tip severity ranking.</p>
       </div>
@@ -479,7 +478,7 @@ document.addEventListener('keydown', e => {
 });
 </script>
 
-<footer style="position:fixed;bottom:0;width:100%;text-align:center;font-size:10px;color:#2a3a55;padding:2px 0;pointer-events:none;">
+<footer style="position:fixed;bottom:0;width:100%;text-align:center;font-size:12.5px;color:#2a3a55;padding:2px 0;pointer-events:none;">
   Made with IBM Bob
 </footer>
 
