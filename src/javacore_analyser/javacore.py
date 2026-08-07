@@ -7,8 +7,12 @@ import codecs
 import datetime
 import logging
 import os.path
+import re
 
-from javacore_analyser.constants import THREAD_INFO, DATETIME, SIGINFO, ENCODING
+from javacore_analyser.constants import (
+    THREAD_INFO, DATETIME, SIGINFO, ENCODING,
+    XMX, XMS, XMN, GC_POLICY, COMPRESSED_REFS, NO_COMPRESSED_REFS, VERBOSE_GC, UNKNOWN,
+)
 from javacore_analyser.thread_snapshot import ThreadSnapshot
 
 
@@ -195,3 +199,66 @@ class Javacore:
     def get_id(self):
         """Unique identifier of javacore"""
         return self.basefilename()
+
+    # -------------------------------------------------------------------------
+    # JVM config parsing helpers — write parsed values into self.javacore_set
+    # -------------------------------------------------------------------------
+
+    @staticmethod
+    def parse_mem_arg(line):
+        """Extract a memory argument value (e.g. 512m, 1g) from a javacore user-arg line."""
+        line = line.split()[-1]  # avoid matching the '2' in tag name 2CIUSERARG
+        tokens = re.findall(r"\d+[KkMmGg]?$", line)
+        if len(tokens) != 1:
+            return UNKNOWN
+        return tokens[0]
+
+    def parse_xmx(self, line):
+        """Parse Xmx value from *line* and store it in self.javacore_set.xmx."""
+        self.javacore_set.xmx = self.parse_mem_arg(line)
+
+    def parse_xms(self, line):
+        """Parse Xms value from *line* and store it in self.javacore_set.xms."""
+        self.javacore_set.xms = self.parse_mem_arg(line)
+
+    def parse_xmn(self, line):
+        """Parse Xmn value from *line* and store it in self.javacore_set.xmn."""
+        self.javacore_set.xmn = self.parse_mem_arg(line)
+
+    def parse_gc_policy(self, line):
+        """Parse GC policy from *line* and store it in self.javacore_set.gc_policy."""
+        self.javacore_set.gc_policy = line[line.rfind(":") + 1:].strip()
+
+    def parse_compressed_refs(self, line):
+        """Parse compressed refs flag from *line* and update self.javacore_set.compressed_refs."""
+        if COMPRESSED_REFS in line:
+            self.javacore_set.compressed_refs = True
+        if NO_COMPRESSED_REFS in line:
+            self.javacore_set.compressed_refs = False
+
+    def parse_verbose_gc(self, line):
+        """Set self.javacore_set.verbose_gc = True if *line* contains the verbose:gc flag."""
+        if VERBOSE_GC in line:
+            self.javacore_set.verbose_gc = True
+
+    def add_user_arg(self, line):
+        """Append the JVM user arg from *line* to self.javacore_set.user_args."""
+        arg = line[line.find('-'):].rstrip()
+        logging.debug("User arg: " + arg)
+        self.javacore_set.user_args.append(arg)
+
+    def parse_user_args(self, line):
+        """Parse all JVM user-arg fields from *line* and update self.javacore_set attributes."""
+        self.add_user_arg(line)
+        if XMX in line:
+            self.parse_xmx(line)
+        if XMS in line:
+            self.parse_xms(line)
+        if XMN in line:
+            self.parse_xmn(line)
+        if GC_POLICY in line:
+            self.parse_gc_policy(line)
+        if COMPRESSED_REFS in line or NO_COMPRESSED_REFS in line:
+            self.parse_compressed_refs(line)
+        if VERBOSE_GC in line:
+            self.parse_verbose_gc(line)

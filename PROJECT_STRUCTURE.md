@@ -37,7 +37,8 @@ javacore-analyser/
 
 | File | Class | Purpose |
 |------|-------|---------|
-| `javacore_set.py` | `JavacoreSet` | Main orchestrator - processes javacores, generates reports |
+| `javacore_analyzer.py` | `JavacoreAnalyzer` | Main orchestrator — coordinates file discovery, parsing, report generation, plugins, and AI |
+| `javacore_set.py` | `JavacoreSet` | Backward-compatibility shim; deprecated alias for `JavacoreAnalyzer` (used by tests only) |
 | `javacore.py` | `Javacore` | Represents single javacore file, parses threads |
 | `java_thread.py` | `Thread` | Represents thread across multiple javacores |
 | `thread_snapshot.py` | `ThreadSnapshot` | Single thread state at one point in time |
@@ -55,6 +56,18 @@ javacore-analyser/
 | `abstract_snapshot_collection.py` | `AbstractSnapshotCollection` | Abstract base for collections |
 | `code_snapshot_collection.py` | `CodeSnapshotCollection` | Groups threads by code path |
 | `snapshot_collection_collection.py` | `SnapshotCollectionCollection` | Collection of collections |
+
+### Analysis Submodules (extracted from `javacore_set.py` in issue #258)
+
+| File | Class | Purpose |
+|------|-------|---------|
+| `file_resolver.py` | `FileResolver` | Custom lxml URI resolver for `xsl:include` directives in XSLT processing |
+| `jvm_config_parser.py` | `JvmConfigParser` | Parses JVM `-X` arguments (Xmx, Xms, Xmn, GC policy, etc.) from javacore lines |
+| `file_discovery.py` | `FileDiscovery` | Walks the input directory and discovers javacore, verbose GC, and HAR files |
+| `blocking_analyzer.py` | `BlockingAnalyzer` | Builds thread blocking relationships from javacore snapshots |
+| `xml_report_generator.py` | `XmlReportGenerator` | Generates the XML report file from analysed data |
+| `html_report_generator.py` | `HtmlReportGenerator` | Runs XSLT transformations; generates HTML pages in parallel |
+| `plugin_coordinator.py` | `PluginCoordinator` | Manages plugin lifecycle, XSL generation, and HTML injection |
 
 ### Plugin System
 
@@ -205,13 +218,14 @@ test/data/
 ### Batch Processing Flow
 1. `javacore_analyser_batch.py` → Entry point
 2. Extract archives if needed → `extract_archive()`
-3. Create `JavacoreSet` → `JavacoreSet.create()`
-4. Parse javacores → `parse_javacores()`
-5. Parse verbose GC → `parse_verbose_gc_files()`
-6. Parse HAR files → `HarFile`
-7. Load plugins → `_process_plugins()`
-8. Generate XML → `__create_report_xml()`
-9. Generate HTML → `generate_htmls_from_xmls_xsls()`
+3. Create `JavacoreAnalyzer` → `JavacoreAnalyzer.create()`
+4. `FileDiscovery` discovers javacore, verbose GC, and HAR files
+5. Parse javacores → `parse_javacores()`
+6. Parse verbose GC → `parse_verbose_gc_files()`
+7. Parse HAR files → `HarFile`
+8. Load plugins → `PluginCoordinator.process_plugins()`
+9. Generate XML → `XmlReportGenerator.create_report_xml()`
+10. Generate HTML → `HtmlReportGenerator.generate_htmls_from_xmls_xsls()`
 
 ### Web Processing Flow
 1. User uploads files → `/upload` route
@@ -260,7 +274,7 @@ test/data/
 
 ### Adding New Analysis Feature
 1. Modify parsing in `javacore.py` or `thread_snapshot.py`
-2. Update XML generation in `javacore_set.py`
+2. Update XML generation in `xml_report_generator.py`
 3. Add XSL template in `data/xml/sections/`
 4. Update `report.xsl` to include new section
 5. Add tests in `test/`
@@ -327,5 +341,9 @@ pip install -r requirements.txt    # Install dependencies
 
 ---
 
-**Last Updated**: 2026-06-12  
-**For**: Issue #292 - Create project structure description
+## Update History
+
+| Date | Issue | Description |
+|------|-------|-------------|
+| 2026-06-12 | #292 | Initial creation — project structure description |
+| 2026-07-23 | #258 | Added `JavacoreAnalyzer` and 7 extracted analysis submodules; updated batch flow and modification scenarios |
