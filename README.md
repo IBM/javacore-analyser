@@ -52,7 +52,7 @@ Javacore Analyser supports a plugin system that allows you to extend the tool wi
 ## Installation and usage
 
 ### Installation:
-The tool requires Python 3.9 or higher plus some packages - see more in [REQUIREMENTS](REQUIREMENTS.md). 
+The tool requires Python 3.10 or higher plus some packages - see more in [REQUIREMENTS](REQUIREMENTS.md). 
 Despite it is not mandatory, it is recommended in Python to use [virtual environment](https://docs.python.org/3/tutorial/venv.html) to manage packages.
 
 #### Installing from pip
