@@ -147,8 +147,8 @@ if should_run 4; then
   echo "Creating temporary venv in $VENV_DIR ..."
   python -m venv "$VENV_DIR"
 
-  echo "Installing $WHL ..."
-  "$VENV_DIR/bin/pip" install --quiet "$WHL"
+  echo "Installing $WHL[full] ..."
+  "$VENV_DIR/bin/pip" install --quiet "$WHL[full]"
 
   echo "Running tests against the installed package ..."
   PYTHONPATH=test "$VENV_DIR/bin/python" -m unittest discover -s test -v
