@@ -3,7 +3,7 @@
 # Run from the project root on the `main` branch with a clean working tree.
 #
 # Usage:
-#   bash release.sh <VERSION>             # run all steps (1-6)
+#   bash release.sh <VERSION>             # run all steps (1-7)
 #   bash release.sh <VERSION> --from 3   # resume from step 3 onwards
 #   bash release.sh --help
 
@@ -21,16 +21,17 @@ usage() {
 Usage: $0 <VERSION> [--from STEP] [--help]
 
   VERSION       The release version tag to create, e.g. 4.0beta2, 3.1, 2.0.1
-  --from STEP   Start execution from STEP (1-6). Skips earlier steps.
+  --from STEP   Start execution from STEP (1-7). Skips earlier steps.
   --help        Show this help message.
 
 Steps:
   1  Verify preconditions (branch = main, clean working tree)
   2  Create and push git tag VERSION
   3  Build distribution packages (python -m build)
-  4  Upload to PyPI (twine upload)
-  5  Create GitHub release draft
-  6  Copy release notes to CHANGELOG.md
+  4  Install built package in a temporary venv and run tests
+  5  Upload to PyPI (twine upload)
+  6  Create GitHub release draft
+  7  Copy release notes to CHANGELOG.md
 
 Examples:
   bash $0 4.0beta2
@@ -43,8 +44,8 @@ EOF
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --from)
-      if [[ -z "${2-}" || ! "$2" =~ ^[1-6]$ ]]; then
-        echo "ERROR: --from requires a step number between 1 and 6"
+      if [[ -z "${2-}" || ! "$2" =~ ^[1-7]$ ]]; then
+        echo "ERROR: --from requires a step number between 1 and 7"
         exit 1
       fi
       START_STEP="$2"
@@ -91,7 +92,7 @@ should_run() {
 # Step 1 — Verify preconditions
 # ---------------------------------------------------------------------------
 if should_run 1; then
-  echo "=== [1/6] Verifying preconditions ==="
+  echo "=== [1/7] Verifying preconditions ==="
   BRANCH=$(git rev-parse --abbrev-ref HEAD)
   if [[ "$BRANCH" != "main" ]]; then
     echo "ERROR: must be on 'main' branch (currently on '$BRANCH')"
@@ -109,7 +110,7 @@ fi
 # Step 2 — Create and push git tag
 # ---------------------------------------------------------------------------
 if should_run 2; then
-  echo "=== [2/6] Creating and pushing git tag $VERSION ==="
+  echo "=== [2/7] Creating and pushing git tag $VERSION ==="
   git tag "$VERSION"
   git push --tags
   echo "Tag $VERSION pushed."
@@ -120,7 +121,7 @@ fi
 # Step 3 — Build distribution packages
 # ---------------------------------------------------------------------------
 if should_run 3; then
-  echo "=== [3/6] Building distribution packages ==="
+  echo "=== [3/7] Building distribution packages ==="
   pip install --quiet build
   python -m build
   echo "Build complete. Artifacts in dist/:"
@@ -129,10 +130,38 @@ if should_run 3; then
 fi
 
 # ---------------------------------------------------------------------------
-# Step 4 — Upload to PyPI
+# Step 4 — Install built package in a temporary venv and run tests
 # ---------------------------------------------------------------------------
 if should_run 4; then
-  echo "=== [4/6] Uploading to PyPI ==="
+  echo "=== [4/7] Testing the built package ==="
+
+  VENV_DIR=$(mktemp -d)
+  WHL=$(ls dist/javacore_analyser-"${VERSION}"-*.whl 2>/dev/null | head -n1)
+  if [[ -z "$WHL" ]]; then
+    echo "ERROR: No wheel found in dist/ for version $VERSION. Run step 3 first."
+    rm -rf "$VENV_DIR"
+    exit 1
+  fi
+
+  echo "Creating temporary venv in $VENV_DIR ..."
+  python -m venv "$VENV_DIR"
+
+  echo "Installing $WHL ..."
+  "$VENV_DIR/bin/pip" install --quiet "$WHL"
+
+  echo "Running tests against the installed package ..."
+  PYTHONPATH=test "$VENV_DIR/bin/python" -m unittest discover -s test -v
+
+  echo "All tests passed."
+  rm -rf "$VENV_DIR"
+  echo ""
+fi
+
+# ---------------------------------------------------------------------------
+# Step 5 — Upload to PyPI
+# ---------------------------------------------------------------------------
+if should_run 5; then
+  echo "=== [5/7] Uploading to PyPI ==="
   # Use __token__ as the username and your PyPI API token as the password when prompted.
   pip install --quiet twine
   twine upload dist/*
@@ -140,10 +169,10 @@ if should_run 4; then
 fi
 
 # ---------------------------------------------------------------------------
-# Step 5 — Create GitHub release (draft)
+# Step 6 — Create GitHub release (draft)
 # ---------------------------------------------------------------------------
-if should_run 5; then
-  echo "=== [5/6] Creating GitHub release (draft) ==="
+if should_run 6; then
+  echo "=== [6/7] Creating GitHub release (draft) ==="
   gh release create "$VERSION" dist/* \
     --repo "$REPO" \
     --generate-notes \
@@ -158,10 +187,10 @@ if should_run 5; then
 fi
 
 # ---------------------------------------------------------------------------
-# Step 6 — Copy release notes to CHANGELOG.md
+# Step 7 — Copy release notes to CHANGELOG.md
 # ---------------------------------------------------------------------------
-if should_run 6; then
-  echo "=== [6/6] Copying release notes to CHANGELOG.md ==="
+if should_run 7; then
+  echo "=== [7/7] Copying release notes to CHANGELOG.md ==="
   NOTES=$(gh release view "$VERSION" --json body --jq '.body' --repo "$REPO")
   TMP=$(mktemp)
   {
