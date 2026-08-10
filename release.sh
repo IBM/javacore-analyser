@@ -123,7 +123,7 @@ fi
 # ---------------------------------------------------------------------------
 if should_run 3; then
   echo "=== [3/7] Building distribution packages ==="
-  pip install --quiet build
+  pip install --quiet --upgrade build
   python -m build
   echo "Build complete. Artifacts in dist/:"
   ls dist/
@@ -164,7 +164,7 @@ fi
 if should_run 5; then
   echo "=== [5/7] Uploading to PyPI ==="
   # Use __token__ as the username and your PyPI API token as the password when prompted.
-  pip install --quiet twine
+  pip install --quiet --upgrade twine
   twine upload dist/*
   echo ""
 fi
