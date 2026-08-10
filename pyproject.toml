@@ -99,6 +99,7 @@ exclude = [
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/javacore_analyser"]
+artifacts = ["src/javacore_analyser/config.ini"]
 
 [tool.hatch.version]
 source = "versioningit"
