@@ -5,7 +5,6 @@
 import configparser
 import logging
 import os.path
-import shutil
 
 import importlib_resources
 
@@ -93,5 +92,6 @@ class Properties:
 
     @staticmethod
     def _generate_default_config(config_file):
-        with importlib_resources.path("javacore_analyser", "config.ini") as config_ini_resource:
-            shutil.copy2(config_ini_resource, config_file)
+        config_data = importlib_resources.files("javacore_analyser").joinpath("config.ini").read_bytes()
+        with open(config_file, "wb") as f:
+            f.write(config_data)
