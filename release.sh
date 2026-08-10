@@ -136,9 +136,9 @@ if should_run 4; then
   echo "=== [4/7] Testing the built package ==="
 
   VENV_DIR=$(mktemp -d)
-  WHL=$(ls dist/javacore_analyser-"${VERSION}"-*.whl 2>/dev/null | head -n1)
+  WHL=$(ls -t dist/javacore_analyser-*.whl 2>/dev/null | head -n1)
   if [[ -z "$WHL" ]]; then
-    echo "ERROR: No wheel found in dist/ for version $VERSION. Run step 3 first."
+    echo "ERROR: No wheel found in dist/. Run step 3 first."
     rm -rf "$VENV_DIR"
     exit 1
   fi
