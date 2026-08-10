@@ -33,51 +33,67 @@ body {
   background: #0062FF;
 }
 .slide-header {
-  padding: 18px 44px 0 44px;
+  padding: 14px 44px 0 44px;
   flex-shrink: 0;
 }
 .tag {
-  color: #0062FF; font-size: 11.25px; font-weight: bold;
-  letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px;
+  color: #0062FF; font-size: 11px; font-weight: bold;
+  letter-spacing: 2px; text-transform: uppercase; margin-bottom: 3px;
 }
 .slide-header h2 {
-  color: #fff; font-size: clamp(21.25px, 2.75vw, 30px);
+  color: #fff; font-size: clamp(19px, 2.5vw, 27px);
   font-weight: bold; margin: 0;
 }
+
+/* ── Body: left text + right image ── */
 .body {
-  display: flex; flex: 1; padding: 14px 44px 20px 44px;
-  gap: 24px; min-height: 0;
+  display: flex; flex: 1; padding: 10px 44px 16px 44px;
+  gap: 28px; min-height: 0;
 }
 
-/* ── Left / right columns ── */
-.left { flex: 0 0 50%; display: flex; flex-direction: column; gap: 10px; }
-.right { flex: 0 0 50%; min-width: 0; display: flex; flex-direction: column; gap: 10px; }
-
-/* ── Text elements ── */
-.desc { color: #8BACD9; font-size: 13.75px; line-height: 1.55; }
-.section-label {
-  color: #0062FF; font-size: 10.625px; font-weight: bold;
-  text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 5px;
+/* Left column: three stacked rows */
+.left {
+  flex: 0 0 50%;
+  display: flex; flex-direction: column;
+  gap: 0;
 }
-ul.pts { list-style: none; padding: 0; }
+
+/* Each of the three rows */
+.row {
+  flex: 1; display: flex; flex-direction: column;
+  justify-content: flex-start;
+  padding: 8px 12px 8px 0;
+  border-bottom: 1px solid #1a2e45;
+}
+.row:last-child { border-bottom: none; }
+
+.row-label {
+  color: #0062FF; font-size: 10px; font-weight: bold;
+  text-transform: uppercase; letter-spacing: 1.5px;
+  margin-bottom: 5px;
+}
+.row-title {
+  color: #fff; font-size: 13px; font-weight: bold;
+  margin-bottom: 4px;
+}
+.row p {
+  color: #8BACD9; font-size: 12.5px; line-height: 1.5;
+}
+ul.pts { list-style: none; padding: 0; margin-top: 2px; }
 ul.pts li {
-  color: #C9D8F0; font-size: 13.125px; line-height: 1.5;
-  padding: 2.5px 0 2.5px 14px; position: relative;
+  color: #C9D8F0; font-size: 12px; line-height: 1.45;
+  padding: 2px 0 2px 14px; position: relative;
 }
 ul.pts li::before {
-  content: "▶"; color: #0062FF; font-size: 8.75px;
+  content: "▶"; color: #0062FF; font-size: 8px;
   position: absolute; left: 0; top: 4px;
 }
 
-/* ── Cards ── */
-.card {
-  background: #0D1E32; border-left: 3px solid #0062FF;
-  border-radius: 5px; padding: 10px 13px;
+/* Right column: image */
+.right {
+  flex: 0 0 50%; min-width: 0;
+  display: flex; flex-direction: column; gap: 6px;
 }
-.card-title { color: #fff; font-size: 13.125px; font-weight: bold; margin-bottom: 4px; }
-.card p { color: #8BACD9; font-size: 11.875px; line-height: 1.45; }
-
-/* ── Screenshot frame ── */
 .ss-wrap {
   flex: 1; min-height: 0; border-radius: 6px; overflow: hidden;
   border: 1px solid #1E3A5F; background: #060c13;
@@ -90,12 +106,20 @@ ul.pts li::before {
 }
 .ss-caption {
   color: #57748a; font-size: 10px; text-align: center;
-  padding-top: 4px; font-style: italic;
+  font-style: italic; flex-shrink: 0;
 }
 
+/* ── Cards ── */
+.card {
+  background: #0D1E32; border-left: 3px solid #0062FF;
+  border-radius: 5px; padding: 7px 11px; margin-top: 4px;
+}
+.card-title { color: #fff; font-size: 12px; font-weight: bold; margin-bottom: 3px; }
+.card p { color: #8BACD9; font-size: 11px; line-height: 1.4; }
+
 /* ── Tag pills ── */
-.pills { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 4px; }
 .pill {
+  display: inline-block;
   background: #162236; border: 1px solid #0062FF;
   border-radius: 3px; padding: 2px 8px;
   color: #8BACD9; font-size: 10px;
@@ -126,19 +150,6 @@ ul.pts li::before {
   border-radius: 4px; padding: 5px 13px;
   color: #8BACD9; font-size: 11.25px;
 }
-
-/* ── Summary slide ── */
-#slide-8 .grid {
-  display: grid; grid-template-columns: 1fr 1fr 1fr;
-  gap: 12px; flex: 1; padding: 14px 44px 20px 44px;
-}
-#slide-8 .sum-card {
-  background: #0D1E32; border-radius: 6px; padding: 14px 15px;
-  border-top: 3px solid #0062FF;
-}
-#slide-8 .sum-num { color: #0062FF; font-size: 30px; font-weight: bold; }
-#slide-8 .sum-title { color: #fff; font-size: 13.75px; font-weight: bold; margin: 4px 0 6px; }
-#slide-8 .sum-card p { color: #8BACD9; font-size: 11.875px; line-height: 1.45; }
 
 /* ── Navigation ── */
 #nav {
@@ -204,25 +215,31 @@ ul.pts li::before {
     </div>
     <div class="body">
       <div class="left">
-        <p class="desc">The tool is integrated directly into Ecurep — no need to switch to Citrix or set up a local environment. Launch it from the tool list while browsing a customer case.</p>
-        <p class="section-label">What you can provide</p>
-        <ul class="pts">
-          <li>A <strong style="color:#fff">zip or 7z archive</strong> — tool extracts and processes automatically</li>
-          <li>A <strong style="color:#fff">folder</strong> containing diagnostic files</li>
-          <li>A <strong style="color:#fff">list of individual files</strong> for targeted analysis</li>
-        </ul>
-        <p class="section-label">Supported file types</p>
-        <ul class="pts">
-          <li>Javacore files (<code style="color:#7EC8E3;font-size:11.25px">*javacore*.txt</code>)</li>
-          <li>HAR network capture files (<code style="color:#7EC8E3;font-size:11.25px">*.har</code>)</li>
-          <li>Verbose GC log files</li>
-        </ul>
+        <div class="row">
+          <p class="row-label">What</p>
+          <p class="row-title">Integrated directly into Ecurep</p>
+          <p>Launch the analyser from the Ecurep tool list while browsing a customer case — no Citrix, no local setup required.</p>
+        </div>
+        <div class="row">
+          <p class="row-label">How to use</p>
+          <p class="row-title">Select your input and launch</p>
+          <ul class="pts">
+            <li>Select <strong style="color:#fff">WAIT2 Javacore Analyzer</strong> from the tool list and click Launch</li>
+            <li>Provide a <strong style="color:#fff">zip / 7z archive</strong>, a <strong style="color:#fff">folder</strong>, or a <strong style="color:#fff">list of files</strong></li>
+            <li>Supported: javacore files, HAR network captures, verbose GC logs</li>
+          </ul>
+        </div>
+        <div class="row">
+          <p class="row-label">Output</p>
+          <p class="row-title">Self-contained HTML report</p>
+          <p>A single HTML file is generated and opens automatically in the browser — ready to review and share.</p>
+        </div>
       </div>
       <div class="right">
         <div class="ss-wrap">
           <img src="screenshots/Ecurep.png" alt="WAIT2 Javacore Analyser selected in Ecurep tool launcher">
         </div>
-        <p class="ss-caption">WAIT2 Javacore Analyser listed in the Ecurep tool launcher — select and click Launch directly from the case</p>
+        <p class="ss-caption">WAIT2 Javacore Analyser in the Ecurep tool launcher — select and click Launch directly from the case</p>
       </div>
     </div>
   </div>
@@ -236,20 +253,32 @@ ul.pts li::before {
     </div>
     <div class="body">
       <div class="left">
-        <p class="desc">Running the tool produces a self-contained HTML report that opens directly in the browser. Everything needed to diagnose the issue is in one file — no extra tools required.</p>
-        <p class="section-label">Report highlights</p>
-        <ul class="pts">
-          <li><strong style="color:#fff">Expandable sections</strong> — navigate directly to the area of interest</li>
-          <li><strong style="color:#fff">Embedded documentation</strong> — "What does this chart tell me?" explains each chart inline</li>
-          <li><strong style="color:#fff">Intelligent tips</strong> — ranked HIGH / MEDIUM / LOW with Evidence, Action and Expected Impact</li>
-          <li><strong style="color:#fff">Interactive charts</strong> — zoom, hover and explore data without leaving the report</li>
-        </ul>
+        <div class="row">
+          <p class="row-label">What</p>
+          <p class="row-title">A self-contained diagnostic report</p>
+          <p>The tool produces a single HTML file with everything needed to diagnose the issue — no extra tools or viewers required.</p>
+        </div>
+        <div class="row">
+          <p class="row-label">How to use</p>
+          <p class="row-title">Open in any browser</p>
+          <p>The report opens automatically after the run. Share it with colleagues — it works fully offline.</p>
+        </div>
+        <div class="row">
+          <p class="row-label">Output highlights</p>
+          <p class="row-title">Rich, interactive content</p>
+          <ul class="pts">
+            <li><strong style="color:#fff">Expandable sections</strong> — navigate directly to the area of interest</li>
+            <li><strong style="color:#fff">Embedded documentation</strong> — inline chart explainers</li>
+            <li><strong style="color:#fff">Intelligent tips</strong> — ranked HIGH / MEDIUM / LOW</li>
+            <li><strong style="color:#fff">Interactive charts</strong> — zoom and hover to explore data</li>
+          </ul>
+        </div>
       </div>
       <div class="right">
         <div class="ss-wrap">
           <img src="screenshots/javacore_main.png" alt="Javacore Analyser report overview">
         </div>
-        <p class="ss-caption">The report front page — expandable navigation links, embedded chart documentation and interactive CPU Load chart</p>
+        <p class="ss-caption">The report front page — expandable navigation, embedded chart documentation and interactive CPU Load chart</p>
       </div>
     </div>
   </div>
@@ -263,19 +292,34 @@ ul.pts li::before {
     </div>
     <div class="body">
       <div class="left">
-        <p class="desc">Verbose GC log files are parsed alongside javacores. Heap usage, GC pause times and collection frequency are rendered as an interactive chart. No external GC analysis tools needed — everything is built in.</p>
-        <p class="section-label">Why it matters</p>
-        <ul class="pts">
-          <li>Spot GC spikes that coincide with thread blocking</li>
-          <li>Detect Stop-the-World pauses causing apparent hangs</li>
-          <li>Correlate heap exhaustion with OOME javacore triggers</li>
-          <li>Too-frequent GC drains CPU and masks root cause</li>
-          <li>Visualise usage of different memory types (heap, nursery, tenured)</li>
-        </ul>
+        <div class="row">
+          <p class="row-label">What</p>
+          <p class="row-title">Built-in verbose GC analysis</p>
+          <p>Verbose GC logs are parsed alongside javacores — heap usage, GC pause times and collection frequency are visualised without any external GC tool.</p>
+        </div>
+        <div class="row">
+          <p class="row-label">How to use</p>
+          <p class="row-title">Include GC logs in your input</p>
+          <ul class="pts">
+            <li>Add verbose GC log files to your zip, folder or file list</li>
+            <li>The tool auto-detects and processes them alongside javacores</li>
+            <li>No configuration needed — detection is automatic</li>
+          </ul>
+        </div>
+        <div class="row">
+          <p class="row-label">Output</p>
+          <p class="row-title">GC Activity chart in the report</p>
+          <ul class="pts">
+            <li>Heap usage, nursery and tenured memory over time</li>
+            <li>GC pause durations overlaid as bars</li>
+            <li>Long Stop-the-World pauses automatically flagged in Tips</li>
+          </ul>
+        </div>
       </div>
       <div class="right">
         <div class="ss-wrap">
-          <img src="screenshots/gc_activity_chart.png" alt="Garbage Collection activity chart">        </div>
+          <img src="screenshots/gc_activity_chart.png" alt="Garbage Collection activity chart">
+        </div>
         <p class="ss-caption">GC pause spikes (blue bars) overlaid on heap usage — long pauses flagged automatically in Tips</p>
       </div>
     </div>
@@ -290,16 +334,28 @@ ul.pts li::before {
     </div>
     <div class="body">
       <div class="left">
-        <p class="desc">HTTP Archive (HAR) files capture network traffic. The tool parses HAR files and displays slow HTTP calls, error codes and payload sizes alongside thread data. No external HAR viewer required — analysis is done directly in the report.</p>
-        <p class="section-label">Why it matters</p>
-        <ul class="pts">
-          <li>Identify slow external calls that cause thread wait states</li>
-          <li>Detect high-latency endpoints behind application hangs</li>
-          <li>Spot HTTP 5xx errors indicating back-end overload</li>
-        </ul>
-        <div class="card" style="margin-top:6px">
-          <p class="card-title">Typical scenario</p>
-          <p>App appears hung → javacores show threads waiting on I/O → HAR shows 30-second calls to a downstream REST service returning HTTP 503.</p>
+        <div class="row">
+          <p class="row-label">What</p>
+          <p class="row-title">HTTP traffic analysis inside the report</p>
+          <p>HAR (HTTP Archive) files capture browser/application network traffic. The tool parses them and surfaces slow calls, error codes and payload sizes — no external HAR viewer needed.</p>
+        </div>
+        <div class="row">
+          <p class="row-label">How to use</p>
+          <p class="row-title">Include HAR files in your input</p>
+          <ul class="pts">
+            <li>Add <code style="color:#7EC8E3;font-size:11px">*.har</code> files to your zip, folder or file list</li>
+            <li>Capture HAR from a browser DevTools session or proxy tool</li>
+            <li>The tool auto-detects and includes them — no extra steps</li>
+          </ul>
+        </div>
+        <div class="row">
+          <p class="row-label">Output</p>
+          <p class="row-title">HTTP calls table in the report</p>
+          <ul class="pts">
+            <li>All HTTP calls sorted by duration</li>
+            <li>Slow calls and 5xx errors highlighted</li>
+            <li>Expandable request / response details per call</li>
+          </ul>
         </div>
       </div>
       <div class="right">
@@ -320,14 +376,28 @@ ul.pts li::before {
     </div>
     <div class="body">
       <div class="left">
-        <p class="desc">A pre-trained model automatically classifies every thread snapshot into meaningful categories.</p>
-        <p class="section-label">Why it matters</p>
-        <ul class="pts">
-          <li>Surface thread types relevant to your issue instantly (DB waiters, GC threads, HTTP workers…)</li>
-          <li>Classification column visible in All Threads table</li>
-          <li>Thread Classification Over Time chart shows workload shifts</li>
-          <li>Permanently blocked threads detected and flagged in Tips</li>
-        </ul>
+        <div class="row">
+          <p class="row-label">What</p>
+          <p class="row-title">Automatic thread categorisation by a pre-trained model</p>
+          <p>Every thread snapshot is classified into a meaningful category (e.g. Computing, Wait For Condition, Read From Database) without any manual inspection.</p>
+        </div>
+        <div class="row">
+          <p class="row-label">How to use</p>
+          <p class="row-title">Nothing extra — runs automatically</p>
+          <ul class="pts">
+            <li>Classification runs on every javacore analysis automatically</li>
+            <li>No additional files or configuration required</li>
+          </ul>
+        </div>
+        <div class="row">
+          <p class="row-label">Output</p>
+          <p class="row-title">Classification column + Over Time chart</p>
+          <ul class="pts">
+            <li>Classification column visible in the All Threads table</li>
+            <li>Thread Classification Over Time chart shows workload shifts</li>
+            <li>Permanently blocked threads flagged in Tips</li>
+          </ul>
+        </div>
       </div>
       <div class="right">
         <div class="ss-wrap">
@@ -347,30 +417,38 @@ ul.pts li::before {
     </div>
     <div class="body">
       <div class="left">
-        <p class="desc">A dedicated chart tracks the count of each thread class across all javacore snapshots, making workload changes over time immediately visible.</p>
-        <p class="section-label">Possible thread states</p>
-        <ul class="pts">
-          <li><strong style="color:#fff">Read From Network</strong> — I/O bound threads waiting on sockets</li>
-          <li><strong style="color:#fff">Computing</strong> — actively executing application code</li>
-          <li><strong style="color:#fff">Read From Database</strong> — threads blocked on JDBC queries</li>
-          <li><strong style="color:#fff">Save To Disk</strong> — threads performing file write operations</li>
-          <li><strong style="color:#fff">Read From Disk</strong> — threads blocked on file reads</li>
-          <li><strong style="color:#fff">Wait For Connection</strong> — threads waiting for a connection pool slot</li>
-                    <li><strong style="color:#fff">Java Internal</strong> — JVM-managed threads (JIT, GC helpers)</li>
-          <li><strong style="color:#fff">Wait For Condition</strong> — threads blocked on locks or semaphores</li>
-          <li><strong style="color:#fff">Liberty Internal</strong> — server framework threads</li>
-          <li><strong style="color:#fff">Display Graphics</strong> — AWT/Swing rendering threads</li>
-        </ul>
-        <div class="card" style="margin-top:6px">
-          <p class="card-title">Deadlock signal</p>
-          <p>If "Wait For Condition" count climbs across snapshots while "Computing" drops → suspect thread starvation or deadlock.</p>
+        <div class="row">
+          <p class="row-label">What</p>
+          <p class="row-title">Thread count per class across all snapshots</p>
+          <p>A dedicated chart shows how many threads fall into each category at every javacore timestamp — making workload shifts immediately visible.</p>
+        </div>
+        <div class="row">
+          <p class="row-label">Possible thread states</p>
+          <p class="row-title">10 classification categories</p>
+          <ul class="pts" style="columns:2; column-gap:12px;">
+            <li><strong style="color:#fff">Java Internal</strong></li>
+            <li><strong style="color:#fff">Wait For Condition</strong></li>
+            <li><strong style="color:#fff">Liberty Internal</strong></li>
+            <li><strong style="color:#fff">Display Graphics</strong></li>
+            <li><strong style="color:#fff">Read From Network</strong></li>
+            <li><strong style="color:#fff">Computing</strong></li>
+            <li><strong style="color:#fff">Read From Database</strong></li>
+            <li><strong style="color:#fff">Save To Disk</strong></li>
+            <li><strong style="color:#fff">Read From Disk</strong></li>
+            <li><strong style="color:#fff">Wait For Connection</strong></li>
+          </ul>
+        </div>
+        <div class="row">
+          <p class="row-label">Output</p>
+          <p class="row-title">Thread Classification Over Time chart</p>
+          <p>If <strong style="color:#fff">Wait For Condition</strong> climbs while <strong style="color:#fff">Computing</strong> drops across snapshots → suspect thread starvation or deadlock.</p>
         </div>
       </div>
       <div class="right">
         <div class="ss-wrap">
           <img src="screenshots/thread_classification_over_time_2.png" alt="Thread Classification Over Time chart">
         </div>
-        <p class="ss-caption">Blue dominates = most threads waiting on conditions — immediately actionable insight without reading stack traces</p>
+        <p class="ss-caption">Thread counts per class over time — workload shifts visible at a glance without reading stack traces</p>
       </div>
     </div>
   </div>
@@ -384,16 +462,29 @@ ul.pts li::before {
     </div>
     <div class="body">
       <div class="left">
-        <p class="desc">The Intelligent Tips section is the first place to look. It now produces richer recommendations with actionable evidence and expected impact — plus clickable links to the relevant thread or javacore.</p>
-        <p class="section-label">What's new</p>
-        <ul class="pts">
-          <li>Tips include Evidence, Action and Expected Impact</li>
-          <li>Thread names in tips are clickable — jump straight to the drill-down</li>
-          <li>Javacore filenames in tips link to the javacore detail page</li>
-          <li>Long GC pause tip — fires when STW pauses exceed thresholds</li>
-          <li>Permanently blocked thread tip — instant deadlock signal</li>
-          <li>System exit in main thread detection</li>
-        </ul>
+        <div class="row">
+          <p class="row-label">What</p>
+          <p class="row-title">Richer, actionable Intelligent Tips</p>
+          <p>The Tips section is the first place to look. Each tip now includes Evidence, a recommended Action, and the Expected Impact — ranked HIGH, MEDIUM or LOW.</p>
+        </div>
+        <div class="row">
+          <p class="row-label">How to use</p>
+          <p class="row-title">Open the Intelligent Tips section</p>
+          <ul class="pts">
+            <li>Tips are generated automatically — no extra input needed</li>
+            <li>Click a thread name in a tip to jump to its drill-down</li>
+            <li>Click a javacore filename to open the javacore detail page</li>
+          </ul>
+        </div>
+        <div class="row">
+          <p class="row-label">Output</p>
+          <p class="row-title">New tips added in this release</p>
+          <ul class="pts">
+            <li>Long GC pause tip — fires when STW pauses exceed thresholds</li>
+            <li>Permanently blocked thread tip — instant deadlock signal</li>
+            <li>System.exit in main thread detection</li>
+          </ul>
+        </div>
       </div>
       <div class="right">
         <div class="ss-wrap">
@@ -413,13 +504,29 @@ ul.pts li::before {
     </div>
     <div class="body">
       <div class="left">
-        <p class="desc">Javacore Analyser can now be integrated with other diagnostic tools. Plugins allow external tools to contribute their own data sections directly into the analysis report — no manual steps, no separate viewers.</p>
-        <p class="section-label">What this means for you</p>
-        <ul class="pts">
-          <li>Data from tools like <strong style="color:#fff">Autogather</strong> can appear as a dedicated section in the report</li>
-          <li>Analysis is richer without extra effort on your part</li>
-          <li>Custom diagnostic file types (e.g. Liberty server logs, JMX exports) can be included</li>
-        </ul>
+        <div class="row">
+          <p class="row-label">What</p>
+          <p class="row-title">External tools can contribute report sections</p>
+          <p>Javacore Analyser can be integrated with other diagnostic tools — data from tools like <strong style="color:#fff">Autogather</strong> appears as a dedicated section in the report automatically.</p>
+        </div>
+        <div class="row">
+          <p class="row-label">How to use</p>
+          <p class="row-title">Include supported tool output in your input</p>
+          <ul class="pts">
+            <li>Add output files from integrated tools to your zip or folder</li>
+            <li>The plugin detects and processes them automatically</li>
+            <li>No additional configuration required on your part</li>
+          </ul>
+        </div>
+        <div class="row">
+          <p class="row-label">Output</p>
+          <p class="row-title">Additional sections in the report</p>
+          <ul class="pts">
+            <li>Dedicated section per integrated tool</li>
+            <li>Richer analysis without extra manual steps</li>
+            <li>Custom file types (e.g. Liberty server logs) supported</li>
+          </ul>
+        </div>
       </div>
       <div class="right">
         <div class="ss-wrap">
@@ -439,21 +546,34 @@ ul.pts li::before {
     </div>
     <div class="body">
       <div class="left">
-        <p class="desc">LLM integration is actively being developed. It is <strong style="color:#fff">not yet available on EcuRep</strong> — the restricted architecture where the tool is typically deployed for customer cases.</p>
-        <p class="section-label">What we are working on</p>
-        <ul class="pts">
-          <li>Use a model with domain knowledge to generate targeted tips</li>
-          <li>AI-generated tips ranked HIGH / MEDIUM / LOW with Evidence &amp; Action</li>
-          <li>Thread &amp; javacore names in AI responses auto-linked to drill-downs</li>
-          <li>Natural language tip search — "show me all deadlock hints"</li>
-          <li>Interactive Q&amp;A over the diagnostics data</li>
-        </ul>
+        <div class="row">
+          <p class="row-label">What</p>
+          <p class="row-title">LLM-generated tips and Q&amp;A over diagnostics</p>
+          <p>A domain-aware language model will generate targeted tips and answer natural language questions over the diagnostics data. <strong style="color:#fff">Not yet available on Ecurep.</strong></p>
+        </div>
+        <div class="row">
+          <p class="row-label">How to use (planned)</p>
+          <p class="row-title">Ask questions in natural language</p>
+          <ul class="pts">
+            <li>Type questions like "show me all deadlock hints" in the report</li>
+            <li>AI tips appear alongside rule-based tips, ranked by severity</li>
+            <li>Thread and javacore names in AI responses auto-link to drill-downs</li>
+          </ul>
+        </div>
+        <div class="row">
+          <p class="row-label">Output (planned)</p>
+          <p class="row-title">AI-enhanced Tips section</p>
+          <ul class="pts">
+            <li>AI-generated tips ranked HIGH / MEDIUM / LOW with Evidence &amp; Action</li>
+            <li>Interactive Q&amp;A panel over the diagnostics data</li>
+          </ul>
+        </div>
       </div>
       <div class="right">
         <div class="ss-wrap">
           <img src="screenshots/tips_section.png" alt="Intelligent Tips section screenshot">
         </div>
-        <p class="ss-caption">Tips ranked HIGH / MEDIUM / LOW with Evidence, Action and Expected Impact — to be enhanced with AI-generated insights</p>
+        <p class="ss-caption">Tips section — to be enhanced with AI-generated insights and natural language search</p>
       </div>
     </div>
   </div>
@@ -469,32 +589,32 @@ ul.pts li::before {
       <div class="card" style="border-left: none; border-top: 3px solid #0062FF;">
         <p style="color:#0062FF; font-size:22.5px; font-weight:bold; margin-bottom:4px;">01</p>
         <p class="card-title">Verbose GC Support</p>
-        <p>GC activity chart with heap, pause times and frequency. Long STW pauses automatically flagged in Tips.</p>
+        <p>Include GC logs in your input → GC Activity chart with heap, pause times and frequency appears in the report. Long STW pauses flagged in Tips.</p>
       </div>
       <div class="card" style="border-left: none; border-top: 3px solid #0062FF;">
         <p style="color:#0062FF; font-size:22.5px; font-weight:bold; margin-bottom:4px;">02</p>
         <p class="card-title">HAR File Support</p>
-        <p>HTTP call durations, status codes and payload sizes — correlated with javacore timestamps to reveal slow downstream calls.</p>
+        <p>Include HAR files in your input → HTTP calls table with durations, status codes and payload sizes appears in the report.</p>
       </div>
       <div class="card" style="border-left: none; border-top: 3px solid #0062FF;">
         <p style="color:#0062FF; font-size:22.5px; font-weight:bold; margin-bottom:4px;">03</p>
         <p class="card-title">AI-Based Thread Classification</p>
-        <p>Pre-trained model classifies every thread snapshot. Workload trends visible in the Thread Classification Over Time chart.</p>
+        <p>Runs automatically → Classification column in All Threads table and Thread Classification Over Time chart in the report.</p>
       </div>
       <div class="card" style="border-left: none; border-top: 3px solid #0062FF;">
         <p style="color:#0062FF; font-size:22.5px; font-weight:bold; margin-bottom:4px;">04</p>
         <p class="card-title">Tips Enhancements</p>
-        <p>AI tips ranked HIGH/MEDIUM/LOW with Evidence, Action and Expected Impact. Thread &amp; javacore names are clickable links.</p>
+        <p>Runs automatically → Tips ranked HIGH/MEDIUM/LOW with Evidence, Action and Expected Impact. Thread &amp; javacore names are clickable links.</p>
       </div>
       <div class="card" style="border-left: none; border-top: 3px solid #0062FF;">
         <p style="color:#0062FF; font-size:22.5px; font-weight:bold; margin-bottom:4px;">05</p>
-        <p class="card-title">Plugin Architecture</p>
-        <p>Extend the tool with custom file processors. Drop a plugin into <code style="color:#7EC8E3; font-size:11.25px">~/.javacore_analyser/plugins/</code> — no core changes needed.</p>
+        <p class="card-title">Tool Integration (Plugins)</p>
+        <p>Include Autogather or other tool output in your input → dedicated section appears in the report automatically.</p>
       </div>
       <div class="card" style="border-left: none; border-top: 3px solid #4a90e2;">
         <p style="color:#4a90e2; font-size:22.5px; font-weight:bold; margin-bottom:4px;">🔮</p>
         <p class="card-title">WatsonX AI Integration (planned)</p>
-        <p>Natural language search over tips, interactive Q&amp;A over diagnostics data, and automatic tip severity ranking.</p>
+        <p>Ask natural language questions over diagnostics data → AI-generated tips and interactive Q&amp;A in the report.</p>
       </div>
     </div>
   </div>
