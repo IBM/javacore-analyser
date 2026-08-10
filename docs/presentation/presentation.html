@@ -196,43 +196,43 @@ ul.pts li::before {
         <p style="color:#57748a; font-size:12.5px;">August 2026</p>
       </div>
       <div class="footer-pills">
-        <span class="footer-pill">Verbose GC Analysis</span>
-        <span class="footer-pill">HAR Files</span>
+        <span class="footer-pill">Verbose GC File Visualisation</span>
+        <span class="footer-pill">HAR File Support</span>
         <span class="footer-pill">AI-Based Thread Classification</span>
         <span class="footer-pill">Tips Enhancements</span>
-        <span class="footer-pill">Plugin Architecture</span>
-        <span class="footer-pill">WatsonX AI Integration</span>
+        <span class="footer-pill">Tool Integration via Plugin Architecture</span>
+        <span class="footer-pill">WatsonX AI Integration for Intelligent Tips</span>
       </div>
     </div>
   </div>
 
-  <!-- ─── SLIDE 2 · Running from Ecurep ─────────────────────── -->
+  <!-- ─── SLIDE 2 · What is WAIT2 ────────────────────────────── -->
   <div class="slide" id="slide-2">
     <div class="top-bar"></div>
     <div class="slide-header">
       <p class="tag">Overview</p>
-      <h2>Running WAIT2 Javacore Analyser from Ecurep</h2>
+      <h2>What is WAIT2 Javacore Analyser?</h2>
     </div>
     <div class="body">
       <div class="left">
         <div class="row">
-          <p class="row-label">What</p>
-          <p class="row-title">Integrated directly into Ecurep</p>
-          <p>Launch the analyser from the Ecurep tool list while browsing a customer case — no Citrix, no local setup required.</p>
+          <p class="row-label">Purpose</p>
+          <p class="row-title">Analyses and visualises Java performance data</p>
+          <p>WAIT2 Javacore Analyser processes javacore files and related diagnostic data to help identify performance bottlenecks, thread hangs, memory issues and GC problems — without manual stack trace inspection.</p>
         </div>
         <div class="row">
-          <p class="row-label">How to use</p>
-          <p class="row-title">Select your input and launch</p>
+          <p class="row-label">What it analyses</p>
+          <p class="row-title">Multiple diagnostic data sources in one run</p>
           <ul class="pts">
-            <li>Select <strong style="color:#fff">WAIT2 Javacore Analyzer</strong> from the tool list and click Launch</li>
-            <li>Provide a <strong style="color:#fff">zip / 7z archive</strong>, a <strong style="color:#fff">folder</strong>, or a <strong style="color:#fff">list of files</strong></li>
-            <li>Supported: javacore files, HAR network captures, verbose GC logs</li>
+            <li><strong style="color:#fff">Javacore files</strong> — thread states, CPU usage, lock contention</li>
+            <li><strong style="color:#fff">Verbose GC logs</strong> — heap usage, pause times, collection frequency</li>
+            <li><strong style="color:#fff">HAR files</strong> — HTTP call durations, status codes, slow endpoints</li>
           </ul>
         </div>
         <div class="row">
-          <p class="row-label">Output</p>
-          <p class="row-title">Self-contained HTML report</p>
-          <p>A single HTML file is generated and opens automatically in the browser — ready to review and share.</p>
+          <p class="row-label">Where to run it</p>
+          <p class="row-title">Available directly on Ecurep</p>
+          <p>Launch from the Ecurep tool list while browsing a customer case — no Citrix, no local setup, no file download required.</p>
         </div>
       </div>
       <div class="right">
@@ -261,7 +261,7 @@ ul.pts li::before {
         <div class="row">
           <p class="row-label">How to use</p>
           <p class="row-title">Open in any browser</p>
-          <p>The report opens automatically after the run. Share it with colleagues — it works fully offline.</p>
+          <p>The report opens automatically after the run. Share it with colleagues.</p>
         </div>
         <div class="row">
           <p class="row-label">Output highlights</p>
@@ -269,7 +269,7 @@ ul.pts li::before {
           <ul class="pts">
             <li><strong style="color:#fff">Expandable sections</strong> — navigate directly to the area of interest</li>
             <li><strong style="color:#fff">Embedded documentation</strong> — inline chart explainers</li>
-            <li><strong style="color:#fff">Intelligent tips</strong> — ranked HIGH / MEDIUM / LOW</li>
+            <li><strong style="color:#fff">Intelligent tips</strong> — identify potential causes of performance issues; warns when investigation results may not be reliable</li>
             <li><strong style="color:#fff">Interactive charts</strong> — zoom and hover to explore data</li>
           </ul>
         </div>
@@ -288,7 +288,7 @@ ul.pts li::before {
     <div class="top-bar"></div>
     <div class="slide-header">
       <p class="tag">Feature 1</p>
-      <h2>Verbose GC File Support</h2>
+      <h2>Verbose GC File Visualisation</h2>
     </div>
     <div class="body">
       <div class="left">
@@ -303,7 +303,6 @@ ul.pts li::before {
           <ul class="pts">
             <li>Add verbose GC log files to your zip, folder or file list</li>
             <li>The tool auto-detects and processes them alongside javacores</li>
-            <li>No configuration needed — detection is automatic</li>
           </ul>
         </div>
         <div class="row">
@@ -317,10 +316,13 @@ ul.pts li::before {
         </div>
       </div>
       <div class="right">
-        <div class="ss-wrap">
-          <img src="screenshots/gc_activity_chart.png" alt="Garbage Collection activity chart">
+        <div class="ss-wrap" style="flex: 0 0 auto; max-height: 68%;">
+          <img src="screenshots/verbosegc_chart.png" alt="Garbage Collection activity chart">
         </div>
-        <p class="ss-caption">GC pause spikes (blue bars) overlaid on heap usage — long pauses flagged automatically in Tips</p>
+        <p class="ss-caption">CPU Load (top) and GC Activity (bottom) — heap usage, pause times and collection frequency shown together</p>
+        <div class="card" style="margin-top:6px; flex-shrink:0;">
+          <p style="color:#8BACD9; font-size:11px; line-height:1.5;">Heap oscillates between ~2–4 GB (6 GB total). A single exceptionally long pause (~30 s) is visible at <strong style="color:#fff">02:26</strong> — a Stop-the-World event that would cause a severe application stall.</p>
+        </div>
       </div>
     </div>
   </div>
@@ -344,7 +346,7 @@ ul.pts li::before {
           <p class="row-title">Include HAR files in your input</p>
           <ul class="pts">
             <li>Add <code style="color:#7EC8E3;font-size:11px">*.har</code> files to your zip, folder or file list</li>
-            <li>Capture HAR from a browser DevTools session or proxy tool</li>
+            <li>Capture HAR from a browser DevTools session</li>
             <li>The tool auto-detects and includes them — no extra steps</li>
           </ul>
         </div>
@@ -352,17 +354,19 @@ ul.pts li::before {
           <p class="row-label">Output</p>
           <p class="row-title">HTTP calls table in the report</p>
           <ul class="pts">
-            <li>All HTTP calls sorted by duration</li>
-            <li>Slow calls and 5xx errors highlighted</li>
+            <li>All HTTP calls listed in a table — sort column can be changed</li>
             <li>Expandable request / response details per call</li>
+            <li>Plan to display long HAR requests or errored requests in Tips</li>
           </ul>
         </div>
       </div>
       <div class="right">
-        <div class="ss-wrap">
-          <img src="screenshots/har_view.png" alt="HAR HTTP Calls table screenshot">
+        <div class="ss-wrap" style="flex: 0 0 auto; max-height: 68%;">
+          <img src="screenshots/har_view2.png" alt="HAR HTTP Calls table screenshot">
         </div>
-        <p class="ss-caption">All HTTP calls sorted by duration — slow calls and 5xx errors highlighted, with expandable request/response details</p>
+        <div class="card" style="margin-top:6px; flex-shrink:0;">
+          <p style="color:#8BACD9; font-size:11px; line-height:1.5;">All call durations are below <strong style="color:#fff">900 ms</strong>, however one request fails with <strong style="color:#fff">HTTP 400</strong> — this error response is a possible cause of the performance issue being investigated.</p>
+        </div>
       </div>
     </div>
   </div>
@@ -441,14 +445,17 @@ ul.pts li::before {
         <div class="row">
           <p class="row-label">Output</p>
           <p class="row-title">Thread Classification Over Time chart</p>
-          <p>If <strong style="color:#fff">Wait For Condition</strong> climbs while <strong style="color:#fff">Computing</strong> drops across snapshots → suspect thread starvation or deadlock.</p>
+          <p>Shows the most used resources (database, disk, CPU) over time to detect bottlenecks.</p>
         </div>
       </div>
       <div class="right">
-        <div class="ss-wrap">
+        <div class="ss-wrap" style="flex: 0 0 auto; max-height: 68%;">
           <img src="screenshots/thread_classification_over_time_2.png" alt="Thread Classification Over Time chart">
         </div>
         <p class="ss-caption">Thread counts per class over time — workload shifts visible at a glance without reading stack traces</p>
+        <div class="card" style="margin-top:6px; flex-shrink:0;">
+          <p style="color:#8BACD9; font-size:11px; line-height:1.5;">At <strong style="color:#fff">7:08</strong> and <strong style="color:#fff">7:20</strong> a large number of threads are classified as <strong style="color:#fff">Read From Network</strong>. This spike indicates threads waiting on a network response — an external service is a likely cause of the performance degradation observed at those times.</p>
+        </div>
       </div>
     </div>
   </div>
@@ -464,8 +471,11 @@ ul.pts li::before {
       <div class="left">
         <div class="row">
           <p class="row-label">What</p>
-          <p class="row-title">Richer, actionable Intelligent Tips</p>
-          <p>The Tips section is the first place to look. Each tip now includes Evidence, a recommended Action, and the Expected Impact — ranked HIGH, MEDIUM or LOW.</p>
+          <p class="row-title">Two entry types: Warnings and Tips</p>
+          <ul class="pts">
+            <li><strong style="color:#fff">Warning</strong> — flags a data quality or reliability issue (e.g. corrupted javacore, too few snapshots); indicates the investigation results may not be reliable</li>
+            <li><strong style="color:#fff">Tip</strong> — identifies a potential cause of a performance problem (e.g. high CPU thread, deadlock, long GC pause); includes Evidence, Action and Expected Impact</li>
+          </ul>
         </div>
         <div class="row">
           <p class="row-label">How to use</p>
@@ -507,30 +517,29 @@ ul.pts li::before {
         <div class="row">
           <p class="row-label">What</p>
           <p class="row-title">External tools can contribute report sections</p>
-          <p>Javacore Analyser can be integrated with other diagnostic tools — data from tools like <strong style="color:#fff">Autogather</strong> appears as a dedicated section in the report automatically.</p>
+          <p>A plugin system allows external diagnostic tools to inject dedicated sections into the report automatically — no manual steps, no separate viewers.</p>
         </div>
         <div class="row">
-          <p class="row-label">How to use</p>
-          <p class="row-title">Include supported tool output in your input</p>
+          <p class="row-label">Available now</p>
+          <p class="row-title">Liberty message occurrence plugin</p>
           <ul class="pts">
-            <li>Add output files from integrated tools to your zip or folder</li>
-            <li>The plugin detects and processes them automatically</li>
-            <li>No additional configuration required on your part</li>
+            <li>Detects and parses Liberty server logs included in the input</li>
+            <li>Injects a dedicated section with message severity breakdown and top message IDs</li>
+            <li>No additional configuration required</li>
           </ul>
         </div>
         <div class="row">
-          <p class="row-label">Output</p>
-          <p class="row-title">Additional sections in the report</p>
+          <p class="row-label">Planned</p>
+          <p class="row-title">Autogather integration</p>
           <ul class="pts">
-            <li>Dedicated section per integrated tool</li>
-            <li>Richer analysis without extra manual steps</li>
-            <li>Custom file types (e.g. Liberty server logs) supported</li>
+            <li>Include <strong style="color:#fff">Autogather</strong> output in your zip or folder</li>
+            <li>Autogather data will appear as a dedicated section in the report</li>
           </ul>
         </div>
       </div>
       <div class="right">
         <div class="ss-wrap">
-          <img src="screenshots/plugin_output.png" alt="Example plugin output screenshot">
+          <img src="screenshots/plugin_output2.png" alt="Example plugin output screenshot">
         </div>
         <p class="ss-caption">The Liberty System Out example plugin injects a dedicated report section with severity breakdown and top message IDs</p>
       </div>
@@ -588,7 +597,7 @@ ul.pts li::before {
     <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; flex:1; padding: 4px 44px 20px 44px; min-height:0;">
       <div class="card" style="border-left: none; border-top: 3px solid #0062FF;">
         <p style="color:#0062FF; font-size:22.5px; font-weight:bold; margin-bottom:4px;">01</p>
-        <p class="card-title">Verbose GC Support</p>
+        <p class="card-title">Verbose GC File Visualisation</p>
         <p>Include GC logs in your input → GC Activity chart with heap, pause times and frequency appears in the report. Long STW pauses flagged in Tips.</p>
       </div>
       <div class="card" style="border-left: none; border-top: 3px solid #0062FF;">
@@ -608,12 +617,12 @@ ul.pts li::before {
       </div>
       <div class="card" style="border-left: none; border-top: 3px solid #0062FF;">
         <p style="color:#0062FF; font-size:22.5px; font-weight:bold; margin-bottom:4px;">05</p>
-        <p class="card-title">Tool Integration (Plugins)</p>
+        <p class="card-title">Tool Integration via Plugin Architecture</p>
         <p>Include Autogather or other tool output in your input → dedicated section appears in the report automatically.</p>
       </div>
       <div class="card" style="border-left: none; border-top: 3px solid #4a90e2;">
         <p style="color:#4a90e2; font-size:22.5px; font-weight:bold; margin-bottom:4px;">🔮</p>
-        <p class="card-title">WatsonX AI Integration (planned)</p>
+        <p class="card-title">WatsonX AI Integration for Intelligent Tips</p>
         <p>Ask natural language questions over diagnostics data → AI-generated tips and interactive Q&amp;A in the report.</p>
       </div>
     </div>
