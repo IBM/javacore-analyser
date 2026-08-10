@@ -78,6 +78,7 @@ fi
 
 echo "Release:      $VERSION"
 echo "Repository:   $REPO"
+echo "Python:       $(python --version 2>&1)"
 echo "Starting from step $START_STEP."
 echo ""
 
