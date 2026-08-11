@@ -19,7 +19,8 @@
                         The table can be sorted by clicking on a column header.
                         <ul>
                             <li><strong>Request URL and Details</strong>
-                                is the URL of the HTTP request. Click "Show" to view request and response details.
+                                is the URL of the HTTP request. Click "Details" to view request and response details,
+                                including a traffic timing breakdown (DNS, connect, SSL, send, wait, receive).
                             </li>
                             <li><strong>Method</strong>
                                 is the HTTP method used (GET, POST, PUT, DELETE, etc.).
@@ -80,6 +81,124 @@
                                             </xsl:attribute>
                                             <xsl:attribute name="style">display:none;</xsl:attribute>
                                             <div class="http-call-details">
+                                                <h4>Traffic Timing Breakdown</h4>
+                                                <table class="timing-table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Phase</th>
+                                                            <th>Duration (ms)</th>
+                                                            <th>Bar</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <xsl:if test="@timing_blocked &gt;= 0">
+                                                            <tr>
+                                                                <td>Blocked</td>
+                                                                <td><xsl:value-of select="@timing_blocked"/></td>
+                                                                <td class="timing-bar-cell">
+                                                                    <div class="timing-bar timing-blocked">
+                                                                        <xsl:attribute name="style">
+                                                                            <xsl:text>width:</xsl:text>
+                                                                            <xsl:value-of select="@timing_blocked div @duration * 100"/>
+                                                                            <xsl:text>%</xsl:text>
+                                                                        </xsl:attribute>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        </xsl:if>
+                                                        <xsl:if test="@timing_dns &gt;= 0">
+                                                            <tr>
+                                                                <td>DNS</td>
+                                                                <td><xsl:value-of select="@timing_dns"/></td>
+                                                                <td class="timing-bar-cell">
+                                                                    <div class="timing-bar timing-dns">
+                                                                        <xsl:attribute name="style">
+                                                                            <xsl:text>width:</xsl:text>
+                                                                            <xsl:value-of select="@timing_dns div @duration * 100"/>
+                                                                            <xsl:text>%</xsl:text>
+                                                                        </xsl:attribute>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        </xsl:if>
+                                                        <xsl:if test="@timing_connect &gt;= 0">
+                                                            <tr>
+                                                                <td>Connect</td>
+                                                                <td><xsl:value-of select="@timing_connect"/></td>
+                                                                <td class="timing-bar-cell">
+                                                                    <div class="timing-bar timing-connect">
+                                                                        <xsl:attribute name="style">
+                                                                            <xsl:text>width:</xsl:text>
+                                                                            <xsl:value-of select="@timing_connect div @duration * 100"/>
+                                                                            <xsl:text>%</xsl:text>
+                                                                        </xsl:attribute>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        </xsl:if>
+                                                        <xsl:if test="@timing_ssl &gt;= 0">
+                                                            <tr>
+                                                                <td>SSL</td>
+                                                                <td><xsl:value-of select="@timing_ssl"/></td>
+                                                                <td class="timing-bar-cell">
+                                                                    <div class="timing-bar timing-ssl">
+                                                                        <xsl:attribute name="style">
+                                                                            <xsl:text>width:</xsl:text>
+                                                                            <xsl:value-of select="@timing_ssl div @duration * 100"/>
+                                                                            <xsl:text>%</xsl:text>
+                                                                        </xsl:attribute>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        </xsl:if>
+                                                        <xsl:if test="@timing_send &gt;= 0">
+                                                            <tr>
+                                                                <td>Send</td>
+                                                                <td><xsl:value-of select="@timing_send"/></td>
+                                                                <td class="timing-bar-cell">
+                                                                    <div class="timing-bar timing-send">
+                                                                        <xsl:attribute name="style">
+                                                                            <xsl:text>width:</xsl:text>
+                                                                            <xsl:value-of select="@timing_send div @duration * 100"/>
+                                                                            <xsl:text>%</xsl:text>
+                                                                        </xsl:attribute>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        </xsl:if>
+                                                        <xsl:if test="@timing_wait &gt;= 0">
+                                                            <tr>
+                                                                <td>Wait</td>
+                                                                <td><xsl:value-of select="@timing_wait"/></td>
+                                                                <td class="timing-bar-cell">
+                                                                    <div class="timing-bar timing-wait">
+                                                                        <xsl:attribute name="style">
+                                                                            <xsl:text>width:</xsl:text>
+                                                                            <xsl:value-of select="@timing_wait div @duration * 100"/>
+                                                                            <xsl:text>%</xsl:text>
+                                                                        </xsl:attribute>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        </xsl:if>
+                                                        <xsl:if test="@timing_receive &gt;= 0">
+                                                            <tr>
+                                                                <td>Receive</td>
+                                                                <td><xsl:value-of select="@timing_receive"/></td>
+                                                                <td class="timing-bar-cell">
+                                                                    <div class="timing-bar timing-receive">
+                                                                        <xsl:attribute name="style">
+                                                                            <xsl:text>width:</xsl:text>
+                                                                            <xsl:value-of select="@timing_receive div @duration * 100"/>
+                                                                            <xsl:text>%</xsl:text>
+                                                                        </xsl:attribute>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        </xsl:if>
+                                                    </tbody>
+                                                </table>
+
                                                 <h4>Request Details</h4>
                                                 <xsl:if test="string-length(@request_headers) > 0">
                                                     <div class="http-detail-section">

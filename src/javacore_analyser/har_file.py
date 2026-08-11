@@ -86,6 +86,13 @@ class HttpCall:
         start_time (str): The start time of the request
         duration (str): Total duration of the request in milliseconds
         timings (str): Detailed timing information
+        timing_blocked (str): Time spent in a queue waiting for a network connection (-1 if not applicable)
+        timing_dns (str): DNS resolution time in ms (-1 if not applicable)
+        timing_connect (str): Time to establish TCP connection in ms (-1 if not applicable)
+        timing_ssl (str): Time for SSL/TLS handshake in ms (-1 if not applicable)
+        timing_send (str): Time to send the request in ms
+        timing_wait (str): Time waiting for server response in ms
+        timing_receive (str): Time to receive the response in ms
         size (str): Response body size in bytes
         success (str): Whether the request was successful (not 4xx or 5xx)
         request_headers (str): Formatted request headers
@@ -110,6 +117,13 @@ class HttpCall:
         self.start_time = HttpCall.__sanitize_xml_attribute_value(str(call.startTime))
         self.duration = HttpCall.__sanitize_xml_attribute_value(str(self.get_total_time()))
         self.timings = HttpCall.__sanitize_xml_attribute_value(str(call.timings))
+        self.timing_blocked = str(call.timings.get('blocked', -1))
+        self.timing_dns = str(call.timings.get('dns', -1))
+        self.timing_connect = str(call.timings.get('connect', -1))
+        self.timing_ssl = str(call.timings.get('ssl', -1))
+        self.timing_send = str(call.timings.get('send', -1))
+        self.timing_wait = str(call.timings.get('wait', -1))
+        self.timing_receive = str(call.timings.get('receive', -1))
         self.size = HttpCall.__sanitize_xml_attribute_value(str(call.response.bodySize))
         self.success = HttpCall.__sanitize_xml_attribute_value(str(self._calculate_success()))
         
@@ -255,6 +269,13 @@ class HttpCall:
         http_call_node.setAttribute("start_time", self.start_time)
         http_call_node.setAttribute("duration", self.duration)
         http_call_node.setAttribute("timings", self.timings)
+        http_call_node.setAttribute("timing_blocked", self.timing_blocked)
+        http_call_node.setAttribute("timing_dns", self.timing_dns)
+        http_call_node.setAttribute("timing_connect", self.timing_connect)
+        http_call_node.setAttribute("timing_ssl", self.timing_ssl)
+        http_call_node.setAttribute("timing_send", self.timing_send)
+        http_call_node.setAttribute("timing_wait", self.timing_wait)
+        http_call_node.setAttribute("timing_receive", self.timing_receive)
         http_call_node.setAttribute("size", self.size)
         http_call_node.setAttribute("success", self.success)
         http_call_node.setAttribute("request_headers", self.request_headers)
