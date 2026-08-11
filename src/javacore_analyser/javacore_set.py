@@ -603,6 +603,12 @@ class JavacoreSet:
                 javacore_load_node = self.doc.createElement("javacore_load")
                 javacore_node.appendChild(javacore_load_node)
                 javacore_load_node.appendChild(self.doc.createTextNode(str(jc.get_load())))
+                if jc.current_thread:
+                    current_thread_node = self.doc.createElement("javacore_current_thread")
+                    current_thread_node.appendChild(self.doc.createTextNode(jc.current_thread.name))
+                    if jc.current_thread.thread:
+                        current_thread_node.setAttribute("thread_hash", jc.current_thread.thread.get_hash())
+                    javacore_node.appendChild(current_thread_node)
                 # When ML classification is enabled, count how many thread snapshots in
                 # this javacore received each classification label.  The counts are
                 # stored as <classification_entry value="…" count="…"/> children so the

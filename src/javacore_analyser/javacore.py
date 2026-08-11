@@ -8,7 +8,7 @@ import datetime
 import logging
 import os.path
 
-from javacore_analyser.constants import THREAD_INFO, DATETIME, SIGINFO, ENCODING
+from javacore_analyser.constants import THREAD_INFO, DATETIME, SIGINFO, ENCODING, CURRENT_THREAD_INFO
 from javacore_analyser.thread_snapshot import ThreadSnapshot
 
 
@@ -29,6 +29,7 @@ class Javacore:
         self.snapshots = []
         self.javacore_set = None
         self.siginfo = None
+        self.current_thread = None
         self.__total_cpu = -1
         self.__load = -1
         self.__encoding = None
@@ -144,6 +145,7 @@ class Javacore:
         file = codecs.open(self.filename, encoding=self.get_encoding(), errors='strict')
         line = ""
         line_num = 0
+        is_current = False
         try:
             while True:
                 line = file.readline()
@@ -151,9 +153,14 @@ class Javacore:
                 if not line:
                     break
                 line = self.encode(line)
-                if line.startswith(THREAD_INFO):
+                if line.startswith(CURRENT_THREAD_INFO):
+                    is_current = True
+                elif line.startswith(THREAD_INFO):
                     line = Javacore.process_thread_name(line, file)
-                    snapshot = ThreadSnapshot.create(line, file, self)
+                    snapshot = ThreadSnapshot.create(line, file, self, is_current=is_current)
+                    if is_current:
+                        self.current_thread = snapshot
+                        is_current = False
                     self.snapshots.append(snapshot)
         except Exception as e:
             msg: str = "Corrupted javacore file {} \n" \
