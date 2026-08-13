@@ -582,13 +582,7 @@ class TestTips(unittest.TestCase):
         javacore_set = JavacoreSet("")
         javacore_set.har_files = [har_file]
         
-        # Now set threshold to 500ms to guarantee triggering
-        original_threshold = tips.LongHttpCallsTip.THRESHOLD
-        tips.LongHttpCallsTip.THRESHOLD = 500
-        try:
-            result_triggered = tips.LongHttpCallsTip.generate(javacore_set)
-            self.assertTrue(len(result_triggered) > 0, "Should have triggered long HTTP calls tip")
-            self.assertIn("[WARNING] Detected", result_triggered[0])
-            self.assertIn("HTTP call(s) longer than 500ms", result_triggered[0])
-        finally:
-            tips.LongHttpCallsTip.THRESHOLD = original_threshold
+        result_triggered = tips.LongHttpCallsTip.generate(javacore_set)
+        self.assertTrue(len(result_triggered) > 0, "Should have triggered long HTTP calls tip")
+        self.assertIn("[WARNING] Detected", result_triggered[0])
+        self.assertIn("HTTP call(s) longer than 5000ms", result_triggered[0])
