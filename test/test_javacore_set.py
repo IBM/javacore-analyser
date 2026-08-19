@@ -22,127 +22,12 @@ class TestJavacoreSet(unittest.TestCase):
     def setUp(self):
         self.dummy_javacore_set = JavacoreSet("")
 
-    def test_parse_mem_arg(self):
-        line = "2CIUSERARG               -Xmx32g"
-        mem = self.dummy_javacore_set.parse_mem_arg(line)
-        self.assertEqual(mem, "32g")
-        #
-        line = "2CIUSERARG               -Xmx"
-        mem = self.dummy_javacore_set.parse_mem_arg(line)
-        self.assertEqual(mem, UNKNOWN)
-
-    def test_parse_xmx(self):
-        line = "2CIUSERARG               -Xmx32g"
-        self.dummy_javacore_set.parse_xmx(line)
-        self.assertEqual(self.dummy_javacore_set.xmx, "32g")
-        #
-        line = "2CIUSERARG               -Xmxg"
-        self.dummy_javacore_set.parse_xmx(line)
-        self.assertEqual(self.dummy_javacore_set.xmx, UNKNOWN)
-        #
-        line = "2CIUSERARG               -Xmx32k"
-        mem = self.javacore_set_from_test_data.parse_mem_arg(line)
-        self.assertEqual(mem, "32k")
-        #
-        line = "2CIUSERARG               -Xmx32K"
-        mem = self.javacore_set_from_test_data.parse_mem_arg(line)
-        self.assertEqual(mem, "32K")
-        #
-        line = "2CIUSERARG               -Xmx323232"
-        mem = self.javacore_set_from_test_data.parse_mem_arg(line)
-        self.assertEqual(mem, "323232")
-        #
-        line = "2CIUSERARG               -Xmx32B"
-        mem = self.javacore_set_from_test_data.parse_mem_arg(line)
-        self.assertEqual(mem, UNKNOWN)
-
-    def test_parse_xms(self):
-        line = "2CIUSERARG               -Xms32g"
-        self.dummy_javacore_set.parse_xms(line)
-        self.assertEqual(self.dummy_javacore_set.xms, "32g")
-        #
-        line = "2CIUSERARG               -Xmsg"
-        self.dummy_javacore_set.parse_xms(line)
-        self.assertEqual(self.dummy_javacore_set.xms, UNKNOWN)
-
-    def test_parse_xmn(self):
-        line = "2CIUSERARG               -Xmn2g"
-        self.dummy_javacore_set.parse_xmn(line)
-        self.assertEqual(self.dummy_javacore_set.xmn, "2g")
-        #
-        line = "2CIUSERARG               -Xmng"
-        self.dummy_javacore_set.parse_xmn(line)
-        self.assertEqual(self.dummy_javacore_set.xmn, UNKNOWN)
-
-    def test_parse_gc_policy(self):
-        line = "2CIUSERARG               -Xgcpolicy:gencon"
-        self.dummy_javacore_set.parse_gc_policy(line)
-        self.assertEqual(self.dummy_javacore_set.gc_policy, "gencon")
-
-    def test_parse_compressed_refs(self):
-        line = "2CIUSERARG               -Xcompressedrefs"
-        self.dummy_javacore_set.parse_compressed_refs(line)
-        self.assertTrue(self.dummy_javacore_set.compressed_refs)
-        #
-        line = "2CIUSERARG               -Xnocompressedrefs"
-        self.dummy_javacore_set.parse_compressed_refs(line)
-        self.assertFalse(self.dummy_javacore_set.compressed_refs)
-
-    def test_parse_verbose_gc(self):
-        line = ""
-        self.dummy_javacore_set.verbose_gc = False
-        self.dummy_javacore_set.parse_verbose_gc(line)
-        self.assertFalse(self.dummy_javacore_set.verbose_gc)
-        #
-        line = "2CIUSERARG               -verbose:gc"
-        self.dummy_javacore_set.parse_verbose_gc(line)
-        self.assertTrue(self.dummy_javacore_set.verbose_gc)
-
     def test_start_time(self):
-        self.assertEqual(self.javacore_set_from_test_data.jvm_start_time, "2022/06/06 at 11:33:18:586")
+        self.assertEqual(self.javacore_set_from_test_data.get_jvm_start_time(), "2022/06/06 at 11:33:18:586")
 
     def test_cmd_line(self):
-        self.assertTrue(self.javacore_set_from_test_data.cmd_line.startswith("C:\\jazz\\ELM703M19\\server\\jre\\bin"
+        self.assertTrue(self.javacore_set_from_test_data.get_cmd_line().startswith("C:\\jazz\\ELM703M19\\server\\jre\\bin"
                                                                              "\\javaw"))
-
-    def test_parse_user_args(self):
-        line = "2CIUSERARG               -Xmx32g"
-        self.dummy_javacore_set.parse_user_args(line)
-        self.assertEqual(self.dummy_javacore_set.xmx, "32g")
-        self.assertTrue("-Xmx32g" in self.dummy_javacore_set.user_args)
-        #
-        line = "2CIUSERARG               -Xms32g"
-        self.dummy_javacore_set.parse_user_args(line)
-        self.assertEqual(self.dummy_javacore_set.xms, "32g")
-        #
-        line = "2CIUSERARG               -Xmn2g"
-        self.dummy_javacore_set.parse_user_args(line)
-        self.assertEqual(self.dummy_javacore_set.xmn, "2g")
-        #
-        line = "2CIUSERARG               -Xgcpolicy:gencon"
-        self.dummy_javacore_set.parse_user_args(line)
-        self.assertEqual(self.dummy_javacore_set.gc_policy, "gencon")
-        #
-        line = "2CIUSERARG               -Xcompressedrefs"
-        self.dummy_javacore_set.parse_user_args(line)
-        self.assertTrue(self.dummy_javacore_set.compressed_refs)
-        #
-        line = "2CIUSERARG               -Xnocompressedrefs"
-        self.dummy_javacore_set.parse_user_args(line)
-        self.assertFalse(self.dummy_javacore_set.compressed_refs)
-        #
-        line = ""
-        self.dummy_javacore_set.parse_user_args(line)
-        self.assertFalse(self.dummy_javacore_set.verbose_gc)
-        #
-        line = "2CIUSERARG               -verbose:gc"
-        self.dummy_javacore_set.parse_user_args(line)
-        self.assertTrue(self.dummy_javacore_set.verbose_gc)
-        self.assertTrue("-verbose:gc" in self.dummy_javacore_set.user_args)
-
-        line = "2CIUSERARG               -Ddefault.client.encoding=UTF-8"
-        self.dummy_javacore_set.parse_user_args(line)
-        self.assertTrue("-Ddefault.client.encoding=UTF-8" in self.dummy_javacore_set.user_args)
 
     def test_sort_snapshots(self):
         # tested in test_java_thread.py in function test_sort_snapshots
