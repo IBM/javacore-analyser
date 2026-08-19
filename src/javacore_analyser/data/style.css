@@ -260,8 +260,17 @@ div.margined {
     max-height: 400px;
 }
 
-.http_failure {
-    background-color: #ffcccc;
+td.http_error,
+td.http_error.primary,
+td.http_error.secondary {
+    background-color: #ffcccc !important;
+    font-weight: bold;
+}
+
+td.http_slow,
+td.http_slow.primary,
+td.http_slow.secondary {
+    background-color: #fff3cd !important;
     font-weight: bold;
 }
 

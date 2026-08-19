@@ -17,6 +17,9 @@
                         <div id="httpcallsdoc" style="display:none;">
                         The table shows the HTTP calls that are included in the HAR files from the data set.
                         The table can be sorted by clicking on a column header.
+                        Rows highlighted in <span style="background-color:#ffcccc;padding:0 4px;">red</span> finished
+                        with a 4xx or 5xx error status. Rows highlighted in
+                        <span style="background-color:#fff3cd;padding:0 4px;">yellow</span> took longer than 5 seconds.
                         <ul>
                             <li><strong>Request URL and Details</strong>
                                 is the URL of the HTTP request. Click "Details" to view request and response details,
@@ -257,16 +260,39 @@
                                     <td>
                                         <xsl:choose>
                                             <xsl:when test="@success='False'">
-                                                <xsl:attribute name="class">http_failure</xsl:attribute>
+                                                <xsl:attribute name="class">http_error</xsl:attribute>
                                             </xsl:when>
                                         </xsl:choose>
-                                        <xsl:value-of select="@status"/>
+                                        <xsl:choose>
+                                            <xsl:when test="@success='False'">
+                                                <div class="info"><xsl:value-of select="@status"/>
+                                                    <span class="infotooltip">Request failed with status <xsl:value-of select="@status"/></span>
+                                                </div>
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                <xsl:value-of select="@status"/>
+                                            </xsl:otherwise>
+                                        </xsl:choose>
                                     </td>
                                     <td><xsl:value-of select="@start_time"/></td>
                                     <td>
-                                        <div class="info"><xsl:value-of select="@duration"/>
-                                            <span class="infotooltip"><xsl:value-of select="@timings"/></span>
-                                        </div>
+                                        <xsl:choose>
+                                            <xsl:when test="@duration &gt; 5000">
+                                                <xsl:attribute name="class">http_slow</xsl:attribute>
+                                            </xsl:when>
+                                        </xsl:choose>
+                                        <xsl:choose>
+                                            <xsl:when test="@duration &gt; 5000">
+                                                <div class="info"><xsl:value-of select="@duration"/>
+                                                    <span class="infotooltip">Request took longer than 5 seconds&#10;<xsl:value-of select="@timings"/></span>
+                                                </div>
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                <div class="info"><xsl:value-of select="@duration"/>
+                                                    <span class="infotooltip"><xsl:value-of select="@timings"/></span>
+                                                </div>
+                                            </xsl:otherwise>
+                                        </xsl:choose>
                                     </td>
                                     <td><xsl:value-of select="@size"/></td>
                                 </tr>
