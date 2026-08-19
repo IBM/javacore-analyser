@@ -49,6 +49,8 @@ class ThreadSnapshot:
         """Parses cpu time line and allocated memory line from provided file and saves as instance attributes"""
         while True:
             line = self.file_reader.readline()
+            self.javacore.line_num += 1
+            self.javacore.line = line
             line = self.javacore.encode(line)
             if not line: break
             if line.startswith("NULL"): break
@@ -329,6 +331,8 @@ class ThreadSnapshot:
                 stack_trace_element.set_line(line)
                 stack_trace.stack_trace_elements.append(stack_trace_element)
             line = self.file_reader.readline()
+            self.javacore.line_num += 1
+            self.javacore.line = line
         self.stack_trace = stack_trace
 
     def classify(self):

@@ -76,6 +76,7 @@ class Javacore:
     def _parse_siginfo(self):
         while True:
             self.line = self.file.readline()
+            self.line_num += 1
             if self.line.startswith(SIGINFO + " "):
                 self.siginfo = self.line[len(SIGINFO):].strip()
                 return
@@ -84,11 +85,11 @@ class Javacore:
         # 1TIDATETIME    Date: 2022/04/12 at 09:56:36:266
         datetime_object = None  # for coding good practices only
         while True:
-            line = self.file.readline()
+            self.line = self.file.readline()
             self.line_num += 1
-            if not line: break
-            if line.startswith(DATETIME + " ") or line.startswith(DATETIME + "\t"):
-                line = line[len(DATETIME):].strip()
+            if not self.line: break
+            if self.line.startswith(DATETIME + " ") or self.line.startswith(DATETIME + "\t"):
+                line = self.line[len(DATETIME):].strip()
                 fmt = "Date: %Y/%m/%d at %H:%M:%S:%f"
                 self.datetime = datetime.datetime.strptime(line, fmt)
                 self.timestamp = self.datetime.timestamp()
@@ -98,38 +99,39 @@ class Javacore:
         i = 0
         try:
             while True:
-                line = self.file.readline()
+                self.line = self.file.readline()
+                self.line_num += 1
                 i += 1
-                if line.startswith(CPU_NUMBER_TAG):  # for example: 3XHNUMCPUS       How Many       : 16
-                    self.number_of_cpus = line.split()[-1]
+                if self.line.startswith(CPU_NUMBER_TAG):  # for example: 3XHNUMCPUS       How Many       : 16
+                    self.number_of_cpus = self.line.split()[-1]
                     continue
-                elif line.startswith(USER_ARGS):
-                    self._parse_user_args(line)
+                elif self.line.startswith(USER_ARGS):
+                    self._parse_user_args(self.line)
                     continue
-                elif line.startswith(OS_LEVEL):
-                    self.os_level = line[line.rfind(":") + 1:].strip()
+                elif self.line.startswith(OS_LEVEL):
+                    self.os_level = self.line[self.line.rfind(":") + 1:].strip()
                     continue
-                elif line.startswith(ARCHITECTURE):
-                    self.architecture = line[line.rfind(":") + 1:].strip()
+                elif self.line.startswith(ARCHITECTURE):
+                    self.architecture = self.line[self.line.rfind(":") + 1:].strip()
                     continue
-                elif line.startswith(JAVA_VERSION):
-                    self.java_version = line[len(JAVA_VERSION) + 1:].strip()
+                elif self.line.startswith(JAVA_VERSION):
+                    self.java_version = self.line[len(JAVA_VERSION) + 1:].strip()
                     continue
-                elif line.startswith(STARTTIME):
-                    self.jvm_start_time = line[line.find(":") + 1:].strip()
+                elif self.line.startswith(STARTTIME):
+                    self.jvm_start_time = self.line[self.line.find(":") + 1:].strip()
                     continue
-                elif line.startswith(CMD_LINE):
-                    self.cmd_line = line[len(CMD_LINE) + 1:].strip()
+                elif self.line.startswith(CMD_LINE):
+                    self.cmd_line = self.line[len(CMD_LINE) + 1:].strip()
                     continue
-                elif line.startswith(MEM_SECTION): # end of header data section
+                elif self.line.startswith(MEM_SECTION): # end of header data section
                     return
         except Exception as e:
             logging.exception(e)
             if self.file is not None:
-                msg = f'Error during processing file: {self.file.name} \n'
-                f'line number: {i} \n'
-                f'line: {self.curr_line}\n'
-                f'Check the exception below what happened'
+                msg = f'Error during processing file: {self.file.name} \n' \
+                      f'line number: {self.line_num} \n' \
+                      f'line: {self.line}\n' \
+                      f'Check the exception below what happened'
                 logging.error(msg)
             raise CorruptedJavacoreException(msg) from e
 
@@ -186,7 +188,7 @@ class Javacore:
                     break
                 self.line = self.encode(self.line)
                 if self.line.startswith(THREAD_INFO):
-                    self.line = Javacore.process_thread_name(self.line, self.file)
+                    self.line = self.process_thread_name(self.line)
                     snapshot = ThreadSnapshot.create(self.line, self.file, self)
                     self.snapshots.append(snapshot)
         except Exception as e:
@@ -256,14 +258,14 @@ class Javacore:
         string = bts.decode('utf-8', 'ignore')
         return string
 
-    @staticmethod
-    def process_thread_name(line, file):
+    def process_thread_name(self, line):
         count = line.count('"')
         if count == 0: return line  # anonymous native threads
         while True:
             count = line.count('"')
             if count == 1:
-                next_line = file.readline()
+                next_line = self.file.readline()
+                self.line_num += 1
                 line = line + next_line
             else:
                 return line
