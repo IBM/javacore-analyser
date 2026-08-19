@@ -482,13 +482,10 @@ class JavacoreSet:
         # Unless the user changed the javacore file name format, this is equivalent to sorting by date
         self.files.sort()
 
-   
-
     def parse_javacores(self):
         """ creates a Javacore object for each javacore...txt file in the given path """
         for filename in tqdm(self.files, "Parsing javacore files", unit=" file"):
-            javacore = Javacore()
-            javacore.create(filename, self)
+            javacore = Javacore.create(filename, self)
             self.javacores.append(javacore)
         self.javacores.sort(key=lambda x: x.timestamp)
 

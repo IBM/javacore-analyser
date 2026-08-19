@@ -14,3 +14,4 @@ dist
 src/javacore_analyser.egg-info
 reports
 config.ini
+test_output

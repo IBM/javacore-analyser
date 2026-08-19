@@ -24,12 +24,12 @@ class CorruptedJavacoreException(Exception):
 class Javacore:
 
     def __init__(self):
+        self.javacore_set = None
         self.datetime = None
         self.timestamp = None
         self.filename = None
         self.file = None
         self.snapshots = []
-        self.javacore_set = None
         self.siginfo = None
         self.__total_cpu = -1
         self.__load = -1
@@ -52,32 +52,35 @@ class Javacore:
         self.curr_line = ""
         self.line_num = 0
 
-    def create(self, filename, javacore_set):
-        self.filename = filename
-        self.javacore_set = javacore_set
-        self.parse()
+    @staticmethod
+    def create(filename, javacore_set):
+        javacore = Javacore()
+        javacore.filename = filename
+        javacore.javacore_set = javacore_set
+        javacore.parse()
+        return javacore
 
     def parse(self):
         try:
             self.file = codecs.open(self.filename, encoding=self.get_encoding(), errors='strict')
-            self.parse_siginfo()
-            self.parse_datetime()
-            self.parse_header_data()
-            self.parse_thread_snapshots()
+            self._parse_siginfo()
+            self._parse_datetime()
+            self._parse_header_data()
+            self._parse_thread_snapshots()
         except UnicodeDecodeError as e:
             msg: str = "Unicode, decode error in file {}. Error message: {}".format(self.basefilename(), e)
             raise CorruptedJavacoreException(msg) from e
         finally:
             self.file.close()
 
-    def parse_siginfo(self):
+    def _parse_siginfo(self):
         while True:
             self.line = self.file.readline()
             if self.line.startswith(SIGINFO + " "):
                 self.siginfo = self.line[len(SIGINFO):].strip()
                 return
 
-    def parse_datetime(self):
+    def _parse_datetime(self):
         # 1TIDATETIME    Date: 2022/04/12 at 09:56:36:266
         datetime_object = None  # for coding good practices only
         while True:
@@ -91,7 +94,7 @@ class Javacore:
                 self.timestamp = self.datetime.timestamp()
                 break
 
-    def parse_header_data(self):
+    def _parse_header_data(self):
         i = 0
         try:
             while True:
@@ -101,7 +104,7 @@ class Javacore:
                     self.number_of_cpus = line.split()[-1]
                     continue
                 elif line.startswith(USER_ARGS):
-                    self.parse_user_args(line)
+                    self._parse_user_args(line)
                     continue
                 elif line.startswith(OS_LEVEL):
                     self.os_level = line[line.rfind(":") + 1:].strip()
@@ -125,46 +128,46 @@ class Javacore:
             if self.file is not None:
                 msg = f'Error during processing file: {self.file.name} \n'
                 f'line number: {i} \n'
-                f'line: {curr_line}\n'
+                f'line: {self.curr_line}\n'
                 f'Check the exception below what happened'
                 logging.error(msg)
             raise CorruptedJavacoreException(msg) from e
 
-    def parse_user_args(self, line):
-        self.add_user_arg(line)
-        if line.__contains__(XMX): self.parse_xmx(line)
-        if line.__contains__(XMS): self.parse_xms(line)
-        if line.__contains__(XMN): self.parse_xmn(line)
-        if line.__contains__(GC_POLICY): self.parse_gc_policy(line)
-        if line.__contains__(COMPRESSED_REFS) or line.__contains__(NO_COMPRESSED_REFS): self.parse_compressed_refs(line)
-        if line.__contains__(VERBOSE_GC): self.parse_verbose_gc(line)
+    def _parse_user_args(self, line):
+        self._add_user_arg(line)
+        if line.__contains__(XMX): self._parse_xmx(line)
+        if line.__contains__(XMS): self._parse_xms(line)
+        if line.__contains__(XMN): self._parse_xmn(line)
+        if line.__contains__(GC_POLICY): self._parse_gc_policy(line)
+        if line.__contains__(COMPRESSED_REFS) or line.__contains__(NO_COMPRESSED_REFS): self._parse_compressed_refs(line)
+        if line.__contains__(VERBOSE_GC): self._parse_verbose_gc(line)
 
-    def parse_mem_arg(self, line):
+    def _parse_mem_arg(self, line):
         line = line.split()[-1]  # avoid matching the '2' in tag name 2CIUSERARG
         tokens = re.findall("\d+[KkMmGg]?$", line)
         if len(tokens) != 1: return UNKNOWN
         return tokens[0]
     
-    def parse_xmx(self, line):
-        self.xmx = self.parse_mem_arg(line)
+    def _parse_xmx(self, line):
+        self.xmx = self._parse_mem_arg(line)
 
-    def parse_xms(self, line):
-        self.xms = self.parse_mem_arg(line)
+    def _parse_xms(self, line):
+        self.xms = self._parse_mem_arg(line)
 
-    def parse_xmn(self, line):
-        self.xmn = self.parse_mem_arg(line)
+    def _parse_xmn(self, line):
+        self.xmn = self._parse_mem_arg(line)
 
-    def parse_gc_policy(self, line):
+    def _parse_gc_policy(self, line):
         self.gc_policy = line[line.rfind(":") + 1:].strip()
 
-    def parse_compressed_refs(self, line):
+    def _parse_compressed_refs(self, line):
         if line.__contains__(COMPRESSED_REFS): self.compressed_refs = True
         if line.__contains__(NO_COMPRESSED_REFS): self.compressed_refs = False
 
-    def parse_verbose_gc(self, line):
+    def _parse_verbose_gc(self, line):
         if line.__contains__(VERBOSE_GC): self.verbose_gc = True
 
-    def add_user_arg(self, line):
+    def _add_user_arg(self, line):
         # 2CIUSERARG               -Djava.lang.stringBuffer.growAggressively=false
         # Search for - and trim everything before
         # (from https://stackoverflow.com/questions/30945784/how-to-remove-all-characters-before-a-specific
@@ -173,7 +176,7 @@ class Javacore:
         logging.debug("User arg: " + arg)
         self.user_args.append(arg)
     
-    def parse_thread_snapshots(self):
+    def _parse_thread_snapshots(self):
         """ creates a ThreadSnapshot object for each "3XMTHREADINFO" tag found in the javacore """
         try:
             while True:
