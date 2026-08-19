@@ -83,7 +83,6 @@ class Javacore:
 
     def _parse_datetime(self):
         # 1TIDATETIME    Date: 2022/04/12 at 09:56:36:266
-        datetime_object = None  # for coding good practices only
         while True:
             self.line = self.file_reader.readline()
             self.line_num += 1

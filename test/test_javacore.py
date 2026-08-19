@@ -7,7 +7,7 @@ import datetime
 import os
 import unittest
 
-from javacore_analyser.javacore import Javacore, CorruptedJavacoreException
+from javacore_analyser.javacore import Javacore
 from javacore_analyser.javacore_set import JavacoreSet
 from javacore_analyser.thread_snapshot import ThreadSnapshot
 
@@ -92,7 +92,7 @@ class TestJavacore(unittest.TestCase):
         
         # Verify user arguments extraction (tests _parse_user_args and _add_user_arg)
         self.assertIsNotNone(self.javacore.user_args)
-        self.assertTrue(len(self.javacore.user_args) > 0)
+        self.assertGreater(len(self.javacore.user_args), 0)
         user_args_str = ' '.join(self.javacore.user_args)
         self.assertIn('-Xmx', user_args_str)
         self.assertIn('-Xms', user_args_str)
@@ -118,7 +118,7 @@ class TestJavacore(unittest.TestCase):
         
         # Verify thread snapshots creation (tests _parse_thread_snapshots)
         self.assertIsNotNone(self.javacore.snapshots)
-        self.assertTrue(len(self.javacore.snapshots) > 0)
+        self.assertGreater(len(self.javacore.snapshots), 0)
         self.assertEqual(len(self.javacore.snapshots), 201)
         first_snapshot = self.javacore.snapshots[0]
         self.assertIsNotNone(first_snapshot.name)
@@ -142,14 +142,14 @@ class TestJavacore(unittest.TestCase):
                 javacores.append(jc)
         
         # All should parse successfully
-        self.assertTrue(len(javacores) >= 2)
+        self.assertGreaterEqual(len(javacores), 2)
         
         # All should have required attributes populated by _parse* methods
         for jc in javacores:
             self.assertIsNotNone(jc.siginfo)
             self.assertIsNotNone(jc.datetime)
             self.assertIsNotNone(jc.number_of_cpus)
-            self.assertTrue(len(jc.snapshots) > 0)
+            self.assertGreater(len(jc.snapshots), 0)
             self.assertIsNotNone(jc.xmx)
             self.assertIsNotNone(jc.gc_policy)
 
