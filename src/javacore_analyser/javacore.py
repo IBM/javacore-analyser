@@ -28,7 +28,7 @@ class Javacore:
         self.datetime = None
         self.timestamp = None
         self.filename = None
-        self.file = None
+        self.file_reader = None
         self.snapshots = []
         self.siginfo = None
         self.__total_cpu = -1
@@ -62,7 +62,7 @@ class Javacore:
 
     def parse(self):
         try:
-            self.file = codecs.open(self.filename, encoding=self.get_encoding(), errors='strict')
+            self.file_reader = codecs.open(self.filename, encoding=self.get_encoding(), errors='strict')
             self._parse_siginfo()
             self._parse_datetime()
             self._parse_header_data()
@@ -71,11 +71,11 @@ class Javacore:
             msg: str = "Unicode, decode error in file {}. Error message: {}".format(self.basefilename(), e)
             raise CorruptedJavacoreException(msg) from e
         finally:
-            self.file.close()
+            self.file_reader.close()
 
     def _parse_siginfo(self):
         while True:
-            self.line = self.file.readline()
+            self.line = self.file_reader.readline()
             self.line_num += 1
             if self.line.startswith(SIGINFO + " "):
                 self.siginfo = self.line[len(SIGINFO):].strip()
@@ -85,7 +85,7 @@ class Javacore:
         # 1TIDATETIME    Date: 2022/04/12 at 09:56:36:266
         datetime_object = None  # for coding good practices only
         while True:
-            self.line = self.file.readline()
+            self.line = self.file_reader.readline()
             self.line_num += 1
             if not self.line: break
             if self.line.startswith(DATETIME + " ") or self.line.startswith(DATETIME + "\t"):
@@ -99,7 +99,7 @@ class Javacore:
         i = 0
         try:
             while True:
-                self.line = self.file.readline()
+                self.line = self.file_reader.readline()
                 self.line_num += 1
                 i += 1
                 if self.line.startswith(CPU_NUMBER_TAG):  # for example: 3XHNUMCPUS       How Many       : 16
@@ -127,8 +127,8 @@ class Javacore:
                     return
         except Exception as e:
             logging.exception(e)
-            if self.file is not None:
-                msg = f'Error during processing file: {self.file.name} \n' \
+            if self.file_reader is not None:
+                msg = f'Error during processing file: {self.file_reader.name} \n' \
                       f'line number: {self.line_num} \n' \
                       f'line: {self.line}\n' \
                       f'Check the exception below what happened'
@@ -182,14 +182,14 @@ class Javacore:
         """ creates a ThreadSnapshot object for each "3XMTHREADINFO" tag found in the javacore """
         try:
             while True:
-                self.line = self.file.readline()
+                self.line = self.file_reader.readline()
                 self.line_num += 1
                 if not self.line:
                     break
                 self.line = self.encode(self.line)
                 if self.line.startswith(THREAD_INFO):
                     self.line = self.process_thread_name(self.line)
-                    snapshot = ThreadSnapshot.create(self.line, self.file, self)
+                    snapshot = ThreadSnapshot.create(self.line, self.file_reader, self)
                     self.snapshots.append(snapshot)
         except Exception as e:
             msg: str = "Corrupted javacore file {} \n" \
@@ -264,7 +264,7 @@ class Javacore:
         while True:
             count = line.count('"')
             if count == 1:
-                next_line = self.file.readline()
+                next_line = self.file_reader.readline()
                 self.line_num += 1
                 line = line + next_line
             else:
