@@ -27,7 +27,7 @@ class ThreadSnapshot:
         self.blocker = None
         self.blocker_name = None
         self.stack_trace = None
-        self.file = None
+        self.file_reader = None
         self.state = UNKNOWN
         self.elapsed_time = None
         self.cpu_usage_inc = None
@@ -35,9 +35,9 @@ class ThreadSnapshot:
         self._ml_classification = None
 
     @staticmethod
-    def create(line, file, javacore):
+    def create(line, file_reader, javacore):
         snapshot = ThreadSnapshot()
-        snapshot.file = file
+        snapshot.file_reader = file_reader
         snapshot.javacore = javacore
         snapshot.name = snapshot.get_thread_name(line)
         snapshot.thread_address = snapshot.get_thread_address(line)
@@ -48,7 +48,9 @@ class ThreadSnapshot:
     def parse_snapshot_data(self):
         """Parses cpu time line and allocated memory line from provided file and saves as instance attributes"""
         while True:
-            line = self.file.readline()
+            line = self.file_reader.readline()
+            self.javacore.line_num += 1
+            self.javacore.line = line
             line = self.javacore.encode(line)
             if not line: break
             if line.startswith("NULL"): break
@@ -211,7 +213,7 @@ class ThreadSnapshot:
 
     def get_xml(self, doc, thread_snapshot_node):
         file_name = ""
-        if self.file:
+        if self.file_reader:
             file_name = self.javacore.filename.split(os.sep)[-1].strip()
         # CPU usage
         cpu_usage_node = doc.createElement("cpu_usage")
@@ -328,7 +330,9 @@ class ThreadSnapshot:
                     stack_trace_element.kind = StackTraceKind.NATIVE
                 stack_trace_element.set_line(line)
                 stack_trace.stack_trace_elements.append(stack_trace_element)
-            line = self.file.readline()
+            line = self.file_reader.readline()
+            self.javacore.line_num += 1
+            self.javacore.line = line
         self.stack_trace = stack_trace
 
     def classify(self):
