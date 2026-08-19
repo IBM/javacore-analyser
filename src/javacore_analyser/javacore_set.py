@@ -6,7 +6,6 @@
 import fnmatch
 import logging
 import os
-import re
 import shutil
 import tempfile
 from datetime import datetime
@@ -116,21 +115,6 @@ class JavacoreSet:
 
     def __init__(self, path):
         self.path = path  # path of the folder where the javacores are located
-        # start of static information
-        self.number_of_cpus = None  # number of cpus the VM is using
-        self.xmx = ""
-        self.xms = ""
-        self.xmn = ""
-        self.gc_policy = ""
-        self.compressed_refs = False
-        self.verbose_gc = False
-        self.os_level = ""
-        self.architecture = ""
-        self.java_version = ""
-        self.jvm_start_time = ""
-        self.cmd_line = ""
-        self.user_args = []
-        # end of static information
         self.files = []
         self.javacores = []
         self.excluded_javacores = []
@@ -297,19 +281,84 @@ class JavacoreSet:
 
         logging.info("Thread classification complete")
 
+    def get_number_of_cpus(self):
+        if len(self.javacores) > 0:
+            return self.javacores[0].number_of_cpus
+        return ""
+
+    def get_xmx(self):
+        if len(self.javacores) > 0:
+            return self.javacores[0].xmx
+        return ""
+
+    def get_xms(self):
+        if len(self.javacores) > 0:
+            return self.javacores[0].xms
+        return ""
+
+    def get_xmn(self):
+        if len(self.javacores) > 0:
+            return self.javacores[0].xmn
+        return ""
+
+    def get_verbose_gc(self):
+        if len(self.javacores) > 0:
+            return self.javacores[0].verbose_gc
+        return ""
+    
+    def get_gc_policy(self):
+        if len(self.javacores) > 0:
+            return self.javacores[0].gc_policy
+        return ""
+
+    def get_compressed_refs(self):
+        if len(self.javacores) > 0:
+            return self.javacores[0].compressed_refs
+        return ""
+
+    def get_architecture(self):
+        if len(self.javacores) > 0:
+            return self.javacores[0].architecture
+        return ""
+
+    def get_java_version(self):
+        if len(self.javacores) > 0:
+            return self.javacores[0].java_version
+        return ""
+
+    def get_os_level(self):
+        if len(self.javacores) > 0:
+            return self.javacores[0].os_level
+        return ""
+
+    def get_jvm_start_time(self):
+        if len(self.javacores) > 0:
+            return self.javacores[0].jvm_start_time
+        return ""
+
+    def get_cmd_line(self):
+        if len(self.javacores) > 0:
+            return self.javacores[0].cmd_line
+        return ""
+
+    def get_user_args(self):
+        if len(self.javacores) > 0:
+            return self.javacores[0].user_args
+        return ""
+    
     def print_java_settings(self):
-        logging.debug("number of CPUs: {}".format(self.number_of_cpus))
-        logging.debug("Xmx: {}".format(self.xmx))
-        logging.debug("Xms: {}".format(self.xms))
-        logging.debug("Xmn: {}".format(self.xmn))
-        logging.debug("Verbose GC: {}".format(self.verbose_gc))
-        logging.debug("GC policy: {}".format(self.gc_policy))
-        logging.debug("Compressed refs: {}".format(self.compressed_refs))
-        logging.debug("Architecture: {}".format(self.architecture))
-        logging.debug("Java version: {}".format(self.java_version))
-        logging.debug("OS Level: {}".format(self.os_level))
-        logging.debug("JVM Startup time: {}".format(self.jvm_start_time))
-        logging.debug("Command line: {}".format(self.cmd_line))
+        logging.debug("number of CPUs: {}".format(self.get_number_of_cpus()))
+        logging.debug("Xmx: {}".format(self.get_xmx()))
+        logging.debug("Xms: {}".format(self.get_xms()))
+        logging.debug("Xmn: {}".format(self.get_xmn()))
+        logging.debug("Verbose GC: {}".format(self.get_verbose_gc()))
+        logging.debug("GC policy: {}".format(self.get_gc_policy()))
+        logging.debug("Compressed refs: {}".format(self.get_compressed_refs()))
+        logging.debug("Architecture: {}".format(self.get_architecture()))
+        logging.debug("Java version: {}".format(self.get_java_version()))
+        logging.debug("OS Level: {}".format(self.get_os_level()))
+        logging.debug("JVM Startup time: {}".format(self.get_jvm_start_time()))
+        logging.debug("Command line: {}".format(self.get_cmd_line()))
 
     @staticmethod
     def create(path):
@@ -320,7 +369,6 @@ class JavacoreSet:
         if len(jset.files) > 0:
             jset.data_types.add('javacores')
             first_javacore = jset.get_one_javacore()
-            jset.parse_common_data(first_javacore)
             jset.parse_javacores()
             jset.sort_snapshots()
             jset.__generate_blocked_snapshots_list()
@@ -434,47 +482,7 @@ class JavacoreSet:
         # Unless the user changed the javacore file name format, this is equivalent to sorting by date
         self.files.sort()
 
-    def parse_common_data(self, filename):
-        """ extracts information that is common to all the javacores, like the number of CPUs """
-        filename = os.path.join(self.path, filename)
-        curr_line = ""
-        i = 0
-        file = None
-        try:
-            file = open(filename, 'r')
-            for line in file:
-                i += 1
-                if line.startswith(CPU_NUMBER_TAG):  # for example: 3XHNUMCPUS       How Many       : 16
-                    self.number_of_cpus = line.split()[-1]
-                    continue
-                elif line.startswith(USER_ARGS):
-                    self.parse_user_args(line)
-                    continue
-                elif line.startswith(OS_LEVEL):
-                    self.os_level = line[line.rfind(":") + 1:].strip()
-                    continue
-                elif line.startswith(ARCHITECTURE):
-                    self.architecture = line[line.rfind(":") + 1:].strip()
-                    continue
-                elif line.startswith(JAVA_VERSION):
-                    self.java_version = line[len(JAVA_VERSION) + 1:].strip()
-                    continue
-                elif line.startswith(STARTTIME):
-                    self.jvm_start_time = line[line.find(":") + 1:].strip()
-                    continue
-                elif line.startswith(CMD_LINE):
-                    self.cmd_line = line[len(CMD_LINE) + 1:].strip()
-                    continue
-        except Exception as ex:
-            logging.exception(ex)
-            if file is not None:
-                logging.error(f'Error during processing file: {file.name} \n'
-                              f'line number: {i} \n'
-                              f'line: {curr_line}\n'
-                              f'Check the exception below what happened')
-        finally:
-            if file is not None:
-                file.close()
+   
 
     def parse_javacores(self):
         """ creates a Javacore object for each javacore...txt file in the given path """
@@ -666,58 +674,58 @@ class JavacoreSet:
             user_args_list_node = self.doc.createElement("user_args_list")
             #system_info_node.setAttribute("ai_overview", self.ai_overview)
             system_info_node.appendChild(user_args_list_node)
-            for arg in self.user_args:
+            for arg in self.get_user_args():
                 arg_node = self.doc.createElement("user_arg")
                 user_args_list_node.appendChild(arg_node)
                 arg_node.appendChild(self.doc.createTextNode(arg))
 
             number_of_cpus_node = self.doc.createElement("number_of_cpus")
             system_info_node.appendChild(number_of_cpus_node)
-            number_of_cpus_node.appendChild(self.doc.createTextNode(self.number_of_cpus if self.number_of_cpus else ""))
+            number_of_cpus_node.appendChild(self.doc.createTextNode(self.get_number_of_cpus()))
 
             xmx_node = self.doc.createElement("xmx")
             system_info_node.appendChild(xmx_node)
-            xmx_node.appendChild(self.doc.createTextNode(self.xmx))
+            xmx_node.appendChild(self.doc.createTextNode(self.get_xmx()))
 
             xms_node = self.doc.createElement("xms")
             system_info_node.appendChild(xms_node)
-            xms_node.appendChild(self.doc.createTextNode(self.xms))
+            xms_node.appendChild(self.doc.createTextNode(self.get_xms()))
 
             xmn_node = self.doc.createElement("xmn")
             system_info_node.appendChild(xmn_node)
-            xmn_node.appendChild(self.doc.createTextNode(self.xmn))
+            xmn_node.appendChild(self.doc.createTextNode(self.get_xmn()))
 
             verbose_gc_node = self.doc.createElement("verbose_gc")
             system_info_node.appendChild(verbose_gc_node)
-            verbose_gc_node.appendChild(self.doc.createTextNode(str(self.verbose_gc)))
+            verbose_gc_node.appendChild(self.doc.createTextNode(str(self.get_verbose_gc())))
 
             gc_policy_node = self.doc.createElement("gc_policy")
             system_info_node.appendChild(gc_policy_node)
-            gc_policy_node.appendChild(self.doc.createTextNode(self.gc_policy))
+            gc_policy_node.appendChild(self.doc.createTextNode(self.get_gc_policy()))
 
             compressed_refs_node = self.doc.createElement("compressed_refs")
             system_info_node.appendChild(compressed_refs_node)
-            compressed_refs_node.appendChild(self.doc.createTextNode(str(self.compressed_refs)))
+            compressed_refs_node.appendChild(self.doc.createTextNode(str(self.get_compressed_refs())))
 
             architecture_node = self.doc.createElement("architecture")
             system_info_node.appendChild(architecture_node)
-            architecture_node.appendChild(self.doc.createTextNode(self.architecture))
+            architecture_node.appendChild(self.doc.createTextNode(self.get_architecture()))
 
             java_version_node = self.doc.createElement("java_version")
             system_info_node.appendChild(java_version_node)
-            java_version_node.appendChild(self.doc.createTextNode(self.java_version))
+            java_version_node.appendChild(self.doc.createTextNode(self.get_java_version()))
 
             os_level_node = self.doc.createElement("os_level")
             system_info_node.appendChild(os_level_node)
-            os_level_node.appendChild(self.doc.createTextNode(self.os_level))
+            os_level_node.appendChild(self.doc.createTextNode(self.get_os_level()))
 
             jvm_startup_time = self.doc.createElement("jvm_start_time")
             system_info_node.appendChild(jvm_startup_time)
-            jvm_startup_time.appendChild(self.doc.createTextNode(self.jvm_start_time))
+            jvm_startup_time.appendChild(self.doc.createTextNode(self.get_jvm_start_time()))
 
             cmd_line = self.doc.createElement("cmd_line")
             system_info_node.appendChild(cmd_line)
-            cmd_line.appendChild(self.doc.createTextNode(self.cmd_line))
+            cmd_line.appendChild(self.doc.createTextNode(self.get_cmd_line()))
 
         # Only add javacore-dependent data if javacores are present
         if 'javacores' in self.data_types:
@@ -1113,51 +1121,7 @@ class JavacoreSet:
                 logging.debug("Writing file " + file)
                 f = open(file, "w")
                 f.write(file_content.format(id=element_id))
-                f.close()
-
-    @staticmethod
-    def parse_mem_arg(line):
-        line = line.split()[-1]  # avoid matching the '2' in tag name 2CIUSERARG
-        tokens = re.findall("\d+[KkMmGg]?$", line)
-        if len(tokens) != 1: return UNKNOWN
-        return tokens[0]
-
-    def parse_xmx(self, line):
-        self.xmx = self.parse_mem_arg(line)
-
-    def parse_xms(self, line):
-        self.xms = self.parse_mem_arg(line)
-
-    def parse_xmn(self, line):
-        self.xmn = self.parse_mem_arg(line)
-
-    def parse_gc_policy(self, line):
-        self.gc_policy = line[line.rfind(":") + 1:].strip()
-
-    def parse_compressed_refs(self, line):
-        if line.__contains__(COMPRESSED_REFS): self.compressed_refs = True
-        if line.__contains__(NO_COMPRESSED_REFS): self.compressed_refs = False
-
-    def parse_verbose_gc(self, line):
-        if line.__contains__(VERBOSE_GC): self.verbose_gc = True
-
-    def add_user_arg(self, line):
-        # 2CIUSERARG               -Djava.lang.stringBuffer.growAggressively=false
-        # Search for - and trim everything before
-        # (from https://stackoverflow.com/questions/30945784/how-to-remove-all-characters-before-a-specific
-        # -character-in-python)
-        arg = line[line.find('-'):].rstrip()
-        logging.debug("User arg: " + arg)
-        self.user_args.append(arg)
-
-    def parse_user_args(self, line):
-        self.add_user_arg(line)
-        if line.__contains__(XMX): self.parse_xmx(line)
-        if line.__contains__(XMS): self.parse_xms(line)
-        if line.__contains__(XMN): self.parse_xmn(line)
-        if line.__contains__(GC_POLICY): self.parse_gc_policy(line)
-        if line.__contains__(COMPRESSED_REFS) or line.__contains__(NO_COMPRESSED_REFS): self.parse_compressed_refs(line)
-        if line.__contains__(VERBOSE_GC): self.parse_verbose_gc(line)
+                f.close()    
 
     def blocked_collection(self, blocker):
         """
