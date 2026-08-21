@@ -9,6 +9,34 @@
 
     <xsl:variable name="displayed_stack_depth" select="50" />
 
+    <!-- Reusable sort-button markup for Carbon DataTable sort headers.
+         Call with: <xsl:call-template name="sort_th">
+                        <xsl:with-param name="col">0</xsl:with-param>
+                        <xsl:with-param name="label">Column Label</xsl:with-param>
+                        <xsl:with-param name="class">sixty</xsl:with-param>  (optional)
+                    </xsl:call-template>
+    -->
+    <xsl:template name="sort_th">
+        <xsl:param name="col"/>
+        <xsl:param name="label"/>
+        <xsl:param name="class" select="''"/>
+        <th>
+            <xsl:if test="$class != ''">
+                <xsl:attribute name="class"><xsl:value-of select="$class"/> cds--table-sort__header</xsl:attribute>
+            </xsl:if>
+            <xsl:if test="$class = ''">
+                <xsl:attribute name="class">cds--table-sort__header</xsl:attribute>
+            </xsl:if>
+            <button class="cds--table-sort">
+                <xsl:attribute name="data-col"><xsl:value-of select="$col"/></xsl:attribute>
+                <xsl:attribute name="aria-label">Sort by <xsl:value-of select="$label"/></xsl:attribute>
+                <span class="cds--table-header-label"><xsl:value-of select="$label"/></span>
+                <svg class="cds--table-sort__icon-unsorted" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M27.6 20.6L24 24.2V4h-2v20.2l-3.6-3.6L17 22l6 6 6-6zM9 4L3 10l1.4 1.4L8 7.8V28h2V7.8l3.6 3.6L15 10z"/></svg>
+                <svg class="cds--table-sort__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M27.6 20.6L24 24.2V4h-2v20.2l-3.6-3.6L17 22l6 6 6-6zM9 4L3 10l1.4 1.4L8 7.8V28h2V7.8l3.6 3.6L15 10z"/></svg>
+            </button>
+        </th>
+    </xsl:template>
+
     <!-- Import section templates -->
     <xsl:include href="sections/classification_config.xsl"/>
     <xsl:include href="sections/header.xsl"/>
