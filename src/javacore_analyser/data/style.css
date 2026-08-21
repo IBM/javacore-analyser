@@ -64,14 +64,23 @@ th {
     background-color: var(--color-layer-01);
 }
 
-/* Do not override Carbon's own th styling for cds--data-table */
+/* Do not override Carbon's own table/th/td styling for cds--data-table */
+.cds--data-table {
+    width: 100%;
+    table-layout: unset;
+    border-radius: unset;
+}
+
+.cds--data-table, .cds--data-table th, .cds--data-table td {
+    border: unset;
+}
+
 .cds--data-table th {
     background-color: unset;
     position: unset;
     top: unset;
     z-index: unset;
     width: unset;
-    border: unset;
     font-size: unset;
     color: unset;
 }
@@ -86,7 +95,8 @@ th.twenty-five { width: 25%; }
 th.fifteen     { width: 15%; }
 th.ten         { width: 10%; }
 th.http-small  { width: 5%; }
-th.http-medium { width: 12%; }
+th.http-medium { width: 13%; }
+
 td {
     text-align:right;
     word-wrap:break-word;
