@@ -88,7 +88,7 @@ def linkify_ai_response(javacore_set, text):
         key=len, reverse=True
     )
 
-    claimed_spans = []
+    claimed_spans: list[tuple[int, int]] = []
 
     def overlaps_claimed(start, end):
         return any(start < c_end and end > c_start for c_start, c_end in claimed_spans)

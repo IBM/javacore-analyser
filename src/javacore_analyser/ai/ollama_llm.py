@@ -57,6 +57,6 @@ class OllamaLLM(LLM):
                 },
             ], options=self.params if self.params else None)
             logging.debug("Infused finished")
-            content = response.message.content
+            content = response.message.content or ""
         return content
         

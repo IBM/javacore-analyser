@@ -14,6 +14,7 @@ import tarfile
 import tempfile
 import traceback
 import zipfile
+from typing import Union
 
 import importlib_resources
 import py7zr
@@ -53,6 +54,7 @@ def extract_archive(input_archive_filename, output_path):
 
     assert isinstance(output_path, str)
 
+    file: Union[zipfile.ZipFile, tarfile.TarFile, py7zr.SevenZipFile]
     if input_archive_filename.endswith(".zip"):
         logging.info("Processing zip file")
         file = zipfile.ZipFile(input_archive_filename)
