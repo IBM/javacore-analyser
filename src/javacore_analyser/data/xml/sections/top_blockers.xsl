@@ -8,8 +8,14 @@
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
     <xsl:template name="top_blockers">
-        <h3><a id="toggletop10blocker" href="javascript:expand_it(top10blocker,toggletop10blocker)" class="expandit">Top 10 Blockers</a></h3>
-        <div id="top10blocker" style="display:none;">
+        <div class="cds--accordion__item" id="accordion-top-blockers">
+            <button type="button" class="cds--accordion__heading"
+                    aria-expanded="false" aria-controls="content-top-blockers"
+                    onclick="this.closest('.cds--accordion__item').classList.toggle('cds--accordion__item--active'); this.setAttribute('aria-expanded', this.closest('.cds--accordion__item').classList.contains('cds--accordion__item--active')?'true':'false');">
+                <svg class="cds--accordion__arrow" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M11 8L6 13 4.6 11.6 8.2 8 4.6 4.4 6 3z"/></svg>
+                <span class="cds--accordion__title">Top 10 Blockers</span>
+            </button>
+            <div class="cds--accordion__wrapper"><div id="content-top-blockers" class="cds--accordion__content">
             <xsl:choose>
                 <xsl:when test="doc/blockers/blocker">
                     <a id="toggleblockersdoc" href="javascript:expand_it(blockersdoc,toggleblockersdoc)" class="expandit">
@@ -29,7 +35,9 @@
                             </li>
                         </ul>
                     </div>
-                    <table id="top10_blocker_table" class="tablesorter">
+                    <div class="cds--data-table-container">
+                    <div class="cds--data-table-content">
+                    <table id="top10_blocker_table" class="cds--data-table cds--data-table--zebra cds--data-table--sort">
                         <thead>
                             <tr>
                                 <th class="ninety">Thread name</th>
@@ -40,21 +48,35 @@
                             <xsl:for-each select="doc/blockers/blocker">
                                 <tr>
                                     <td class="left">
-                                        <a class="right" target="_blank">
+                                        <a class="cds--link" target="_blank">
                                             <xsl:attribute name="href">
                                                 <xsl:value-of select="concat('threads/thread_', blocker_hash, '.html')"/>
                                             </xsl:attribute>
                                             <xsl:value-of select="blocker_name"/>
                                         </a>
                                     </td>
-                                    <td><xsl:value-of select="blocker_size"/></td>
+                                    <td>
+                                        <span class="cds--tag cds--tag--red">
+                                            <xsl:value-of select="blocker_size"/>
+                                        </span>
+                                    </td>
                                 </tr>
                             </xsl:for-each>
                         </tbody>
                     </table>
+                    </div>
+                    </div>
                 </xsl:when>
-                <xsl:otherwise> There are no blocking threads in Javacores </xsl:otherwise>
+                <xsl:otherwise>
+                    <div class="cds--inline-notification cds--inline-notification--info" role="status">
+                        <div class="cds--inline-notification__details">
+                            <p class="cds--inline-notification__text">There are no blocking threads in javacores</p>
+                        </div>
+                    </div>
+                </xsl:otherwise>
             </xsl:choose>
+            </div>
+            </div>
         </div>
     </xsl:template>
 

@@ -8,8 +8,14 @@
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
     <xsl:template name="all_threads">
-        <h3><a  id="toggle_all_threads" href="javascript:expand_it(all_threads,toggle_all_threads)" class="expandit">All Threads</a></h3>
-        <div id="all_threads"  style="display:none;">
+        <div class="cds--accordion__item" id="accordion-all-threads">
+            <button type="button" class="cds--accordion__heading"
+                    aria-expanded="false" aria-controls="content-all-threads"
+                    onclick="this.closest('.cds--accordion__item').classList.toggle('cds--accordion__item--active'); this.setAttribute('aria-expanded', this.closest('.cds--accordion__item').classList.contains('cds--accordion__item--active')?'true':'false');">
+                <svg class="cds--accordion__arrow" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M11 8L6 13 4.6 11.6 8.2 8 4.6 4.4 6 3z"/></svg>
+                <span class="cds--accordion__title">All Threads</span>
+            </button>
+            <div class="cds--accordion__wrapper"><div id="content-all-threads" class="cds--accordion__content">
             <a id="togglethreadsdoc" href="javascript:expand_it(threadsdoc,togglethreadsdoc)" class="expandit">
                 What does this table tell me?</a>
             <div id="threadsdoc" style="display:none;">
@@ -63,7 +69,9 @@
                     </xsl:choose>
                 </ul>
             </div>
-            <table id="all_threads_table" class="tablesorter">
+            <div class="cds--data-table-container">
+            <div class="cds--data-table-content">
+            <table id="all_threads_table" class="cds--data-table cds--data-table--zebra cds--data-table--sort">
                 <thead>
                     <tr>
                         <th class="sixty">Thread name</th>
@@ -256,6 +264,10 @@
                     </xsl:for-each>
                 </tbody>
             </table>
+            </div>
+            </div>
+            </div>
+            </div>
         </div>
     </xsl:template>
 

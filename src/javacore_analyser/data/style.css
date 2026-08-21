@@ -3,6 +3,29 @@ Copyright IBM Corp. 2024 - 2026
 SPDX-License-Identifier: Apache-2.0
 */
 
+/* ── Carbon token aliases for fallback when Carbon CSS is not yet loaded ── */
+:root {
+    --color-text-primary:   var(--cds-text-primary,   #161616);
+    --color-text-secondary: var(--cds-text-secondary, #525252);
+    --color-layer-01:       var(--cds-layer-01,       #f4f4f4);
+    --color-layer-02:       var(--cds-layer-02,       #ffffff);
+    --color-border-subtle:  var(--cds-border-subtle-01, #e0e0e0);
+    --color-border-strong:  var(--cds-border-strong-01, #8d8d8d);
+    --color-support-warning: var(--cds-support-warning, #f1c21b);
+    --color-support-error:   var(--cds-support-error,   #da1e28);
+    --color-interactive:    var(--cds-interactive,    #0f62fe);
+    --font-body: var(--cds-body-short-01-font-family, 'IBM Plex Sans', 'Helvetica Neue', Arial, sans-serif);
+    --font-mono: var(--cds-code-01-font-family,       'IBM Plex Mono', 'Courier New', Courier, monospace);
+}
+
+body {
+    font-family: var(--font-body);
+    color: var(--color-text-primary);
+    background-color: var(--color-layer-02);
+}
+
+/* ── Report-specific heading and table layout ────────────────────────────── */
+
 table.heading {
     border: none;
     width: 100%;
@@ -27,205 +50,146 @@ table {
 }
 
 table, th, td {
-    border: 1px solid;
+    border: 1px solid var(--color-border-subtle);
 }
 
 th {
-    color:black;
+    color: var(--color-text-primary);
     font-size:12pt;
-    border-color: black;
+    border-color: var(--color-border-strong);
     width: 10%;
     position: sticky;
     top: 0;
     z-index: 10;
+    background-color: var(--color-layer-01);
 }
 
-th.ninety {
-    width: 90%;
-}
-
-th.sixty {
-    width: 60%;
-}
-
-th.fifty {
-    width: 50%;
-}
-
-th.forty {
-    width: 40%;
-}
-
-th.thirty {
-    width: 30%;
-}
-
-th.twenty {
-    width: 20%;
-}
-
-th.twenty-five {
-    width: 25%;
-}
-
-th.fifteen {
-    width: 15%;
-}
-
-th.ten {
-    width: 10%;
-}
-
-th.http-small {
-    width: 5%;
-}
-
-th.http-medium {
-    width: 12%;
-}
-
+th.ninety      { width: 90%; }
+th.sixty       { width: 60%; }
+th.fifty       { width: 50%; }
+th.forty       { width: 40%; }
+th.thirty      { width: 30%; }
+th.twenty      { width: 20%; }
+th.twenty-five { width: 25%; }
+th.fifteen     { width: 15%; }
+th.ten         { width: 10%; }
+th.http-small  { width: 5%; }
+th.http-medium { width: 12%; }
 td {
     text-align:right;
     word-wrap:break-word;
+    color: var(--color-text-primary);
 }
 
-.left {
-    text-align:left;
-}
+.left  { text-align:left; }
+.right { text-align:right; }
+.smaller { font-size:smaller; }
 
-.right {
-    text-align:right;
-}
-
-.smaller {
-    font-size:smaller;
-}
+/* ── Stack traces ─────────────────────────────────────────────────────────── */
 
 .stacktrace {
-  margin: 0;
-  padding-left: 5;
-  /*
-    To show the first n lines of stack trace in threads change the height using the pattern:
-    <font size> * <number of lines> by default it should be
-    15 * <number of lines>
-  */
-  height: 45px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 5;
+    margin: 0;
+    padding-left: 5px;
+    height: 45px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    font-family: var(--font-mono);
+    font-size: 12px;
 }
-.stacktrace.show-all{
-  margin: 0;
-  padding-left: 5;
-  height:auto;
-  overflow:visible;
-  text-overflow: none
+.stacktrace.show-all {
+    margin: 0;
+    padding-left: 5px;
+    height:auto;
+    overflow:visible;
+    text-overflow: none;
 }
 .toggle_expand {
-  text-align: left;
+    text-align: left;
 }
+
+/* ── Inline warnings / info tooltips ─────────────────────────────────────── */
 
 .info {
-  position: relative;
-  display: inline-block;
-  border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
-  color: orange
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted var(--color-support-warning);
+    color: var(--color-support-warning);
 }
-
-/* Tooltip text */
 .info .infotooltip {
-  visibility: hidden;
-  width: 120px;
-  background-color: black;
-  color: #fff;
-  text-align: center;
-  padding: 5px 0;
-  border-radius: 6px;
-
-  /* Position the tooltip text - see examples below! */
-  position: absolute;
-  z-index: 1;
+    visibility: hidden;
+    width: 120px;
+    background-color: var(--color-text-primary);
+    color: var(--color-layer-02);
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 6px;
+    position: absolute;
+    z-index: 1;
 }
+.info:hover .infotooltip { visibility: visible; }
 
 .warning {
-  position: relative;
-  display: inline-block;
-  border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
-  color: orange
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted var(--color-support-warning);
+    color: var(--color-support-warning);
 }
-
-/* Tooltip text */
 .warning .warningtooltip {
-  visibility: hidden;
-  width: 120px;
-  background-color: black;
-  color: #fff;
-  text-align: center;
-  padding: 5px 0;
-  border-radius: 6px;
-
-  /* Position the tooltip text - see examples below! */
-  position: absolute;
-  z-index: 1;
+    visibility: hidden;
+    width: 120px;
+    background-color: var(--color-text-primary);
+    color: var(--color-layer-02);
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 6px;
+    position: absolute;
+    z-index: 1;
 }
+.warning:hover .warningtooltip { visibility: visible; }
 
-.searchbar {
-  position: fixed;
-  height: 30px;
-  width: 100%;
-  bottom: 0;
-  background-color: black;
-  z-index: 100;
-}
+/* ── Search counter (shown in Carbon Header) ─────────────────────────────── */
 
 .search-counter {
-  color: white;
-  margin-left: 10px;
-  font-size: 14px;
-  vertical-align: middle;
+    color: var(--cds-text-on-color, #ffffff);
+    margin-left: 10px;
+    font-size: 14px;
+    vertical-align: middle;
+    align-self: center;
+}
+
+/* ── Main content padding below the fixed Carbon header ─────────────────── */
+
+.cds--content {
+    padding-top: 3rem;  /* offset for the 48px Carbon header */
 }
 
 .content {
-   padding-bottom: 30px
+    padding-bottom: 30px;
 }
 
 mark {
-  background: yellow;
+    background: var(--color-support-warning);
 }
-
 mark.current {
-  background: orange;
+    background: var(--cds-support-warning-inverse, #f1a620);
 }
 
-/* Show the tooltip text when you mouse over the tooltip container */
-.info:hover .infotooltip {
-  visibility: visible;
-}
-
-/* Show the tooltip text when you mouse over the tooltip container */
-.warning:hover .warningtooltip {
-  visibility: visible;
-}
-
-.hide {
-  display:none;
-}
+.hide { display:none; }
 
 span.native {
-    color: #aaaaaa;
+    color: var(--color-text-secondary);
     font-style: italic;
 }
 
-h3 {
-    margin: 10px;
-}
+h3 { margin: 10px; }
 
-div.margined {
-    margin: 10px;
-}
+div.margined { margin: 10px; }
+p.margined   { margin: 10px; }
 
-/* HTTP call details styling */
+/* ── HTTP call detail panel ───────────────────────────────────────────────── */
+
 .http-show-button {
     margin-top: 5px;
     font-size: 0.9em;
@@ -235,42 +199,36 @@ div.margined {
     width: 100%;
     margin-top: 10px;
     padding: 10px;
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
+    background-color: var(--color-layer-01);
+    border: 1px solid var(--color-border-subtle);
     border-radius: 4px;
 }
 
 .http-call-details h4 {
     margin-top: 10px;
     margin-bottom: 5px;
-    color: #333;
+    color: var(--color-text-primary);
 }
 
-.http-call-details h4:first-child {
-    margin-top: 0;
-}
+.http-call-details h4:first-child { margin-top: 0; }
 
-.http-detail-section {
-    margin-bottom: 15px;
-}
+.http-detail-section { margin-bottom: 15px; }
 
 .http-detail-pre {
-    background-color: #f4f4f4;
-    border: 1px solid #ddd;
+    background-color: var(--color-layer-01);
+    border: 1px solid var(--color-border-subtle);
     border-radius: 4px;
     padding: 10px;
     overflow-x: auto;
     white-space: pre-wrap;
     word-wrap: break-word;
-    font-family: 'Courier New', monospace;
+    font-family: var(--font-mono);
     font-size: 12px;
     max-height: 300px;
     overflow-y: auto;
 }
 
-.http-detail-pre.scrollable {
-    max-height: 400px;
-}
+.http-detail-pre.scrollable { max-height: 400px; }
 
 td.http_error,
 td.http_error.primary,
@@ -286,7 +244,13 @@ td.http_slow.secondary {
     font-weight: bold;
 }
 
-/* ML classification badge colours */
+.http_failure {
+    background-color: var(--cds-support-error-inverse, #fff1f1);
+    font-weight: bold;
+}
+
+/* ── ML classification badges ────────────────────────────────────────────── */
+
 .ml-badge {
     display: inline-block;
     padding: 1px 6px;
@@ -296,19 +260,19 @@ td.http_slow.secondary {
     overflow-wrap: break-word;
 }
 
-.ml-computing        { background-color: #cce5ff; color: #004085; }
-.ml-display-graphics { background-color: #d4edda; color: #155724; }
-.ml-java-internal    { background-color: #e2d9f3; color: #4a235a; }
-.ml-liberty-internal { background-color: #d6d6f5; color: #2c2c7a; }
-.ml-read-database    { background-color: #fff3cd; color: #856404; }
-.ml-read-disk        { background-color: #fde8c8; color: #7d4200; }
-.ml-read-network     { background-color: #fdd9b5; color: #6d3200; }
-.ml-save-disk        { background-color: #f8d7da; color: #842029; }
-.ml-wait-condition   { background-color: #f5c6cb; color: #721c24; }
-.ml-wait-connection  { background-color: #f1b0b7; color: #6f1117; }
-.ml-write-database   { background-color: #d1ecf1; color: #0c5460; }
-.ml-write-network    { background-color: #bee5eb; color: #0a4650; }
-.ml-unknown          { background-color: #e9ecef; color: #495057; }
+.ml-computing        { background-color: var(--cds-tag-background-blue,    #cce5ff); color: var(--cds-tag-color-blue,    #004085); }
+.ml-display-graphics { background-color: var(--cds-tag-background-green,   #d4edda); color: var(--cds-tag-color-green,   #155724); }
+.ml-java-internal    { background-color: var(--cds-tag-background-purple,  #e2d9f3); color: var(--cds-tag-color-purple,  #4a235a); }
+.ml-liberty-internal { background-color: var(--cds-tag-background-teal,    #d6d6f5); color: var(--cds-tag-color-teal,    #2c2c7a); }
+.ml-read-database    { background-color: var(--cds-tag-background-yellow,  #fff3cd); color: var(--cds-tag-color-yellow,  #856404); }
+.ml-read-disk        { background-color: var(--cds-tag-background-warm-gray, #fde8c8); color: var(--cds-tag-color-warm-gray, #7d4200); }
+.ml-read-network     { background-color: var(--cds-tag-background-orange,  #fdd9b5); color: var(--cds-tag-color-orange,  #6d3200); }
+.ml-save-disk        { background-color: var(--cds-tag-background-red,     #f8d7da); color: var(--cds-tag-color-red,     #842029); }
+.ml-wait-condition   { background-color: var(--cds-tag-background-red,     #f5c6cb); color: var(--cds-tag-color-red,     #721c24); }
+.ml-wait-connection  { background-color: var(--cds-tag-background-red,     #f1b0b7); color: var(--cds-tag-color-red,     #6f1117); }
+.ml-write-database   { background-color: var(--cds-tag-background-cyan,    #d1ecf1); color: var(--cds-tag-color-cyan,    #0c5460); }
+.ml-write-network    { background-color: var(--cds-tag-background-cyan,    #bee5eb); color: var(--cds-tag-color-cyan,    #0a4650); }
+.ml-unknown          { background-color: var(--cds-tag-background-gray,    #e9ecef); color: var(--cds-tag-color-gray,    #495057); }
 
 /* CPU usage badge colours (green < 20%, amber 20–50%, red > 50%) */
 .cpu-badge  { display: inline-block; padding: 1px 6px; border-radius: 3px; font-size: 0.85em; }
@@ -316,8 +280,15 @@ td.http_slow.secondary {
 .cpu-medium { background-color: #fff3cd; color: #856404; }
 .cpu-high   { background-color: #f8d7da; color: #842029; }
 
+/* ── Thread state tags ───────────────────────────────────────────────────── */
 
-/* Traffic timing breakdown table */
+.state-blocked  { background-color: var(--cds-tag-background-red,    #ffd7d9); color: var(--cds-tag-color-red,    #750e13); }
+.state-waiting  { background-color: var(--cds-tag-background-yellow, #ffecd9); color: var(--cds-tag-color-yellow, #8a3800); }
+.state-runnable { background-color: var(--cds-tag-background-green,  #defbe6); color: var(--cds-tag-color-green,  #044317); }
+.state-parked   { background-color: var(--cds-tag-background-gray,   #e0e0e0); color: var(--cds-tag-color-gray,   #525252); }
+
+/* ── Traffic timing breakdown table ──────────────────────────────────────── */
+
 .timing-table {
     width: 100%;
     border-collapse: collapse;
@@ -327,13 +298,13 @@ td.http_slow.secondary {
 
 .timing-table th,
 .timing-table td {
-    border: 1px solid #ddd;
+    border: 1px solid var(--color-border-subtle);
     padding: 5px 8px;
     text-align: left;
 }
 
 .timing-table th {
-    background-color: #f0f0f0;
+    background-color: var(--color-layer-01);
     font-weight: bold;
 }
 
@@ -348,10 +319,10 @@ td.http_slow.secondary {
     min-width: 2px;
 }
 
-.timing-blocked  { background-color: #aaaaaa; }
-.timing-dns      { background-color: #9b59b6; }
-.timing-connect  { background-color: #e67e22; }
-.timing-ssl      { background-color: #27ae60; }
-.timing-send     { background-color: #3498db; }
-.timing-wait     { background-color: #e74c3c; }
-.timing-receive  { background-color: #1abc9c; }
+.timing-blocked  { background-color: var(--color-text-secondary); }
+.timing-dns      { background-color: var(--cds-support-info,    #0043ce); }
+.timing-connect  { background-color: var(--cds-support-warning, #f1c21b); }
+.timing-ssl      { background-color: var(--cds-support-success, #198038); }
+.timing-send     { background-color: var(--color-interactive); }
+.timing-wait     { background-color: var(--color-support-error); }
+.timing-receive  { background-color: var(--cds-interactive-01,  #0f62fe); }

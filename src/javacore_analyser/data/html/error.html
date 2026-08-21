@@ -5,18 +5,57 @@
 # SPDX-License-Identifier: Apache-2.0
 -->
 
-<html lang="en">
+<html lang="en" class="cds--white">
 <head>
     <meta charset="UTF-8">
     <title>Processing failed</title>
+    <link rel="stylesheet" href="data/carbon/ibm-plex.css"/>
+    <link rel="stylesheet" href="data/carbon/carbon.min.css"/>
+    <style>
+        body {
+            font-family: var(--cds-body-short-01-font-family, 'IBM Plex Sans', sans-serif);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: var(--cds-background, #f4f4f4);
+        }
+        .error-wrapper {
+            max-width: 640px;
+            width: 100%;
+            padding: 1rem;
+        }
+        .stacktrace-block {
+            background-color: var(--cds-layer-01, #f4f4f4);
+            border: 1px solid var(--cds-border-subtle-01, #e0e0e0);
+            border-radius: 4px;
+            padding: 1rem;
+            font-family: var(--cds-code-01-font-family, 'IBM Plex Mono', monospace);
+            font-size: 12px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 1rem;
+        }
+    </style>
 </head>
 <body>
-<p>
-  Processing failed with an error. Check the log file. If the issue is a product defect, rais it on
-  <a href="https://github.com/IBM/javacore-analyser/issues/new?template=bug_report.md">Bug report</a> page.
-</p>
-<p>Please attach the stack trace</p>
-<p>Stack trace: </p>
-<code> {stacktrace} </code>
+    <div class="error-wrapper">
+        <div class="cds--inline-notification cds--inline-notification--error" role="alert">
+            <div class="cds--inline-notification__details">
+                <p class="cds--inline-notification__title">Processing failed</p>
+                <p class="cds--inline-notification__text">
+                    Processing failed with an error. Check the log file. If this is a product defect, please
+                    <a class="cds--link" href="https://github.com/IBM/javacore-analyser/issues/new?template=bug_report.md">raise a bug report</a>
+                    and attach the stack trace below.
+                </p>
+            </div>
+        </div>
+        <p style="margin-top:1rem;font-size:0.875rem;color:var(--cds-text-secondary,#525252);">Stack trace:</p>
+        <div class="stacktrace-block">{stacktrace}</div>
+    </div>
 </body>
 </html>

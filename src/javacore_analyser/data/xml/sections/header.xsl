@@ -8,6 +8,8 @@
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
     <xsl:template name="header">
+        <link rel="stylesheet" href="data/carbon/ibm-plex.css" />
+        <link rel="stylesheet" href="data/carbon/carbon.min.css" />
         <link rel="stylesheet" href="data/style.css" />
         <link rel="stylesheet" href="data/jquery/theme.default.min.css" />
         <link rel="stylesheet" href="data/jquery/jq.css" />
@@ -23,6 +25,7 @@
         <script src="data/jquery/jquery.mark.min.js"> _ </script>
         <script type="text/javascript" src="data/jquery/search.js"> _ </script>
         <script type="text/javascript" src="data/jquery/tablesorter-init.js"> _ </script>
+        <script type="text/javascript" src="data/carbon/carbon-components.min.js"> _ </script>
     </xsl:template>
 
 </xsl:stylesheet>

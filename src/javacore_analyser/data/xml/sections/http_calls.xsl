@@ -10,8 +10,14 @@
     <xsl:template name="http_calls">
         <xsl:choose>
             <xsl:when test="doc/har_files">
-                <h3><a  id="toggle_http_calls" href="javascript:expand_it(http_calls,toggle_http_calls)" class="expandit">HTTP calls</a></h3>
-                <div id="http_calls" style="display:none;" >
+                <div class="cds--accordion__item" id="accordion-http-calls">
+                    <button type="button" class="cds--accordion__heading"
+                            aria-expanded="false" aria-controls="content-http-calls"
+                            onclick="this.closest('.cds--accordion__item').classList.toggle('cds--accordion__item--active'); this.setAttribute('aria-expanded', this.closest('.cds--accordion__item').classList.contains('cds--accordion__item--active')?'true':'false');">
+                        <svg class="cds--accordion__arrow" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M11 8L6 13 4.6 11.6 8.2 8 4.6 4.4 6 3z"/></svg>
+                        <span class="cds--accordion__title">HTTP Calls</span>
+                    </button>
+                    <div class="cds--accordion__wrapper"><div id="content-http-calls" class="cds--accordion__content">
                     <a id="togglehttpcallsdoc" href="javascript:expand_it(httpcallsdoc,togglehttpcallsdoc)" class="expandit">
                         What does this table tell me?</a>
                         <div id="httpcallsdoc" style="display:none;">
@@ -42,7 +48,9 @@
                             </li>
                         </ul>
                     </div>
-                    <table id="HttpCallTable" class="tablesorter">
+                    <div class="cds--data-table-container">
+                    <div class="cds--data-table-content">
+                    <table id="HttpCallTable" class="cds--data-table cds--data-table--zebra cds--data-table--sort cds--data-table--sticky-header">
                         <thead>
                             <tr>
                                 <th class="sixty">Request URL and Details</th>
@@ -62,17 +70,17 @@
                                             <xsl:value-of select="@url"/>
                                         </div>
                                         <div class="http-show-button">
-                                            <a class="expandit">
+                                            <a class="cds--btn cds--btn--ghost cds--btn--sm expandit">
                                                 <xsl:attribute name="id">
                                                     <xsl:text>toggle_</xsl:text>
                                                     <xsl:value-of select="$call_id"/>
                                                 </xsl:attribute>
                                                 <xsl:attribute name="href">
-                                                    <xsl:text>javascript:expand_http_details(</xsl:text>
+                                                    <xsl:text>javascript:expand_http_details(document.getElementById('</xsl:text>
                                                     <xsl:value-of select="$call_id"/>
-                                                    <xsl:text>_details,toggle_</xsl:text>
+                                                    <xsl:text>_details'),document.getElementById('toggle_</xsl:text>
                                                     <xsl:value-of select="$call_id"/>
-                                                    <xsl:text>)</xsl:text>
+                                                    <xsl:text>'))</xsl:text>
                                                 </xsl:attribute>
                                                 Details
                                             </a>
@@ -260,14 +268,7 @@
                                     <td>
                                         <xsl:choose>
                                             <xsl:when test="@success='False'">
-                                                <xsl:attribute name="class">http_error</xsl:attribute>
-                                            </xsl:when>
-                                        </xsl:choose>
-                                        <xsl:choose>
-                                            <xsl:when test="@success='False'">
-                                                <div class="info"><xsl:value-of select="@status"/>
-                                                    <span class="infotooltip">Request failed with status <xsl:value-of select="@status"/></span>
-                                                </div>
+                                                <span class="cds--tag cds--tag--red"><xsl:value-of select="@status"/></span>
                                             </xsl:when>
                                             <xsl:otherwise>
                                                 <xsl:value-of select="@status"/>
@@ -299,6 +300,10 @@
                             </xsl:for-each>
                         </tbody>
                     </table>
+                    </div>
+                    </div>
+                    </div>
+                    </div>
                 </div>
             </xsl:when>
         </xsl:choose>

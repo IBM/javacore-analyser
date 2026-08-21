@@ -8,8 +8,14 @@
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
     <xsl:template name="input_files">
-        <h3><a id="togglejavacores" href="javascript:expand_it(javacores,togglejavacores)" class="expandit">Input Files</a></h3>
-        <div id="javacores" style="display:none;">
+        <div class="cds--accordion__item" id="accordion-input-files">
+            <button type="button" class="cds--accordion__heading"
+                    aria-expanded="false" aria-controls="content-input-files"
+                    onclick="this.closest('.cds--accordion__item').classList.toggle('cds--accordion__item--active'); this.setAttribute('aria-expanded', this.closest('.cds--accordion__item').classList.contains('cds--accordion__item--active')?'true':'false');">
+                <svg class="cds--accordion__arrow" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M11 8L6 13 4.6 11.6 8.2 8 4.6 4.4 6 3z"/></svg>
+                <span class="cds--accordion__title">Input Files</span>
+            </button>
+            <div class="cds--accordion__wrapper"><div id="content-input-files" class="cds--accordion__content">
             <xsl:choose>
                 <xsl:when test="doc/report_info/javacore_list">
                     <h4>Javacore Files</h4>
@@ -43,7 +49,9 @@
                                 </li>
                             </ul>
                         </div>
-                        <table id="javacores_files_table">
+                        <div class="cds--data-table-container">
+                        <div class="cds--data-table-content">
+                        <table id="javacores_files_table" class="cds--data-table cds--data-table--zebra">
                             <thead>
                                 <tr>
                                     <th class="thirty">File Name</th>
@@ -114,8 +122,16 @@
                                 </xsl:for-each>
                             </tbody>
                         </table>
+                        </div>
+                        </div>
                     </xsl:when>
-                    <xsl:otherwise> No javacore files </xsl:otherwise>
+                    <xsl:otherwise>
+                        <div class="cds--inline-notification cds--inline-notification--info" role="status">
+                            <div class="cds--inline-notification__details">
+                                <p class="cds--inline-notification__text">No javacore files</p>
+                            </div>
+                        </div>
+                    </xsl:otherwise>
                 </xsl:choose>
                 <br/>
                 <xsl:choose>
@@ -143,7 +159,9 @@
                                 </li>
                             </ul>
                         </div>
-                        <table id="verbose_gc_files_table">
+                        <div class="cds--data-table-container">
+                        <div class="cds--data-table-content">
+                        <table id="verbose_gc_files_table" class="cds--data-table cds--data-table--zebra">
                             <thead>
                                 <tr>
                                     <th class="sixty">File Name</th>
@@ -169,8 +187,16 @@
                                 </xsl:for-each>
                             </tbody>
                         </table>
+                        </div>
+                        </div>
                     </xsl:when>
-                    <xsl:otherwise> No verbose GC files </xsl:otherwise>
+                    <xsl:otherwise>
+                        <div class="cds--inline-notification cds--inline-notification--info" role="status">
+                            <div class="cds--inline-notification__details">
+                                <p class="cds--inline-notification__text">No verbose GC files</p>
+                            </div>
+                        </div>
+                    </xsl:otherwise>
                 </xsl:choose>
                 <br/>
                 <xsl:choose>
@@ -195,7 +221,9 @@
                                 </li>
                             </ul>
                         </div>
-                        <table id="har_files_table">
+                        <div class="cds--data-table-container">
+                        <div class="cds--data-table-content">
+                        <table id="har_files_table" class="cds--data-table cds--data-table--zebra">
                             <thead>
                                 <tr>
                                     <th class="sixty">File Name</th>
@@ -213,8 +241,16 @@
                                 </xsl:for-each>
                             </tbody>
                         </table>
+                        </div>
+                        </div>
                     </xsl:when>
-                    <xsl:otherwise> No HAR files </xsl:otherwise>
+                    <xsl:otherwise>
+                        <div class="cds--inline-notification cds--inline-notification--info" role="status">
+                            <div class="cds--inline-notification__details">
+                                <p class="cds--inline-notification__text">No HAR files</p>
+                            </div>
+                        </div>
+                    </xsl:otherwise>
                 </xsl:choose>
                 <br/>
                 <xsl:choose>
@@ -239,7 +275,9 @@
                                 </li>
                             </ul>
                         </div>
-                        <table id="plugin_files_table">
+                        <div class="cds--data-table-container">
+                        <div class="cds--data-table-content">
+                        <table id="plugin_files_table" class="cds--data-table cds--data-table--zebra">
                             <thead>
                                 <tr>
                                     <th class="forty">Plugin Name</th>
@@ -281,10 +319,20 @@
                                 </xsl:for-each>
                             </tbody>
                         </table>
+                        </div>
+                        </div>
                     </xsl:when>
-                    <xsl:otherwise> No plugin files </xsl:otherwise>
+                    <xsl:otherwise>
+                        <div class="cds--inline-notification cds--inline-notification--info" role="status">
+                            <div class="cds--inline-notification__details">
+                                <p class="cds--inline-notification__text">No plugin files</p>
+                            </div>
+                        </div>
+                    </xsl:otherwise>
                 </xsl:choose>
             </div>
+            </div>
+        </div>
     </xsl:template>
 
 </xsl:stylesheet>

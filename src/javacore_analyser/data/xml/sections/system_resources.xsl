@@ -8,14 +8,28 @@
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
     <xsl:template name="system_resources">
-        <h3 id="system_resource_utilization_h3"><a id="toggleresourcesutil" href="javascript:expand_it(systemresources,toggleresourcesutil)" class="expandit">System resources utilization</a></h3>
-        <div id="systemresources"  style="display:none;">
+        <div class="cds--accordion__item" id="accordion-system-resources">
+            <button type="button" class="cds--accordion__heading"
+                    aria-expanded="false" aria-controls="content-system-resources"
+                    onclick="this.closest('.cds--accordion__item').classList.toggle('cds--accordion__item--active'); this.setAttribute('aria-expanded', this.closest('.cds--accordion__item').classList.contains('cds--accordion__item--active')?'true':'false');">
+                <svg class="cds--accordion__arrow" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M11 8L6 13 4.6 11.6 8.2 8 4.6 4.4 6 3z"/></svg>
+                <span class="cds--accordion__title">System Resources Utilization</span>
+            </button>
+            <div class="cds--accordion__wrapper"><div id="content-system-resources" class="cds--accordion__content">
             <xsl:choose>
                 <xsl:when test="//javacore_count = 0">
-                    No javacore files were provided, so CPU utilization data cannot be calculated.
+                    <div class="cds--inline-notification cds--inline-notification--warning" role="status" style="max-width:100%;">
+                        <div class="cds--inline-notification__details">
+                            <p class="cds--inline-notification__text">No javacore files were provided, so CPU utilization data cannot be calculated.</p>
+                        </div>
+                    </div>
                 </xsl:when>
                 <xsl:when test="//javacore_count = 1">
-                    Only one javacore file were provided, so CPU utilization data cannot be calculated.
+                    <div class="cds--inline-notification cds--inline-notification--warning" role="status" style="max-width:100%;">
+                        <div class="cds--inline-notification__details">
+                            <p class="cds--inline-notification__text">Only one javacore file was provided, so CPU utilization data cannot be calculated.</p>
+                        </div>
+                    </div>
                 </xsl:when>
                 <xsl:otherwise>
                     <h4>CPU Load</h4>
@@ -33,9 +47,8 @@
                             <li>Click on a legend item to show or hide that data series.</li>
                         </ul>
                     </div>
-                    <div class="chart-container" style="overflow-x:auto;">
-                        <canvas id="myChartCPUUsage" height="200" width="1400"
-                                title="Draw a rectangle to zoom in. Use the Reset zoom button to return to the full view. Click on a legend item to show or hide that data series."></canvas>
+                    <div class="cds--tile" style="margin-bottom:1rem;overflow-x:auto;min-height:350px;position:relative;">
+                        <canvas id="myChartCPUUsage"></canvas>
                     </div>
                 </xsl:otherwise>
             </xsl:choose>
@@ -43,8 +56,11 @@
                 <xsl:when test="doc/report_info/verbose_gc_list/verbose_gc">
                     <xsl:choose>
                         <xsl:when test="//verbose_gc_list/@total_collects_in_time_limits = 0">
-                            <br/>
-                            There were no garbage collections withing the javacore time limits
+                            <div class="cds--inline-notification cds--inline-notification--info" role="status" style="max-width:100%;">
+                                <div class="cds--inline-notification__details">
+                                    <p class="cds--inline-notification__text">There were no garbage collections within the javacore time limits.</p>
+                                </div>
+                            </div>
                         </xsl:when>
                         <xsl:otherwise>
                             <h4>Garbage Collection Activity</h4>
@@ -98,16 +114,18 @@
                             <li>Click on a legend item to show or hide that data series.</li>
                         </ul>
                     </div>
-                    <div id="systemresources_myChartGC" class="chart-container hide" style="overflow-x:auto;">
-                        <canvas id="myChartGC" height="200" width="1400"
-                                title="Draw a rectangle to zoom in. Use the Reset zoom button to return to the full view. Click on a legend item to show or hide that data series."></canvas>
+                    <div id="systemresources_myChartGC" class="cds--tile hide" style="margin-bottom:1rem;overflow-x:auto;min-height:350px;position:relative;">
+                        <canvas id="myChartGC"></canvas>
                     </div>
                         </xsl:otherwise>
                     </xsl:choose>
                 </xsl:when>
                 <xsl:otherwise>
-                    <br/>
-                    No verbosegc logs were provided, so verbose GC data cannot be shown.
+                    <div class="cds--inline-notification cds--inline-notification--info" role="status" style="max-width:100%;">
+                        <div class="cds--inline-notification__details">
+                            <p class="cds--inline-notification__text">No verbose GC logs were provided, so verbose GC data cannot be shown.</p>
+                        </div>
+                    </div>
                 </xsl:otherwise>
             </xsl:choose>
 
@@ -135,9 +153,8 @@
                     </ul>
 
                 </div>
-                <div class="chart-container" style="overflow-x:auto;">
-                    <canvas id="myChartThreadClassifications" height="200" width="1400"
-                            title="Draw a rectangle to zoom in. Use the Reset zoom button to return to the full view. Click on a legend item to show or hide that data series."></canvas>
+                <div class="cds--tile" style="margin-bottom:1rem;overflow-x:auto;min-height:350px;position:relative;">
+                    <canvas id="myChartThreadClassifications"></canvas>
                 </div>
                 <!-- Hidden data table consumed by loadChartThreadClassifications() in wait2scripts.js.
                      Row 0 = header (timestamp + one cell per category).
@@ -187,6 +204,8 @@
                     </table>
                 </div>
             </xsl:if>
+            </div>
+            </div>
         </div>
     </xsl:template>
 

@@ -261,6 +261,7 @@ const loadChartCPUUsage = function() {
       ],
     },
     options: {
+      maintainAspectRatio: false,
       scales: {
         y: { beginAtZero: true },
         x: {
@@ -471,6 +472,7 @@ const loadChartGC = function() {
       ],
     },
     options: {
+      maintainAspectRatio: false,
       scales: {
         y: {
           beginAtZero: true,
@@ -553,6 +555,7 @@ const loadChart = function() {
       ],
     },
     options: {
+      maintainAspectRatio: false,
       layout: {
         padding: {
           // Fixes #179 — right-most bar was truncated
@@ -652,6 +655,7 @@ const loadChartThreadClassifications = function() {
       datasets: datasets,
     },
     options: {
+      maintainAspectRatio: false,
       scales: {
         y: {
           beginAtZero: true,
