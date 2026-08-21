@@ -37,11 +37,18 @@
                     </div>
                     <div class="cds--data-table-container">
                     <div class="cds--data-table-content">
-                    <table id="top10_blocker_table" class="cds--data-table cds--data-table--zebra cds--data-table--sort">
+                    <table id="top10_blocker_table" class="cds--data-table cds--data-table--zebra cds--data-table--sort" data-sort-initial-col="1" data-sort-initial-dir="desc">
                         <thead>
                             <tr>
-                                <th class="ninety">Thread name</th>
-                                <th>Number of different blocked threads</th>
+                                <xsl:call-template name="sort_th">
+                                    <xsl:with-param name="col">0</xsl:with-param>
+                                    <xsl:with-param name="label">Thread name</xsl:with-param>
+                                    <xsl:with-param name="class">ninety</xsl:with-param>
+                                </xsl:call-template>
+                                <xsl:call-template name="sort_th">
+                                    <xsl:with-param name="col">1</xsl:with-param>
+                                    <xsl:with-param name="label">Number of different blocked threads</xsl:with-param>
+                                </xsl:call-template>
                             </tr>
                         </thead>
                         <tbody>

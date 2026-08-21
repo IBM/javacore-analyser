@@ -679,3 +679,77 @@ const loadChartThreadClassifications = function() {
 
   console.log('Thread classifications chart created successfully');
 };
+
+// ---------------------------------------------------------------------------
+// Carbon-native column sort – generic, works on every cds--data-table--sort
+// ---------------------------------------------------------------------------
+
+/**
+ * initCarbonSort – wires up Carbon-style column sorting for every
+ * <table class="cds--data-table--sort"> in the document.
+ *
+ * Each sortable column header must contain a <button class="cds--table-sort"
+ * data-col="N"> where N is the zero-based column index.
+ *
+ * Optional table-level attributes control the initial sort state:
+ *   data-sort-initial-col  – column index to sort on load (default: none)
+ *   data-sort-initial-dir  – "asc" or "desc" (default: "asc")
+ *
+ * Carbon sort state classes applied to the active <button>:
+ *   cds--table-sort--active      – this column is the active sort key
+ *   cds--table-sort--descending  – active column is sorted descending
+ */
+const initCarbonSort = function() {
+  document.querySelectorAll('table.cds--data-table--sort').forEach(function(table) {
+    const tbody = table.querySelector('tbody');
+    if (!tbody) return;
+
+    const buttons = table.querySelectorAll('thead .cds--table-sort');
+    if (!buttons.length) return;
+
+    let activeCol = -1;
+    let ascending = true;
+
+    function sortBy(col, asc) {
+      activeCol = col;
+      ascending = asc;
+
+      buttons.forEach(function(b) {
+        b.classList.remove('cds--table-sort--active', 'cds--table-sort--descending');
+      });
+      const activeBtn = table.querySelector('thead .cds--table-sort[data-col="' + col + '"]');
+      if (activeBtn) {
+        activeBtn.classList.add('cds--table-sort--active');
+        if (!asc) activeBtn.classList.add('cds--table-sort--descending');
+      }
+
+      const rows = Array.from(tbody.querySelectorAll(':scope > tr'));
+      rows.sort(function(a, b) {
+        const aText = (a.cells[col] ? a.cells[col].innerText.trim() : '');
+        const bText = (b.cells[col] ? b.cells[col].innerText.trim() : '');
+        const aNum = parseFloat(aText);
+        const bNum = parseFloat(bText);
+        const numeric = !isNaN(aNum) && !isNaN(bNum);
+        const cmp = numeric ? (aNum - bNum) : aText.localeCompare(bText);
+        return asc ? cmp : -cmp;
+      });
+      rows.forEach(function(row) { tbody.appendChild(row); });
+    }
+
+    buttons.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        const col = parseInt(btn.getAttribute('data-col'), 10);
+        sortBy(col, activeCol === col ? !ascending : true);
+      });
+    });
+
+    // Apply initial sort if declared on the table element
+    const initCol = table.getAttribute('data-sort-initial-col');
+    if (initCol !== null) {
+      const initDir = table.getAttribute('data-sort-initial-dir');
+      sortBy(parseInt(initCol, 10), initDir !== 'desc');
+    }
+  });
+};
+
+document.addEventListener('DOMContentLoaded', initCarbonSort);

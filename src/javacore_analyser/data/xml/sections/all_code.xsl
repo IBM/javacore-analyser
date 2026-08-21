@@ -52,13 +52,26 @@
             </div>
             <div class="cds--data-table-container">
             <div class="cds--data-table-content">
-            <table id="allCodeTable" class="cds--data-table cds--data-table--zebra cds--data-table--sort">
+            <table id="allCodeTable" class="cds--data-table cds--data-table--zebra cds--data-table--sort" data-sort-initial-col="2" data-sort-initial-dir="desc">
                 <thead>
                     <tr>
-                        <th  class="sixty">stack</th>
-                        <th>Total CPU usage (s)</th>
-                        <th>% CPU usage</th>
-                        <th>Average memory allocated since last GC (MB)</th>
+                        <xsl:call-template name="sort_th">
+                            <xsl:with-param name="col">0</xsl:with-param>
+                            <xsl:with-param name="label">Stack</xsl:with-param>
+                            <xsl:with-param name="class">sixty</xsl:with-param>
+                        </xsl:call-template>
+                        <xsl:call-template name="sort_th">
+                            <xsl:with-param name="col">1</xsl:with-param>
+                            <xsl:with-param name="label">Total CPU usage (s)</xsl:with-param>
+                        </xsl:call-template>
+                        <xsl:call-template name="sort_th">
+                            <xsl:with-param name="col">2</xsl:with-param>
+                            <xsl:with-param name="label">% CPU usage</xsl:with-param>
+                        </xsl:call-template>
+                        <xsl:call-template name="sort_th">
+                            <xsl:with-param name="col">3</xsl:with-param>
+                            <xsl:with-param name="label">Average memory allocated since last GC (MB)</xsl:with-param>
+                        </xsl:call-template>
                         <th>Threads</th>
                     </tr>
                 </thead>

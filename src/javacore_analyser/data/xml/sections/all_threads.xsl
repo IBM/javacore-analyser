@@ -71,14 +71,30 @@
             </div>
             <div class="cds--data-table-container">
             <div class="cds--data-table-content">
-            <table id="all_threads_table" class="cds--data-table cds--data-table--zebra cds--data-table--sort">
+            <table id="all_threads_table" class="cds--data-table cds--data-table--zebra cds--data-table--sort" data-sort-initial-col="2" data-sort-initial-dir="desc">
                 <thead>
                     <tr>
-                        <th class="sixty">Thread name</th>
-                        <th>Total CPU usage (s)</th>
-                        <th>% CPU usage</th>
-                        <th>Average memory allocated since last GC (MB)</th>
-                        <th>Average stack depth</th>
+                        <xsl:call-template name="sort_th">
+                            <xsl:with-param name="col">0</xsl:with-param>
+                            <xsl:with-param name="label">Thread name</xsl:with-param>
+                            <xsl:with-param name="class">sixty</xsl:with-param>
+                        </xsl:call-template>
+                        <xsl:call-template name="sort_th">
+                            <xsl:with-param name="col">1</xsl:with-param>
+                            <xsl:with-param name="label">Total CPU usage (s)</xsl:with-param>
+                        </xsl:call-template>
+                        <xsl:call-template name="sort_th">
+                            <xsl:with-param name="col">2</xsl:with-param>
+                            <xsl:with-param name="label">% CPU usage</xsl:with-param>
+                        </xsl:call-template>
+                        <xsl:call-template name="sort_th">
+                            <xsl:with-param name="col">3</xsl:with-param>
+                            <xsl:with-param name="label">Average memory allocated since last GC (MB)</xsl:with-param>
+                        </xsl:call-template>
+                        <xsl:call-template name="sort_th">
+                            <xsl:with-param name="col">4</xsl:with-param>
+                            <xsl:with-param name="label">Average stack depth</xsl:with-param>
+                        </xsl:call-template>
                         <th>Blocking information</th>
                         <xsl:choose>
                             <xsl:when test="//@use_ml='True'">
