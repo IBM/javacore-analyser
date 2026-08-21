@@ -91,8 +91,8 @@ class AbstractSnapshotCollection(abc.ABC):
             else:
                 i += 1
 
-    def calculate_snapshot_states(self):
-        snapshot_states = {}
+    def calculate_snapshot_states(self) -> dict[str, int]:
+        snapshot_states: dict[str, int] = {}
         for snapshot in self.thread_snapshots:
             state = snapshot.state
             if snapshot_states.keys().__contains__(state):
@@ -148,7 +148,7 @@ class AbstractSnapshotCollection(abc.ABC):
         mem_sum = 0
         for snapshot in self.thread_snapshots:
             mem_sum += snapshot.allocated_mem
-        self.avg_mem = mem_sum / len(self.thread_snapshots)
+        self.avg_mem = int(mem_sum / len(self.thread_snapshots))
 
     def get_avg_mem(self):
         if not self.avg_mem:

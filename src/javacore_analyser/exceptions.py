@@ -12,7 +12,7 @@ class InvalidLLMMethodError(ValueError):
     supported methods (e.g., 'ollama' or 'huggingface').
     """
     
-    def __init__(self, llm_method: str, supported_methods: list = None):
+    def __init__(self, llm_method: str, supported_methods: list | None = None):
         """
         Initialize the InvalidLLMMethodError.
         
