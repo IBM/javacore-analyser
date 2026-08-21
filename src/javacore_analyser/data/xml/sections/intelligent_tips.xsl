@@ -27,11 +27,23 @@
                         <xsl:choose>
                             <xsl:when test="doc/report_info/tips/tip">
                                 <xsl:for-each select="doc/report_info/tips/tip">
-                                    <div class="cds--inline-notification cds--inline-notification--low-contrast cds--inline-notification--info" role="status" style="max-width:100%;margin-bottom:0.5rem;">
-                                        <div class="cds--inline-notification__details">
-                                            <p class="cds--inline-notification__text"><xsl:value-of select="current()" disable-output-escaping="yes"/></p>
-                                        </div>
-                                    </div>
+                                    <xsl:variable name="tiptext" select="current()"/>
+                                    <xsl:choose>
+                                        <xsl:when test="starts-with($tiptext, '[WARNING]')">
+                                            <div class="cds--inline-notification cds--inline-notification--low-contrast cds--inline-notification--warning" role="status" style="max-width:100%;margin-bottom:0.5rem;">
+                                                <div class="cds--inline-notification__details">
+                                                    <p class="cds--inline-notification__text"><xsl:value-of select="$tiptext" disable-output-escaping="yes"/></p>
+                                                </div>
+                                            </div>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <div class="cds--inline-notification cds--inline-notification--low-contrast cds--inline-notification--info" role="status" style="max-width:100%;margin-bottom:0.5rem;">
+                                                <div class="cds--inline-notification__details">
+                                                    <p class="cds--inline-notification__text"><xsl:value-of select="$tiptext" disable-output-escaping="yes"/></p>
+                                                </div>
+                                            </div>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
                                 </xsl:for-each>
                             </xsl:when>
                             <xsl:otherwise>

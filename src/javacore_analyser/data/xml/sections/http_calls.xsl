@@ -53,7 +53,7 @@
                     <table id="HttpCallTable" class="cds--data-table cds--data-table--zebra cds--data-table--sort">
                         <thead>
                             <tr>
-                                <th class="sixty cds--table-sort__header" data-col="0">
+                                <th class="fifty cds--table-sort__header" data-col="0">
                                     <button class="cds--table-sort" data-col="0" aria-label="Sort by Request URL">
                                         <span class="cds--table-header-label">Request URL and Details</span>
                                         <svg class="cds--table-sort__icon-unsorted" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M27.6 20.6L24 24.2V4h-2v20.2l-3.6-3.6L17 22l6 6 6-6zM9 4L3 10l1.4 1.4L8 7.8V28h2V7.8l3.6 3.6L15 10z"/></svg>
@@ -81,14 +81,14 @@
                                         <svg class="cds--table-sort__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M27.6 20.6L24 24.2V4h-2v20.2l-3.6-3.6L17 22l6 6 6-6zM9 4L3 10l1.4 1.4L8 7.8V28h2V7.8l3.6 3.6L15 10z"/></svg>
                                     </button>
                                 </th>
-                                <th class="http-small cds--table-sort__header" data-col="4">
+                                <th class="http-medium cds--table-sort__header" data-col="4">
                                     <button class="cds--table-sort" data-col="4" aria-label="Sort by Duration">
                                         <span class="cds--table-header-label">Duration</span>
                                         <svg class="cds--table-sort__icon-unsorted" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M27.6 20.6L24 24.2V4h-2v20.2l-3.6-3.6L17 22l6 6 6-6zM9 4L3 10l1.4 1.4L8 7.8V28h2V7.8l3.6 3.6L15 10z"/></svg>
                                         <svg class="cds--table-sort__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M27.6 20.6L24 24.2V4h-2v20.2l-3.6-3.6L17 22l6 6 6-6zM9 4L3 10l1.4 1.4L8 7.8V28h2V7.8l3.6 3.6L15 10z"/></svg>
                                     </button>
                                 </th>
-                                <th class="http-small cds--table-sort__header" data-col="5">
+                                <th class="http-medium cds--table-sort__header" data-col="5">
                                     <button class="cds--table-sort" data-col="5" aria-label="Sort by Size">
                                         <span class="cds--table-header-label">Size</span>
                                         <svg class="cds--table-sort__icon-unsorted" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M27.6 20.6L24 24.2V4h-2v20.2l-3.6-3.6L17 22l6 6 6-6zM9 4L3 10l1.4 1.4L8 7.8V28h2V7.8l3.6 3.6L15 10z"/></svg>

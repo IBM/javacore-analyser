@@ -77,25 +77,29 @@
                         <xsl:call-template name="sort_th">
                             <xsl:with-param name="col">0</xsl:with-param>
                             <xsl:with-param name="label">Thread name</xsl:with-param>
-                            <xsl:with-param name="class">sixty</xsl:with-param>
+                            <xsl:with-param name="class">forty</xsl:with-param>
                         </xsl:call-template>
                         <xsl:call-template name="sort_th">
                             <xsl:with-param name="col">1</xsl:with-param>
                             <xsl:with-param name="label">Total CPU usage (s)</xsl:with-param>
+                            <xsl:with-param name="class">ten</xsl:with-param>
                         </xsl:call-template>
                         <xsl:call-template name="sort_th">
                             <xsl:with-param name="col">2</xsl:with-param>
                             <xsl:with-param name="label">% CPU usage</xsl:with-param>
+                            <xsl:with-param name="class">ten</xsl:with-param>
                         </xsl:call-template>
                         <xsl:call-template name="sort_th">
                             <xsl:with-param name="col">3</xsl:with-param>
                             <xsl:with-param name="label">Average memory allocated since last GC (MB)</xsl:with-param>
+                            <xsl:with-param name="class">ten</xsl:with-param>
                         </xsl:call-template>
                         <xsl:call-template name="sort_th">
                             <xsl:with-param name="col">4</xsl:with-param>
                             <xsl:with-param name="label">Average stack depth</xsl:with-param>
+                            <xsl:with-param name="class">ten</xsl:with-param>
                         </xsl:call-template>
-                        <th>Blocking information</th>
+                        <th class="ten">Blocking information</th>
                         <xsl:choose>
                             <xsl:when test="//@use_ml='True'">
                                 <th>Classification</th>
