@@ -64,6 +64,18 @@ th {
     background-color: var(--color-layer-01);
 }
 
+/* Do not override Carbon's own th styling for cds--data-table */
+.cds--data-table th {
+    background-color: unset;
+    position: unset;
+    top: unset;
+    z-index: unset;
+    width: unset;
+    border: unset;
+    font-size: unset;
+    color: unset;
+}
+
 th.ninety      { width: 90%; }
 th.sixty       { width: 60%; }
 th.fifty       { width: 50%; }

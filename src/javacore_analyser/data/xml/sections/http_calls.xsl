@@ -145,6 +145,7 @@
                                                                      <xsl:value-of select="@timing_blocked div @duration * 100"/>
                                                                      <xsl:text>%</xsl:text>
                                                                  </xsl:attribute>
+                                                                 <xsl:text> </xsl:text>
                                                              </div>
                                                          </div>
                                                      </xsl:if>
@@ -158,6 +159,7 @@
                                                                      <xsl:value-of select="@timing_dns div @duration * 100"/>
                                                                      <xsl:text>%</xsl:text>
                                                                  </xsl:attribute>
+                                                                 <xsl:text> </xsl:text>
                                                              </div>
                                                          </div>
                                                      </xsl:if>
@@ -171,6 +173,7 @@
                                                                      <xsl:value-of select="@timing_connect div @duration * 100"/>
                                                                      <xsl:text>%</xsl:text>
                                                                  </xsl:attribute>
+                                                                 <xsl:text> </xsl:text>
                                                              </div>
                                                          </div>
                                                      </xsl:if>
@@ -184,6 +187,7 @@
                                                                      <xsl:value-of select="@timing_ssl div @duration * 100"/>
                                                                      <xsl:text>%</xsl:text>
                                                                  </xsl:attribute>
+                                                                 <xsl:text> </xsl:text>
                                                              </div>
                                                          </div>
                                                      </xsl:if>
@@ -197,6 +201,7 @@
                                                                      <xsl:value-of select="@timing_send div @duration * 100"/>
                                                                      <xsl:text>%</xsl:text>
                                                                  </xsl:attribute>
+                                                                 <xsl:text> </xsl:text>
                                                              </div>
                                                          </div>
                                                      </xsl:if>
@@ -210,6 +215,7 @@
                                                                      <xsl:value-of select="@timing_wait div @duration * 100"/>
                                                                      <xsl:text>%</xsl:text>
                                                                  </xsl:attribute>
+                                                                 <xsl:text> </xsl:text>
                                                              </div>
                                                          </div>
                                                      </xsl:if>
@@ -223,6 +229,7 @@
                                                                      <xsl:value-of select="@timing_receive div @duration * 100"/>
                                                                      <xsl:text>%</xsl:text>
                                                                  </xsl:attribute>
+                                                                 <xsl:text> </xsl:text>
                                                              </div>
                                                          </div>
                                                      </xsl:if>
