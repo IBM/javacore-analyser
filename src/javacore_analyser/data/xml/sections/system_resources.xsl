@@ -14,14 +14,28 @@
              use="@value"/>
 
     <xsl:template name="system_resources">
-        <h3 id="system_resource_utilization_h3"><a id="toggleresourcesutil" href="javascript:expand_it(systemresources,toggleresourcesutil)" class="expandit">System resources utilization</a></h3>
-        <div id="systemresources"  style="display:none;">
+        <div class="cds--accordion__item" id="accordion-system-resources">
+            <button type="button" class="cds--accordion__heading"
+                    aria-expanded="false" aria-controls="content-system-resources"
+                    onclick="this.closest('.cds--accordion__item').classList.toggle('cds--accordion__item--active'); this.setAttribute('aria-expanded', this.closest('.cds--accordion__item').classList.contains('cds--accordion__item--active')?'true':'false');">
+                <svg class="cds--accordion__arrow" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M11 8L6 13 4.6 11.6 8.2 8 4.6 4.4 6 3z"/></svg>
+                <span class="cds--accordion__title">System Resources Utilization</span>
+            </button>
+            <div class="cds--accordion__wrapper"><div id="content-system-resources" class="cds--accordion__content">
             <xsl:choose>
                 <xsl:when test="//javacore_count = 0">
-                    No javacore files were provided, so CPU utilization data cannot be calculated.
+                    <div class="cds--inline-notification cds--inline-notification--warning" role="status" style="max-width:100%;">
+                        <div class="cds--inline-notification__details">
+                            <p class="cds--inline-notification__text">No javacore files were provided, so CPU utilization data cannot be calculated.</p>
+                        </div>
+                    </div>
                 </xsl:when>
                 <xsl:when test="//javacore_count = 1">
-                    Only one javacore file were provided, so CPU utilization data cannot be calculated.
+                    <div class="cds--inline-notification cds--inline-notification--warning" role="status" style="max-width:100%;">
+                        <div class="cds--inline-notification__details">
+                            <p class="cds--inline-notification__text">Only one javacore file was provided, so CPU utilization data cannot be calculated.</p>
+                        </div>
+                    </div>
                 </xsl:when>
                 <xsl:otherwise>
                     <h4>CPU Load</h4>
@@ -37,10 +51,9 @@
                             <li>Draw a rectangle on the chart to zoom into that area. Use the <em>Reset zoom</em> button to return to the full view.</li>
                             <li>Click on a legend item to show or hide that data series.</li>
                         </ul>
-                    </details>
-                    <div class="chart-container" style="overflow-x:auto;">
-                        <canvas id="myChartCPUUsage" height="200" width="1400"
-                                title="Draw a rectangle to zoom in. Use the Reset zoom button to return to the full view. Click on a legend item to show or hide that data series."></canvas>
+                    </div>
+                    <div class="cds--tile" style="margin-bottom:1rem;overflow-x:auto;min-height:350px;position:relative;">
+                        <canvas id="myChartCPUUsage"></canvas>
                     </div>
                 </xsl:otherwise>
             </xsl:choose>
@@ -48,70 +61,76 @@
                 <xsl:when test="doc/report_info/verbose_gc_list/verbose_gc">
                     <xsl:choose>
                         <xsl:when test="//verbose_gc_list/@total_collects_in_time_limits = 0">
-                            <br/>
-                            There were no garbage collections withing the javacore time limits
+                            <div class="cds--inline-notification cds--inline-notification--info" role="status" style="max-width:100%;">
+                                <div class="cds--inline-notification__details">
+                                    <p class="cds--inline-notification__text">There were no garbage collections within the javacore time limits.</p>
+                                </div>
+                            </div>
                         </xsl:when>
                         <xsl:otherwise>
                             <h4>Garbage Collection Activity</h4>
-                            <details class="doc-toggle">
-                                <summary>What does this chart tell me?</summary>
-                                This chart shows all the garbage collections that happened between the time
-                                of the first and the last javacore in the data set.
-                                Garbage collections that happened before the first
-                                or after the last javacore generation time are not included.
-                                If there are none or only one javacore provided, then the chart shows the data from all verbose GC log files.
-                                <ul>
-                                    <li><strong>Heap Usage</strong>
-                                        is the available Java heap memory over time,
-                                        based on the garbage collection data from the verbose GC log files.
-                                    </li>
-                                    <li><strong>Total Heap</strong>
-                                        is the maximum size of the Java heap, configured by using the Xmx Java argument,
-                                        expressed in megabytes.
-                                    </li>
-                                    <li><strong>GC Pause Time</strong>
-                                        is the duration of each garbage collection pause in milliseconds,
-                                        indicating how long the application was stopped during garbage collection.
-                                    </li>
-                                    <li><strong>Nursery Usage</strong>
-                                        shows the free memory in the nursery (young generation) space before and after each garbage collection,
-                                        expressed in bytes. The nursery is where new objects are allocated.
-                                    </li>
-                                    <li><strong>Nursery Total</strong>
-                                        is the total size of the nursery (young generation) space,
-                                        expressed in bytes.
-                                    </li>
-                                    <li><strong>Tenure Usage</strong>
-                                        shows the free memory in the tenure (old generation) space before and after each garbage collection,
-                                        expressed in bytes. The tenure space holds long-lived objects.
-                                    </li>
-                                    <li><strong>Tenure Total</strong>
-                                        is the total size of the tenure (old generation) space,
-                                        expressed in bytes.
-                                    </li>
-                                    <li><strong>Comp Ratio (%)</strong>
-                                        is the compression ratio for each garbage collection,
-                                        calculated as the percentage of used heap memory that was freed by the collection.
-                                        A high value indicates an efficient collection that recovered a large fraction of live objects;
-                                        a low or declining comp ratio over time is a sign of memory pressure.
-                                    </li>
-                                </ul>
-                                <p><strong>Chart interactions:</strong></p>
-                                <ul>
-                                    <li>Draw a rectangle on the chart to zoom into that area. Use the <em>Reset zoom</em> button to return to the full view.</li>
-                                    <li>Click on a legend item to show or hide that data series.</li>
-                                </ul>
-                            </details>
-                    <div id="systemresources_myChartGC" class="chart-container hide" style="overflow-x:auto;">
-                        <canvas id="myChartGC" height="200" width="1400"
-                                title="Draw a rectangle to zoom in. Use the Reset zoom button to return to the full view. Click on a legend item to show or hide that data series."></canvas>
+                            <a id="togglememusagedoc" href="javascript:expand_it(memusagedoc,togglememusagedoc)" class="expandit">
+                                What does this chart tell me?</a>
+                            <div id="memusagedoc" style="display:none;">
+                            This chart shows all the garbage collections that happened between the time
+                            of the first and the last javacore in the data set.
+                            Garbage collections that happened before the first
+                            or after the last javacore generation time are not included.
+                            If there are none or only one javacore provided, then the chart shows the data from all verbose GC log files.
+                            <ul>
+                                <li><strong>Heap Usage</strong>
+                                    is the available Java heap memory over time,
+                                    based on the garbage collection data from the verbose GC log files.
+                                </li>
+                                <li><strong>Total Heap</strong>
+                                    is the maximum size of the Java heap, configured by using the Xmx Java argument,
+                                    expressed in megabytes.
+                                </li>
+                                <li><strong>GC Pause Time</strong>
+                                    is the duration of each garbage collection pause in milliseconds,
+                                    indicating how long the application was stopped during garbage collection.
+                                </li>
+                                <li><strong>Nursery Usage</strong>
+                                    shows the free memory in the nursery (young generation) space before and after each garbage collection,
+                                    expressed in bytes. The nursery is where new objects are allocated.
+                                </li>
+                                <li><strong>Nursery Total</strong>
+                                    is the total size of the nursery (young generation) space,
+                                    expressed in bytes.
+                                </li>
+                                <li><strong>Tenure Usage</strong>
+                                    shows the free memory in the tenure (old generation) space before and after each garbage collection,
+                                    expressed in bytes. The tenure space holds long-lived objects.
+                                </li>
+                                <li><strong>Tenure Total</strong>
+                                    is the total size of the tenure (old generation) space,
+                                    expressed in bytes.
+                                </li>
+                                <li><strong>Comp Ratio (%)</strong>
+                                    is the compression ratio for each garbage collection,
+                                    calculated as the percentage of used heap memory that was freed by the collection.
+                                    A high value indicates an efficient collection that recovered a large fraction of live objects;
+                                    a low or declining comp ratio over time is a sign of memory pressure.
+                                </li>
+                        </ul>
+                        <p><strong>Chart interactions:</strong></p>
+                        <ul>
+                            <li>Draw a rectangle on the chart to zoom into that area. Use the <em>Reset zoom</em> button to return to the full view.</li>
+                            <li>Click on a legend item to show or hide that data series.</li>
+                        </ul>
+                    </div>
+                    <div id="systemresources_myChartGC" class="cds--tile hide" style="margin-bottom:1rem;overflow-x:auto;min-height:350px;position:relative;">
+                        <canvas id="myChartGC"></canvas>
                     </div>
                         </xsl:otherwise>
                     </xsl:choose>
                 </xsl:when>
                 <xsl:otherwise>
-                    <br/>
-                    No verbosegc logs were provided, so verbose GC data cannot be shown.
+                    <div class="cds--inline-notification cds--inline-notification--info" role="status" style="max-width:100%;">
+                        <div class="cds--inline-notification__details">
+                            <p class="cds--inline-notification__text">No verbose GC logs were provided, so verbose GC data cannot be shown.</p>
+                        </div>
+                    </div>
                 </xsl:otherwise>
             </xsl:choose>
 
@@ -135,10 +154,10 @@
                         <li>Draw a rectangle on the chart to zoom into that area. Use the <em>Reset zoom</em> button to return to the full view.</li>
                         <li>Click on a legend item to show or hide that data series.</li>
                     </ul>
-                </details>
-                <div class="chart-container" style="overflow-x:auto;">
-                    <canvas id="myChartThreadClassifications" height="200" width="1400"
-                            title="Draw a rectangle to zoom in. Use the Reset zoom button to return to the full view. Click on a legend item to show or hide that data series."></canvas>
+
+                </div>
+                <div class="cds--tile" style="margin-bottom:1rem;overflow-x:auto;min-height:350px;position:relative;">
+                    <canvas id="myChartThreadClassifications"></canvas>
                 </div>
                 <!-- Hidden data table consumed by loadChartThreadClassifications() in wait2scripts.js.
                      Row 0 = header (timestamp + one cell per category).
@@ -188,6 +207,8 @@
                     </table>
                 </div>
             </xsl:if>
+            </div>
+            </div>
         </div>
     </xsl:template>
 
