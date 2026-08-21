@@ -287,30 +287,40 @@ td.http_slow.secondary {
 .state-runnable { background-color: var(--cds-tag-background-green,  #defbe6); color: var(--cds-tag-color-green,  #044317); }
 .state-parked   { background-color: var(--cds-tag-background-gray,   #e0e0e0); color: var(--cds-tag-color-gray,   #525252); }
 
-/* ── Traffic timing breakdown table ──────────────────────────────────────── */
+/* ── Traffic timing breakdown grid (div-based, avoids nested <table>) ─────── */
 
-.timing-table {
-    width: 100%;
-    border-collapse: collapse;
+.timing-grid {
+    display: grid;
+    grid-template-columns: 90px 100px 1fr;
+    gap: 0;
     margin-bottom: 15px;
     font-size: 13px;
-}
-
-.timing-table th,
-.timing-table td {
     border: 1px solid var(--color-border-subtle);
-    padding: 5px 8px;
-    text-align: left;
+    border-radius: 4px;
+    overflow: hidden;
 }
 
-.timing-table th {
+.timing-grid__header {
     background-color: var(--color-layer-01);
     font-weight: bold;
+    padding: 5px 8px;
+    border-bottom: 1px solid var(--color-border-subtle);
+    color: var(--color-text-primary);
+}
+
+.timing-grid__cell {
+    padding: 4px 8px;
+    border-bottom: 1px solid var(--color-border-subtle);
+    color: var(--color-text-primary);
+}
+
+.timing-grid > :nth-last-child(-n+3) {
+    border-bottom: none;
 }
 
 .timing-bar-cell {
-    width: 50%;
     min-width: 120px;
+    padding: 6px 8px;
 }
 
 .timing-bar {
