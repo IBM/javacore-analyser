@@ -30,7 +30,7 @@ class Properties:
         # the assertion below effectively makes the constructor private
         assert (create_key == Properties.__create_key), \
             "Properties objects must be created using Properties.create"
-        self.properties = {}
+        self.properties: dict[str, str | bool | int] = {}
 
 
     def load_properties(self, args):
@@ -40,7 +40,7 @@ class Properties:
         properties.
         """
 
-        properties = {}
+        properties: dict[str, str | bool | int] = {}
         config_file = args.config_file
         if not os.path.exists(config_file):
             logging.info(f"Config file {config_file} does not exist. Creating default config file")
@@ -62,10 +62,10 @@ class Properties:
             arg_value = getattr(args, arg)
             if arg_value is not None:
                 logging.info(f"Reading property {arg} with value {arg_value}")
-                properties[arg] = arg_value
+                properties[arg] = arg_value  # type: ignore[assignment]
 
         # For each property change the type from String to Boolean or number
-        for key, value in properties.items():
+        for key, value in properties.items():  # type: ignore[assignment]
             if isinstance(value, str):
                 if value.lower() == "true":
                     properties[key] = True

@@ -8,13 +8,36 @@ import datetime
 import logging
 import os.path
 import re
+from typing import Any, Optional
 
-
-from javacore_analyser.constants import *
+from javacore_analyser.constants import (
+    ARCHITECTURE,
+    CMD_LINE,
+    COMPRESSED_REFS,
+    CPU_NUMBER_TAG,
+    DATETIME,
+    ENCODING,
+    GC_POLICY,
+    JAVA_VERSION,
+    MEM_SECTION,
+    NO_COMPRESSED_REFS,
+    OS_LEVEL,
+    SIGINFO,
+    STARTTIME,
+    THREAD_INFO,
+    UNKNOWN,
+    USER_ARGS,
+    VERBOSE_GC,
+    XMN,
+    XMS,
+    XMX,
+    CURRENT_THREAD_INFO,
+)
 from javacore_analyser.thread_snapshot import ThreadSnapshot
 
 
 class CorruptedJavacoreException(Exception):
+    
     def __init__(self, msg):
         self.msg = msg
 
@@ -25,34 +48,32 @@ class CorruptedJavacoreException(Exception):
 class Javacore:
 
     def __init__(self):
-        self.javacore_set = None
-        self.datetime = None
-        self.timestamp = None
-        self.filename = None
-        self.file_reader = None
-        self.snapshots = []
-        self.siginfo = None
-        self.current_thread = None
-        self.__total_cpu = -1
-        self.__load = -1
-        self.__encoding = None
+        self.javacore_set: Any = None
+        self.datetime: Optional[datetime.datetime] = None
+        self.timestamp: Optional[float] = None
+        self.filename: Optional[str] = None
+        self.file_reader: Any = None
+        self.snapshots: list[ThreadSnapshot] = []
+        self.siginfo: Optional[str] = None
+        self.__total_cpu: float = -1
+        self.__load: float = -1
+        self.__encoding: Optional[str] = None
 
-        self.number_of_cpus = None  # number of cpus the VM is using
-        self.xmx = ""
-        self.xms = ""
-        self.xmn = ""
-        self.gc_policy = ""
-        self.compressed_refs = False
-        self.verbose_gc = False
-        self.os_level = ""
-        self.architecture = ""
-        self.java_version = ""
-        self.jvm_start_time = ""
-        self.cmd_line = ""
-        self.user_args = []
-        self.snapshots = []
-        self.curr_line = ""
-        self.line_num = 0
+        self.number_of_cpus: Optional[str] = None  # number of cpus the VM is using
+        self.xmx: str = ""
+        self.xms: str = ""
+        self.xmn: str = ""
+        self.gc_policy: str = ""
+        self.compressed_refs: bool = False
+        self.verbose_gc: bool = False
+        self.os_level: str = ""
+        self.architecture: str = ""
+        self.java_version: str = ""
+        self.jvm_start_time: str = ""
+        self.cmd_line: str = ""
+        self.user_args: list[str] = []
+        self.curr_line: str = ""
+        self.line_num: int = 0
 
     @staticmethod
     def create(filename, javacore_set):
@@ -64,7 +85,7 @@ class Javacore:
 
     def parse(self):
         try:
-            self.file_reader = codecs.open(self.filename, encoding=self.get_encoding(), errors='strict')
+            self.file_reader = codecs.open(self.filename, encoding=self.get_encoding(), errors='strict')  # type: ignore[arg-type]
             self._parse_siginfo()
             self._parse_datetime()
             self._parse_header_data()
@@ -128,6 +149,7 @@ class Javacore:
                     return
         except Exception as e:
             logging.exception(e)
+            msg = f'Error during processing file: unknown\nCheck the exception below what happened'
             if self.file_reader is not None:
                 msg = f'Error during processing file: {self.file_reader.name} \n' \
                       f'line number: {self.line_num} \n' \
@@ -147,7 +169,7 @@ class Javacore:
 
     def _parse_mem_arg(self, line):
         line = line.split()[-1]  # avoid matching the '2' in tag name 2CIUSERARG
-        tokens = re.findall("\d+[KkMmGg]?$", line)
+        tokens = re.findall(r"\d+[KkMmGg]?$", line)
         if len(tokens) != 1: return UNKNOWN
         return tokens[0]
     
@@ -214,7 +236,7 @@ class Javacore:
         for s in self.snapshots:
             self.__total_cpu += s.get_cpu_percentage()
         self.__load = self.__total_cpu / 100
-        self.__total_cpu /= int(self.number_of_cpus)
+        self.__total_cpu /= int(self.number_of_cpus)  # type: ignore[arg-type,operator]
 
     def get_load(self):
         if self.__load == -1:
@@ -236,7 +258,7 @@ class Javacore:
         # opening the file without specifying the encoding (which we don't know yet)
         # the encoding line is near the top of the javacore
         # so assuming everything up to that point is plain old ASCII
-        file = codecs.open(self.filename, errors='strict')
+        file = codecs.open(self.filename, errors='strict')  # type: ignore[arg-type]
         while True:
             line = file.readline()
             if not line:
@@ -255,7 +277,7 @@ class Javacore:
         for i in range(0, len(bts)):
             # fix for 'XML Syntax error PCDATA invalid char#405'
             if bts[i] < 32 and bts[i] != 9 and bts[i] != 10 and bts[i] != 13 and bts[i] != 1:
-                raise CorruptedJavacoreException("Javacore " + self.filename + " is corrupted in line " + string)
+                raise CorruptedJavacoreException("Javacore " + str(self.filename) + " is corrupted in line " + string)
         string = bts.decode('utf-8', 'ignore')
         return string
 
@@ -304,7 +326,7 @@ class Javacore:
                 return line
 
     def print_javacore(self):
-        logging.debug("Javacore filename: " + self.filename)
+        logging.debug("Javacore filename: " + str(self.filename))
         self.print_thread_snapshots()
         logging.debug("\n")
 
@@ -312,8 +334,8 @@ class Javacore:
         for snapshot in self.snapshots:
             logging.debug(snapshot)
 
-    def basefilename(self):
-        return os.path.basename(self.filename)
+    def basefilename(self) -> str:
+        return os.path.basename(self.filename or "")
 
     def basefilename_without_extension(self):
         return os.path.splitext(self.basefilename())[0]

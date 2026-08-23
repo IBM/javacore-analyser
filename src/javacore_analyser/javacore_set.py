@@ -12,8 +12,8 @@ from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from multiprocessing.dummy import Pool  # Keep for HTML generation compatibility
 from pathlib import Path
-from typing import Optional
-from xml.dom.minidom import parseString
+from typing import IO, Any, Optional, cast
+from xml.dom.minidom import Document, Element, parseString
 
 import importlib_resources
 from lxml import etree
@@ -23,7 +23,10 @@ from tqdm import tqdm
 from javacore_analyser import tips
 from javacore_analyser.ai.performance_recommendations_prompter import PerformanceRecommendationsPrompter
 from javacore_analyser.code_snapshot_collection import CodeSnapshotCollection
-from javacore_analyser.constants import *
+from javacore_analyser.constants import (
+    DATE_FORMAT,
+    MIN_JAVACORE_SIZE,
+)
 from javacore_analyser.exceptions import InvalidLLMMethodError
 from javacore_analyser.har_file import HarFile
 from javacore_analyser.java_thread import Thread
@@ -115,18 +118,18 @@ class JavacoreSet:
 
     def __init__(self, path):
         self.path = path  # path of the folder where the javacores are located
-        self.files = []
-        self.javacores = []
-        self.excluded_javacores = []
-        self.verbose_gc_files = []
+        self.files: list[str] = []
+        self.javacores: list[Any] = []
+        self.excluded_javacores: list[Any] = []
+        self.verbose_gc_files: list[str] = []
         self.threads = SnapshotCollectionCollection(Thread)
         self.stacks = SnapshotCollectionCollection(CodeSnapshotCollection)
-        self.report_xml_file = None
+        self.report_xml_file: Optional[str] = None
 
         #self.ai_overview = ""
-        self.ai_tips = ""
+        self.ai_tips: str = ""
 
-        self.doc = None
+        self.doc: Optional[Document] = None
         
         # Track what types of data files are present
         self.data_types = set()
@@ -146,7 +149,7 @@ class JavacoreSet:
         self.plugin_manager = None  # Will be set if plugins enabled
 
         # machine learning
-        self.ml_classifier = None
+        self.ml_classifier: Any = None
         self.use_ml = Properties.get_instance().get_property("use_ml", False)
         if self.use_ml:
             self.ml_classifier = JavacoreClassifier()     
@@ -511,24 +514,25 @@ class JavacoreSet:
             # thread.compare_call_stacks()
 
     def get_blockers_xml(self):
-        blockers_node = self.doc.createElement("blockers")
+        doc: Document = cast(Document, self.doc)
+        blockers_node = doc.createElement("blockers")
         count = 0
         for blocked in self.blocked_snapshots:
-            blocker_node = self.doc.createElement("blocker")
-            blocker_id_node = self.doc.createElement("blocker_id")
+            blocker_node = doc.createElement("blocker")
+            blocker_id_node = doc.createElement("blocker_id")
             blocker_node.appendChild(blocker_id_node)
-            blocker_id_node.appendChild(self.doc.createTextNode(str(blocked.get(0).blocker.thread.id)))
+            blocker_id_node.appendChild(doc.createTextNode(str(blocked.get(0).blocker.thread.id)))
             blockers_node.appendChild(blocker_node)
-            blocker_name_node = self.doc.createElement("blocker_name")
+            blocker_name_node = doc.createElement("blocker_name")
             blocker_node.appendChild(blocker_name_node)
-            blocker_name_node.appendChild(self.doc.createTextNode(blocked.get(0).blocker.name))
-            blocker_hash_node = self.doc.createElement("blocker_hash")
+            blocker_name_node.appendChild(doc.createTextNode(blocked.get(0).blocker.name))
+            blocker_hash_node = doc.createElement("blocker_hash")
             blocker_node.appendChild(blocker_hash_node)
-            blocker_hash_node.appendChild(self.doc.createTextNode(blocked.get(0).blocker.get_thread_hash()))
-            blocker_size_node = self.doc.createElement("blocker_size")
+            blocker_hash_node.appendChild(doc.createTextNode(blocked.get(0).blocker.get_thread_hash()))
+            blocker_size_node = doc.createElement("blocker_size")
             blocker_node.appendChild(blocker_size_node)
             blocked_size = len(blocked.get_threads_set())
-            blocker_size_node.appendChild(self.doc.createTextNode(str(blocked_size)))
+            blocker_size_node.appendChild(doc.createTextNode(str(blocked_size)))
             if count > 9:
                 break
             count = count + 1
@@ -557,55 +561,56 @@ class JavacoreSet:
 
         self.doc = parseString('''<?xml version="1.0" encoding="UTF-8" ?>
         <?xml-stylesheet type="text/xsl" href="data/report.xsl"?><doc/>''')
+        doc: Document = cast(Document, self.doc)  # self.doc is assigned just above
 
-        doc_node = self.doc.documentElement
+        doc_node: Element = cast(Element, doc.documentElement)
         
         # Add data types information
-        data_types_node = self.doc.createElement("data_types")
+        data_types_node = cast(Element, doc.createElement("data_types"))
         doc_node.appendChild(data_types_node)
         for data_type in self.data_types:
-            type_node = self.doc.createElement("type")
-            type_node.appendChild(self.doc.createTextNode(data_type))
+            type_node = cast(Element, doc.createElement("type"))
+            type_node.appendChild(doc.createTextNode(data_type))
             data_types_node.appendChild(type_node)
 
-        javacore_count_node = self.doc.createElement("javacore_count")
-        javacore_count_node.appendChild(self.doc.createTextNode(str(len(self.javacores))))
+        javacore_count_node = cast(Element, doc.createElement("javacore_count"))
+        javacore_count_node.appendChild(doc.createTextNode(str(len(self.javacores))))
         doc_node.appendChild(javacore_count_node)
-        report_info_node = self.doc.createElement("report_info")
+        report_info_node = cast(Element, doc.createElement("report_info"))
         doc_node.appendChild(report_info_node)
-        generation_time_node = self.doc.createElement("generation_time")
+        generation_time_node = cast(Element, doc.createElement("generation_time"))
         report_info_node.appendChild(generation_time_node)
-        generation_time_node.appendChild(self.doc.createTextNode(str(datetime.now().strftime(DATE_FORMAT))))
+        generation_time_node.appendChild(doc.createTextNode(str(datetime.now().strftime(DATE_FORMAT))))
         doc_node.setAttribute("use_ml", str(self.use_ml))
 
         # Only include javacore-specific data if javacores are present
         if 'javacores' in self.data_types and len(self.javacores) > 0:
-            generation_javacores_node = self.doc.createElement("javacores_generation_time")
+            generation_javacores_node = doc.createElement("javacores_generation_time")
             report_info_node.appendChild(generation_javacores_node)
-            generation_javacores_node_starting_time = self.doc.createElement("starting_time")
+            generation_javacores_node_starting_time = doc.createElement("starting_time")
             generation_javacores_node.appendChild(generation_javacores_node_starting_time)
             generation_javacores_node_starting_time.appendChild(
                 self.doc.createTextNode(str(self.javacores[0].datetime.strftime(DATE_FORMAT))))
-            generation_javacores_node_end_time = self.doc.createElement("end_time")
+            generation_javacores_node_end_time = doc.createElement("end_time")
             generation_javacores_node.appendChild(generation_javacores_node_end_time)
             generation_javacores_node_end_time.appendChild(
                 self.doc.createTextNode(str(self.javacores[-1].datetime.strftime(DATE_FORMAT))))
 
-            javacore_list_node = self.doc.createElement("javacore_list")
+            javacore_list_node = doc.createElement("javacore_list")
             report_info_node.appendChild(javacore_list_node)
             for jc in self.javacores:
-                javacore_node = self.doc.createElement("javacore")
+                javacore_node = doc.createElement("javacore")
                 javacore_list_node.appendChild(javacore_node)
-                javacore_file_node = self.doc.createElement("javacore_file_name")
+                javacore_file_node = doc.createElement("javacore_file_name")
                 javacore_node.appendChild(javacore_file_node)
                 javacore_file_node.appendChild(self.doc.createTextNode(jc.basefilename()))
-                javacore_file_time_stamp_node = self.doc.createElement("javacore_file_time_stamp")
+                javacore_file_time_stamp_node = doc.createElement("javacore_file_time_stamp")
                 javacore_node.appendChild(javacore_file_time_stamp_node)
                 javacore_file_time_stamp_node.appendChild(self.doc.createTextNode(str(jc.datetime.strftime(DATE_FORMAT))))
-                javacore_total_cpu_node = self.doc.createElement("javacore_cpu_percentage")
+                javacore_total_cpu_node = doc.createElement("javacore_cpu_percentage")
                 javacore_node.appendChild(javacore_total_cpu_node)
                 javacore_total_cpu_node.appendChild(self.doc.createTextNode(str(jc.get_cpu_percentage())))
-                javacore_load_node = self.doc.createElement("javacore_load")
+                javacore_load_node = doc.createElement("javacore_load")
                 javacore_node.appendChild(javacore_load_node)
                 javacore_load_node.appendChild(self.doc.createTextNode(str(jc.get_load())))
                 if jc.current_thread:
@@ -619,130 +624,131 @@ class JavacoreSet:
                 # stored as <classification_entry value="…" count="…"/> children so the
                 # thread-classification-over-time chart can read them per javacore.
                 if self.use_ml:
-                    classification_counts = {}
+                    classification_counts: dict[str, int] = {}
                     for snapshot in jc.snapshots:
                         label = snapshot.get_classification()
                         if label:
                             classification_counts[label] = classification_counts.get(label, 0) + 1
-                    jc_classifications_node = self.doc.createElement("javacore_classifications")
+                    jc_classifications_node = doc.createElement("javacore_classifications")
                     javacore_node.appendChild(jc_classifications_node)
                     for label, count in classification_counts.items():
-                        entry_node = self.doc.createElement("classification_entry")
+                        entry_node = doc.createElement("classification_entry")
                         entry_node.setAttribute("value", label)
                         entry_node.setAttribute("count", str(count))
                         jc_classifications_node.appendChild(entry_node)
 
-        verbose_gc_list_node = self.doc.createElement("verbose_gc_list")
+        verbose_gc_list_node = doc.createElement("verbose_gc_list")
         report_info_node.appendChild(verbose_gc_list_node)
 
         total_collects_in_time_limits = 0
         for vgc in self.gc_parser.get_files():
-            verbose_gc_node = self.doc.createElement("verbose_gc")
+            verbose_gc_node = doc.createElement("verbose_gc")
             verbose_gc_list_node.appendChild(verbose_gc_node)
-            verbose_gc_file_name_node = self.doc.createElement("verbose_gc_file_name")
+            verbose_gc_file_name_node = doc.createElement("verbose_gc_file_name")
             verbose_gc_node.appendChild(verbose_gc_file_name_node)
             verbose_gc_file_name_node.appendChild(self.doc.createTextNode(vgc.get_file_name()))
-            verbose_gc_collects_node = self.doc.createElement("verbose_gc_collects")
+            verbose_gc_collects_node = doc.createElement("verbose_gc_collects")
             verbose_gc_node.appendChild(verbose_gc_collects_node)
             verbose_gc_collects_node.appendChild(self.doc.createTextNode(str(vgc.get_number_of_collects())))
             total_collects_in_time_limits += vgc.get_number_of_collects()
-            verbose_gc_total_collects_node = self.doc.createElement("verbose_gc_total_collects")
+            verbose_gc_total_collects_node = doc.createElement("verbose_gc_total_collects")
             verbose_gc_node.appendChild(verbose_gc_total_collects_node)
             verbose_gc_total_collects_node.appendChild(self.doc.createTextNode(str(vgc.get_total_number_of_collects())))
         verbose_gc_list_node.setAttribute("total_collects_in_time_limits", str(total_collects_in_time_limits))
 
         if len(self.har_files) > 0:
-            har_files_node = self.doc.createElement("har_files")
+            har_files_node = cast(Element, doc.createElement("har_files"))
             doc_node.appendChild(har_files_node)
             for har in self.har_files:
-                har_files_node.appendChild(har.get_xml(self.doc))
+                har_files_node.appendChild(har.get_xml(doc))
 
         # Only include system info if javacores are present
+        system_info_node: Optional[Element]
         if 'javacores' in self.data_types:
-            system_info_node = self.doc.createElement("system_info")
+            system_info_node = cast(Element, doc.createElement("system_info"))
             doc_node.appendChild(system_info_node)
         else:
             system_info_node = None
 
-        tips_node = self.doc.createElement("tips")
+        tips_node = doc.createElement("tips")
         report_info_node.appendChild(tips_node)
         for tip in self.tips:
-            tip_node = self.doc.createElement("tip")
+            tip_node = doc.createElement("tip")
             tips_node.appendChild(tip_node)
             tip_node.appendChild(self.doc.createTextNode(tip))
         tips_node.setAttribute("ai_tips", self.ai_tips)
 
         # Only add system info details if javacores are present
         if system_info_node is not None:
-            user_args_list_node = self.doc.createElement("user_args_list")
+            user_args_list_node = doc.createElement("user_args_list")
             #system_info_node.setAttribute("ai_overview", self.ai_overview)
             system_info_node.appendChild(user_args_list_node)
             for arg in self.get_user_args():
-                arg_node = self.doc.createElement("user_arg")
+                arg_node = doc.createElement("user_arg")
                 user_args_list_node.appendChild(arg_node)
                 arg_node.appendChild(self.doc.createTextNode(arg))
 
-            number_of_cpus_node = self.doc.createElement("number_of_cpus")
+            number_of_cpus_node = doc.createElement("number_of_cpus")
             system_info_node.appendChild(number_of_cpus_node)
             number_of_cpus_node.appendChild(self.doc.createTextNode(self.get_number_of_cpus()))
 
-            xmx_node = self.doc.createElement("xmx")
+            xmx_node = doc.createElement("xmx")
             system_info_node.appendChild(xmx_node)
             xmx_node.appendChild(self.doc.createTextNode(self.get_xmx()))
 
-            xms_node = self.doc.createElement("xms")
+            xms_node = doc.createElement("xms")
             system_info_node.appendChild(xms_node)
             xms_node.appendChild(self.doc.createTextNode(self.get_xms()))
 
-            xmn_node = self.doc.createElement("xmn")
+            xmn_node = doc.createElement("xmn")
             system_info_node.appendChild(xmn_node)
             xmn_node.appendChild(self.doc.createTextNode(self.get_xmn()))
 
-            verbose_gc_node = self.doc.createElement("verbose_gc")
+            verbose_gc_node = doc.createElement("verbose_gc")
             system_info_node.appendChild(verbose_gc_node)
             verbose_gc_node.appendChild(self.doc.createTextNode(str(self.get_verbose_gc())))
 
-            gc_policy_node = self.doc.createElement("gc_policy")
+            gc_policy_node = doc.createElement("gc_policy")
             system_info_node.appendChild(gc_policy_node)
             gc_policy_node.appendChild(self.doc.createTextNode(self.get_gc_policy()))
 
-            compressed_refs_node = self.doc.createElement("compressed_refs")
+            compressed_refs_node = doc.createElement("compressed_refs")
             system_info_node.appendChild(compressed_refs_node)
             compressed_refs_node.appendChild(self.doc.createTextNode(str(self.get_compressed_refs())))
 
-            architecture_node = self.doc.createElement("architecture")
+            architecture_node = doc.createElement("architecture")
             system_info_node.appendChild(architecture_node)
             architecture_node.appendChild(self.doc.createTextNode(self.get_architecture()))
 
-            java_version_node = self.doc.createElement("java_version")
+            java_version_node = doc.createElement("java_version")
             system_info_node.appendChild(java_version_node)
             java_version_node.appendChild(self.doc.createTextNode(self.get_java_version()))
 
-            os_level_node = self.doc.createElement("os_level")
+            os_level_node = doc.createElement("os_level")
             system_info_node.appendChild(os_level_node)
             os_level_node.appendChild(self.doc.createTextNode(self.get_os_level()))
 
-            jvm_startup_time = self.doc.createElement("jvm_start_time")
+            jvm_startup_time = doc.createElement("jvm_start_time")
             system_info_node.appendChild(jvm_startup_time)
             jvm_startup_time.appendChild(self.doc.createTextNode(self.get_jvm_start_time()))
 
-            cmd_line = self.doc.createElement("cmd_line")
+            cmd_line = doc.createElement("cmd_line")
             system_info_node.appendChild(cmd_line)
             cmd_line.appendChild(self.doc.createTextNode(self.get_cmd_line()))
 
         # Only add javacore-dependent data if javacores are present
         if 'javacores' in self.data_types:
             doc_node.appendChild(self.get_blockers_xml())
-            doc_node.appendChild(self.threads.get_xml(self.doc))
-            doc_node.appendChild(self.stacks.get_xml(self.doc))
+            doc_node.appendChild(self.threads.get_xml(doc))
+            doc_node.appendChild(self.stacks.get_xml(doc))
         
-        doc_node.appendChild(self.gc_parser.get_xml(self.doc))
+        doc_node.appendChild(self.gc_parser.get_xml(doc))
         
         # Add plugin data to XML if plugins were processed
         if self.plugin_data:
             try:
                 logging.info("Adding plugin data to report XML")
-                plugins_node = self.doc.createElement("plugins")
+                plugins_node = cast(Element, doc.createElement("plugins"))
                 doc_node.appendChild(plugins_node)
                 
                 for plugin_name, plugin_info in self.plugin_data.items():
@@ -763,7 +769,7 @@ class JavacoreSet:
             except Exception as e:
                 logging.error(f"Error adding plugin data to XML: {e}")
 
-        self.doc.appendChild(doc_node)
+        doc.appendChild(doc_node)  # type: ignore[type-var]
 
         with open(output_file, 'w', encoding='utf-8') as stream:
             self.doc.writexml(stream, indent="  ", addindent="  ", newl='\n', encoding="utf-8")
@@ -784,13 +790,14 @@ class JavacoreSet:
         Returns:
         str: The JavaCore set in the XML format.
         """
-        file = None
+        file: Optional[IO[str]] = None
         try:
-            file = open(self.report_xml_file, "r")
+            file = open(self.report_xml_file, "r")  # type: ignore[arg-type]
             content = file.read()
             return content
         finally:
-            file.close()
+            if file is not None:
+                file.close()
 
     @staticmethod
     def validate_uncontrolled_data_used_in_path(path_params):
@@ -1076,8 +1083,8 @@ class JavacoreSet:
 
     # Run with the same number of threads as you have processes but leave one thread for something else.
     @staticmethod
-    def get_number_of_parallel_threads():
-        return max(1, os.cpu_count() - 1)
+    def get_number_of_parallel_threads() -> int:
+        return max(1, (os.cpu_count() or 2) - 1)
 
     @staticmethod
     def generate_html_from_xml_xsl_files(args):
