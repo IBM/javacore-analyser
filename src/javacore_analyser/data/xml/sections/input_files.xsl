@@ -46,10 +46,11 @@
                         <table id="javacores_files_table">
                             <thead>
                                 <tr>
-                                    <th class="fifty">File Name</th>
-                                    <th class="thirty">Time Stamp</th>
+                                    <th class="thirty">File Name</th>
+                                    <th class="twenty">Time Stamp</th>
                                     <th class="ten">CPU usage (%)</th>
                                     <th class="ten">CPU Load</th>
+                                    <th class="thirty">Current Thread</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -80,6 +81,26 @@
                                                 <td><xsl:value-of select="format-number(javacore_load, '0.##')"/></td>
                                             </xsl:otherwise>
                                         </xsl:choose>
+                                        <td class="left">
+                                            <xsl:choose>
+                                                <xsl:when test="javacore_current_thread">
+                                                    <xsl:choose>
+                                                        <xsl:when test="javacore_current_thread/@thread_hash">
+                                                            <a target="_blank">
+                                                                <xsl:attribute name="href">
+                                                                    <xsl:value-of select="concat('threads/thread_', javacore_current_thread/@thread_hash, '.html')"/>
+                                                                </xsl:attribute>
+                                                                <xsl:value-of select="javacore_current_thread"/>
+                                                            </a>
+                                                        </xsl:when>
+                                                        <xsl:otherwise>
+                                                            <xsl:value-of select="javacore_current_thread"/>
+                                                        </xsl:otherwise>
+                                                    </xsl:choose>
+                                                </xsl:when>
+                                                <xsl:otherwise>N/A</xsl:otherwise>
+                                            </xsl:choose>
+                                        </td>
                                     </tr>
                                 </xsl:for-each>
                             </tbody>
