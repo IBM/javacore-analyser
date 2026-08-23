@@ -1057,18 +1057,21 @@ class JavacoreSet:
         threads_no = JavacoreSet.get_number_of_parallel_threads()
         logging.info(f"Using {threads_no} threads to generate html files")
 
-        list_files = os.listdir(data_input_dir)
-        progress_bar = tqdm(desc="Generating html files", unit=' file')
+        # Only pass .xsl files to the worker — it skips everything else anyway,
+        # and filtering here gives tqdm an accurate total count.
+        list_files = [f for f in os.listdir(data_input_dir) if f.endswith(".xsl")]
+        logging.info(f"Generating {len(list_files)} html files from {data_input_dir}")
 
         # Generating list of tuples. This is required attribute for p.map function executed few lines below.
-        generate_html_from_xml_xsl_files_params = []
-        for file in list_files:
-            generate_html_from_xml_xsl_files_params.append((file, data_input_dir, output_dir, progress_bar))
+        generate_html_from_xml_xsl_files_params = [(file, data_input_dir, output_dir) for file in list_files]
 
         with Pool(threads_no) as p:
-            p.map(JavacoreSet.generate_html_from_xml_xsl_files, generate_html_from_xml_xsl_files_params)
+            for _ in tqdm(p.imap_unordered(JavacoreSet.generate_html_from_xml_xsl_files,
+                                           generate_html_from_xml_xsl_files_params),
+                          total=len(generate_html_from_xml_xsl_files_params),
+                          desc="Generating html files", unit=' file'):
+                pass
 
-        progress_bar.close()
         logging.info(f"Generated html files in {output_dir}")
 
     # Run with the same number of threads as you have processes but leave one thread for something else.
@@ -1079,7 +1082,7 @@ class JavacoreSet:
     @staticmethod
     def generate_html_from_xml_xsl_files(args):
 
-        collection_file, collection_input_dir, output_dir, progress_bar = args
+        collection_file, collection_input_dir, output_dir = args
 
         if not collection_file.endswith(".xsl"): return
 
@@ -1105,8 +1108,6 @@ class JavacoreSet:
 
         logging.debug("Generating file " + html_file)
         output_doc.write(html_file, pretty_print=True)
-
-        progress_bar.update(1)
 
     @staticmethod
     def create_xml_xsl_for_collection(tmp_dir, xml_xsls_prefix_path, collection, output_file_prefix):
