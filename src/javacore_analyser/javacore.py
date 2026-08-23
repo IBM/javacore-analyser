@@ -259,7 +259,7 @@ class Javacore:
         string = bts.decode('utf-8', 'ignore')
         return string
 
-    def extract_thread_snapshots(self):
+    def _parse_thread_snapshots(self):
         """ creates a ThreadSnapshot object for each "3XMTHREADINFO" tag found in the javacore """
         file = codecs.open(self.filename, encoding=self.get_encoding(), errors='strict')
         line = ""
@@ -275,7 +275,7 @@ class Javacore:
                 if line.startswith(CURRENT_THREAD_INFO):
                     is_current = True
                 elif line.startswith(THREAD_INFO):
-                    line = Javacore.process_thread_name(line, file)
+                    self.line = self.process_thread_name(self.line)
                     snapshot = ThreadSnapshot.create(line, file, self, is_current=is_current)
                     if is_current:
                         self.current_thread = snapshot
