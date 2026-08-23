@@ -24,10 +24,8 @@ from javacore_analyser import tips
 from javacore_analyser.ai.performance_recommendations_prompter import PerformanceRecommendationsPrompter
 from javacore_analyser.code_snapshot_collection import CodeSnapshotCollection
 from javacore_analyser.constants import (
-    DATA_OUTPUT_SUBDIR,
     DATE_FORMAT,
     MIN_JAVACORE_SIZE,
-    TEMP_DIR,
 )
 from javacore_analyser.exceptions import InvalidLLMMethodError
 from javacore_analyser.har_file import HarFile
