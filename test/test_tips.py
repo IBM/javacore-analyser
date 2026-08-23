@@ -27,7 +27,7 @@ class TestTips(unittest.TestCase):
         shutil.copy2(jc1, temp_dir_path)
         shutil.copy2(jc2, temp_dir_path)
         javacore_set = JavacoreSet(temp_dir_path)
-        javacore_set.create(temp_dir_path)
+        javacore_set = javacore_set.create(temp_dir_path)
         result = tips.TooFewJavacoresTip.generate(javacore_set)
         self.assertTrue(len(result) > 0, "Missing tip for too few javacores")
         temp_dir.cleanup()
@@ -559,3 +559,30 @@ class TestTips(unittest.TestCase):
         first_close = result.index("</a>", first_open) + len("</a>")
         self.assertNotIn("<a href=", result[first_open + len("<a href="):first_close],
                           "A link must not be nested inside another link's text")
+
+    def test_FailingHttpCallsTip(self):
+        from javacore_analyser.har_file import HarFile
+        har_path = "test/data/javacores/jazz.net_Archive [25-01-03 11-07-56].har"
+        har_file = HarFile(har_path)
+        
+        javacore_set = JavacoreSet("")
+        javacore_set.har_files = [har_file]
+        
+        result = tips.FailingHttpCallsTip.generate(javacore_set)
+        self.assertEqual(1, len(result), "Should have 1 tip for failing HTTP calls")
+        self.assertIn("[WARNING] Detected", result[0])
+        self.assertIn("failing HTTP call(s) in HAR file", result[0])
+        self.assertIn("returned status 400", result[0])
+
+    def test_LongHttpCallsTip(self):
+        from javacore_analyser.har_file import HarFile
+        har_path = "test/data/javacores/jazz.net_Archive [25-01-03 11-07-56].har"
+        har_file = HarFile(har_path)
+        
+        javacore_set = JavacoreSet("")
+        javacore_set.har_files = [har_file]
+        
+        result_triggered = tips.LongHttpCallsTip.generate(javacore_set)
+        self.assertTrue(len(result_triggered) > 0, "Should have triggered long HTTP calls tip")
+        self.assertIn("[WARNING] Detected", result_triggered[0])
+        self.assertIn("HTTP call(s) longer than 5000ms", result_triggered[0])
