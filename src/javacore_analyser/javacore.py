@@ -31,6 +31,7 @@ from javacore_analyser.constants import (
     XMN,
     XMS,
     XMX,
+    CURRENT_THREAD_INFO,
 )
 from javacore_analyser.thread_snapshot import ThreadSnapshot
 
