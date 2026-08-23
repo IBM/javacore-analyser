@@ -33,12 +33,14 @@ class ThreadSnapshot:
         self.cpu_usage_inc = None
         self.blocking = set()  # set of snapshots blocking by this thread
         self._ml_classification = None
+        self.is_current_thread = False
 
     @staticmethod
-    def create(line, file_reader, javacore):
+    def create(line, file_reader, javacore, is_current=False):
         snapshot = ThreadSnapshot()
         snapshot.file_reader = file_reader
         snapshot.javacore = javacore
+        snapshot.is_current_thread = is_current
         snapshot.name = snapshot.get_thread_name(line)
         snapshot.thread_address = snapshot.get_thread_address(line)
         snapshot.parse_state(line)
@@ -215,6 +217,8 @@ class ThreadSnapshot:
         file_name = ""
         if self.file_reader:
             file_name = self.javacore.filename.split(os.sep)[-1].strip()
+        if self.is_current_thread:
+            thread_snapshot_node.setAttribute("is_current_thread", "true")
         # CPU usage
         cpu_usage_node = doc.createElement("cpu_usage")
         cpu_usage_node.appendChild(doc.createTextNode(str(self.get_cpu_usage_inc())))
