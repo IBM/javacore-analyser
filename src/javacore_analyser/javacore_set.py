@@ -31,6 +31,7 @@ from javacore_analyser.exceptions import InvalidLLMMethodError
 from javacore_analyser.har_file import HarFile
 from javacore_analyser.java_thread import Thread
 from javacore_analyser.javacore import Javacore
+from javacore_analyser.jvm_info import JvmInfo
 from javacore_analyser.plugin_manager import PluginManager
 from javacore_analyser.properties import Properties
 from javacore_analyser.snapshot_collection import SnapshotCollection
@@ -284,84 +285,29 @@ class JavacoreSet:
 
         logging.info("Thread classification complete")
 
-    def get_number_of_cpus(self):
+    @property
+    def jvm_info(self) -> Optional[JvmInfo]:
+        """Return the :class:`JvmInfo` from the first parsed javacore, or ``None``."""
         if len(self.javacores) > 0:
-            return self.javacores[0].number_of_cpus
-        return ""
+            return self.javacores[0].jvm_info
+        return None
 
-    def get_xmx(self):
-        if len(self.javacores) > 0:
-            return self.javacores[0].xmx
-        return ""
-
-    def get_xms(self):
-        if len(self.javacores) > 0:
-            return self.javacores[0].xms
-        return ""
-
-    def get_xmn(self):
-        if len(self.javacores) > 0:
-            return self.javacores[0].xmn
-        return ""
-
-    def get_verbose_gc(self):
-        if len(self.javacores) > 0:
-            return self.javacores[0].verbose_gc
-        return ""
-    
-    def get_gc_policy(self):
-        if len(self.javacores) > 0:
-            return self.javacores[0].gc_policy
-        return ""
-
-    def get_compressed_refs(self):
-        if len(self.javacores) > 0:
-            return self.javacores[0].compressed_refs
-        return ""
-
-    def get_architecture(self):
-        if len(self.javacores) > 0:
-            return self.javacores[0].architecture
-        return ""
-
-    def get_java_version(self):
-        if len(self.javacores) > 0:
-            return self.javacores[0].java_version
-        return ""
-
-    def get_os_level(self):
-        if len(self.javacores) > 0:
-            return self.javacores[0].os_level
-        return ""
-
-    def get_jvm_start_time(self):
-        if len(self.javacores) > 0:
-            return self.javacores[0].jvm_start_time
-        return ""
-
-    def get_cmd_line(self):
-        if len(self.javacores) > 0:
-            return self.javacores[0].cmd_line
-        return ""
-
-    def get_user_args(self):
-        if len(self.javacores) > 0:
-            return self.javacores[0].user_args
-        return ""
-    
     def print_java_settings(self):
-        logging.debug("number of CPUs: {}".format(self.get_number_of_cpus()))
-        logging.debug("Xmx: {}".format(self.get_xmx()))
-        logging.debug("Xms: {}".format(self.get_xms()))
-        logging.debug("Xmn: {}".format(self.get_xmn()))
-        logging.debug("Verbose GC: {}".format(self.get_verbose_gc()))
-        logging.debug("GC policy: {}".format(self.get_gc_policy()))
-        logging.debug("Compressed refs: {}".format(self.get_compressed_refs()))
-        logging.debug("Architecture: {}".format(self.get_architecture()))
-        logging.debug("Java version: {}".format(self.get_java_version()))
-        logging.debug("OS Level: {}".format(self.get_os_level()))
-        logging.debug("JVM Startup time: {}".format(self.get_jvm_start_time()))
-        logging.debug("Command line: {}".format(self.get_cmd_line()))
+        jvm_info = self.jvm_info
+        if jvm_info is None:
+            return
+        logging.debug("number of CPUs: {}".format(jvm_info.number_of_cpus))
+        logging.debug("Xmx: {}".format(jvm_info.xmx))
+        logging.debug("Xms: {}".format(jvm_info.xms))
+        logging.debug("Xmn: {}".format(jvm_info.xmn))
+        logging.debug("Verbose GC: {}".format(jvm_info.verbose_gc))
+        logging.debug("GC policy: {}".format(jvm_info.gc_policy))
+        logging.debug("Compressed refs: {}".format(jvm_info.compressed_refs))
+        logging.debug("Architecture: {}".format(jvm_info.architecture))
+        logging.debug("Java version: {}".format(jvm_info.java_version))
+        logging.debug("OS Level: {}".format(jvm_info.os_level))
+        logging.debug("JVM Startup time: {}".format(jvm_info.jvm_start_time))
+        logging.debug("Command line: {}".format(jvm_info.cmd_line))
 
     @staticmethod
     def create(path):
@@ -680,61 +626,8 @@ class JavacoreSet:
 
         # Only add system info details if javacores are present
         if system_info_node is not None:
-            user_args_list_node = doc.createElement("user_args_list")
-            #system_info_node.setAttribute("ai_overview", self.ai_overview)
-            system_info_node.appendChild(user_args_list_node)
-            for arg in self.get_user_args():
-                arg_node = doc.createElement("user_arg")
-                user_args_list_node.appendChild(arg_node)
-                arg_node.appendChild(self.doc.createTextNode(arg))
-
-            number_of_cpus_node = doc.createElement("number_of_cpus")
-            system_info_node.appendChild(number_of_cpus_node)
-            number_of_cpus_node.appendChild(self.doc.createTextNode(self.get_number_of_cpus()))
-
-            xmx_node = doc.createElement("xmx")
-            system_info_node.appendChild(xmx_node)
-            xmx_node.appendChild(self.doc.createTextNode(self.get_xmx()))
-
-            xms_node = doc.createElement("xms")
-            system_info_node.appendChild(xms_node)
-            xms_node.appendChild(self.doc.createTextNode(self.get_xms()))
-
-            xmn_node = doc.createElement("xmn")
-            system_info_node.appendChild(xmn_node)
-            xmn_node.appendChild(self.doc.createTextNode(self.get_xmn()))
-
-            verbose_gc_node = doc.createElement("verbose_gc")
-            system_info_node.appendChild(verbose_gc_node)
-            verbose_gc_node.appendChild(self.doc.createTextNode(str(self.get_verbose_gc())))
-
-            gc_policy_node = doc.createElement("gc_policy")
-            system_info_node.appendChild(gc_policy_node)
-            gc_policy_node.appendChild(self.doc.createTextNode(self.get_gc_policy()))
-
-            compressed_refs_node = doc.createElement("compressed_refs")
-            system_info_node.appendChild(compressed_refs_node)
-            compressed_refs_node.appendChild(self.doc.createTextNode(str(self.get_compressed_refs())))
-
-            architecture_node = doc.createElement("architecture")
-            system_info_node.appendChild(architecture_node)
-            architecture_node.appendChild(self.doc.createTextNode(self.get_architecture()))
-
-            java_version_node = doc.createElement("java_version")
-            system_info_node.appendChild(java_version_node)
-            java_version_node.appendChild(self.doc.createTextNode(self.get_java_version()))
-
-            os_level_node = doc.createElement("os_level")
-            system_info_node.appendChild(os_level_node)
-            os_level_node.appendChild(self.doc.createTextNode(self.get_os_level()))
-
-            jvm_startup_time = doc.createElement("jvm_start_time")
-            system_info_node.appendChild(jvm_startup_time)
-            jvm_startup_time.appendChild(self.doc.createTextNode(self.get_jvm_start_time()))
-
-            cmd_line = doc.createElement("cmd_line")
-            system_info_node.appendChild(cmd_line)
-            cmd_line.appendChild(self.doc.createTextNode(self.get_cmd_line()))
+            if self.jvm_info is not None:
+                system_info_node.appendChild(self.jvm_info.to_xml(doc))
 
         # Only add javacore-dependent data if javacores are present
         if 'javacores' in self.data_types:

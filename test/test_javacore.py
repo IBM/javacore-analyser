@@ -77,44 +77,44 @@ class TestJavacore(unittest.TestCase):
         self.assertEqual(self.javacore.timestamp, self.javacore.datetime.timestamp())
         
         # Verify header data extraction (tests _parse_header_data)
-        self.assertIsNotNone(self.javacore.number_of_cpus)
-        self.assertEqual(self.javacore.number_of_cpus, '8')
-        self.assertIsNotNone(self.javacore.os_level)
-        self.assertIn('Windows', self.javacore.os_level)
-        self.assertIsNotNone(self.javacore.architecture)
-        self.assertEqual(self.javacore.architecture, 'amd64')
-        self.assertIsNotNone(self.javacore.java_version)
-        self.assertIn('JRE 1.8.0', self.javacore.java_version)
-        self.assertIsNotNone(self.javacore.jvm_start_time)
-        self.assertIn('2022/06/06', self.javacore.jvm_start_time)
-        self.assertIsNotNone(self.javacore.cmd_line)
-        self.assertIn('javaw', self.javacore.cmd_line)
-        
+        self.assertIsNotNone(self.javacore.jvm_info.number_of_cpus)
+        self.assertEqual(self.javacore.jvm_info.number_of_cpus, '8')
+        self.assertIsNotNone(self.javacore.jvm_info.os_level)
+        self.assertIn('Windows', self.javacore.jvm_info.os_level)
+        self.assertIsNotNone(self.javacore.jvm_info.architecture)
+        self.assertEqual(self.javacore.jvm_info.architecture, 'amd64')
+        self.assertIsNotNone(self.javacore.jvm_info.java_version)
+        self.assertIn('JRE 1.8.0', self.javacore.jvm_info.java_version)
+        self.assertIsNotNone(self.javacore.jvm_info.jvm_start_time)
+        self.assertIn('2022/06/06', self.javacore.jvm_info.jvm_start_time)
+        self.assertIsNotNone(self.javacore.jvm_info.cmd_line)
+        self.assertIn('javaw', self.javacore.jvm_info.cmd_line)
+
         # Verify user arguments extraction (tests _parse_user_args and _add_user_arg)
-        self.assertIsNotNone(self.javacore.user_args)
-        self.assertGreater(len(self.javacore.user_args), 0)
-        user_args_str = ' '.join(self.javacore.user_args)
+        self.assertIsNotNone(self.javacore.jvm_info.user_args)
+        self.assertGreater(len(self.javacore.jvm_info.user_args), 0)
+        user_args_str = ' '.join(self.javacore.jvm_info.user_args)
         self.assertIn('-Xmx', user_args_str)
         self.assertIn('-Xms', user_args_str)
         self.assertIn('-Xmn', user_args_str)
-        
+
         # Verify memory settings extraction (tests _parse_xmx, _parse_xms, _parse_xmn, _parse_mem_arg)
-        self.assertIsNotNone(self.javacore.xmx)
-        self.assertEqual(self.javacore.xmx, '4294967296')
-        self.assertIsNotNone(self.javacore.xms)
-        self.assertEqual(self.javacore.xms, '4G')
-        self.assertIsNotNone(self.javacore.xmn)
-        self.assertEqual(self.javacore.xmn, '1G')
-        
+        self.assertIsNotNone(self.javacore.jvm_info.xmx)
+        self.assertEqual(self.javacore.jvm_info.xmx, '4294967296')
+        self.assertIsNotNone(self.javacore.jvm_info.xms)
+        self.assertEqual(self.javacore.jvm_info.xms, '4G')
+        self.assertIsNotNone(self.javacore.jvm_info.xmn)
+        self.assertEqual(self.javacore.jvm_info.xmn, '1G')
+
         # Verify GC policy extraction (tests _parse_gc_policy)
-        self.assertIsNotNone(self.javacore.gc_policy)
-        self.assertEqual(self.javacore.gc_policy, 'gencon')
-        
+        self.assertIsNotNone(self.javacore.jvm_info.gc_policy)
+        self.assertEqual(self.javacore.jvm_info.gc_policy, 'gencon')
+
         # Verify compressed refs detection (tests _parse_compressed_refs)
-        self.assertTrue(self.javacore.compressed_refs)
-        
+        self.assertTrue(self.javacore.jvm_info.compressed_refs)
+
         # Verify verbose GC detection (tests _parse_verbose_gc)
-        self.assertTrue(self.javacore.verbose_gc)
+        self.assertTrue(self.javacore.jvm_info.verbose_gc)
         
         # Verify thread snapshots creation (tests _parse_thread_snapshots)
         self.assertIsNotNone(self.javacore.snapshots)
@@ -148,10 +148,10 @@ class TestJavacore(unittest.TestCase):
         for jc in javacores:
             self.assertIsNotNone(jc.siginfo)
             self.assertIsNotNone(jc.datetime)
-            self.assertIsNotNone(jc.number_of_cpus)
+            self.assertIsNotNone(jc.jvm_info.number_of_cpus)
             self.assertGreater(len(jc.snapshots), 0)
-            self.assertIsNotNone(jc.xmx)
-            self.assertIsNotNone(jc.gc_policy)
+            self.assertIsNotNone(jc.jvm_info.xmx)
+            self.assertIsNotNone(jc.jvm_info.gc_policy)
 
     def test_parse_with_different_encodings(self):
         """
@@ -165,4 +165,4 @@ class TestJavacore(unittest.TestCase):
         # Verify parse() still extracted all key attributes despite different encoding
         self.assertIsNotNone(self.javacore2.siginfo)
         self.assertIsNotNone(self.javacore2.datetime)
-        self.assertIsNotNone(self.javacore2.number_of_cpus)
+        self.assertIsNotNone(self.javacore2.jvm_info.number_of_cpus)
