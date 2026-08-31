@@ -354,7 +354,10 @@ class ThreadSnapshot:
     def classify(self):
         classifier = self.javacore.javacore_set.ml_classifier  # type: ignore[union-attr]
         try:
-            self._ml_classification = classifier.predict_thread_snapshot(self)
+            if classifier is not None:
+                self._ml_classification = classifier.predict_thread_snapshot(self)
+            else:
+                self._ml_classification = ""
         except Exception as ex:
             logging.error(
                 f"ML classification failed for thread '{self.name}' "
