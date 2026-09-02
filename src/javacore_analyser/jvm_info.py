@@ -87,7 +87,6 @@ class JvmInfo:
                 elif line.startswith(MEM_SECTION):
                     return lines_read
         except Exception as e:
-            logging.exception(e)
             name = getattr(file_reader, "name", "unknown")
             msg = (
                 f"Error during processing file: {name}\n"
@@ -95,7 +94,7 @@ class JvmInfo:
                 f"line: {line}\n"
                 f"Check the exception below what happened"
             )
-            logging.error(msg)
+            logging.exception(msg)
             raise RuntimeError(msg) from e
 
     def _parse_user_args(self, line: str):
