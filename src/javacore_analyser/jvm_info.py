@@ -97,7 +97,6 @@ class JvmInfo:
             )
             logging.error(msg)
             raise RuntimeError(msg) from e
-        return lines_read
 
     def _parse_user_args(self, line: str):
         self._add_user_arg(line)
