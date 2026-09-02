@@ -133,10 +133,10 @@ class JvmInfo:
         self.gc_policy = line[line.rfind(":") + 1:].strip()
 
     def _parse_compressed_refs(self, line: str):
-        if COMPRESSED_REFS in line:
-            self.compressed_refs = True
         if NO_COMPRESSED_REFS in line:
             self.compressed_refs = False
+        elif COMPRESSED_REFS in line:
+            self.compressed_refs = True
 
     def _parse_verbose_gc(self, line: str):
         if VERBOSE_GC in line:
