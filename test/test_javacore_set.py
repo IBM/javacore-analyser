@@ -23,11 +23,11 @@ class TestJavacoreSet(unittest.TestCase):
         self.dummy_javacore_set = JavacoreSet("")
 
     def test_start_time(self):
-        self.assertEqual(self.javacore_set_from_test_data.get_jvm_start_time(), "2022/06/06 at 11:33:18:586")
+        self.assertEqual(self.javacore_set_from_test_data.jvm_info.jvm_start_time, "2022/06/06 at 11:33:18:586")
 
     def test_cmd_line(self):
-        self.assertTrue(self.javacore_set_from_test_data.get_cmd_line().startswith("C:\\jazz\\ELM703M19\\server\\jre\\bin"
-                                                                             "\\javaw"))
+        self.assertTrue(self.javacore_set_from_test_data.jvm_info.cmd_line.startswith("C:\\jazz\\ELM703M19\\server\\jre\\bin"
+                                                                                       "\\javaw"))
 
     def test_sort_snapshots(self):
         # tested in test_java_thread.py in function test_sort_snapshots
