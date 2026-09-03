@@ -102,14 +102,14 @@ class PerformanceRecommendationsPrompter(Prompter):
             str: Formatted memory usage information
         """
         memory_parts = []
-        
+        jvm_info = self.javacore_set.jvm_info
         # Add heap configuration
-        if self.javacore_set.xmx:
-            memory_parts.append(f"Max heap (Xmx): {self.javacore_set.xmx}")
-        if self.javacore_set.xms:
-            memory_parts.append(f"Initial heap (Xms): {self.javacore_set.xms}")
-        if self.javacore_set.xmn:
-            memory_parts.append(f"Young generation (Xmn): {self.javacore_set.xmn}")
+        if jvm_info and jvm_info.xmx:
+            memory_parts.append(f"Max heap (Xmx): {jvm_info.xmx}")
+        if jvm_info and jvm_info.xms:
+            memory_parts.append(f"Initial heap (Xms): {jvm_info.xms}")
+        if jvm_info and jvm_info.xmn:
+            memory_parts.append(f"Young generation (Xmn): {jvm_info.xmn}")
         
         # Add GC memory data if available
         if self.javacore_set.gc_parser and self.javacore_set.gc_parser.get_collects():
@@ -130,19 +130,19 @@ class PerformanceRecommendationsPrompter(Prompter):
             str: Formatted application parameters
         """
         params = []
-        
-        if self.javacore_set.number_of_cpus:
-            params.append(f"CPUs: {self.javacore_set.number_of_cpus}")
-        if self.javacore_set.gc_policy:
-            params.append(f"GC Policy: {self.javacore_set.gc_policy}")
-        if self.javacore_set.compressed_refs:
-            params.append(f"Compressed References: {self.javacore_set.compressed_refs}")
-        if self.javacore_set.java_version:
-            params.append(f"Java Version: {self.javacore_set.java_version}")
-        if self.javacore_set.os_level:
-            params.append(f"OS: {self.javacore_set.os_level}")
-        if self.javacore_set.cmd_line: 
-            params.append(f"Command Line: {self.javacore_set.cmd_line}")
+        jvm_info = self.javacore_set.jvm_info
+        if jvm_info and jvm_info.number_of_cpus:
+            params.append(f"CPUs: {jvm_info.number_of_cpus}")
+        if jvm_info and jvm_info.gc_policy:
+            params.append(f"GC Policy: {jvm_info.gc_policy}")
+        if jvm_info and jvm_info.compressed_refs:
+            params.append(f"Compressed References: {jvm_info.compressed_refs}")
+        if jvm_info and jvm_info.java_version:
+            params.append(f"Java Version: {jvm_info.java_version}")
+        if jvm_info and jvm_info.os_level:
+            params.append(f"OS: {jvm_info.os_level}")
+        if jvm_info and jvm_info.cmd_line:
+            params.append(f"Command Line: {jvm_info.cmd_line}")
         
         return ", ".join(params) if params else "No parameter data available"
 

@@ -1,5 +1,5 @@
 #
-# Copyright IBM Corp. 2024 - 2025
+# Copyright IBM Corp. 2024 - 2026
 # SPDX-License-Identifier: Apache-2.0
 #
 
@@ -7,32 +7,16 @@ import codecs
 import datetime
 import logging
 import os.path
-import re
 from typing import Any, Optional
 
 from javacore_analyser.constants import (
-    ARCHITECTURE,
-    CMD_LINE,
-    COMPRESSED_REFS,
-    CPU_NUMBER_TAG,
+    CURRENT_THREAD_INFO,
     DATETIME,
     ENCODING,
-    GC_POLICY,
-    JAVA_VERSION,
-    MEM_SECTION,
-    NO_COMPRESSED_REFS,
-    OS_LEVEL,
     SIGINFO,
-    STARTTIME,
     THREAD_INFO,
-    UNKNOWN,
-    USER_ARGS,
-    VERBOSE_GC,
-    XMN,
-    XMS,
-    XMX,
-    CURRENT_THREAD_INFO,
 )
+from javacore_analyser.jvm_info import JvmInfo
 from javacore_analyser.thread_snapshot import ThreadSnapshot
 
 
@@ -58,20 +42,7 @@ class Javacore:
         self.__total_cpu: float = -1
         self.__load: float = -1
         self.__encoding: Optional[str] = None
-
-        self.number_of_cpus: Optional[str] = None  # number of cpus the VM is using
-        self.xmx: str = ""
-        self.xms: str = ""
-        self.xmn: str = ""
-        self.gc_policy: str = ""
-        self.compressed_refs: bool = False
-        self.verbose_gc: bool = False
-        self.os_level: str = ""
-        self.architecture: str = ""
-        self.java_version: str = ""
-        self.jvm_start_time: str = ""
-        self.cmd_line: str = ""
-        self.user_args: list[str] = []
+        self.jvm_info: JvmInfo = JvmInfo()
         self.curr_line: str = ""
         self.line_num: int = 0
 
@@ -88,7 +59,7 @@ class Javacore:
             self.file_reader = codecs.open(self.filename, encoding=self.get_encoding(), errors='strict')  # type: ignore[arg-type]
             self._parse_siginfo()
             self._parse_datetime()
-            self._parse_header_data()
+            self.line_num += self.jvm_info.parse(self.file_reader)
             self._parse_thread_snapshots()
         except UnicodeDecodeError as e:
             msg: str = "Unicode, decode error in file {}. Error message: {}".format(self.basefilename(), e)
@@ -117,112 +88,6 @@ class Javacore:
                 self.timestamp = self.datetime.timestamp()
                 break
 
-    def _parse_header_data(self):
-        i = 0
-        try:
-            while True:
-                self.line = self.file_reader.readline()
-                self.line_num += 1
-                i += 1
-                if self.line.startswith(CPU_NUMBER_TAG):  # for example: 3XHNUMCPUS       How Many       : 16
-                    self.number_of_cpus = self.line.split()[-1]
-                    continue
-                elif self.line.startswith(USER_ARGS):
-                    self._parse_user_args(self.line)
-                    continue
-                elif self.line.startswith(OS_LEVEL):
-                    self.os_level = self.line[self.line.rfind(":") + 1:].strip()
-                    continue
-                elif self.line.startswith(ARCHITECTURE):
-                    self.architecture = self.line[self.line.rfind(":") + 1:].strip()
-                    continue
-                elif self.line.startswith(JAVA_VERSION):
-                    self.java_version = self.line[len(JAVA_VERSION) + 1:].strip()
-                    continue
-                elif self.line.startswith(STARTTIME):
-                    self.jvm_start_time = self.line[self.line.find(":") + 1:].strip()
-                    continue
-                elif self.line.startswith(CMD_LINE):
-                    self.cmd_line = self.line[len(CMD_LINE) + 1:].strip()
-                    continue
-                elif self.line.startswith(MEM_SECTION): # end of header data section
-                    return
-        except Exception as e:
-            logging.exception(e)
-            msg = f'Error during processing file: unknown\nCheck the exception below what happened'
-            if self.file_reader is not None:
-                msg = f'Error during processing file: {self.file_reader.name} \n' \
-                      f'line number: {self.line_num} \n' \
-                      f'line: {self.line}\n' \
-                      f'Check the exception below what happened'
-                logging.error(msg)
-            raise CorruptedJavacoreException(msg) from e
-
-    def _parse_user_args(self, line):
-        self._add_user_arg(line)
-        if line.__contains__(XMX): self._parse_xmx(line)
-        if line.__contains__(XMS): self._parse_xms(line)
-        if line.__contains__(XMN): self._parse_xmn(line)
-        if line.__contains__(GC_POLICY): self._parse_gc_policy(line)
-        if line.__contains__(COMPRESSED_REFS) or line.__contains__(NO_COMPRESSED_REFS): self._parse_compressed_refs(line)
-        if line.__contains__(VERBOSE_GC): self._parse_verbose_gc(line)
-
-    def _parse_mem_arg(self, line):
-        line = line.split()[-1]  # avoid matching the '2' in tag name 2CIUSERARG
-        tokens = re.findall(r"\d+[KkMmGg]?$", line)
-        if len(tokens) != 1: return UNKNOWN
-        return tokens[0]
-    
-    def _parse_xmx(self, line):
-        self.xmx = self._parse_mem_arg(line)
-
-    def _parse_xms(self, line):
-        self.xms = self._parse_mem_arg(line)
-
-    def _parse_xmn(self, line):
-        self.xmn = self._parse_mem_arg(line)
-
-    def _parse_gc_policy(self, line):
-        self.gc_policy = line[line.rfind(":") + 1:].strip()
-
-    def _parse_compressed_refs(self, line):
-        if line.__contains__(COMPRESSED_REFS): self.compressed_refs = True
-        if line.__contains__(NO_COMPRESSED_REFS): self.compressed_refs = False
-
-    def _parse_verbose_gc(self, line):
-        if line.__contains__(VERBOSE_GC): self.verbose_gc = True
-
-    def _add_user_arg(self, line):
-        # 2CIUSERARG               -Djava.lang.stringBuffer.growAggressively=false
-        # Search for - and trim everything before
-        # (from https://stackoverflow.com/questions/30945784/how-to-remove-all-characters-before-a-specific
-        # -character-in-python)
-        arg = line[line.find('-'):].rstrip()
-        logging.debug("User arg: " + arg)
-        self.user_args.append(arg)
-    
-    def _parse_thread_snapshots(self):
-        """ creates a ThreadSnapshot object for each "3XMTHREADINFO" tag found in the javacore """
-        try:
-            while True:
-                self.line = self.file_reader.readline()
-                self.line_num += 1
-                if not self.line:
-                    break
-                self.line = self.encode(self.line)
-                if self.line.startswith(THREAD_INFO):
-                    self.line = self.process_thread_name(self.line)
-                    snapshot = ThreadSnapshot.create(self.line, self.file_reader, self)
-                    self.snapshots.append(snapshot)
-        except Exception as e:
-            msg: str = "Corrupted javacore file {} \n" \
-                        "Error message: {} \n" \
-                        "Line number: {} \n" \
-                        "Previous line: {} \n" \
-                        .format(self.basefilename(), e, str(self.line_num), self.line)
-            raise CorruptedJavacoreException(msg) from e
-
-
     def is_interesting(self):  # method is to be overloaded in subclasses, ignore the static warning
         return True
 
@@ -236,7 +101,7 @@ class Javacore:
         for s in self.snapshots:
             self.__total_cpu += s.get_cpu_percentage()
         self.__load = self.__total_cpu / 100
-        self.__total_cpu /= int(self.number_of_cpus)  # type: ignore[arg-type,operator]
+        self.__total_cpu /= int(self.jvm_info.number_of_cpus)  # type: ignore[arg-type,operator]
 
     def get_load(self):
         if self.__load == -1:
@@ -283,22 +148,20 @@ class Javacore:
 
     def _parse_thread_snapshots(self):
         """ creates a ThreadSnapshot object for each "3XMTHREADINFO" tag found in the javacore """
-        file = codecs.open(self.filename, encoding=self.get_encoding(), errors='strict')
         line = ""
-        line_num = 0
         is_current = False
         try:
             while True:
-                line = file.readline()
-                line_num += 1
+                line = self.file_reader.readline()
+                self.line_num += 1
                 if not line:
                     break
                 line = self.encode(line)
                 if line.startswith(CURRENT_THREAD_INFO):
                     is_current = True
                 elif line.startswith(THREAD_INFO):
-                    self.line = self.process_thread_name(self.line)
-                    snapshot = ThreadSnapshot.create(line, file, self, is_current=is_current)
+                    line = self.process_thread_name(line)
+                    snapshot = ThreadSnapshot.create(line, self.file_reader, self, is_current=is_current)
                     if is_current:
                         self.current_thread = snapshot
                         is_current = False
@@ -308,10 +171,8 @@ class Javacore:
                        "Error message: {} \n" \
                        "Line number: {} \n" \
                        "Previous line: {} \n" \
-                       .format(self.basefilename(), e, str(line_num), line)
+                       .format(self.basefilename(), e, str(self.line_num), line)
             raise CorruptedJavacoreException(msg) from e
-        finally:
-            file.close()
 
     def process_thread_name(self, line):
         count = line.count('"')
