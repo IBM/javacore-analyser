@@ -166,6 +166,8 @@ logger.info("Starting plugin discovery")
 
 For the full release procedure see [CONTRIBUTING.md — Releasing a new version](CONTRIBUTING.md#releasing-a-new-version).
 
+Use [`release.sh`](release.sh) to run the release procedure from the project root. Run `bash release.sh <VERSION>` for all steps, or `bash release.sh <VERSION> --from <STEP>` to resume at a specific step.
+
 Summary of steps:
 1. Ensure you are on `main` and the branch is clean.
 2. Create and push a version tag: `git tag <version> && git push --tags`
