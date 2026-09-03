@@ -51,10 +51,10 @@ class HuggingFaceLLM(LLM):
     def infuse(self, prompter):
         prompt = prompter.construct_prompt()
         logging.debug("Infusing prompt: " + prompt)
-        chat = [
+        chat_messages = [
             {"role": "user", "content": prompt},
         ]
-        chat = self.tokenizer.apply_chat_template(chat, tokenize=False, add_generation_prompt=True)
+        chat = self.tokenizer.apply_chat_template(chat_messages, tokenize=False, add_generation_prompt=True)
         # tokenize the text
         input_tokens = self.tokenizer(chat, return_tensors="pt").to(self.device)
         

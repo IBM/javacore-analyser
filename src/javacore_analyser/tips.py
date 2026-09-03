@@ -3,9 +3,11 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 import logging
+import os
 import re
 
 from javacore_analyser.properties import Properties
+from javacore_analyser.har_file import HttpCall
 
 # This is a module containing list of the tips.
 # Each tip has to implement dynamic method generate(javacore_set)
@@ -13,7 +15,8 @@ from javacore_analyser.properties import Properties
 # List of the tips on which run the tool
 TIPS_LIST = ["DifferentIssuesTip", "ExcludedJavacoresTip", "InvalidAccumulatedCpuTimeTip", "TooFewJavacoresTip",
              "OOMEGenerationTip", "BlockingThreadsTip", "HighCpuUsageTip", "LongGcPauseTip",
-             "SystemExitInMainThreadTip", "PermanentlyBlockedThreadsTip"]
+             "SystemExitInMainThreadTip", "PermanentlyBlockedThreadsTip",
+             "FailingHttpCallsTip", "LongHttpCallsTip"]
 
 
 def get_thread_link(javacore_set, thread_name):
@@ -88,7 +91,7 @@ def linkify_ai_response(javacore_set, text):
         key=len, reverse=True
     )
 
-    claimed_spans = []
+    claimed_spans: list[tuple[int, int]] = []
 
     def overlaps_claimed(start, end):
         return any(start < c_end and end > c_start for c_start, c_end in claimed_spans)
@@ -234,7 +237,8 @@ class TooFewJavacoresTip:
         if jc_number == 1:
             return [TooFewJavacoresTip.ONE_JAVACORE_WARNING]
         if jc_number == 0:
-            return [TooFewJavacoresTip.NO_JAVACORES_INFO]
+            # return [TooFewJavacoresTip.NO_JAVACORES_INFO]
+            return [] #Assuming that we have hars or verbose gc data. No tip is needed.
         elif jc_number < TooFewJavacoresTip.MIN_NUMBER_OF_JAVACORES:
             return [TooFewJavacoresTip.NOT_ENOUGH_JAVACORES_MESSAGE.format(jc_number)]
         else:
@@ -440,3 +444,79 @@ class SystemExitInMainThreadTip:
                         return [msg]
 
         return []  # No System.exit detected in any thread
+
+
+class FailingHttpCallsTip:
+    # Generates a tip for failing HTTP calls in HAR files.
+
+    MAX_TIPS = 5
+    FAILING_CALLS_WARNING = """[WARNING] Detected {0} failing HTTP call(s) in HAR file {1}.
+    Example failing call: {2} {3} returned status {4}."""
+
+    @staticmethod
+    def generate(javacore_set):
+        result = []
+        for har_file in javacore_set.har_files:
+            failing_calls = []
+            for page in har_file.har.pages:
+                for entry in page.entries:
+                    http_call = HttpCall(entry)
+                    if not http_call._calculate_success():
+                        failing_calls.append(http_call)
+            
+            if failing_calls:
+                filename = os.path.basename(har_file.path)
+                example = failing_calls[0]
+                msg = FailingHttpCallsTip.FAILING_CALLS_WARNING.format(
+                    len(failing_calls),
+                    filename,
+                    example.method,
+                    example.url,
+                    example.status
+                )
+                result.append(msg)
+                if len(result) >= FailingHttpCallsTip.MAX_TIPS:
+                    break
+        return result
+
+
+class LongHttpCallsTip:
+    # Generates a tip for HTTP calls that are longer than a threshold.
+
+    THRESHOLD = 5000  # 5 seconds
+    MAX_TIPS = 5
+    LONG_CALLS_WARNING = """[WARNING] Detected {0} HTTP call(s) longer than {1}ms in HAR file {2}.
+    The longest call took {3:.0f}ms: {4} {5}."""
+
+    @staticmethod
+    def generate(javacore_set):
+        result = []
+        for har_file in javacore_set.har_files:
+            long_calls = []
+            longest_duration = -1
+            longest_call = None
+            
+            for page in har_file.har.pages:
+                for entry in page.entries:
+                    http_call = HttpCall(entry)
+                    duration = http_call.get_total_time()
+                    if duration > LongHttpCallsTip.THRESHOLD:
+                        long_calls.append(http_call)
+                    if duration > longest_duration:
+                        longest_duration = duration
+                        longest_call = http_call
+            
+            if long_calls and longest_call:
+                filename = os.path.basename(har_file.path)
+                msg = LongHttpCallsTip.LONG_CALLS_WARNING.format(
+                    len(long_calls),
+                    LongHttpCallsTip.THRESHOLD,
+                    filename,
+                    longest_duration,
+                    longest_call.method,
+                    longest_call.url
+                )
+                result.append(msg)
+                if len(result) >= LongHttpCallsTip.MAX_TIPS:
+                    break
+        return result

@@ -69,6 +69,11 @@
                                                     <xsl:value-of select="preceding-sibling::thread_name"/>
                                                 </a>
                                                 <xsl:choose>
+                                                    <xsl:when test="@is_current_thread='true'">
+                                                        <b style="color: #d9534f; margin-left: 5px;">[Current Thread]</b>
+                                                    </xsl:when>
+                                                </xsl:choose>
+                                                <xsl:choose>
                                                     <xsl:when test="stack_depth &gt; 0">
                                                     <div>
                                                         <div class="toggle_expand">

@@ -44,7 +44,8 @@ def create_temp_data_in_reports_dir(directory):
 def index():
     reports = [{"name": Path(f).name, "date": time.ctime(os.path.getctime(f)), "timestamp": os.path.getctime(f)}
                for f in os.scandir(reports_dir) if f.is_dir() and Path(f).name is not TEMP_DIR]
-    reports.sort(key=lambda item: item["timestamp"], reverse=True)
+    reports.sort(key=lambda item: item["timestamp"])  # type: ignore[arg-type,return-value]
+    reports.reverse()
     return render_template('index.html', reports=reports)
 
 
@@ -98,13 +99,13 @@ def delete(path):
 @app.route('/upload', methods=['POST'])
 def upload_file():
 
-    report_name = request.values.get("report_name")
+    report_name = request.values.get("report_name") or ""
     report_name = re.sub(r'[^a-zA-Z0-9]', '_', report_name)
 
     # Create a temporary directory to store uploaded files
     # Note We have to use permanent files and then delete them.
     # tempfile.Temporary_directory function does not work when you want to access files from another threads.
-    javacores_temp_dir_name = os.path.normpath(os.path.join(reports_dir, TEMP_DIR, report_name))
+    javacores_temp_dir_name = os.path.normpath(os.path.join(reports_dir, TEMP_DIR, report_name or ""))
     if not javacores_temp_dir_name.startswith(reports_dir):
         raise Exception("Security exception: Uncontrolled data used in path expression")
 
@@ -117,7 +118,7 @@ def upload_file():
         input_files = []
         # Iterate for each file in the files List, and Save them
         for file in files:
-            file_name = os.path.join(javacores_temp_dir_name, file.filename)
+            file_name = os.path.join(javacores_temp_dir_name, file.filename or "")
             file.save(file_name)
             input_files.append(file_name)
 

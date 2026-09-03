@@ -6,39 +6,53 @@ import logging
 import os
 import re
 from datetime import datetime
+from typing import TYPE_CHECKING, Any, Optional
 
-from javacore_analyser.constants import *
+from javacore_analyser.constants import (
+    ALLOCATED_MEM,
+    CPU_TIME,
+    NATIVE_STACK_TRACE,
+    STACK_TRACE,
+    THREAD_BLOCK,
+    THREAD_ID,
+    UNKNOWN,
+)
 from javacore_analyser.stack_trace import StackTrace
 from javacore_analyser.stack_trace_element import StackTraceElement
 from javacore_analyser.stack_trace_kind import StackTraceKind
+
+if TYPE_CHECKING:
+    from javacore_analyser.javacore import Javacore
 
 
 class ThreadSnapshot:
 
     def __init__(self):
         """ dummy constructor for tests only """
-        self.cpu_usage = 0
-        self.allocated_mem = 0
-        self.name = None
-        self.thread_id = None
-        self.thread_address = None
-        self.thread = None
-        self.javacore = None
-        self.blocker = None
-        self.blocker_name = None
-        self.stack_trace = None
-        self.file_reader = None
-        self.state = UNKNOWN
-        self.elapsed_time = None
-        self.cpu_usage_inc = None
-        self.blocking = set()  # set of snapshots blocking by this thread
-        self._ml_classification = None
+        self.cpu_usage: float = 0
+        self.allocated_mem: int = 0
+        self.name: Optional[str] = None
+        self.thread_id: Optional[str] = None
+        self.thread_address: Optional[str] = None
+        self.thread: Any = None
+        self.javacore: Optional["Javacore"] = None
+        self.blocker: Optional["ThreadSnapshot"] = None
+        self.blocker_name: Optional[str] = None
+        self.stack_trace: Optional[StackTrace] = None
+        self.file_reader: Any = None
+        self.state: str = UNKNOWN
+        self.elapsed_time: Optional[float] = None
+        self.cpu_usage_inc: Optional[float] = None
+        self.blocking: set = set()  # set of snapshots blocking by this thread
+        self._ml_classification: Optional[str] = None
+        self.is_current_thread: Optional[bool] = False
 
     @staticmethod
-    def create(line, file_reader, javacore):
+    def create(line, file_reader, javacore, is_current=False):
         snapshot = ThreadSnapshot()
         snapshot.file_reader = file_reader
         snapshot.javacore = javacore
+        snapshot.is_current_thread = is_current
         snapshot.name = snapshot.get_thread_name(line)
         snapshot.thread_address = snapshot.get_thread_address(line)
         snapshot.parse_state(line)
@@ -49,9 +63,9 @@ class ThreadSnapshot:
         """Parses cpu time line and allocated memory line from provided file and saves as instance attributes"""
         while True:
             line = self.file_reader.readline()
-            self.javacore.line_num += 1
-            self.javacore.line = line
-            line = self.javacore.encode(line)
+            self.javacore.line_num += 1  # type: ignore[union-attr]
+            self.javacore.line = line  # type: ignore[union-attr]
+            line = self.javacore.encode(line)  # type: ignore[union-attr]
             if not line: break
             if line.startswith("NULL"): break
             if line.startswith(THREAD_ID): self.parse_thread_id(line)
@@ -74,7 +88,7 @@ class ThreadSnapshot:
             if i > 1: name = name + "?"
             name = name + tokens[i]
         name = name.strip()
-        name = self.javacore.encode(name)
+        name = self.javacore.encode(name)  # type: ignore[union-attr]
 
         # fix for https://trello.com/c/W0tS9b4K/116-processing-javacores-fail-with-xmletreeelementtreeparseerror-not-
         # well-formed-invalid-token-line-1-column-13722
@@ -138,8 +152,8 @@ class ThreadSnapshot:
         m = re.search("CPU usage total: ([0-9]+\\.[0-9]+) secs,", line)
 
         try:
-            token = m.group(1)
-            self.cpu_usage = float(token)
+            token = m.group(1)  # type: ignore[union-attr]
+            self.cpu_usage = float(token)  # type: ignore[assignment]
         except Exception as ex:
             logging.warning(ex)
             self.cpu_usage = 0
@@ -150,7 +164,7 @@ class ThreadSnapshot:
         # self.cpu_usage = float(tokens[0])  # assuming the first number is the CPU usage total
 
     def get_timestamp(self):
-        return self.javacore.timestamp
+        return self.javacore.timestamp  # type: ignore[union-attr]
 
     def parse_allocated_mem(self, line):
         """ assuming line format:
@@ -179,7 +193,7 @@ class ThreadSnapshot:
     def get_blocker(self):
         if not self.blocker_name: return None
         if not self.blocker:
-            self.blocker = self.javacore.get_snapshot_by_name(self.blocker_name)
+            self.blocker = self.javacore.get_snapshot_by_name(self.blocker_name)  # type: ignore[union-attr]
         return self.blocker
 
     def get_blocker_name(self):
@@ -205,16 +219,18 @@ class ThreadSnapshot:
         return len(self.stack_trace.stack_trace_elements)
 
     def __str__(self):
-        s = self.name + '(' + str(self.thread_id) + ') ' \
+        s = (self.name or '') + '(' + str(self.thread_id) + ') ' \
             + "State: " + self.state \
             + " Blocking thread: " + self.get_blocker_name()
-        s = str.encode(s, self.javacore.get_encoding(), 'ignore').decode('utf-8', 'ignore')
+        s = str.encode(s, self.javacore.get_encoding(), 'ignore').decode('utf-8', 'ignore')  # type: ignore[union-attr]
         return s
 
     def get_xml(self, doc, thread_snapshot_node):
         file_name = ""
         if self.file_reader:
-            file_name = self.javacore.filename.split(os.sep)[-1].strip()
+            file_name = str(self.javacore.filename).split(os.sep)[-1].strip()  # type: ignore[union-attr]
+        if self.is_current_thread:
+            thread_snapshot_node.setAttribute("is_current_thread", "true")
         # CPU usage
         cpu_usage_node = doc.createElement("cpu_usage")
         cpu_usage_node.appendChild(doc.createTextNode(str(self.get_cpu_usage_inc())))
@@ -238,7 +254,7 @@ class ThreadSnapshot:
         # timestamp
         timestamp_node = doc.createElement("timestamp")
         timestamp_node.appendChild(
-            doc.createTextNode(datetime.fromtimestamp(self.javacore.timestamp).strftime('%d-%m-%y %H:%M:%S')))
+            doc.createTextNode(datetime.fromtimestamp(self.javacore.timestamp).strftime('%d-%m-%y %H:%M:%S')))  # type: ignore[union-attr,arg-type]
         thread_snapshot_node.appendChild(timestamp_node)
         # elapsed time
         elapsed_time_node = doc.createElement("elapsed_time")
@@ -299,7 +315,7 @@ class ThreadSnapshot:
         if previous is None:
             self.elapsed_time = 0
         else:
-            self.elapsed_time = self.javacore.timestamp - previous.javacore.timestamp
+            self.elapsed_time = self.javacore.timestamp - previous.javacore.timestamp  # type: ignore[union-attr,operator]
 
     def get_elapsed_time(self):
         if self.elapsed_time is None: self.compute_elapsed_time()
@@ -331,14 +347,17 @@ class ThreadSnapshot:
                 stack_trace_element.set_line(line)
                 stack_trace.stack_trace_elements.append(stack_trace_element)
             line = self.file_reader.readline()
-            self.javacore.line_num += 1
-            self.javacore.line = line
+            self.javacore.line_num += 1  # type: ignore[union-attr]
+            self.javacore.line = line  # type: ignore[union-attr]
         self.stack_trace = stack_trace
 
     def classify(self):
-        classifier = self.javacore.javacore_set.ml_classifier
+        classifier = self.javacore.javacore_set.ml_classifier  # type: ignore[union-attr]
         try:
-            self._ml_classification = classifier.predict_thread_snapshot(self)
+            if classifier is not None:
+                self._ml_classification = classifier.predict_thread_snapshot(self)
+            else:
+                self._ml_classification = ""
         except Exception as ex:
             logging.error(
                 f"ML classification failed for thread '{self.name}' "

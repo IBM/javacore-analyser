@@ -185,7 +185,7 @@ class VerboseGcFile:
         return None
 
     def get_collects(self):
-        collects = []
+        collects: list = []
         self.__total_number_of_collects = 0
         if self.__root is None:
             return collects
