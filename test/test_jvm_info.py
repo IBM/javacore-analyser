@@ -31,7 +31,7 @@ class TestJvmInfo(unittest.TestCase):
         self.assertEqual(jvm_info.os_level, "Windows 10 10.0")
         self.assertEqual(jvm_info.architecture, "amd64")
         self.assertEqual(jvm_info.jvm_start_time, "2023/01/05 at 13:56:13:727")
-        self.assertTrue(len(jvm_info.user_args) > 0)
+        self.assertGreater(len(jvm_info.user_args), 0)
         self.assertIn("-Xmx4G", jvm_info.user_args)
         self.assertIn("-Xms4G", jvm_info.user_args)
         self.assertIn("-Xmn1G", jvm_info.user_args)
