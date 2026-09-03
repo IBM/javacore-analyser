@@ -28,51 +28,51 @@
                 <tbody>
                     <tr>
                         <td>Number of CPUs</td>
-                        <td class="left"><xsl:value-of select="doc/system_info/number_of_cpus"/></td>
+                        <td class="left"><xsl:value-of select="doc/system_info/jvm_info/number_of_cpus"/></td>
                     </tr>
                     <tr>
                         <td>Xmx</td>
-                        <td class="left"><xsl:value-of select="doc/system_info/xmx"/></td>
+                        <td class="left"><xsl:value-of select="doc/system_info/jvm_info/xmx"/></td>
                     </tr>
                     <tr>
                         <td>Xms</td>
-                        <td class="left"><xsl:value-of select="doc/system_info/xms"/></td>
+                        <td class="left"><xsl:value-of select="doc/system_info/jvm_info/xms"/></td>
                     </tr>
                     <tr>
                         <td>Xmn</td>
-                        <td class="left"><xsl:value-of select="doc/system_info/xmn"/></td>
+                        <td class="left"><xsl:value-of select="doc/system_info/jvm_info/xmn"/></td>
                     </tr>
                     <tr>
                         <td>Verbose GC</td>
-                        <td class="left"><xsl:value-of select="doc/system_info/verbose_gc"/></td>
+                        <td class="left"><xsl:value-of select="doc/system_info/jvm_info/verbose_gc"/></td>
                     </tr>
                     <tr>
                         <td>GC policy</td>
-                        <td class="left"><xsl:value-of select="doc/system_info/gc_policy"/></td>
+                        <td class="left"><xsl:value-of select="doc/system_info/jvm_info/gc_policy"/></td>
                     </tr>
                     <tr>
                         <td>Compressed refs</td>
-                        <td class="left"><xsl:value-of select="doc/system_info/compressed_refs"/></td>
+                        <td class="left"><xsl:value-of select="doc/system_info/jvm_info/compressed_refs"/></td>
                     </tr>
                     <tr>
                         <td>Architecture</td>
-                        <td class="left"><xsl:value-of select="doc/system_info/architecture"/></td>
+                        <td class="left"><xsl:value-of select="doc/system_info/jvm_info/architecture"/></td>
                     </tr>
                     <tr>
                         <td>Java version</td>
-                        <td class="left"><xsl:value-of select="doc/system_info/java_version"/></td>
+                        <td class="left"><xsl:value-of select="doc/system_info/jvm_info/java_version"/></td>
                     </tr>
                     <tr>
                         <td>Os level</td>
-                        <td class="left"><xsl:value-of select="doc/system_info/os_level"/></td>
+                        <td class="left"><xsl:value-of select="doc/system_info/jvm_info/os_level"/></td>
                     </tr>
                     <tr>
                         <td>JVM startup time</td>
-                        <td class="left"><xsl:value-of select="doc/system_info/jvm_start_time"/></td>
+                        <td class="left"><xsl:value-of select="doc/system_info/jvm_info/jvm_start_time"/></td>
                     </tr>
                      <tr>
                         <td>Command line</td>
-                        <td class="left"><xsl:value-of select="doc/system_info/cmd_line"/></td>
+                        <td class="left"><xsl:value-of select="doc/system_info/jvm_info/cmd_line"/></td>
                     </tr>
                 </tbody>
             </table>
@@ -80,7 +80,7 @@
             <table id="java_arguments_table" class="tablesorter">
                 <thead><th>Argument</th></thead>
                 <tbody>
-                    <xsl:for-each select="doc/system_info/user_args_list/user_arg ">
+                    <xsl:for-each select="doc/system_info/jvm_info/user_args_list/user_arg ">
                         <tr><td class="left"><xsl:value-of select="current()"/></td></tr>
                     </xsl:for-each>
                 </tbody>
