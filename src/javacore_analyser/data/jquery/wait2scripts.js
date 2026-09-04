@@ -17,24 +17,65 @@ const MB_SIZE = Math.pow(1024, 2);
 
 /**
  * Zoom/pan plugin configuration reused by every chart.
- * Allows wheel zoom, pinch zoom and panning on both axes,
- * clamped to the original data range.
+ *
+ *   - Mouse wheel / pinch  → zoom in/out
+ *   - Plain drag           → draw a rectangle and zoom into it
  */
 const ZOOM_PLUGIN_CONFIG = {
   zoom: {
     wheel: { enabled: true },
     pinch: { enabled: true },
+    drag: {
+      enabled: true,
+      backgroundColor: 'rgba(54,162,235,0.15)',
+      borderColor: 'rgba(54,162,235,0.8)',
+      borderWidth: 1,
+    },
     mode: 'xy',
   },
   pan: {
-    enabled: true,
-    mode: 'xy',
+    enabled: false,
   },
   limits: {
     x: { min: 'original', max: 'original' },
     y: { min: 'original', max: 'original' },
   },
 };
+
+/**
+ * Returns a deep copy of ZOOM_PLUGIN_CONFIG so each chart gets its own
+ * independent options object.  The plugin stores state (originalScaleLimits,
+ * updatedScaleLimits, etc.) inside the options reference it receives; sharing
+ * a single object across charts would cause those internal mutations to bleed
+ * between charts.
+ * @returns {object}
+ */
+function zoomPluginConfig() {
+  return JSON.parse(JSON.stringify(ZOOM_PLUGIN_CONFIG));
+}
+
+/**
+ * Inserts a reset-zoom button directly above the chart canvas.
+ * Called just before each chart is created (after all early-return guards).
+ *
+ * @param {string} canvasId  The id of the <canvas> element.
+ * @param {Chart}  chart     The Chart.js instance to reset.
+ */
+function createChartResetButton(canvasId, chart) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+
+  const btn = document.createElement('button');
+  btn.className = 'chart-toolbar-btn';
+  btn.textContent = 'Reset zoom';
+  btn.title = 'Reset to full view';
+  btn.addEventListener('click', function() { chart.resetZoom(); });
+
+  const toolbar = document.createElement('div');
+  toolbar.className = 'chart-toolbar';
+  toolbar.appendChild(btn);
+  canvas.parentNode.insertBefore(toolbar, canvas);
+}
 
 /**
  * displayFormats for time-based X axes.  Shared by the GC, CPU and
@@ -176,7 +217,7 @@ const loadChartCPUUsage = function() {
     totalCPUs.push(TOTAL_CPU_PERCENTAGE);
   }
 
-  new Chart(ctx, {
+  const cpuChart = new Chart(ctx, {
     type: 'bar',
     responsive: true,
     data: {
@@ -210,10 +251,11 @@ const loadChartCPUUsage = function() {
         },
       },
       plugins: {
-        zoom: ZOOM_PLUGIN_CONFIG,
+        zoom: zoomPluginConfig(),
       },
     },
   });
+  createChartResetButton('myChartCPUUsage', cpuChart);
 };
 
 // ---------------------------------------------------------------------------
@@ -311,7 +353,7 @@ const loadChartGC = function() {
     labels.push(gcEndTime.valueOf());
   });
 
-  new Chart(ctx, {
+  const gcChart = new Chart(ctx, {
     type: 'line',
     responsive: true,
     data: {
@@ -420,10 +462,11 @@ const loadChartGC = function() {
         },
       },
       plugins: {
-        zoom: ZOOM_PLUGIN_CONFIG,
+        zoom: zoomPluginConfig(),
       },
     },
   });
+  createChartResetButton('myChartGC', gcChart);
 
   console.log('GC Chart created successfully');
 };
@@ -450,7 +493,7 @@ const loadChart = function() {
     }
   }
 
-  new Chart(ctx, {
+  const threadChart = new Chart(ctx, {
     type: 'bar',
     responsive: true,
     data: {
@@ -489,10 +532,11 @@ const loadChart = function() {
         },
       },
       plugins: {
-        zoom: ZOOM_PLUGIN_CONFIG,
+        zoom: zoomPluginConfig(),
       },
     },
   });
+  createChartResetButton('myChart', threadChart);
 };
 
 // ---------------------------------------------------------------------------
@@ -551,7 +595,7 @@ const loadChartThreadClassifications = function() {
     };
   });
 
-  new Chart(ctx, {
+  const classificationChart = new Chart(ctx, {
     type: 'line',
     responsive: true,
     data: {
@@ -573,10 +617,11 @@ const loadChartThreadClassifications = function() {
         },
       },
       plugins: {
-        zoom: ZOOM_PLUGIN_CONFIG,
+        zoom: zoomPluginConfig(),
       },
     },
   });
+  createChartResetButton('myChartThreadClassifications', classificationChart);
 
   console.log('Thread classifications chart created successfully');
 };
