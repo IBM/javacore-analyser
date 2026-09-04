@@ -5,6 +5,9 @@
 
 import os
 import unittest
+import tempfile
+
+from xml.dom.minidom import parse
 
 from javacore_analyser.jvm_info import JvmInfo
 from javacore_analyser.javacore_set import JavacoreSet
@@ -60,8 +63,6 @@ class TestJvmInfo(unittest.TestCase):
         self.assertEqual(jvm_info.jvm_start_time, "2023/01/05 at 13:56:13:727")
 
     def test_javacore_set_report_xml_has_system_info_with_only_verbose_gc(self):
-        import tempfile
-        from xml.dom.minidom import parse
         with tempfile.TemporaryDirectory() as tmp_dir:
             jset = JavacoreSet.create(self.verbose_gc_dir)
             report_path = os.path.join(tmp_dir, "report.xml")

@@ -629,7 +629,7 @@ class JavacoreSet:
             tip_node.appendChild(self.doc.createTextNode(tip))
         tips_node.setAttribute("ai_tips", self.ai_tips)
 
-        # Only add system info details if javacores are present
+        # Add system info details if jvm_info is available
         if system_info_node is not None:
             if self.jvm_info is not None:
                 system_info_node.appendChild(self.jvm_info.to_xml(doc))

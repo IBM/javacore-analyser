@@ -115,6 +115,7 @@ class JvmInfo:
             # Find the initialized element
             initialized_nodes = root.getElementsByTagName("initialized")
             if not initialized_nodes:
+                logging.warning(f"No <initialized> element found in verbosegc file: {file_path}. System information will not be available.")
                 return
             initialized_node = initialized_nodes[0]
 
