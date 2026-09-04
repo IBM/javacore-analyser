@@ -126,6 +126,7 @@ class JavacoreSet:
         self.threads = SnapshotCollectionCollection(Thread)
         self.stacks = SnapshotCollectionCollection(CodeSnapshotCollection)
         self.report_xml_file: Optional[str] = None
+        self._jvm_info: Optional[JvmInfo] = None
 
         #self.ai_overview = ""
         self.ai_tips: str = ""
@@ -287,10 +288,10 @@ class JavacoreSet:
 
     @property
     def jvm_info(self) -> Optional[JvmInfo]:
-        """Return the :class:`JvmInfo` from the first parsed javacore, or ``None``."""
+        """Return the :class:`JvmInfo` from the first parsed javacore, or from verbose gc if no javacores, or ``None``."""
         if len(self.javacores) > 0:
             return self.javacores[0].jvm_info
-        return None
+        return self._jvm_info
 
     def print_java_settings(self):
         jvm_info = self.jvm_info
@@ -328,6 +329,10 @@ class JavacoreSet:
         if len(jset.gc_parser.get_file_paths()) > 0:
             jset.data_types.add('verbosegc')
             jset.parse_verbose_gc_files()
+            if len(jset.javacores) == 0:
+                first_vgc_path = jset.gc_parser.get_file_paths()[0]
+                jset._jvm_info = JvmInfo()
+                jset._jvm_info.parse_verbose_gc(first_vgc_path)
         
         # Track HAR files if available
         if len(jset.har_files) > 0:
@@ -608,9 +613,9 @@ class JavacoreSet:
             for har in self.har_files:
                 har_files_node.appendChild(har.get_xml(doc))
 
-        # Only include system info if javacores are present
+        # Include system info if javacores or verbosegc are present and jvm_info is available
         system_info_node: Optional[Element]
-        if 'javacores' in self.data_types:
+        if ('javacores' in self.data_types or 'verbosegc' in self.data_types) and self.jvm_info is not None:
             system_info_node = cast(Element, doc.createElement("system_info"))
             doc_node.appendChild(system_info_node)
         else:
@@ -624,7 +629,7 @@ class JavacoreSet:
             tip_node.appendChild(self.doc.createTextNode(tip))
         tips_node.setAttribute("ai_tips", self.ai_tips)
 
-        # Only add system info details if javacores are present
+        # Add system info details if jvm_info is available
         if system_info_node is not None:
             if self.jvm_info is not None:
                 system_info_node.appendChild(self.jvm_info.to_xml(doc))

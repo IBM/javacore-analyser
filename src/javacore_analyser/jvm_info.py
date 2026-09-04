@@ -3,10 +3,12 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
+from datetime import datetime
 import logging
+from pathlib import Path
 import re
 from typing import Optional
-from xml.dom.minidom import Document, Element
+from xml.dom.minidom import Document, Element, parseString
 
 from javacore_analyser.constants import (
     ARCHITECTURE,
@@ -94,6 +96,127 @@ class JvmInfo:
                 f"line: {line}\n"
                 f"Check the exception below what happened"
             )
+            logging.exception(msg)
+            raise RuntimeError(msg) from e
+
+    def parse_verbose_gc(self, file_path: str) -> None:
+        """Parse JVM information from a verbosegc XML file."""
+        try:
+            file = Path(file_path)
+            xml_text = file.read_text()
+            xml_text = xml_text.replace("&#x1;", "?")
+            closing_tag = "</verbosegc>"
+            if closing_tag not in xml_text:
+                xml_text = xml_text + closing_tag
+
+            doc = parseString(xml_text)
+            root = doc.documentElement
+
+            # Find the initialized element
+            initialized_nodes = root.getElementsByTagName("initialized")
+            if not initialized_nodes:
+                logging.warning(f"No <initialized> element found in verbosegc file: {file_path}. System information will not be available.")
+                return
+            initialized_node = initialized_nodes[0]
+
+            # 1. Parse start time from timestamp attribute, convert to javacore format if possible
+            timestamp = initialized_node.getAttribute("timestamp")
+            if timestamp:
+                try:
+                    dt = datetime.strptime(timestamp, "%Y-%m-%dT%H:%M:%S.%f")
+                    self.jvm_start_time = dt.strftime("%Y/%m/%d at %H:%M:%S:%f")[:-3]
+                except Exception:
+                    try:
+                        dt = datetime.strptime(timestamp, "%Y-%m-%dT%H:%M:%S")
+                        self.jvm_start_time = dt.strftime("%Y/%m/%d at %H:%M:%S:000")
+                    except Exception:
+                        self.jvm_start_time = timestamp
+
+            # 2. Parse attributes directly under initialized
+            for child in initialized_node.childNodes:
+                if child.nodeType == child.ELEMENT_NODE and child.tagName == "attribute":
+                    name = child.getAttribute("name")
+                    val = child.getAttribute("value")
+                    if name == "gcPolicy":
+                        self.gc_policy = val[val.rfind(":") + 1:].strip()
+                    elif name == "compressedRefs":
+                        self.compressed_refs = val.lower() == "true"
+                    elif name == "maxHeapSize":
+                        if val.startswith("0x"):
+                            self.xmx = str(int(val, 16))
+                        else:
+                            self.xmx = val
+                    elif name == "initialHeapSize":
+                        if val.startswith("0x"):
+                            self.xms = str(int(val, 16))
+                        else:
+                            self.xms = val
+
+            # 3. Parse system element
+            system_nodes = initialized_node.getElementsByTagName("system")
+            if system_nodes:
+                system_node = system_nodes[0]
+                os_name = ""
+                os_version = ""
+                for child in system_node.childNodes:
+                    if child.nodeType == child.ELEMENT_NODE and child.tagName == "attribute":
+                        name = child.getAttribute("name")
+                        val = child.getAttribute("value")
+                        if name == "numCPUs":
+                            self.number_of_cpus = val
+                        elif name == "architecture":
+                            self.architecture = val
+                        elif name == "os":
+                            os_name = val
+                        elif name == "osVersion":
+                            os_version = val
+                if os_name:
+                    self.os_level = f"{os_name} {os_version}".strip()
+
+            # 4. Parse vmargs and populate cmd_line, user_args
+            vmargs_nodes = initialized_node.getElementsByTagName("vmargs")
+            if vmargs_nodes:
+                vmargs_node = vmargs_nodes[0]
+                for child in vmargs_node.childNodes:
+                    if child.nodeType == child.ELEMENT_NODE and child.tagName == "vmarg":
+                        arg_name = child.getAttribute("name")
+                        if arg_name:
+                            self.user_args.append(arg_name)
+                            # Parse out information matching userargs logic
+                            if "-Xmx" in arg_name:
+                                parsed_val = self._parse_mem_arg(arg_name)
+                                if parsed_val != UNKNOWN:
+                                    self.xmx = parsed_val
+                            if "-Xms" in arg_name:
+                                parsed_val = self._parse_mem_arg(arg_name)
+                                if parsed_val != UNKNOWN:
+                                    self.xms = parsed_val
+                            if "-Xmn" in arg_name:
+                                parsed_val = self._parse_mem_arg(arg_name)
+                                if parsed_val != UNKNOWN:
+                                    self.xmn = parsed_val
+                            if "-Xgcpolicy" in arg_name:
+                                self.gc_policy = arg_name[arg_name.rfind(":") + 1:].strip()
+                            if "-Xcompressedrefs" in arg_name or "-Xnocompressedrefs" in arg_name:
+                                if "-Xnocompressedrefs" in arg_name:
+                                    self.compressed_refs = False
+                                elif "-Xcompressedrefs" in arg_name:
+                                    self.compressed_refs = True
+                            if "-verbose:gc" in arg_name:
+                                self.verbose_gc = True
+
+            self.verbose_gc = True # Definitely True for verbosegc parser
+
+            # Reconstruct cmd_line from vmargs
+            if self.user_args:
+                non_sun_command_args = [arg for arg in self.user_args if not arg.startswith("-Dsun.java.command=")]
+                sun_command_val = next(
+                    (arg.split("=", 1)[1] for arg in self.user_args if arg.startswith("-Dsun.java.command=")), ""
+                )
+                self.cmd_line = f"java {' '.join(non_sun_command_args)} {sun_command_val}".strip()
+
+        except Exception as e:
+            msg = f"Error during processing verbosegc file: {file_path}. Check the exception below what happened"
             logging.exception(msg)
             raise RuntimeError(msg) from e
 
