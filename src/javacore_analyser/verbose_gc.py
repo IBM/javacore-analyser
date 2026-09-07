@@ -75,6 +75,7 @@ class VerboseGcParser:
                 file.set_number_of_collects(collects_from_time_range)
             except GcVerboseProcessingException as ex:
                 logging.warning(f"{file_path} was omitted due to error: {ex}")
+        self.__collects.sort(key=lambda c: c.get_start_time())
         logging.info("Finished parsing GC files")
 
     def get_xml(self, doc):
