@@ -55,6 +55,24 @@ function zoomPluginConfig() {
 }
 
 /**
+ * Returns a Chart.js legend configuration that changes the canvas cursor to a
+ * pointer when the user hovers over a clickable legend item, and restores the
+ * default cursor when they move away.  Assign the return value to
+ * options.plugins.legend in each chart that has a toggleable legend.
+ * @returns {object}
+ */
+function legendConfig() {
+  return {
+    onHover: function(event) {
+      event.native.target.style.cursor = 'pointer';
+    },
+    onLeave: function(event) {
+      event.native.target.style.cursor = 'default';
+    },
+  };
+}
+
+/**
  * Inserts a reset-zoom button directly above the chart canvas.
  * Called just before each chart is created (after all early-return guards).
  *
@@ -252,6 +270,7 @@ const loadChartCPUUsage = function() {
       },
       plugins: {
         zoom: zoomPluginConfig(),
+        legend: legendConfig(),
       },
     },
   });
@@ -463,6 +482,7 @@ const loadChartGC = function() {
       },
       plugins: {
         zoom: zoomPluginConfig(),
+        legend: legendConfig(),
       },
     },
   });
@@ -533,6 +553,7 @@ const loadChart = function() {
       },
       plugins: {
         zoom: zoomPluginConfig(),
+        legend: legendConfig(),
       },
     },
   });
@@ -621,6 +642,7 @@ const loadChartThreadClassifications = function() {
       },
       plugins: {
         zoom: zoomPluginConfig(),
+        legend: legendConfig(),
       },
     },
   });
