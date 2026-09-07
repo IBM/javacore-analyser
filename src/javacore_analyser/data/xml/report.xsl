@@ -58,7 +58,7 @@
             </xsl:if>
             
             <xsl:call-template name="input_files"/>
-            <xsl:if test="doc/data_types/type[text()='javacores']">
+            <xsl:if test="doc/system_info">
                 <xsl:call-template name="system_information"/>
             </xsl:if>
             <xsl:call-template name="intelligent_tips"/>
