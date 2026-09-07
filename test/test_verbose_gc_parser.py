@@ -1,5 +1,5 @@
 #
-# Copyright IBM Corp. 2024 - 2024
+# Copyright IBM Corp. 2024 - 2026
 # SPDX-License-Identifier: Apache-2.0
 #
 
@@ -60,3 +60,18 @@ class TestVerboseGcParser(unittest.TestCase):
         parser.parse_files(start, stop)
         element = parser.get_xml(self.doc)
         self.assertEqual(len(element.getElementsByTagName(GC_COLLECTION)), 39, "Wrong number of GC collects in XML")
+
+    def test_collects_sorted_by_time_when_files_added_out_of_order(self):
+        """Collections from multiple files must be sorted chronologically (Fixes #366)."""
+        parser = VerboseGcParser()
+        # Add files in reverse chronological order to trigger the sorting bug
+        parser.add_file("test/data/verboseGc/verbosegc.230420.33424.txt.001")
+        parser.add_file("test/data/verboseGc/verbosegc.230413.19984.txt.001")
+        parser.add_file("test/data/verboseGc/verbosegc.230105.19308.log")
+        start = datetime.strptime('2000-01-01T00:00:00.000', '%Y-%m-%dT%H:%M:%S.%f')
+        stop = datetime.strptime('2100-01-01T00:00:00.000', '%Y-%m-%dT%H:%M:%S.%f')
+        parser.parse_files(start, stop)
+        collects = parser.get_collects()
+        self.assertGreater(len(collects), 0, "No collections parsed")
+        times = [c.get_start_time() for c in collects]
+        self.assertEqual(times, sorted(times), "GC collections are not sorted by start time")
