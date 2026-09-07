@@ -111,22 +111,36 @@
                     The X axis represents the javacore generation time and the Y axis shows
                     the number of thread snapshots with that classification in each javacore.
                     Each line corresponds to one classification category.
+                    Categories such as <em>Java Internal</em>, <em>Liberty Internal</em> and
+                    <em>Wait For Condition</em> are struck through in the legend by default because
+                    they tend to dominate the chart and obscure more interesting activity.
+                    Click their legend entries to toggle them back on.
                 </div>
                 <div class="chart-container" style="overflow-x:auto;">
                     <canvas id="myChartThreadClassifications" height="200" width="1400"></canvas>
                 </div>
                 <!-- Hidden data table consumed by loadChartThreadClassifications() in wait2scripts.js.
                      Row 0 = header (timestamp + one cell per category).
-                     Rows 1..N = one row per javacore: ISO timestamp + counts per category. -->
+                     Rows 1..N = one row per javacore: ISO timestamp + counts per category.
+                     Noisy categories are flagged with data-noisy="true" on their <th> so the JS
+                     can hide the corresponding chart datasets by default. -->
                 <div style="display:none;">
                     <table id="thread_classifications_data_table">
                         <thead>
                             <tr>
                                 <th>timestamp</th>
                                 <!-- Muenchian grouping: emit exactly one header cell per distinct
-                                     classification label found across ALL javacore nodes. -->
+                                     classification label found across ALL javacore nodes.
+                                     Mark the three noisy categories so the JS can hide them by default. -->
                                 <xsl:for-each select="doc/report_info/javacore_list/javacore/javacore_classifications/classification_entry[generate-id() = generate-id(key('classification-by-value', @value)[1])]">
-                                    <th><xsl:value-of select="@value"/></th>
+                                    <xsl:choose>
+                                        <xsl:when test="@value='Java Internal' or @value='Liberty Internal' or @value='Wait For Condition'">
+                                            <th data-noisy="true"><xsl:value-of select="@value"/></th>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <th><xsl:value-of select="@value"/></th>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
                                 </xsl:for-each>
                             </tr>
                         </thead>
