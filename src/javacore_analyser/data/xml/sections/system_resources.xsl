@@ -85,6 +85,12 @@
                                     is the total size of the tenure (old generation) space,
                                     expressed in bytes.
                                 </li>
+                                <li><strong>Comp Ratio (%)</strong>
+                                    is the compression ratio for each garbage collection,
+                                    calculated as the percentage of used heap memory that was freed by the collection.
+                                    A high value indicates an efficient collection that recovered a large fraction of live objects;
+                                    a low or declining comp ratio over time is a sign of memory pressure.
+                                </li>
                         </ul>
                     </div>
                     <div id="systemresources_myChartGC" class="chart-container hide" style="overflow-x:auto;">

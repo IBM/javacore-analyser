@@ -305,6 +305,7 @@ const loadChartGC = function() {
       tenureFreeBefore:   element.getAttribute('tenure-free-before'),
       tenureFreeAfter:    element.getAttribute('tenure-free-after'),
       tenureTotal:        element.getAttribute('tenure-total'),
+      compRatio:          element.getAttribute('comp-ratio'),
     });
   });
 
@@ -319,6 +320,7 @@ const loadChartGC = function() {
   const tenureUsageData  = [];
   const nurseryTotalData = [];
   const tenureTotalData  = [];
+  const compRatioData   = [];
   const labels          = [];
 
   console.log(`Processing ${gcCollections.length} GC collections`);
@@ -339,6 +341,7 @@ const loadChartGC = function() {
     tenureTotalData.push(tenureTotal > 0  ? tenureTotal  / MB_SIZE : null);
     labels.push(gcStartTime);
     pauseTimeData.push(durationMs);
+    compRatioData.push(Number(element['compRatio']));
 
     // Data point: state after GC
     inputData.push((HEAP_SIZE - Number(element['freeAfter'])) / MB_SIZE);
@@ -348,6 +351,7 @@ const loadChartGC = function() {
     nurseryTotalData.push(nurseryTotal > 0 ? nurseryTotal / MB_SIZE : null);
     tenureTotalData.push(tenureTotal > 0  ? tenureTotal  / MB_SIZE : null);
     pauseTimeData.push(null);
+    compRatioData.push(null);
     const gcEndTime = new Date(element['startTime']);
     gcEndTime.setMilliseconds(gcEndTime.getMilliseconds() + durationMs);
     labels.push(gcEndTime.valueOf());
@@ -435,6 +439,16 @@ const loadChartGC = function() {
           yAxisID: 'y',
           hidden: true,
         },
+        {
+          label: 'Comp Ratio (%)',
+          data: compRatioData,
+          borderWidth: 1,
+          borderColor: 'rgba(128,0,128,1)',
+          backgroundColor: 'rgba(128,0,128,0.3)',
+          pointRadius: 1.5,
+          yAxisID: 'yCompRatio',
+          hidden: true,
+        },
       ],
     },
     options: {
@@ -453,6 +467,17 @@ const loadChartGC = function() {
           title: {
             display: true,
             text: 'Pause Time (ms)',
+          },
+          grid: { drawOnChartArea: false },
+        },
+        yCompRatio: {
+          beginAtZero: true,
+          min: 0,
+          max: 100,
+          position: 'right',
+          title: {
+            display: true,
+            text: 'Comp Ratio (%)',
           },
           grid: { drawOnChartArea: false },
         },
