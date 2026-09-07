@@ -167,7 +167,7 @@ class OOMEGenerationTip:
     # Tip generated when one of Javacores is generated on OOME, not by user
 
     SIG_INFO_TEXT = '''[WARNING] The Javacore {0} is generated on OutOfMemoryError.
-    The signal that triggered the javacore: <<<{1}>>>.
+    The signal that triggered the javacore: '{1}'.
     You may need another tool, like Memory Analyzer Tool, to troubleshoot the issue'''
 
     OUT_OF_MEMORY_ERROR = 'OutOfMemoryError'
