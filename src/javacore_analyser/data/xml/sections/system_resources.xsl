@@ -131,10 +131,11 @@
                                 <th>timestamp</th>
                                 <!-- Muenchian grouping: emit exactly one header cell per distinct
                                      classification label found across ALL javacore nodes.
-                                     Mark the three noisy categories so the JS can hide them by default. -->
+                                     Noisy categories (defined in classification_config.xsl) get
+                                     data-noisy="true" so the JS strokes them out by default. -->
                                 <xsl:for-each select="doc/report_info/javacore_list/javacore/javacore_classifications/classification_entry[generate-id() = generate-id(key('classification-by-value', @value)[1])]">
                                     <xsl:choose>
-                                        <xsl:when test="@value='Java Internal' or @value='Liberty Internal' or @value='Wait For Condition'">
+                                        <xsl:when test="contains($noisy_classifications, concat('|', @value, '|'))">
                                             <th data-noisy="true"><xsl:value-of select="@value"/></th>
                                         </xsl:when>
                                         <xsl:otherwise>
