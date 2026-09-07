@@ -205,8 +205,6 @@ class JvmInfo:
                             if "-verbose:gc" in arg_name:
                                 self.verbose_gc = True
 
-            self.verbose_gc = True # Definitely True for verbosegc parser
-
             # Reconstruct cmd_line from vmargs
             if self.user_args:
                 non_sun_command_args = [arg for arg in self.user_args if not arg.startswith("-Dsun.java.command=")]
