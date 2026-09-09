@@ -238,10 +238,10 @@ class TestTips(unittest.TestCase):
         javacore_set.gc_parser._VerboseGcParser__collects = [collect1, collect2, collect3, collect4]
         
         result = tips.LongGcPauseTip.generate(javacore_set)
-        self.assertEqual(1, len(result), "Should return one warning message")
+        self.assertEqual(1, len(result), "Should return one tip message")
         
         tip_text = result[0]
-        self.assertIn("[WARNING]", tip_text, "Tip should contain WARNING")
+        self.assertIn("[TIP]", tip_text, "Tip should contain TIP")
         self.assertIn("3 GC pause(s) longer than 1000ms", tip_text, 
                      "Should report 3 pauses over 1000ms threshold")
         self.assertIn("1 GC pause(s) longer than 2000ms", tip_text,
