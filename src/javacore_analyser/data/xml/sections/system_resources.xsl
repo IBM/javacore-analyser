@@ -33,9 +33,15 @@
                         would indicate all the cores are completely busy. Each bar represents one javacore in the data set.
                         This value is computed incrementally with relation to the previous javacore,
                         hence it is not available for the first javacore file.
+                        <p><strong>Chart interactions:</strong></p>
+                        <ul>
+                            <li>Draw a rectangle on the chart to zoom into that area. Use the <em>Reset zoom</em> button to return to the full view.</li>
+                            <li>Click on a legend item to show or hide that data series.</li>
+                        </ul>
                     </div>
                     <div class="chart-container" style="overflow-x:auto;">
-                        <canvas id="myChartCPUUsage" height="200" width="1400"></canvas>
+                        <canvas id="myChartCPUUsage" height="200" width="1400"
+                                title="Draw a rectangle to zoom in. Use the Reset zoom button to return to the full view. Click on a legend item to show or hide that data series."></canvas>
                     </div>
                 </xsl:otherwise>
             </xsl:choose>
@@ -86,9 +92,15 @@
                                     expressed in bytes.
                                 </li>
                         </ul>
+                        <p><strong>Chart interactions:</strong></p>
+                        <ul>
+                            <li>Draw a rectangle on the chart to zoom into that area. Use the <em>Reset zoom</em> button to return to the full view.</li>
+                            <li>Click on a legend item to show or hide that data series.</li>
+                        </ul>
                     </div>
                     <div id="systemresources_myChartGC" class="chart-container hide" style="overflow-x:auto;">
-                        <canvas id="myChartGC" height="200" width="1400"></canvas>
+                        <canvas id="myChartGC" height="200" width="1400"
+                                title="Draw a rectangle to zoom in. Use the Reset zoom button to return to the full view. Click on a legend item to show or hide that data series."></canvas>
                     </div>
                         </xsl:otherwise>
                     </xsl:choose>
@@ -115,9 +127,17 @@
                     <em>Wait For Condition</em> are struck through in the legend by default because
                     they tend to dominate the chart and obscure more interesting activity.
                     Click their legend entries to toggle them back on.
+
+                    <p><strong>Chart interactions:</strong></p>
+                    <ul>
+                        <li>Draw a rectangle on the chart to zoom into that area. Use the <em>Reset zoom</em> button to return to the full view.</li>
+                        <li>Click on a legend item to show or hide that data series.</li>
+                    </ul>
+
                 </div>
                 <div class="chart-container" style="overflow-x:auto;">
-                    <canvas id="myChartThreadClassifications" height="200" width="1400"></canvas>
+                    <canvas id="myChartThreadClassifications" height="200" width="1400"
+                            title="Draw a rectangle to zoom in. Use the Reset zoom button to return to the full view. Click on a legend item to show or hide that data series."></canvas>
                 </div>
                 <!-- Hidden data table consumed by loadChartThreadClassifications() in wait2scripts.js.
                      Row 0 = header (timestamp + one cell per category).

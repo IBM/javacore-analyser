@@ -46,8 +46,20 @@
                             System resource utilization data cannot be calculated with only a single javacore.
                         </xsl:when>
                         <xsl:otherwise>
+                            <a id="togglethreadchartdoc" href="javascript:expand_it(threadchartdoc,togglethreadchartdoc)" class="expandit">
+                                What does this chart tell me?</a>
+                            <div id="threadchartdoc" style="display:none;">
+                                This chart shows the CPU usage of this thread over time, expressed as a percentage of all available processor cores.
+                                Each data point represents one javacore snapshot.
+                                <p><strong>Chart interactions:</strong></p>
+                                <ul>
+                                    <li>Draw a rectangle on the chart to zoom into that area. Use the <em>Reset zoom</em> button to return to the full view.</li>
+                                    <li>Click on a legend item to show or hide that data series.</li>
+                                </ul>
+                            </div>
                             <div class="chart-container" height="25%" style="overflow-x:auto;">
-                                <canvas id="myChart" height="300" width="1400"></canvas>
+                                <canvas id="myChart" height="300" width="1400"
+                                        title="Draw a rectangle to zoom in. Use the Reset zoom button to return to the full view."></canvas>
                             </div>
                         </xsl:otherwise>
                     </xsl:choose>
