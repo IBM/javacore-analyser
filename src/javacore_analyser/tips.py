@@ -338,7 +338,7 @@ class LongGcPauseTip:
     THRESHOLD_1 = 1000  # 1 second
     THRESHOLD_2 = 2000  # 2 seconds
     
-    LONG_GC_PAUSE_WARNING = """[WARNING] Detected {0} GC pause(s) longer than {1}ms and {2} GC pause(s) longer than {3}ms.
+    LONG_GC_PAUSE_TIP = """[TIP] Detected {0} GC pause(s) longer than {1}ms and {2} GC pause(s) longer than {3}ms.
     The longest GC pause was {4:.0f}ms at {5}.
     Long GC pauses can cause performance issues and application freezes."""
     
@@ -371,9 +371,9 @@ class LongGcPauseTip:
                 longest_pause = duration
                 longest_pause_time = collect.start_time_str
         
-        # Generate warning if any pauses exceed threshold 1
+        # Generate tip if any pauses exceed threshold 1
         if pauses_over_threshold_1 > 0:
-            msg = LongGcPauseTip.LONG_GC_PAUSE_WARNING.format(
+            msg = LongGcPauseTip.LONG_GC_PAUSE_TIP.format(
                 pauses_over_threshold_1,
                 LongGcPauseTip.THRESHOLD_1,
                 pauses_over_threshold_2,
