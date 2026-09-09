@@ -1,5 +1,36 @@
 # Changelog
 
+## [4.0.1] - 2026-09-08
+## What's Changed
+* #347 - Add support for python 3.14 by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/348
+* #344 Create release generation script by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/345
+* Update google/osv-scanner-action action to v2.5.0 by @renovate[bot] in https://github.com/IBM/javacore-analyser/pull/350
+* #351 Fixed filelock vulnerability by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/352
+* #353 test built version in release by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/354
+* #355 config ini missing from wheel by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/356
+* #341 Add trafic timing breakdown support for har files by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/343
+* Add badge for commits since latest release by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/362
+* Update google/osv-scanner-action action to v2.5.1 by @renovate[bot] in https://github.com/IBM/javacore-analyser/pull/365
+* #371 Refactor Javacore class to be self-contained and responsible for its own parsing by @PiotrAniola82 in https://github.com/IBM/javacore-analyser/pull/372
+* #346 Display current thread information by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/358
+* #94 har file http call tips by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/359
+* #360 Fixed concurrency issues in javacore_analyser.generate_htmls_from_xmls_xsls by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/361
+* #363 Highlight long running and errored queries in har view by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/364
+* #376 Add type hints to Python source files by @PiotrAniola82 in https://github.com/IBM/javacore-analyser/pull/377
+* #380 don't use the classifier if it's not initialised by @PiotrAniola82 in https://github.com/IBM/javacore-analyser/pull/381
+* #379 extract JvmInfo class by @PiotrAniola82 in https://github.com/IBM/javacore-analyser/pull/378
+* #376 Add JvmInfo verbosegc parsing and include System Information in verbosegc-only reports by @PiotrAniola82 in https://github.com/IBM/javacore-analyser/pull/382
+* #384 SigInfo isn't being parsed by @PiotrAniola82 in https://github.com/IBM/javacore-analyser/pull/393
+* #394 refactor parsing verbosegc parameter from verbosegc.log by @PiotrAniola82 in https://github.com/IBM/javacore-analyser/pull/395
+* #389 Add drag rectangle zoom and reset-zoom button to charts by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/390
+* #366 sort verbose gc data by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/367
+* #396 Change cursor type for legend items by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/400
+
+
+**Full Changelog**: https://github.com/IBM/javacore-analyser/compare/4.0...4.0.1
+
+
+
 ## [4.0] - 2026-08-05
 * #310 add classification to javacore details by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/311
 * #308 improve classification lookup display by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/309
