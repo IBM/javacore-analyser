@@ -124,7 +124,7 @@
                     the number of thread snapshots with that classification in each javacore.
                     Each line corresponds to one classification category.
                     Categories such as <em>Java Internal</em>, <em>Liberty Internal</em> and
-                    <em>Wait For Condition</em> are struck through in the legend by default because
+                    <em>Wait For Condition</em> are disabled in the chart by default because
                     they tend to dominate the chart and obscure more interesting activity.
                     Click their legend entries to toggle them back on.
 
