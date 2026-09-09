@@ -583,8 +583,10 @@ const loadChartThreadClassifications = function() {
 
   const headerRow = dataTable.rows[0];
   const categories = [];
+  const noisyFlags = [];
   for (let c = 1; c < headerRow.cells.length; c++) {
     categories.push(headerRow.cells[c].innerHTML.trim());
+    noisyFlags.push(headerRow.cells[c].getAttribute('data-noisy') === 'true');
   }
 
   if (categories.length === 0) {
@@ -613,6 +615,7 @@ const loadChartThreadClassifications = function() {
       borderWidth: 2,
       pointRadius: 3,
       fill: false,
+      hidden: noisyFlags[idx],
     };
   });
 
