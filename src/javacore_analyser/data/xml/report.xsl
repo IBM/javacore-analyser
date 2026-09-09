@@ -10,6 +10,7 @@
     <xsl:variable name="displayed_stack_depth" select="50" />
 
     <!-- Import section templates -->
+    <xsl:include href="sections/classification_config.xsl"/>
     <xsl:include href="sections/header.xsl"/>
     <xsl:include href="sections/input_files.xsl"/>
     <xsl:include href="sections/system_information.xsl"/>
