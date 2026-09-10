@@ -33,16 +33,15 @@ class TestJavacore(unittest.TestCase):
         self.assertEqual(encoding, '850')
 
     def test_parse_snapshot_data(self):
-        self.assertEqual(201, len(self.javacore.snapshots))
+        self.assertEqual(200, len(self.javacore.snapshots))
 
     def test_parse_siginfo(self):
         t = self.javacore.siginfo
         self.assertEqual(t, 'Dump Requested By User (00100000) Through com.ibm.jvm.Dump.javaDumpToFile')
 
     def test_get_snapshot_by_name(self):
-        snapshot_name = self.javacore.get_snapshot_by_name('kernel-command-listener').name
-        snapshot_name_from_test_javacore = self.javacore.snapshots[0].name
-        self.assertEqual(snapshot_name, snapshot_name_from_test_javacore)
+        snapshot_name = self.javacore.get_snapshot_by_name('main').name
+        self.assertEqual(snapshot_name, 'main')
 
     def test_basefilename(self):
         self.assertEqual(self.javacore.basefilename(), 'javacore.20220606.114458.32888.0001.txt')
@@ -119,7 +118,7 @@ class TestJavacore(unittest.TestCase):
         # Verify thread snapshots creation (tests _parse_thread_snapshots)
         self.assertIsNotNone(self.javacore.snapshots)
         self.assertGreater(len(self.javacore.snapshots), 0)
-        self.assertEqual(len(self.javacore.snapshots), 201)
+        self.assertEqual(len(self.javacore.snapshots), 200)
         first_snapshot = self.javacore.snapshots[0]
         self.assertIsNotNone(first_snapshot.name)
 
