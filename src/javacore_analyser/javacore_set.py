@@ -9,7 +9,6 @@ import os
 import shutil
 import tempfile
 from datetime import datetime
-from concurrent.futures import ThreadPoolExecutor, as_completed
 from multiprocessing.dummy import Pool  # Keep for HTML generation compatibility
 from pathlib import Path
 from typing import IO, Any, Optional, cast
