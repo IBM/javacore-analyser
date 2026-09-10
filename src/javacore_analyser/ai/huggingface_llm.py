@@ -5,7 +5,6 @@
 
 import logging
 
-import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 from javacore_analyser.ai.llm import LLM
