@@ -6,7 +6,6 @@
 import os
 import unittest
 
-from javacore_analyser.constants import UNKNOWN
 from javacore_analyser.javacore_set import JavacoreSet
 
 
