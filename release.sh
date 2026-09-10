@@ -21,7 +21,7 @@ usage() {
 Usage: $0 <VERSION> [--from STEP] [--help]
 
   VERSION       The release version tag to create, e.g. 4.0beta2, 3.1, 2.0.1
-  --from STEP   Start execution from STEP (1-7). Skips earlier steps.
+  --from STEP   Start execution from STEP (1-8). Skips earlier steps.
   --help        Show this help message.
 
 Steps:
@@ -29,14 +29,15 @@ Steps:
   2  Create and push git tag VERSION
   3  Build distribution packages (python -m build)
   4  Install built package in a temporary venv and run tests
-  5  Upload to PyPI (twine upload)
-  6  Create GitHub release draft
-  7  Copy release notes to CHANGELOG.md
+  5  Sign dist artifacts with GPG (creates .asc detached signatures)
+  6  Upload to PyPI (twine upload dist/*.whl dist/*.tar.gz dist/*.asc)
+  7  Create GitHub release draft
+  8  Copy release notes to CHANGELOG.md
 
 Examples:
   bash $0 4.0beta2
   bash $0 4.0beta2 --from 3
-  bash $0 3.1 --from 5
+  bash $0 3.1 --from 6
 EOF
   exit 0
 }
@@ -44,8 +45,8 @@ EOF
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --from)
-      if [[ -z "${2-}" || ! "$2" =~ ^[1-7]$ ]]; then
-        echo "ERROR: --from requires a step number between 1 and 7"
+      if [[ -z "${2-}" || ! "$2" =~ ^[1-8]$ ]]; then
+        echo "ERROR: --from requires a step number between 1 and 8"
         exit 1
       fi
       START_STEP="$2"
@@ -79,7 +80,7 @@ fi
 echo "Release:      $VERSION"
 echo "Repository:   $REPO"
 echo "Python:       $(python --version 2>&1)"
-echo "Starting from step $START_STEP."
+echo "Starting from step $START_STEP / 8."
 echo ""
 
 # ---------------------------------------------------------------------------
@@ -90,10 +91,24 @@ should_run() {
 }
 
 # ---------------------------------------------------------------------------
+# Helper: resolve the GPG signing key to use
+#   Priority: $GPG_KEY_ID env var  →  first non-expired secret key
+# ---------------------------------------------------------------------------
+gpg_key_id() {
+  if [[ -n "${GPG_KEY_ID:-}" ]]; then
+    echo "$GPG_KEY_ID"
+    return
+  fi
+  # Pick the first secret key that is not expired
+  gpg --list-secret-keys --keyid-format=long 2>/dev/null \
+    | awk '/^sec / && !/\[expired\]/ { match($2, /\/([0-9A-F]+)$/, m); if (m[1]) { print m[1]; exit } }'
+}
+
+# ---------------------------------------------------------------------------
 # Step 1 — Verify preconditions
 # ---------------------------------------------------------------------------
 if should_run 1; then
-  echo "=== [1/7] Verifying preconditions ==="
+  echo "=== [1/8] Verifying preconditions ==="
   BRANCH=$(git rev-parse --abbrev-ref HEAD)
   if [[ "$BRANCH" != "main" ]]; then
     echo "ERROR: must be on 'main' branch (currently on '$BRANCH')"
@@ -111,7 +126,7 @@ fi
 # Step 2 — Create and push git tag
 # ---------------------------------------------------------------------------
 if should_run 2; then
-  echo "=== [2/7] Creating and pushing git tag $VERSION ==="
+  echo "=== [2/8] Creating and pushing git tag $VERSION ==="
   git tag "$VERSION"
   git push --tags
   echo "Tag $VERSION pushed."
@@ -122,7 +137,7 @@ fi
 # Step 3 — Build distribution packages
 # ---------------------------------------------------------------------------
 if should_run 3; then
-  echo "=== [3/7] Building distribution packages ==="
+  echo "=== [3/8] Building distribution packages ==="
   pip install --quiet --upgrade build
   python -m build
   echo "Build complete. Artifacts in dist/:"
@@ -134,7 +149,7 @@ fi
 # Step 4 — Install built package in a temporary venv and run tests
 # ---------------------------------------------------------------------------
 if should_run 4; then
-  echo "=== [4/7] Testing the built package ==="
+  echo "=== [4/8] Testing the built package ==="
 
   VENV_DIR=$(mktemp -d)
   WHL=$(ls -t dist/javacore_analyser-*.whl 2>/dev/null | head -n1)
@@ -159,21 +174,57 @@ if should_run 4; then
 fi
 
 # ---------------------------------------------------------------------------
-# Step 5 — Upload to PyPI
+# Step 5 — Sign dist artifacts with GPG
 # ---------------------------------------------------------------------------
 if should_run 5; then
-  echo "=== [5/7] Uploading to PyPI ==="
-  # Use __token__ as the username and your PyPI API token as the password when prompted.
-  pip install --quiet --upgrade twine
-  twine upload dist/*
+  echo "=== [5/8] Signing dist artifacts with GPG ==="
+
+  KEY_ID=$(gpg_key_id)
+  if [[ -z "$KEY_ID" ]]; then
+    echo "ERROR: No usable GPG secret key found."
+    echo "  Create one with:  gpg --full-gen-key"
+    echo "  Or set GPG_KEY_ID=<key-id> to specify a key explicitly."
+    exit 1
+  fi
+  echo "Using GPG key: $KEY_ID"
+
+  # Remove any stale signatures from a previous run
+  rm -f dist/*.asc
+
+  for artifact in dist/javacore_analyser-"${VERSION}"-*.whl dist/javacore_analyser-"${VERSION}".tar.gz; do
+    if [[ ! -f "$artifact" ]]; then
+      echo "WARNING: expected artifact not found: $artifact"
+      continue
+    fi
+    gpg --batch --yes \
+        --detach-sign --armor \
+        --local-user "$KEY_ID" \
+        "$artifact"
+    echo "  Signed: $artifact  →  ${artifact}.asc"
+  done
+
+  echo "Signatures in dist/:"
+  ls dist/*.asc
   echo ""
 fi
 
 # ---------------------------------------------------------------------------
-# Step 6 — Create GitHub release (draft)
+# Step 6 — Upload to PyPI
 # ---------------------------------------------------------------------------
 if should_run 6; then
-  echo "=== [6/7] Creating GitHub release (draft) ==="
+  echo "=== [6/8] Uploading to PyPI ==="
+  # Use __token__ as the username and your PyPI API token as the password when prompted.
+  # .asc files are uploaded alongside the artifacts so PyPI stores the signatures.
+  pip install --quiet --upgrade twine
+  twine upload dist/*.whl dist/*.tar.gz dist/*.asc
+  echo ""
+fi
+
+# ---------------------------------------------------------------------------
+# Step 7 — Create GitHub release (draft)
+# ---------------------------------------------------------------------------
+if should_run 7; then
+  echo "=== [7/8] Creating GitHub release (draft) ==="
   gh release create "$VERSION" dist/* \
     --repo "$REPO" \
     --generate-notes \
@@ -188,10 +239,10 @@ if should_run 6; then
 fi
 
 # ---------------------------------------------------------------------------
-# Step 7 — Copy release notes to CHANGELOG.md
+# Step 8 — Copy release notes to CHANGELOG.md
 # ---------------------------------------------------------------------------
-if should_run 7; then
-  echo "=== [7/7] Copying release notes to CHANGELOG.md ==="
+if should_run 8; then
+  echo "=== [8/8] Copying release notes to CHANGELOG.md ==="
   NOTES=$(gh release view "$VERSION" --json body --jq '.body' --repo "$REPO")
   TMP=$(mktemp)
   {
@@ -205,4 +256,4 @@ if should_run 7; then
   echo ""
 fi
 
-echo "=== Release $VERSION complete (started from step $START_STEP) ==="
+echo "=== Release $VERSION complete (started from step $START_STEP / 8) ==="
