@@ -16,7 +16,7 @@ from javacore_analyser.har_file import HttpCall
 TIPS_LIST = ["DifferentIssuesTip", "ExcludedJavacoresTip", "InvalidAccumulatedCpuTimeTip", "TooFewJavacoresTip",
              "OOMEGenerationTip", "BlockingThreadsTip", "HighCpuUsageTip", "LongGcPauseTip",
              "SystemExitInMainThreadTip", "PermanentlyBlockedThreadsTip",
-             "FailingHttpCallsTip", "LongHttpCallsTip"]
+             "FailingHttpCallsTip", "LongHttpCallsTip", "LowCompRatioTip"]
 
 
 def get_thread_link(javacore_set, thread_name):
@@ -520,3 +520,52 @@ class LongHttpCallsTip:
                 if len(result) >= LongHttpCallsTip.MAX_TIPS:
                     break
         return result
+
+
+class LowCompRatioTip:
+    # Generates a tip when the GC compression ratio is consistently high.
+    # A high comp ratio means GC must reclaim a large fraction of the heap each cycle,
+    # which signals memory pressure. Two severity levels are reported:
+    #   - above 50%: heap is too small, consider increasing -Xmx
+    #   - above 70%: severe pressure, investigate for memory leaks or architectural issues
+
+    THRESHOLD_CRITICAL = 70  # percent — severe memory pressure
+    THRESHOLD_WARNING = 50   # percent — heap likely undersized
+
+    # Tip fires when at least this fraction of collections exceed a threshold
+    FRACTION_THRESHOLD = 0.5
+
+    CRITICAL_WARNING = (
+        "[WARNING] {0} out of {1} GC collections ({2:.0f}%) have a compression ratio above {3}%."
+        " This indicates severe memory pressure."
+        " Investigate for memory leaks or consider architectural changes to reduce heap usage."
+    )
+
+    HIGH_WARNING = (
+        "[WARNING] {0} out of {1} GC collections ({2:.0f}%) have a compression ratio above {3}%."
+        " GC is reclaiming a large portion of the heap each cycle."
+        " Consider increasing the maximum heap size (-Xmx)."
+    )
+
+    @staticmethod
+    def generate(javacore_set):
+        collects = javacore_set.gc_parser.get_collects()
+
+        if not collects:
+            return []
+
+        total = len(collects)
+        critical_count = sum(1 for c in collects if c.comp_ratio() > LowCompRatioTip.THRESHOLD_CRITICAL)
+        warning_count = sum(1 for c in collects if c.comp_ratio() > LowCompRatioTip.THRESHOLD_WARNING)
+
+        if critical_count / total >= LowCompRatioTip.FRACTION_THRESHOLD:
+            return [LowCompRatioTip.CRITICAL_WARNING.format(
+                critical_count, total, critical_count / total * 100, LowCompRatioTip.THRESHOLD_CRITICAL
+            )]
+
+        if warning_count / total >= LowCompRatioTip.FRACTION_THRESHOLD:
+            return [LowCompRatioTip.HIGH_WARNING.format(
+                warning_count, total, warning_count / total * 100, LowCompRatioTip.THRESHOLD_WARNING
+            )]
+
+        return []
