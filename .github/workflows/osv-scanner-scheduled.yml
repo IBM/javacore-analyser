@@ -7,9 +7,13 @@ on:
   push:
     branches: [main]
 
-# Restrict top-level token to read-only; the reusable workflow grants
-# security-events: write at the job level internally.
-permissions: read-all
+permissions:
+  # Required to upload SARIF file to CodeQL. See: https://github.com/github/codeql-action/issues/2117
+  actions: read
+  # Required to upload SARIF results to the Security tab
+  security-events: write
+  # Only need to read contents
+  contents: read
 
 jobs:
   scan-scheduled:
