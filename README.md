@@ -14,6 +14,7 @@
 ![GitHub Issues or Pull Requests](https://img.shields.io/github/issues-pr-closed/IBM/javacore-analyser)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/javacore-analyser)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/IBM/javacore-analyser/badge)](https://scorecard.dev/viewer/?uri=github.com/IBM/javacore-analyser)
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/14597/badge)](https://www.bestpractices.dev/projects/14597)
 
 
 <!-- Not always needed, but a scope helps the user understand in a short sentence like below, why this repo exists -->
