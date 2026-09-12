@@ -101,7 +101,7 @@ gpg_key_id() {
   fi
   # Pick the first secret key that is not expired
   gpg --list-secret-keys --keyid-format=long 2>/dev/null \
-    | awk '/^sec / && !/\[expired\]/ { match($2, /\/([0-9A-F]+)$/, m); if (m[1]) { print m[1]; exit } }'
+    | awk '/^sec / && !/\[expired\]/ { if (match($2, /\/[0-9A-F]+$/)) { print substr($2, RSTART+1, RLENGTH-1); exit } }'
 }
 
 # ---------------------------------------------------------------------------
@@ -191,9 +191,9 @@ if should_run 5; then
   # Remove any stale signatures from a previous run
   rm -f dist/*.asc
 
-  for artifact in dist/javacore_analyser-"${VERSION}"-*.whl dist/javacore_analyser-"${VERSION}".tar.gz; do
+  SIGNED=0
+  for artifact in dist/javacore_analyser-*.whl dist/javacore_analyser-*.tar.gz; do
     if [[ ! -f "$artifact" ]]; then
-      echo "WARNING: expected artifact not found: $artifact"
       continue
     fi
     gpg --batch --yes \
@@ -201,7 +201,13 @@ if should_run 5; then
         --local-user "$KEY_ID" \
         "$artifact"
     echo "  Signed: $artifact  →  ${artifact}.asc"
+    SIGNED=$((SIGNED + 1))
   done
+
+  if [[ "$SIGNED" -eq 0 ]]; then
+    echo "ERROR: No dist artifacts found to sign. Run step 3 first."
+    exit 1
+  fi
 
   echo "Signatures in dist/:"
   ls dist/*.asc
@@ -214,9 +220,10 @@ fi
 if should_run 6; then
   echo "=== [6/8] Uploading to PyPI ==="
   # Use __token__ as the username and your PyPI API token as the password when prompted.
-  # .asc files are uploaded alongside the artifacts so PyPI stores the signatures.
+  # Note: PyPI dropped PGP signature support in 2023; .asc files are NOT uploaded here.
+  # Signatures are still attached to the GitHub release (step 7) for out-of-band verification.
   pip install --quiet --upgrade twine
-  twine upload dist/*.whl dist/*.tar.gz dist/*.asc
+  twine upload dist/*.whl dist/*.tar.gz
   echo ""
 fi
 
