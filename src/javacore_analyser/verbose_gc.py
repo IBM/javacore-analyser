@@ -34,6 +34,7 @@ NURSERY_TOTAL = "nursery-total"
 TENURE_FREE_BEFORE = "tenure-free-before"
 TENURE_FREE_AFTER = "tenure-free-after"
 TENURE_TOTAL = "tenure-total"
+COMP_RATIO = "comp-ratio"
 
 
 class VerboseGcParser:
@@ -103,6 +104,18 @@ class GcCollection:
     def freed(self):
         return int(self.free_after) - int(self.free_before)
 
+    def comp_ratio(self):
+        """Return the compression ratio as a percentage (0-100).
+
+        Comp ratio = freed / heap_used_before * 100, where heap_used_before is
+        the total heap size minus the free bytes before the collection.
+        Returns 0.0 when heap_used_before is zero (nothing to collect).
+        """
+        heap_used_before = int(self.nursery_total) + int(self.tenure_total) - int(self.free_before)
+        if heap_used_before <= 0:
+            return 0.0
+        return round(self.freed() / heap_used_before * 100, 2)
+
     def get_start_time(self):
         if not self.__start_time:
             # example format: 2023-04-25T11:04:13.857
@@ -125,6 +138,7 @@ class GcCollection:
         element.setAttribute(TENURE_FREE_BEFORE, self.tenure_free_before)
         element.setAttribute(TENURE_FREE_AFTER, self.tenure_free_after)
         element.setAttribute(TENURE_TOTAL, self.tenure_total)
+        element.setAttribute(COMP_RATIO, str(self.comp_ratio()))
         return element
 
 

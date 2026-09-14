@@ -586,3 +586,73 @@ class TestTips(unittest.TestCase):
         self.assertTrue(len(result_triggered) > 0, "Should have triggered long HTTP calls tip")
         self.assertIn("[WARNING] Detected", result_triggered[0])
         self.assertIn("HTTP call(s) longer than 5000ms", result_triggered[0])
+
+    # ------------------------------------------------------------------
+    # LowCompRatioTip
+    # ------------------------------------------------------------------
+
+    def _make_collect(self, comp_ratio_value):
+        """Helper: build a GcCollection whose comp_ratio() returns comp_ratio_value."""
+        collect = GcCollection()
+        collect.start_time_str = "2023-04-25T11:04:13.857"
+        # Set heap values so that comp_ratio() == comp_ratio_value.
+        # heap_used_before = nursery_total + tenure_total - free_before
+        # freed = free_after - free_before
+        # comp_ratio = freed / heap_used_before * 100
+        # Use total = 1000, free_before = 0, so freed = comp_ratio_value * 10
+        collect.nursery_total = "500"
+        collect.tenure_total = "500"
+        collect.free_before = "0"
+        collect.free_after = str(int(comp_ratio_value * 10))
+        return collect
+
+    def test_LowCompRatioTip_no_verbose_gc(self):
+        """Returns empty list when no verbose GC data is available."""
+        javacore_set = JavacoreSet("")
+        result = tips.LowCompRatioTip.generate(javacore_set)
+        self.assertEqual(0, len(result), "Should return empty list when no verbose GC data")
+
+    def test_LowCompRatioTip_all_low(self):
+        """Returns empty list when all collections have comp ratio below warning threshold."""
+        javacore_set = JavacoreSet("")
+        javacore_set.gc_parser._VerboseGcParser__collects = [
+            self._make_collect(10),
+            self._make_collect(20),
+            self._make_collect(30),
+        ]
+        result = tips.LowCompRatioTip.generate(javacore_set)
+        self.assertEqual(0, len(result), "Should return empty list when comp ratios are below warning threshold")
+
+    def test_LowCompRatioTip_majority_above_warning(self):
+        """Returns a -Xmx warning when the majority of collections are above 50% but not above 70%."""
+        javacore_set = JavacoreSet("")
+        javacore_set.gc_parser._VerboseGcParser__collects = [
+            self._make_collect(55),
+            self._make_collect(60),
+            self._make_collect(65),
+            self._make_collect(20),
+        ]
+        result = tips.LowCompRatioTip.generate(javacore_set)
+        self.assertEqual(1, len(result), "Should return one warning when majority are above 50%")
+        tip_text = result[0]
+        self.assertIn("[WARNING]", tip_text, "Tip should contain WARNING")
+        self.assertIn("3 out of 4", tip_text, "Tip should report count correctly")
+        self.assertIn("50%", tip_text, "Tip should mention the warning threshold")
+        self.assertIn("-Xmx", tip_text, "Tip should mention increasing -Xmx")
+
+    def test_LowCompRatioTip_majority_above_critical(self):
+        """Returns a memory-leak warning when the majority of collections are above 70%."""
+        javacore_set = JavacoreSet("")
+        javacore_set.gc_parser._VerboseGcParser__collects = [
+            self._make_collect(75),
+            self._make_collect(80),
+            self._make_collect(85),
+            self._make_collect(20),
+        ]
+        result = tips.LowCompRatioTip.generate(javacore_set)
+        self.assertEqual(1, len(result), "Should return one warning when majority are above 70%")
+        tip_text = result[0]
+        self.assertIn("[WARNING]", tip_text, "Tip should contain WARNING")
+        self.assertIn("3 out of 4", tip_text, "Tip should report count correctly")
+        self.assertIn("70%", tip_text, "Tip should mention the critical threshold")
+        self.assertIn("memory leaks", tip_text, "Tip should mention memory leaks")
