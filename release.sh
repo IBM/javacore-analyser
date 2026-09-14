@@ -137,8 +137,8 @@ fi
 # Step 3 — Build distribution packages
 # ---------------------------------------------------------------------------
 if should_run 3; then
-  echo "=== [3/8] Building distribution packages ==="
-  pip install --quiet --upgrade build
+  echo "=== [3/7] Building distribution packages ==="
+  pip install --quiet "build==1.6.1"
   python -m build
   echo "Build complete. Artifacts in dist/:"
   ls dist/
@@ -220,10 +220,8 @@ fi
 if should_run 6; then
   echo "=== [6/8] Uploading to PyPI ==="
   # Use __token__ as the username and your PyPI API token as the password when prompted.
-  # Note: PyPI dropped PGP signature support in 2023; .asc files are NOT uploaded here.
-  # Signatures are still attached to the GitHub release (step 7) for out-of-band verification.
-  pip install --quiet --upgrade twine
-  twine upload dist/*.whl dist/*.tar.gz
+  pip install --quiet "twine==7.0.0"
+  twine upload dist/*
   echo ""
 fi
 
