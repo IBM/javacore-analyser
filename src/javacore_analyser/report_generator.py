@@ -60,30 +60,6 @@ class FileResolver(etree.Resolver):
         return self.resolve_filename(self.temp_path + os.sep + url, context)
 
 
-def _create_xml_xsl_for_collection(tmp_dir, templates_dir, xml_xsl_filename, collection, output_file_prefix):
-    logging.info("Creating xmls and xsls in " + tmp_dir)
-    os.mkdir(tmp_dir)
-    extensions = [".xsl", ".xml"]
-    for extension in tqdm(extensions, desc="Creating xml/xsl files", unit=" file"):
-        file_full_path = os.path.normpath(os.path.join(templates_dir, xml_xsl_filename + extension))
-        if not file_full_path.startswith(templates_dir):
-            raise Exception("Security exception: Uncontrolled data used in path expression")
-        file_content: str = Path(file_full_path).read_text()
-        for element in collection:
-            element_id = element.get_id()
-            filename = output_file_prefix + "_" + str(element_id) + extension
-            if filename.startswith("_"):
-                filename = filename[1:]
-            if element.is_interesting() or not Properties.get_instance().skip_boring():
-                file = os.path.join(tmp_dir, filename)
-                logging.debug("Writing file " + file)
-                f = open(file, "w")
-                f.write(file_content.format(id=element_id))
-                f.close()
-            else:
-                logging.debug("Skipping boring file: " + filename)
-
-
 class ReportGenerator:
     """Generates HTML report files from a :class:`~javacore_analyser.javacore_set.JavacoreSet`."""
 
@@ -136,9 +112,8 @@ class ReportGenerator:
         logging.info("Finished generating placeholder htmls")
 
     def _generate_htmls_for_threads(self, temp_dir_name: str):
-        _create_xml_xsl_for_collection(
+        self._create_xml_xsl_for_collection(
             os.path.join(temp_dir_name, "threads"),
-            os.path.join(self.output_dir, "data", "xml", "threads"),
             "thread",
             self.javacore_set.threads,
             "thread",
@@ -149,9 +124,8 @@ class ReportGenerator:
         )
 
     def _generate_htmls_for_javacores(self, temp_dir_name: str):
-        _create_xml_xsl_for_collection(
+        self._create_xml_xsl_for_collection(
             os.path.join(temp_dir_name, "javacores"),
-            os.path.join(self.output_dir, "data", "xml", "javacores"),
             "javacore",
             self.javacore_set.javacores,
             "",
@@ -160,6 +134,30 @@ class ReportGenerator:
             os.path.join(temp_dir_name, "javacores"),
             os.path.join(self.output_dir, "javacores"),
         )
+
+    def _create_xml_xsl_for_collection(self, tmp_dir, xml_xsl_filename, collection, output_file_prefix):
+        templates_dir = os.path.join(self.output_dir, "data", "xml", xml_xsl_filename + "s")
+        logging.info("Creating xmls and xsls in " + tmp_dir)
+        os.mkdir(tmp_dir)
+        extensions = [".xsl", ".xml"]
+        for extension in tqdm(extensions, desc="Creating xml/xsl files", unit=" file"):
+            file_full_path = os.path.normpath(os.path.join(templates_dir, xml_xsl_filename + extension))
+            if not file_full_path.startswith(templates_dir):
+                raise Exception("Security exception: Uncontrolled data used in path expression")
+            file_content: str = Path(file_full_path).read_text()
+            for element in collection:
+                element_id = element.get_id()
+                filename = output_file_prefix + "_" + str(element_id) + extension
+                if filename.startswith("_"):
+                    filename = filename[1:]
+                if element.is_interesting() or not Properties.get_instance().skip_boring():
+                    file = os.path.join(tmp_dir, filename)
+                    logging.debug("Writing file " + file)
+                    f = open(file, "w")
+                    f.write(file_content.format(id=element_id))
+                    f.close()
+                else:
+                    logging.debug("Skipping boring file: " + filename)
 
     # Assisted by WCA@IBM
     # Latest GenAI contribution: ibm/granite-8b-code-instruct
