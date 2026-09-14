@@ -98,7 +98,7 @@
                                                         </xsl:otherwise>
                                                     </xsl:choose>
                                                 </xsl:when>
-                                                <xsl:otherwise>N/A</xsl:otherwise>
+                                                <xsl:otherwise>no current thread</xsl:otherwise>
                                             </xsl:choose>
                                         </td>
                                     </tr>

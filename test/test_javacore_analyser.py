@@ -47,6 +47,7 @@ class TestJavacoreAnalyser(unittest.TestCase):
         self.expateerror = ["javacore_analyser", "test/data/verboseGcJavacores", "tmp"]
         self.threadnameswithquotes = ["javacore_analyser", "test/data/quotationMarks", "tmp"]
         self.encoding = ["javacore_analyser", "test/data/encoding/javacore.20220606.114458.32888.0001.txt", "tmp"]
+        self.no_current_thread = ["javacore_analyser", "test/data/javacores/javacore.20220606.114458.32888.0001.txt", "tmp"]
         self.ml = ["javacore_analyser", "test/data/archives/javacores.7z", "tmp", "--use_ml=true"]
         self.ai_default_llm = ["javacore_analyser", "test/data/archives/javacores.7z", "tmp", "--use_ai=true"]
         self.ollama = ["javacore_analyser", "test/data/archives/javacores.7z", "tmp", "--use_ai=true",
@@ -82,6 +83,12 @@ class TestJavacoreAnalyser(unittest.TestCase):
 
     def test_quotation_marks(self):
         self.runMainWithParams(self.threadnameswithquotes)
+
+    def test_no_current_thread(self):
+        self.runMainWithParams(self.no_current_thread)
+        with open("tmp/index.html") as report_file:
+            report_html = report_file.read()
+        self.assertIn("no current thread", report_html)
 
     def test_unknown_encoding(self):
         self.runMainWithParams(self.encoding)
