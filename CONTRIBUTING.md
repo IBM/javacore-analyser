@@ -160,7 +160,7 @@ podman manifest push javacore-analyser:2.1 docker://ghcr.io/ibm/javacore-analyse
 ## Releasing a new version
 
 Use the [`release.sh`](release.sh) script from the project root. It automates all release steps and
-requires `git`, `pip`, `twine`, and the [GitHub CLI (`gh`)](https://cli.github.com/) to be installed
+requires `git`, `pip`, `gpg`, `twine`, and the [GitHub CLI (`gh`)](https://cli.github.com/) to be installed
 and authenticated.
 
 ### Quick start
@@ -187,7 +187,7 @@ bash release.sh <VERSION> --from <STEP>
 For example, to retry only the PyPI upload after a network error:
 
 ```bash
-bash release.sh 4.0 --from 4
+bash release.sh 4.0 --from 6
 ```
 
 ### What the script does
@@ -197,9 +197,11 @@ bash release.sh 4.0 --from 4
 | 1 | Verify you are on `main` with a clean working tree |
 | 2 | Create and push the git tag (`git tag <VERSION> && git push --tags`) |
 | 3 | Build distribution packages (`python -m build`) into `dist/` |
-| 4 | Upload packages to PyPI (`twine upload dist/*`) — prompts for `__token__` and your PyPI API token |
-| 5 | Create a **draft** GitHub release with auto-generated notes attached |
-| 6 | Prepend the release notes to [CHANGELOG.md](CHANGELOG.md) |
+| 4 | Install the built wheel in a temporary venv and run the test suite |
+| 5 | Sign `dist/` artifacts with GPG (creates `.asc` detached signatures) |
+| 6 | Upload packages and signatures to PyPI (`twine upload dist/*.whl dist/*.tar.gz dist/*.asc`) — prompts for `__token__` and your PyPI API token |
+| 7 | Create a **draft** GitHub release with auto-generated notes and all `dist/` files attached |
+| 8 | Prepend the release notes to [CHANGELOG.md](CHANGELOG.md) |
 
 ### After the script finishes
 

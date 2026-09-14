@@ -172,6 +172,8 @@ Summary of steps:
 1. Ensure you are on `main` and the branch is clean.
 2. Create and push a version tag: `git tag <version> && git push --tags`
 3. Build distribution packages: `pip install build && python -m build`
-4. Upload to PyPI: `pip install twine && twine upload dist/*` (use `__token__` as username, PyPI API token as password)
-5. Create a GitHub release attaching the dist files: `gh release create <version> dist/* --repo IBM/javacore-analyser --generate-notes --title "<version>"`
-6. Copy release notes to [CHANGELOG.md](CHANGELOG.md).
+4. Install the built wheel in a temporary venv and run the test suite.
+5. Sign dist artifacts with GPG: `gpg --detach-sign --armor dist/*.whl dist/*.tar.gz` (creates `.asc` files)
+6. Upload to PyPI: `pip install twine && twine upload dist/*.whl dist/*.tar.gz dist/*.asc` (use `__token__` as username, PyPI API token as password)
+7. Create a GitHub release attaching the dist files: `gh release create <version> dist/* --repo IBM/javacore-analyser --generate-notes --title "<version>"`
+8. Copy release notes to [CHANGELOG.md](CHANGELOG.md).
