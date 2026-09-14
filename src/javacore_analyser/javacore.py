@@ -38,6 +38,7 @@ class Javacore:
         self.filename: Optional[str] = None
         self.file_reader: Any = None
         self.snapshots: list[ThreadSnapshot] = []
+        self.current_thread: Optional[ThreadSnapshot] = None
         self.siginfo: Optional[str] = None
         self.__total_cpu: float = -1
         self.__load: float = -1
