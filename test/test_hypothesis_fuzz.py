@@ -4,8 +4,7 @@
 #
 # Property-based fuzz tests using Hypothesis.
 #
-# These tests replace ClusterFuzzLite and exercise the same two high-risk
-# parsing surfaces:
+# Exercises two high-risk parsing surfaces:
 #   - StackTraceElement.set_line()  — arbitrary javacore text lines
 #   - VerboseGcFile.__init__()      — arbitrary XML-like file content
 #
