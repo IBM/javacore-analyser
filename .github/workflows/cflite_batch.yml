@@ -45,6 +45,7 @@ jobs:
           language: python
           sanitizer: address
           output-sarif: true
+          storage-repo: https://github.com/${{ github.repository }}
 
       - name: Upload SARIF
         if: always() && hashFiles('clusterfuzz-sarif/results.sarif') != ''
