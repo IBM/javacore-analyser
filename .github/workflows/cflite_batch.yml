@@ -5,11 +5,6 @@
 # ClusterFuzzLite batch fuzzing — runs a longer fuzz session on the main branch
 # on a weekly schedule and saves the corpus/crash artifacts.
 # See https://google.github.io/clusterfuzzlite/running-clusterfuzzlite/github-actions/
-#
-# Python note: build_fuzzers runs build.sh inside a Docker container whose
-# filesystem is discarded before run_fuzzers starts, so build-out is always
-# empty for the runner. We therefore run build.sh directly on the runner as
-# a plain shell step so the files persist in GITHUB_WORKSPACE/build-out.
 
 name: ClusterFuzzLite batch fuzzing
 
@@ -30,11 +25,13 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Install atheris
-        run: pip3 install atheris
-
-      - name: Build fuzz targets
-        run: bash .clusterfuzzlite/build.sh
+      - name: Build Fuzzers
+        uses: google/clusterfuzzlite/actions/build_fuzzers@v1
+        with:
+          language: python
+          sanitizer: address
+          bad-build-check: false
+          project-src-path: ${{ github.workspace }}
 
       - name: Run Fuzzers
         uses: google/clusterfuzzlite/actions/run_fuzzers@v1
