@@ -10,14 +10,22 @@
 # $SRC and $OUT are not set — fall back to workspace-relative paths that
 # ClusterFuzzLite itself uses on the runner.
 
-# Resolve source root: prefer $SRC (set inside OSS-Fuzz containers), otherwise
-# use the GitHub Actions workspace where the repo was checked out.
-PROJECT_SRC="${SRC:-${GITHUB_WORKSPACE}}"
-PROJECT_ROOT="${PROJECT_SRC}/javacore_analyser"
+# Resolve source root:
+#   - Inside an OSS-Fuzz Docker container the repo is cloned to $SRC/javacore_analyser.
+#   - On a GitHub Actions runner the repo is checked out directly into $GITHUB_WORKSPACE
+#     (no subdirectory), so PROJECT_ROOT = $GITHUB_WORKSPACE.
+#   - Fallback for running the script directly from the repo (local testing).
+if [ -n "${SRC:-}" ] && [ -d "${SRC}/javacore_analyser" ]; then
+    PROJECT_ROOT="${SRC}/javacore_analyser"
+elif [ -n "${GITHUB_WORKSPACE:-}" ]; then
+    PROJECT_ROOT="${GITHUB_WORKSPACE}"
+else
+    PROJECT_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+fi
 
 # Resolve output dir: prefer $OUT (set inside OSS-Fuzz containers), otherwise
 # use the build-out directory that ClusterFuzzLite's runner action reads from.
-FUZZ_OUT="${OUT:-${GITHUB_WORKSPACE}/build-out}"
+FUZZ_OUT="${OUT:-${GITHUB_WORKSPACE:-${PROJECT_ROOT}}/build-out}"
 mkdir -p "$FUZZ_OUT"
 
 # Install the package so fuzz targets can import javacore_analyser
