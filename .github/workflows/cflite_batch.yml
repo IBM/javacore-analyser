@@ -45,7 +45,6 @@ jobs:
           language: python
           sanitizer: address
           output-sarif: true
-          download-build: true
 
       - name: Upload SARIF
         if: always() && hashFiles('clusterfuzz-sarif/results.sarif') != ''
