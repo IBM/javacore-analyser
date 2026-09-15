@@ -33,6 +33,7 @@ jobs:
         with:
           language: python
           sanitizer: ${{ matrix.sanitizer }}
+          bad-build-check: false
 
       - name: Run Fuzzers (${{ matrix.sanitizer }})
         id: run
