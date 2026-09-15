@@ -285,6 +285,7 @@ class JavacoreSet:
         # sorting files by name.
         # Unless the user changed the javacore file name format, this is equivalent to sorting by date
         self.files.sort()
+        self.gc_parser.get_file_paths().sort()
 
     def parse_javacores(self):
         """ creates a Javacore object for each javacore...txt file in the given path """
