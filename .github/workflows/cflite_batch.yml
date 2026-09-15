@@ -31,6 +31,7 @@ jobs:
           language: python
           sanitizer: address
           bad-build-check: false
+          upload-build: true
 
       - name: Run Fuzzers
         uses: google/clusterfuzzlite/actions/run_fuzzers@v1
@@ -41,6 +42,7 @@ jobs:
           language: python
           sanitizer: address
           output-sarif: true
+          download-build: true
 
       - name: Upload SARIF
         if: always() && hashFiles('clusterfuzz-sarif/results.sarif') != ''
