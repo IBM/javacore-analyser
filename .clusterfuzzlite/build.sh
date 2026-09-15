@@ -21,9 +21,6 @@ pip3 install "$SRC"
 for fuzzer in $(find "$SRC/.clusterfuzzlite" -name "fuzz_*.py"); do
     fuzzer_name=$(basename "$fuzzer" .py)
     cp "$fuzzer" "$OUT/"
-    cat > "$OUT/$fuzzer_name" << WRAPPER
-#!/bin/bash
-exec python3 "$OUT/${fuzzer_name}.py" "\$@"
-WRAPPER
+    printf '#!/bin/bash\nexec python3 "%s/%s.py" "$@"\n' "$OUT" "$fuzzer_name" > "$OUT/$fuzzer_name"
     chmod +x "$OUT/$fuzzer_name"
 done
