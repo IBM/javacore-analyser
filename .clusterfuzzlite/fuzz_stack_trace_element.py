@@ -16,7 +16,7 @@ def TestOneInput(data):
     fdp = atheris.FuzzedDataProvider(data)
     line = fdp.ConsumeUnicodeNoSurrogates(256)
     try:
-        element = StackTraceElement(line)
+        StackTraceElement(line)
     except Exception:
         # Unexpected exceptions from arbitrary text input are the bug we are looking for;
         # all other exceptions (ValueError, etc.) from malformed data are acceptable.
