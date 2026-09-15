@@ -22,6 +22,7 @@ from importlib_resources.abc import Traversable
 
 from javacore_analyser import common_utils
 from javacore_analyser.javacore_set import JavacoreSet
+from javacore_analyser.report_generator import ReportGenerator
 from javacore_analyser.properties import Properties
 
 SUPPORTED_ARCHIVES_FORMATS = {"zip", "tar", "gz", "tgz", "bz2", "lzma", "7z"}
@@ -235,7 +236,7 @@ def process_javacores_and_generate_report_data(input_files, output_dir):
     try:
         create_output_files_structure(output_dir)
         javacore_set = generate_javecore_set_data(input_files)
-        javacore_set.generate_report_files(output_dir)
+        ReportGenerator(javacore_set, output_dir).generate_report_files()
     except Exception as ex:
         logging.exception(ex)
         logging.error("Processing was not successful. Correct the problem and try again.")
