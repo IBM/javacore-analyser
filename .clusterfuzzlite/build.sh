@@ -4,24 +4,35 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 # ClusterFuzzLite build script for Python fuzzing with atheris.
-# Copies each fuzz target to $OUT so the fuzzer runner can discover them.
 # See https://google.github.io/clusterfuzzlite/build-integration/python-lang/
+#
+# When run on a GitHub Actions runner (not inside an OSS-Fuzz Docker container),
+# $SRC and $OUT are not set — fall back to workspace-relative paths that
+# ClusterFuzzLite itself uses on the runner.
 
-# Install the package so the fuzz targets can import javacore_analyser
-pip3 install "$SRC/javacore_analyser" || true
+# Resolve source root: prefer $SRC (set inside OSS-Fuzz containers), otherwise
+# use the GitHub Actions workspace where the repo was checked out.
+PROJECT_SRC="${SRC:-${GITHUB_WORKSPACE}}"
+PROJECT_ROOT="${PROJECT_SRC}/javacore_analyser"
+
+# Resolve output dir: prefer $OUT (set inside OSS-Fuzz containers), otherwise
+# use the build-out directory that ClusterFuzzLite's runner action reads from.
+FUZZ_OUT="${OUT:-${GITHUB_WORKSPACE}/build-out}"
+mkdir -p "$FUZZ_OUT"
+
+# Install the package so fuzz targets can import javacore_analyser
+pip3 install "$PROJECT_ROOT" || true
 
 # For each fuzz target:
-#   1. Copy the .py source to $OUT so atheris can find it.
-#   2. Create an executable shell wrapper with the same stem (no extension)
-#      — ClusterFuzzLite only discovers fuzz targets that are executable
-#      files with no extension inside $OUT.
-for fuzzer in $(find "$SRC/javacore_analyser/.clusterfuzzlite" -name "fuzz_*.py"); do
+#   1. Copy the .py source to $FUZZ_OUT so it is importable at runtime.
+#   2. Create an executable shell wrapper with the same stem (no extension) —
+#      ClusterFuzzLite discovers fuzz targets as executable files with no extension.
+for fuzzer in $(find "$PROJECT_ROOT/.clusterfuzzlite" -name "fuzz_*.py"); do
     fuzzer_name=$(basename "$fuzzer" .py)
-    cp "$fuzzer" "$OUT/"
-    # Write the launcher that the runner will invoke
-    cat > "$OUT/$fuzzer_name" << EOF
+    cp "$fuzzer" "$FUZZ_OUT/"
+    cat > "$FUZZ_OUT/$fuzzer_name" << WRAPPER
 #!/bin/bash
-exec python3 "$OUT/${fuzzer_name}.py" "\$@"
-EOF
-    chmod +x "$OUT/$fuzzer_name"
+exec python3 "$FUZZ_OUT/${fuzzer_name}.py" "\$@"
+WRAPPER
+    chmod +x "$FUZZ_OUT/$fuzzer_name"
 done
