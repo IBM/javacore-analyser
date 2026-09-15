@@ -1,0 +1,49 @@
+#
+# Copyright IBM Corp. 2024 - 2026
+# SPDX-License-Identifier: Apache-2.0
+#
+# ClusterFuzzLite batch fuzzing — runs a longer fuzz session on the main branch
+# on a weekly schedule and saves the corpus/crash artifacts.
+# See https://google.github.io/clusterfuzzlite/running-clusterfuzzlite/github-actions/
+
+name: ClusterFuzzLite batch fuzzing
+
+on:
+  schedule:
+    - cron: '0 3 * * 1'  # every Monday at 03:00 UTC
+  push:
+    branches: [ main ]
+
+permissions: read-all
+
+jobs:
+  BatchFuzzing:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        sanitizer:
+          - address
+    steps:
+      - name: Build Fuzzers (${{ matrix.sanitizer }})
+        id: build
+        uses: google/clusterfuzzlite/actions/build_fuzzers@v1
+        with:
+          language: python
+          sanitizer: ${{ matrix.sanitizer }}
+
+      - name: Run Fuzzers (${{ matrix.sanitizer }})
+        id: run
+        uses: google/clusterfuzzlite/actions/run_fuzzers@v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          fuzz-seconds: 600
+          mode: batch
+          sanitizer: ${{ matrix.sanitizer }}
+          output-sarif: true
+
+      - name: Upload SARIF
+        if: always()
+        uses: github/codeql-action/upload-sarif@b96794f015dfd88f77b49b1c93e0fa7110f94c63 # v4.38.0
+        with:
+          sarif_file: clusterfuzz-sarif/results.sarif
