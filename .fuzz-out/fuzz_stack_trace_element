@@ -1,2 +1,0 @@
-#!/bin/bash
-exec python3 "/out/fuzz_stack_trace_element.py" "$@"

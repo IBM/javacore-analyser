@@ -1,2 +1,0 @@
-#!/bin/bash
-exec python3 "/out/fuzz_verbose_gc_parser.py" "$@"
