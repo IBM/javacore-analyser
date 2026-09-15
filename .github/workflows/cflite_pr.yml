@@ -28,6 +28,7 @@ jobs:
           language: python
           sanitizer: address
           bad-build-check: false
+          keep-unaffected-fuzz-targets: true
 
       - name: Run Fuzzers
         uses: google/clusterfuzzlite/actions/run_fuzzers@v1
