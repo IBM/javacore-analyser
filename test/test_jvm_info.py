@@ -11,6 +11,7 @@ from xml.dom.minidom import parse
 
 from javacore_analyser.jvm_info import JvmInfo
 from javacore_analyser.javacore_set import JavacoreSet
+from javacore_analyser.report_generator import ReportGenerator
 
 
 class TestJvmInfo(unittest.TestCase):
@@ -66,7 +67,7 @@ class TestJvmInfo(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp_dir:
             jset = JavacoreSet.create(self.verbose_gc_dir)
             report_path = os.path.join(tmp_dir, "report.xml")
-            jset._JavacoreSet__create_report_xml(report_path)
+            ReportGenerator(jset, tmp_dir)._create_report_xml(report_path)
 
             # Read and parse report.xml from disk
             doc = parse(report_path)
