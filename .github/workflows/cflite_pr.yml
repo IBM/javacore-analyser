@@ -4,6 +4,11 @@
 #
 # ClusterFuzzLite PR fuzzing — runs a short fuzz session on every pull request.
 # See https://google.github.io/clusterfuzzlite/running-clusterfuzzlite/github-actions/
+#
+# Python note: build_fuzzers runs build.sh inside a Docker container whose
+# filesystem is discarded before run_fuzzers starts, so build-out is always
+# empty for the runner. We therefore run build.sh directly on the runner as
+# a plain shell step so the files persist in GITHUB_WORKSPACE/build-out.
 
 name: ClusterFuzzLite PR fuzzing
 
@@ -16,34 +21,26 @@ permissions: read-all
 jobs:
   PR:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        sanitizer:
-          - address
     steps:
       - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
-      - name: Build Fuzzers (${{ matrix.sanitizer }})
-        id: build
-        uses: google/clusterfuzzlite/actions/build_fuzzers@v1
-        with:
-          language: python
-          sanitizer: ${{ matrix.sanitizer }}
-          bad-build-check: false
+      - name: Install atheris
+        run: pip3 install atheris
 
-      - name: Run Fuzzers (${{ matrix.sanitizer }})
-        id: run
+      - name: Build fuzz targets
+        run: bash .clusterfuzzlite/build.sh
+
+      - name: Run Fuzzers
         uses: google/clusterfuzzlite/actions/run_fuzzers@v1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           fuzz-seconds: 60
           mode: code-change
           language: python
-          sanitizer: ${{ matrix.sanitizer }}
+          sanitizer: address
           output-sarif: true
 
       - name: Upload SARIF
