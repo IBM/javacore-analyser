@@ -15,8 +15,7 @@ on:
     branches: [ main ]
 
 permissions:
-  actions: write        # required for upload-build / download-build artifacts
-  contents: read
+  contents: write         # required for upload-build to push to storage-repo branch
   security-events: write  # required for upload-sarif
 
 jobs:
