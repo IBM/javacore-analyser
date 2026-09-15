@@ -14,7 +14,10 @@ on:
   push:
     branches: [ main ]
 
-permissions: read-all
+permissions:
+  actions: write        # required for upload-build / download-build artifacts
+  contents: read
+  security-events: write  # required for upload-sarif
 
 jobs:
   BatchFuzzing:
