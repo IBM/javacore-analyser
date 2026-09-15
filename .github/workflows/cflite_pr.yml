@@ -28,7 +28,6 @@ jobs:
           language: python
           sanitizer: address
           bad-build-check: false
-          project-src-path: ${{ github.workspace }}
 
       - name: Run Fuzzers
         uses: google/clusterfuzzlite/actions/run_fuzzers@v1
