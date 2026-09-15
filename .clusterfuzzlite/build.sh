@@ -11,6 +11,6 @@
 pip3 install "$SRC/javacore_analyser" || true
 
 # Copy every fuzz target to $OUT
-for fuzzer in $(find "$SRC/javacore_analyser/fuzz" -name "fuzz_*.py"); do
+for fuzzer in $(find "$SRC/javacore_analyser/.clusterfuzzlite" -name "fuzz_*.py"); do
     cp "$fuzzer" "$OUT/"
 done

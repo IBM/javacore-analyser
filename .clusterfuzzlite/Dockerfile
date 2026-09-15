@@ -14,4 +14,4 @@ WORKDIR $SRC/javacore_analyser
 # Install package dependencies including atheris for fuzzing
 RUN pip3 install atheris && pip3 install -e ".[full]" || pip3 install -e .
 
-COPY fuzz/build.sh $SRC/
+COPY .clusterfuzzlite/build.sh $SRC/
