@@ -1,0 +1,6 @@
+
+        <!-- Plugin: {plugin_display_name} -->
+        <xsl:text disable-output-escaping="yes"><![CDATA[
+{full_html}
+        ]]></xsl:text>
+
