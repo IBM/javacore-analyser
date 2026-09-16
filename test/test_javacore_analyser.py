@@ -169,6 +169,7 @@ class TestJavacoreAnalyser(unittest.TestCase):
     def test_run_two_javacores_custom_separator(self):
         self.runMainWithParams(self.twofilesargs_different_separator)
 
+    @unittest.skip("We don't want to run HuggingFace tests for now.")
     def test_run_ai_default_llm(self):
         self.runMainWithParams(self.ai_default_llm)
 
@@ -183,6 +184,7 @@ class TestJavacoreAnalyser(unittest.TestCase):
     def test_run_hugging_face(self):
         self.runMainWithParams(self.huggingface)
 
+    @unittest.skip("We don't want to run HuggingFace tests for now.")
     def test_run_hugging_face_default_params(self):
         self.runMainWithParams(self.huggingface_default_params)
 

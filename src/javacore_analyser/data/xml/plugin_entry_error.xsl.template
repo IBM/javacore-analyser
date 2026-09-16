@@ -1,0 +1,8 @@
+
+        <!-- Plugin: {plugin_name} - Error generating HTML -->
+        <xsl:text disable-output-escaping="yes"><![CDATA[
+        <div class="error_row" style="padding: 10px; margin: 10px 0;">
+            <strong>Error in plugin {plugin_name}:</strong> {error_message}
+        </div>
+        ]]></xsl:text>
+
