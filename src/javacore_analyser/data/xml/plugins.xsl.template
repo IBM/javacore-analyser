@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+# Copyright IBM Corp. 2024 - 2026
+# SPDX-License-Identifier: Apache-2.0
+#
+# This file is auto-generated during report creation.
+# It contains XSL templates for all loaded plugins.
+-->
+
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+
+    <xsl:template name="plugins">
+{plugins_body}    </xsl:template>
+
+</xsl:stylesheet>

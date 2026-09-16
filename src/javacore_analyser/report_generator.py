@@ -8,6 +8,7 @@ import os
 import shutil
 import tempfile
 from datetime import datetime
+from html import escape
 from multiprocessing.dummy import Pool
 from pathlib import Path
 from typing import IO, Optional, cast
@@ -376,19 +377,11 @@ class ReportGenerator:
         Returns:
             HTML string containing the section header and documentation wrapper
         """
-        from html import escape
         escaped_title = escape(section_title)
-        return (
-            f'<h3><a id="toggle_{section_id}" href="javascript:expand_it({section_id},toggle_{section_id})"'
-            f' class="expandit">{escaped_title}</a></h3>\n'
-            f'<div id="{section_id}" style="display:none;">\n'
-            f'    <a id="toggle{section_id}doc"'
-            f' href="javascript:expand_it({section_id}doc,toggle{section_id}doc)" class="expandit">\n'
-            f'        What does this section tell me?</a>\n'
-            f'    <div id="{section_id}doc" style="display:none;">\n'
-            f'        {description}\n'
-            f'    </div>\n\n'
-        )
+        template_path = os.path.normpath(
+            str(importlib_resources.files("javacore_analyser") / "data" / "xml" / "plugins_section_header.html"))
+        template = Path(template_path).read_text(encoding="utf-8")
+        return template.format(section_id=section_id, escaped_title=escaped_title, description=description)
 
     def _generate_plugins_xsl(self, temp_dir: str) -> Optional[str]:
         """
@@ -400,21 +393,23 @@ class ReportGenerator:
         plugin_data = self.javacore_set.plugin_data
         plugins_xsl_path = os.path.join(temp_dir, "plugins.xsl")
 
+        xsl_template_path = os.path.normpath(
+            str(importlib_resources.files("javacore_analyser") / "data" / "xml" / "plugins.xsl.template"))
+        xsl_template = Path(xsl_template_path).read_text(encoding="utf-8")
+
+        xsl_empty_path = os.path.normpath(
+            str(importlib_resources.files("javacore_analyser") / "data" / "xml" / "plugins_empty.xsl"))
+
+        plugin_entry_template_path = os.path.normpath(
+            str(importlib_resources.files("javacore_analyser") / "data" / "xml" / "plugin_entry.xsl.template"))
+        plugin_entry_template = Path(plugin_entry_template_path).read_text(encoding="utf-8")
+
+        plugin_entry_error_template_path = os.path.normpath(
+            str(importlib_resources.files("javacore_analyser") / "data" / "xml" / "plugin_entry_error.xsl.template"))
+        plugin_entry_error_template = Path(plugin_entry_error_template_path).read_text(encoding="utf-8")
+
         try:
-            plugins_xsl_content = '''<?xml version="1.0" encoding="UTF-8"?>
-
-<!--
-# Copyright IBM Corp. 2024 - 2026
-# SPDX-License-Identifier: Apache-2.0
-#
-# This file is auto-generated during report creation.
-# It contains XSL templates for all loaded plugins.
--->
-
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-
-    <xsl:template name="plugins">
-'''
+            plugins_body = ""
             if plugin_data:
                 logging.info("Generating plugins.xsl with plugin HTML content")
                 for plugin_name, plugin_info in plugin_data.items():
@@ -430,37 +425,24 @@ class ReportGenerator:
                                 description=plugin.get_description(),
                             )
                             full_html = section_header + html_content + '\n</div>\n'
-                            plugins_xsl_content += f'''
-        <!-- Plugin: {plugin.get_display_name()} -->
-        <xsl:text disable-output-escaping="yes"><![CDATA[
-{full_html}
-        ]]></xsl:text>
-
-'''
+                            plugins_body += plugin_entry_template.format(
+                                plugin_display_name=plugin.get_display_name(),
+                                full_html=full_html,
+                            )
                             logging.info(f"Added HTML content for plugin: {plugin.get_display_name()}")
                         else:
                             logging.debug(f"Plugin {plugin.get_display_name()} returned no HTML content")
                     except Exception as e:
                         logging.error(f"Error generating HTML for plugin {plugin_name}: {e}")
                         logging.exception(e)
-                        plugins_xsl_content += f'''
-        <!-- Plugin: {plugin_name} - Error generating HTML -->
-        <xsl:text disable-output-escaping="yes"><![CDATA[
-        <div class="error_row" style="padding: 10px; margin: 10px 0;">
-            <strong>Error in plugin {plugin_name}:</strong> {str(e).replace('<', '&lt;').replace('>', '&gt;')}
-        </div>
-        ]]></xsl:text>
-
-'''
+                        plugins_body += plugin_entry_error_template.format(
+                            plugin_name=plugin_name,
+                            error_message=str(e).replace("<", "&lt;").replace(">", "&gt;"),
+                        )
             else:
-                plugins_xsl_content += "        <!-- No plugins loaded -->\n"
+                plugins_body = "        <!-- No plugins loaded -->\n"
 
-            plugins_xsl_content += '''    </xsl:template>
-
-</xsl:stylesheet>
-
-<!-- Made with Bob -->
-'''
+            plugins_xsl_content = xsl_template.format(plugins_body=plugins_body)
             with open(plugins_xsl_path, 'w', encoding='utf-8') as f:
                 f.write(plugins_xsl_content)
             logging.info(f"Generated plugins.xsl at {plugins_xsl_path}")
@@ -469,14 +451,7 @@ class ReportGenerator:
         except Exception as e:
             logging.error(f"Error generating plugins.xsl: {e}")
             try:
-                with open(plugins_xsl_path, 'w', encoding='utf-8') as f:
-                    f.write('''<?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-    <xsl:template name="plugins">
-        <!-- Error generating plugin templates -->
-    </xsl:template>
-</xsl:stylesheet>
-''')
+                shutil.copy2(xsl_empty_path, plugins_xsl_path)
                 return plugins_xsl_path
             except Exception:
                 return None
