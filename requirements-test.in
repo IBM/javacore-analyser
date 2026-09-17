@@ -1,0 +1,32 @@
+#
+# Source file for the unit-test dependency set used in .github/workflows/unit-tests.yml.
+#
+# This file lists only the direct (top-level) dependencies needed to run the test suite.
+# Heavy optional dependencies (torch, transformers, ibm-watsonx-ai) are intentionally
+# excluded to keep the CI runner fast.
+#
+# To regenerate requirements-test.txt with pinned hashes, run from the project root
+# using a Linux container so that platform-specific deps (e.g. nvidia-nccl-cu13
+# from xgboost) are resolved correctly for the linux/amd64 CI runner:
+#
+#   podman run --rm -v "$(pwd):/work" -w /work python:3.14-slim \
+#     bash -c "pip install pip-tools --quiet && \
+#              pip-compile --generate-hashes --output-file=requirements-test.txt requirements-test.in"
+#
+
+py7zr
+lxml
+pyana
+importlib-resources
+tqdm
+haralyzer
+flask
+waitress
+markdown
+numpy
+xgboost
+scikit-learn
+pandas
+idna>=3.15
+filelock>=3.20.3
+hypothesis

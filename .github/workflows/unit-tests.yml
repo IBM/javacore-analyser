@@ -40,12 +40,9 @@ jobs:
         # Install only the packages actually needed by the unit tests.
         # Heavy optional deps (torch, transformers, ibm-watsonx-ai) are not
         # required for the unit test suite and would slow the runner down.
-        run: |
-          pip install \
-            py7zr lxml pyana importlib-resources \
-            tqdm haralyzer flask waitress markdown \
-            numpy xgboost scikit-learn pandas \
-            "idna>=3.15" "filelock>=3.20.3" hypothesis
+        # requirements-test.txt is generated from requirements-test.in via (see requirements-test.in for full command):
+        #   podman run --rm -v "$(pwd):/work" -w /work python:3.12-slim bash -c "pip install pip-tools --quiet && pip-compile --generate-hashes ..."
+        run: pip install --require-hashes -r requirements-test.txt
 
       - name: Run unit tests
         run: PYTHONPATH=src:test python -m unittest discover
