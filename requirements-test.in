@@ -5,10 +5,13 @@
 # Heavy optional dependencies (torch, transformers, ibm-watsonx-ai) are intentionally
 # excluded to keep the CI runner fast.
 #
-# To regenerate requirements-test.txt with pinned hashes run from the project root:
+# To regenerate requirements-test.txt with pinned hashes, run from the project root
+# using a Linux container so that platform-specific deps (e.g. nvidia-nccl-cu13
+# from xgboost) are resolved correctly for the linux/amd64 CI runner:
 #
-#   pip install pip-tools
-#   pip-compile --generate-hashes --output-file=requirements-test.txt requirements-test.in
+#   podman run --rm -v "$(pwd):/work" -w /work python:3.12-slim \
+#     bash -c "pip install pip-tools --quiet && \
+#              pip-compile --generate-hashes --output-file=requirements-test.txt requirements-test.in"
 #
 
 py7zr

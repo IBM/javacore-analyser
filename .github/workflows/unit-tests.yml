@@ -40,8 +40,8 @@ jobs:
         # Install only the packages actually needed by the unit tests.
         # Heavy optional deps (torch, transformers, ibm-watsonx-ai) are not
         # required for the unit test suite and would slow the runner down.
-        # requirements-test.txt is generated from requirements-test.in via:
-        #   pip-compile --generate-hashes --output-file=requirements-test.txt requirements-test.in
+        # requirements-test.txt is generated from requirements-test.in via (see requirements-test.in for full command):
+        #   podman run --rm -v "$(pwd):/work" -w /work python:3.12-slim bash -c "pip install pip-tools --quiet && pip-compile --generate-hashes ..."
         run: pip install --require-hashes -r requirements-test.txt
 
       - name: Run unit tests
