@@ -97,7 +97,7 @@
                                                         <xsl:if test="@timing_blocked &gt;= 0">
                                                             <tr>
                                                                 <td>Blocked</td>
-                                                                <td><xsl:value-of select="@timing_blocked"/></td>
+                                                                <td><xsl:value-of select="format-number(@timing_blocked, '0.000')"/></td>
                                                                 <td class="timing-bar-cell">
                                                                     <div class="timing-bar timing-blocked">
                                                                         <xsl:attribute name="style">
@@ -112,7 +112,7 @@
                                                         <xsl:if test="@timing_dns &gt;= 0">
                                                             <tr>
                                                                 <td>DNS</td>
-                                                                <td><xsl:value-of select="@timing_dns"/></td>
+                                                                <td><xsl:value-of select="format-number(@timing_dns, '0.000')"/></td>
                                                                 <td class="timing-bar-cell">
                                                                     <div class="timing-bar timing-dns">
                                                                         <xsl:attribute name="style">
@@ -127,7 +127,7 @@
                                                         <xsl:if test="@timing_connect &gt;= 0">
                                                             <tr>
                                                                 <td>Connect</td>
-                                                                <td><xsl:value-of select="@timing_connect"/></td>
+                                                                <td><xsl:value-of select="format-number(@timing_connect, '0.000')"/></td>
                                                                 <td class="timing-bar-cell">
                                                                     <div class="timing-bar timing-connect">
                                                                         <xsl:attribute name="style">
@@ -142,7 +142,7 @@
                                                         <xsl:if test="@timing_ssl &gt;= 0">
                                                             <tr>
                                                                 <td>SSL</td>
-                                                                <td><xsl:value-of select="@timing_ssl"/></td>
+                                                                <td><xsl:value-of select="format-number(@timing_ssl, '0.000')"/></td>
                                                                 <td class="timing-bar-cell">
                                                                     <div class="timing-bar timing-ssl">
                                                                         <xsl:attribute name="style">
@@ -157,7 +157,7 @@
                                                         <xsl:if test="@timing_send &gt;= 0">
                                                             <tr>
                                                                 <td>Send</td>
-                                                                <td><xsl:value-of select="@timing_send"/></td>
+                                                                <td><xsl:value-of select="format-number(@timing_send, '0.000')"/></td>
                                                                 <td class="timing-bar-cell">
                                                                     <div class="timing-bar timing-send">
                                                                         <xsl:attribute name="style">
@@ -172,7 +172,7 @@
                                                         <xsl:if test="@timing_wait &gt;= 0">
                                                             <tr>
                                                                 <td>Wait</td>
-                                                                <td><xsl:value-of select="@timing_wait"/></td>
+                                                                <td><xsl:value-of select="format-number(@timing_wait, '0.000')"/></td>
                                                                 <td class="timing-bar-cell">
                                                                     <div class="timing-bar timing-wait">
                                                                         <xsl:attribute name="style">
@@ -187,7 +187,7 @@
                                                         <xsl:if test="@timing_receive &gt;= 0">
                                                             <tr>
                                                                 <td>Receive</td>
-                                                                <td><xsl:value-of select="@timing_receive"/></td>
+                                                                <td><xsl:value-of select="format-number(@timing_receive, '0.000')"/></td>
                                                                 <td class="timing-bar-cell">
                                                                     <div class="timing-bar timing-receive">
                                                                         <xsl:attribute name="style">
@@ -283,12 +283,12 @@
                                         </xsl:choose>
                                         <xsl:choose>
                                             <xsl:when test="@duration &gt; 5000">
-                                                <div class="info"><xsl:value-of select="@duration"/>
+                                                <div class="info"><xsl:value-of select="format-number(@duration, '0.000')"/>
                                                     <span class="infotooltip">Request took longer than 5 seconds&#10;<xsl:value-of select="@timings"/></span>
                                                 </div>
                                             </xsl:when>
                                             <xsl:otherwise>
-                                                <div class="info"><xsl:value-of select="@duration"/>
+                                                <div class="info"><xsl:value-of select="format-number(@duration, '0.000')"/>
                                                     <span class="infotooltip"><xsl:value-of select="@timings"/></span>
                                                 </div>
                                             </xsl:otherwise>

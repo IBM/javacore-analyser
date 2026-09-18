@@ -114,7 +114,7 @@ class HttpCall:
         self.url = HttpCall.__sanitize_xml_attribute_value(call.url)
         self.method = HttpCall.__sanitize_xml_attribute_value(str(call.request.method) if hasattr(call.request, 'method') else 'GET')
         self.status = HttpCall.__sanitize_xml_attribute_value(str(call.status))
-        self.start_time = HttpCall.__sanitize_xml_attribute_value(str(call.startTime))
+        self.start_time = HttpCall.__sanitize_xml_attribute_value(HttpCall.__format_start_time(call.startTime))
         self.duration = HttpCall.__sanitize_xml_attribute_value(str(self.get_total_time()))
         self.timings = HttpCall.__sanitize_xml_attribute_value(str(call.timings))
         self.timing_blocked = str(call.timings.get('blocked', -1))
@@ -137,6 +137,26 @@ class HttpCall:
         self.response_cookies = self.get_cookies(call.response.cookies) if hasattr(call.response, 'cookies') else ''
         self.response_content = self.get_response_content(call.response)
     
+    @staticmethod
+    def __format_start_time(start_time):
+        """
+        Format a startTime datetime to millisecond precision (3 decimal places).
+
+        Reduces microsecond precision (e.g. 2025-01-03 11:07:47.997000+01:00)
+        to milliseconds (e.g. 2025-01-03 11:07:47.997+01:00).
+
+        Args:
+            start_time: A datetime object from haralyzer
+
+        Returns:
+            str: The formatted datetime string with 3 decimal places
+        """
+        try:
+            ms = start_time.microsecond // 1000
+            return start_time.strftime(f"%Y-%m-%d %H:%M:%S.{ms:03d}%z")
+        except AttributeError:
+            return str(start_time)
+
     def get_total_time(self):
         """
         Calculate the total time taken for the HTTP call.
