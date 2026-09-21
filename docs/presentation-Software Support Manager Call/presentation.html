@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wait2 Performance Analyser</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background: #0a0f14;
+  color: #e0e8f4;
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+}
+
+/* ── Slide container ── */
+#deck { width: 100vw; height: 100vh; position: relative; }
+
+.slide {
+  position: absolute; inset: 0;
+  display: none;
+  flex-direction: column;
+  background: #0F1923;
+}
+.slide.active { display: flex; }
+
+/* ── Common chrome ── */
+.top-bar {
+  height: 5px; flex-shrink: 0;
+  background: #0062FF;
+}
+.slide-header {
+  padding: 14px 44px 0 44px;
+  flex-shrink: 0;
+}
+.tag {
+  color: #0062FF; font-size: 11px; font-weight: bold;
+  letter-spacing: 2px; text-transform: uppercase; margin-bottom: 3px;
+}
+.slide-header h2 {
+  color: #fff; font-size: clamp(19px, 2.5vw, 27px);
+  font-weight: bold; margin: 0;
+}
+
+/* ── Body: left text + right image ── */
+.body {
+  display: flex; flex: 1; padding: 10px 44px 16px 44px;
+  gap: 28px; min-height: 0;
+}
+
+/* Left column: three stacked rows */
+.left {
+  flex: 0 0 50%;
+  display: flex; flex-direction: column;
+  gap: 0;
+}
+
+/* Each of the three rows */
+.row {
+  flex: 1; display: flex; flex-direction: column;
+  justify-content: flex-start;
+  padding: 8px 12px 8px 0;
+  border-bottom: 1px solid #1a2e45;
+}
+.row:last-child { border-bottom: none; }
+
+.row-label {
+  color: #0062FF; font-size: 10px; font-weight: bold;
+  text-transform: uppercase; letter-spacing: 1.5px;
+  margin-bottom: 5px;
+}
+.row-title {
+  color: #fff; font-size: 13px; font-weight: bold;
+  margin-bottom: 4px;
+}
+.row p {
+  color: #8BACD9; font-size: 12.5px; line-height: 1.5;
+}
+ul.pts { list-style: none; padding: 0; margin-top: 2px; }
+ul.pts li {
+  color: #C9D8F0; font-size: 12px; line-height: 1.45;
+  padding: 2px 0 2px 14px; position: relative;
+}
+ul.pts li::before {
+  content: "▶"; color: #0062FF; font-size: 8px;
+  position: absolute; left: 0; top: 4px;
+}
+
+/* Right column: image */
+.right {
+  flex: 0 0 50%; min-width: 0;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.ss-wrap {
+  flex: 1; min-height: 0; border-radius: 6px; overflow: hidden;
+  border: 1px solid #1E3A5F; background: #060c13;
+  display: flex; align-items: flex-start;
+  max-height: 100%;
+}
+.ss-wrap img {
+  width: 100%; height: 100%; object-fit: contain; object-position: top left;
+  display: block;
+}
+.ss-caption {
+  color: #57748a; font-size: 10px; text-align: center;
+  font-style: italic; flex-shrink: 0;
+}
+
+/* ── Cards ── */
+.card {
+  background: #0D1E32; border-left: 3px solid #0062FF;
+  border-radius: 5px; padding: 7px 11px; margin-top: 4px;
+}
+.card-title { color: #fff; font-size: 12px; font-weight: bold; margin-bottom: 3px; }
+.card p { color: #8BACD9; font-size: 11px; line-height: 1.4; }
+
+/* ── Tag pills ── */
+.pill {
+  display: inline-block;
+  background: #162236; border: 1px solid #0062FF;
+  border-radius: 3px; padding: 2px 8px;
+  color: #8BACD9; font-size: 10px;
+}
+
+/* ── Title slide ── */
+#slide-1 { justify-content: flex-start; }
+#slide-1 .side-accent {
+  position: absolute; left: 0; top: 5px; bottom: 0; width: 6px;
+  background: #0062FF;
+}
+#slide-1 .title-content {
+  margin-left: 70px; max-width: 620px;
+  flex: 1; display: flex; flex-direction: column; justify-content: center;
+  padding-bottom: 40px;
+}
+#slide-1 h1 {
+  color: #fff; font-size: clamp(35px, 5vw, 52.5px);
+  font-weight: bold; line-height: 1.15; margin-bottom: 10px;
+}
+#slide-1 .subtitle {
+  color: #8BACD9; font-size: 17.5px; line-height: 1.5; margin-bottom: 26px;
+}
+#slide-1 .divider { width: 60px; height: 3px; background: #0062FF; margin-bottom: 22px; }
+#slide-1 .footer-pills { display: grid; grid-template-columns: repeat(3, auto); justify-content: start; gap: 8px; }
+#slide-1 .footer-pill {
+  background: #162236; border: 1px solid #0062FF;
+  border-radius: 4px; padding: 5px 13px;
+  color: #8BACD9; font-size: 11.25px;
+}
+
+/* ── Navigation ── */
+#nav {
+  position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%);
+  display: flex; align-items: center; gap: 14px;
+  background: rgba(13,30,50,0.92); border: 1px solid #1E3A5F;
+  border-radius: 30px; padding: 8px 20px;
+  backdrop-filter: blur(4px);
+  z-index: 100;
+}
+#nav button {
+  background: none; border: 1px solid #0062FF; color: #0062FF;
+  border-radius: 50%; width: 30px; height: 30px; cursor: pointer;
+  font-size: 17.5px; display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s;
+}
+#nav button:hover { background: #0062FF; color: #fff; }
+#nav button:disabled { border-color: #2a3a55; color: #2a3a55; cursor: default; }
+#nav button:disabled:hover { background: none; color: #2a3a55; }
+#counter { color: #8BACD9; font-size: 13.75px; min-width: 48px; text-align: center; }
+.dot-row { display: flex; gap: 6px; }
+.dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: #2a3a55; cursor: pointer; transition: background 0.15s;
+}
+.dot.active { background: #0062FF; }
+</style>
+</head>
+<body>
+
+<div id="deck">
+
+  <!-- ─── SLIDE 1 · Title ─────────────────────────────────── -->
+  <div class="slide active" id="slide-1">
+    <div class="top-bar"></div>
+    <div class="side-accent"></div>
+    <div class="title-content">
+      <p class="tag">Engineering Enablement</p>
+      <h1>Wait2 Performance Analyser</h1>
+      <div class="divider"></div>
+      <p class="subtitle">Recently added capabilities for faster performance investigations</p>
+      <div style="margin-bottom: 22px;">
+        <p style="color:#8BACD9; font-size:13.75px; margin-bottom:2px;">Chris Kazmierczyk</p>
+        <p style="color:#57748a; font-size:12.5px;">22 September 2026</p>
+      </div>
+      <div class="footer-pills">
+        <span class="footer-pill">Verbose GC File Visualisation</span>
+        <span class="footer-pill">HAR File Support</span>
+        <span class="footer-pill">AI-Based Thread Classification</span>
+        <span class="footer-pill">Tips</span>
+        <span class="footer-pill">Tool Integration via Plugin Architecture</span>
+        <span class="footer-pill">WatsonX AI Integration for Intelligent Tips</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SLIDE 2 · What is WAIT2 ────────────────────────────── -->
+  <div class="slide" id="slide-2">
+    <div class="top-bar"></div>
+    <div class="slide-header">
+      <p class="tag">Overview</p>
+      <h2>What is WAIT2 Performance Analyser?</h2>
+    </div>
+    <div class="body">
+      <div class="left">
+        <div class="row">
+          <p class="row-label">Purpose</p>
+          <p class="row-title">Analyses and visualises Java performance data</p>
+          <p>WAIT2 Performance Analyser processes javacore files and related diagnostic data to help identify performance bottlenecks, thread hangs, memory issues and GC problems — without manual stack trace inspection.</p>
+        </div>
+        <div class="row">
+          <p class="row-label">What it analyses</p>
+          <p class="row-title">Multiple diagnostic data sources in one run</p>
+          <ul class="pts">
+            <li><strong style="color:#fff">Javacore files</strong> — thread states, CPU usage, lock contention</li>
+            <li><strong style="color:#fff">Verbose GC logs</strong> — heap usage, pause times, collection frequency</li>
+            <li><strong style="color:#fff">HAR files</strong> — HTTP call durations, status codes, slow endpoints</li>
+          </ul>
+        </div>
+        <div class="row">
+          <p class="row-label">Where to run it</p>
+          <p class="row-title">Available directly on Ecurep</p>
+          <p>Launch from the Ecurep tool list while browsing a customer case — no Citrix, no local setup, no file download required.</p>
+        </div>
+      </div>
+      <div class="right">
+        <div class="ss-wrap">
+          <img src="screenshots/Ecurep.png" alt="WAIT2 Performance Analyser selected in Ecurep tool launcher">
+        </div>
+        <p class="ss-caption">WAIT2 Performance Analyser in the Ecurep tool launcher — select and click Launch directly from the case</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SLIDE 3 · Report overview ──────────────────────────── -->
+  <div class="slide" id="slide-3">
+    <div class="top-bar"></div>
+    <div class="slide-header">
+      <p class="tag">Overview</p>
+      <h2>The Generated Report</h2>
+    </div>
+    <div class="body">
+      <div class="left">
+        <div class="row">
+          <p class="row-label">What</p>
+          <p class="row-title">A self-contained diagnostic report</p>
+          <p>The tool produces a single HTML file with everything needed to diagnose the issue — no extra tools or viewers required.</p>
+        </div>
+        <div class="row">
+          <p class="row-label">How to use</p>
+          <p class="row-title">Open in any browser</p>
+          <p>The report opens automatically after the run. Share it with colleagues.</p>
+        </div>
+        <div class="row">
+          <p class="row-label">Output highlights</p>
+          <p class="row-title">Rich, interactive content</p>
+          <ul class="pts">
+            <li><strong style="color:#fff">Expandable sections</strong> — navigate directly to the area of interest</li>
+            <li><strong style="color:#fff">Embedded documentation</strong> — inline chart explainers</li>
+            <li><strong style="color:#fff">Intelligent tips</strong> — identify potential causes of performance issues; warns when investigation results may not be reliable</li>
+            <li><strong style="color:#fff">Interactive charts</strong> — zoom and hover to explore data</li>
+          </ul>
+        </div>
+      </div>
+      <div class="right">
+        <div class="ss-wrap">
+          <img src="screenshots/javacore_main.png" alt="Performance Analyser report overview">
+        </div>
+        <p class="ss-caption">The report front page — expandable navigation, embedded chart documentation and interactive CPU Load chart</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SLIDE 4 · Verbose GC ────────────────────────────── -->
+  <div class="slide" id="slide-4">
+    <div class="top-bar"></div>
+    <div class="slide-header">
+      <p class="tag">Feature 1</p>
+      <h2>Verbose GC File Visualisation</h2>
+    </div>
+    <div class="body">
+      <div class="left">
+        <div class="row">
+          <p class="row-label">What</p>
+          <p class="row-title">Built-in verbose GC analysis</p>
+          <p>Verbose GC logs are parsed alongside javacores — heap usage, GC pause times and collection frequency are visualised without any external GC tool.</p>
+        </div>
+        <div class="row">
+          <p class="row-label">How to use</p>
+          <p class="row-title">Include GC logs in your input</p>
+          <ul class="pts">
+            <li>Add verbose GC log files to your zip, folder or file list</li>
+            <li>The tool auto-detects and processes them alongside javacores</li>
+          </ul>
+        </div>
+        <div class="row">
+          <p class="row-label">Output</p>
+          <p class="row-title">GC Activity chart in the report</p>
+          <ul class="pts">
+            <li>Heap usage, nursery and tenured memory over time</li>
+            <li>GC pause durations overlaid as bars</li>
+            <li>Long Stop-the-World pauses automatically flagged in Tips</li>
+          </ul>
+        </div>
+      </div>
+      <div class="right">
+        <div class="ss-wrap" style="flex: 0 0 auto; max-height: 68%;">
+          <img src="screenshots/verbosegc_chart.png" alt="Garbage Collection activity chart">
+        </div>
+        <p class="ss-caption">CPU Load (top) and GC Activity (bottom) — heap usage, pause times and collection frequency shown together</p>
+        <div class="card" style="margin-top:6px; flex-shrink:0;">
+          <p style="color:#8BACD9; font-size:11px; line-height:1.5;">Heap oscillates between ~2–4 GB (6 GB total). A single exceptionally long pause (~30 s) is visible at <strong style="color:#fff">02:26</strong> — a Stop-the-World event that would cause a severe application stall.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SLIDE 5 · HAR ───────────────────────────────────── -->
+  <div class="slide" id="slide-5">
+    <div class="top-bar"></div>
+    <div class="slide-header">
+      <p class="tag">Feature 2</p>
+      <h2>HAR File Support</h2>
+    </div>
+    <div class="body">
+      <div class="left">
+        <div class="row">
+          <p class="row-label">What</p>
+          <p class="row-title">HTTP traffic analysis inside the report</p>
+          <p>HAR (HTTP Archive) files capture browser/application network traffic. The tool parses them and surfaces slow calls, error codes and payload sizes — no external HAR viewer needed.</p>
+        </div>
+        <div class="row">
+          <p class="row-label">How to use</p>
+          <p class="row-title">Include HAR files in your input</p>
+          <ul class="pts">
+            <li>Add <code style="color:#7EC8E3;font-size:11px">*.har</code> files to your zip, folder or file list</li>
+            <li>Capture HAR from a browser DevTools session</li>
+            <li>The tool auto-detects and includes them — no extra steps</li>
+          </ul>
+        </div>
+        <div class="row">
+          <p class="row-label">Output</p>
+          <p class="row-title">HTTP calls table in the report</p>
+          <ul class="pts">
+            <li>All HTTP calls listed in a table — sort column can be changed</li>
+            <li>Expandable request / response details per call</li>
+            <li>Plan to display long HAR requests or errored requests in Tips</li>
+          </ul>
+        </div>
+      </div>
+      <div class="right">
+        <div class="ss-wrap" style="flex: 0 0 auto; max-height: 68%;">
+          <img src="screenshots/har_view2.png" alt="HAR HTTP Calls table screenshot">
+        </div>
+        <div class="card" style="margin-top:6px; flex-shrink:0;">
+          <p style="color:#8BACD9; font-size:11px; line-height:1.5;">All call durations are below <strong style="color:#fff">900 ms</strong>, however one request fails with <strong style="color:#fff">HTTP 400</strong> — this error response is a possible cause of the performance issue being investigated.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SLIDE 6 · Javacore Processing ───────────────────── -->
+  <div class="slide" id="slide-6-javacores">
+    <div class="top-bar"></div>
+    <div class="slide-header">
+      <p class="tag">Core Capability</p>
+      <h2>Javacore Processing</h2>
+    </div>
+    <div class="body">
+      <div class="left">
+        <div class="row">
+          <p class="row-label">What</p>
+          <p class="row-title">Thread-level analysis across multiple snapshots</p>
+          <p>Javacore files are IBM JVM diagnostic snapshots capturing thread states, stack traces, CPU usage and lock information at a point in time. The tool processes a series of javacores to reveal patterns that a single snapshot cannot show.</p>
+        </div>
+        <div class="row">
+          <p class="row-label">What is analysed</p>
+          <p class="row-title">Per-thread and cross-snapshot data</p>
+          <ul class="pts">
+            <li><strong style="color:#fff">Thread states</strong> — running, waiting, blocked, parked</li>
+            <li><strong style="color:#fff">CPU usage</strong> — top CPU consumers identified across snapshots</li>
+            <li><strong style="color:#fff">Lock contention</strong> — deadlocks and blocked threads detected automatically</li>
+            <li><strong style="color:#fff">Stack traces</strong> — per-thread drill-down with full call stack</li>
+          </ul>
+        </div>
+        <div class="row">
+          <p class="row-label">Output</p>
+          <p class="row-title">Interactive report sections</p>
+          <ul class="pts">
+            <li>CPU Load chart showing usage over time across all snapshots</li>
+            <li>All Threads table — sortable, filterable, with per-thread drill-down</li>
+            <li>Intelligent Tips flagging high-CPU threads, deadlocks and blocked threads</li>
+          </ul>
+        </div>
+      </div>
+      <div class="right">
+        <div class="ss-wrap">
+          <img src="screenshots/all_threads.png" alt="All Threads table in the report">
+        </div>
+        <p class="ss-caption">All Threads table — every thread across all javacore snapshots, sortable by CPU usage, state and classification</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SLIDE 7 · ML Classification ────────────────────── -->
+  <div class="slide" id="slide-6">
+    <div class="top-bar"></div>
+    <div class="slide-header">
+      <p class="tag">Feature 3</p>
+      <h2>AI-Based Thread Classification</h2>
+    </div>
+    <div class="body">
+      <div class="left">
+        <div class="row">
+          <p class="row-label">What</p>
+          <p class="row-title">Automatic thread categorisation by a pre-trained model</p>
+          <p>Every thread snapshot is classified into a meaningful category (e.g. Computing, Wait For Condition, Read From Database) without any manual inspection.</p>
+        </div>
+        <div class="row">
+          <p class="row-label">How to use</p>
+          <p class="row-title">Nothing extra — runs automatically</p>
+          <ul class="pts">
+            <li>Classification runs on every javacore analysis automatically</li>
+            <li>No additional files or configuration required</li>
+          </ul>
+        </div>
+        <div class="row">
+          <p class="row-label">Output</p>
+          <p class="row-title">Classification column + Over Time chart</p>
+          <ul class="pts">
+            <li>Classification column visible in the All Threads table</li>
+            <li>Thread Classification Over Time chart shows workload shifts</li>
+            <li>Permanently blocked threads flagged in Tips</li>
+          </ul>
+        </div>
+      </div>
+      <div class="right">
+        <div class="ss-wrap">
+          <img src="screenshots/all_threads.png" alt="All Threads table with ML classification">
+        </div>
+        <p class="ss-caption">Each thread gets an AI-predicted class (e.g. Java Internal, Wait For Condition) — visible across all snapshots</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SLIDE 7 · ML Classification chart ──────────────── -->
+  <div class="slide" id="slide-7">
+    <div class="top-bar"></div>
+    <div class="slide-header">
+      <p class="tag">Feature 3 — continued</p>
+      <h2>Visual categorisation of thread information</h2>
+    </div>
+    <div class="body">
+      <div class="left">
+        <div class="row">
+          <p class="row-label">What</p>
+          <p class="row-title">Thread count per class across all snapshots</p>
+          <p>A dedicated chart shows how many threads fall into each category at every javacore timestamp — making workload shifts immediately visible.</p>
+        </div>
+        <div class="row">
+          <p class="row-label">Possible thread states</p>
+          <p class="row-title">10 classification categories</p>
+          <ul class="pts" style="columns:2; column-gap:12px;">
+            <li><strong style="color:#fff">Java Internal</strong></li>
+            <li><strong style="color:#fff">Wait For Condition</strong></li>
+            <li><strong style="color:#fff">Liberty Internal</strong></li>
+            <li><strong style="color:#fff">Display Graphics</strong></li>
+            <li><strong style="color:#fff">Read From Network</strong></li>
+            <li><strong style="color:#fff">Computing</strong></li>
+            <li><strong style="color:#fff">Read From Database</strong></li>
+            <li><strong style="color:#fff">Save To Disk</strong></li>
+            <li><strong style="color:#fff">Read From Disk</strong></li>
+            <li><strong style="color:#fff">Wait For Connection</strong></li>
+          </ul>
+        </div>
+        <div class="row">
+          <p class="row-label">Output</p>
+          <p class="row-title">Thread Classification Over Time chart</p>
+          <p>Shows the most used resources (database, disk, CPU) over time to detect bottlenecks.</p>
+        </div>
+      </div>
+      <div class="right">
+        <div class="ss-wrap" style="flex: 0 0 auto; max-height: 68%;">
+          <img src="screenshots/thread_classification_over_time_2.png" alt="Thread Classification Over Time chart">
+        </div>
+        <p class="ss-caption">Thread counts per class over time — workload shifts visible at a glance without reading stack traces</p>
+        <div class="card" style="margin-top:6px; flex-shrink:0;">
+          <p style="color:#8BACD9; font-size:11px; line-height:1.5;">At <strong style="color:#fff">7:08</strong> and <strong style="color:#fff">7:20</strong> a large number of threads are classified as <strong style="color:#fff">Read From Network</strong>. This spike indicates threads waiting on a network response — an external service is a likely cause of the performance degradation observed at those times.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SLIDE 8 · Tips ──────────────────────────────────── -->
+  <div class="slide" id="slide-8">
+    <div class="top-bar"></div>
+    <div class="slide-header">
+      <p class="tag">Feature 4</p>
+      <h2>Tips</h2>
+    </div>
+    <div class="body">
+      <div class="left">
+        <div class="row">
+          <p class="row-label">What</p>
+          <p class="row-title">Two entry types: Warnings and Tips</p>
+          <ul class="pts">
+            <li><strong style="color:#fff">Warning</strong> — flags a data quality or reliability issue (e.g. corrupted javacore, too few snapshots); indicates the investigation results may not be reliable</li>
+            <li><strong style="color:#fff">Tip</strong> — identifies a potential cause of a performance problem (e.g. high CPU thread, deadlock, long GC pause); includes Evidence, Action and Expected Impact</li>
+          </ul>
+        </div>
+        <div class="row">
+          <p class="row-label">How to use</p>
+          <p class="row-title">Open the Intelligent Tips section</p>
+          <ul class="pts">
+            <li>Tips are generated automatically — no extra input needed</li>
+            <li>Click a thread name in a tip to jump to its drill-down</li>
+            <li>Click a javacore filename to open the javacore detail page</li>
+          </ul>
+        </div>
+        <div class="row">
+          <p class="row-label">Output</p>
+          <p class="row-title">Examples of common tips</p>
+          <ul class="pts">
+            <li><strong style="color:#fff">High CPU thread</strong> — thread consuming excessive CPU across multiple snapshots; includes thread name and stack trace</li>
+            <li><strong style="color:#fff">Long running request in HAR file</strong> — HTTP request exceeding response time threshold; URL and duration shown as evidence</li>
+            <li><strong style="color:#fff">Long GC pause</strong> — Stop-the-World pause exceeding threshold; heap usage and pause duration shown as evidence</li>
+          </ul>
+        </div>
+      </div>
+      <div class="right">
+        <div class="ss-wrap">
+          <img src="screenshots/tips_report_overview.png" alt="Intelligent Tips screenshot">
+        </div>
+        <p class="ss-caption">Tips ranked HIGH / MEDIUM / LOW with Evidence, Action and Expected Impact — thread names are clickable links</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SLIDE 9 · Plugin Architecture ──────────────────── -->
+  <div class="slide" id="slide-9">
+    <div class="top-bar"></div>
+    <div class="slide-header">
+      <p class="tag">Feature 5</p>
+      <h2>Tool Integration via Plugin Architecture</h2>
+    </div>
+    <div class="body">
+      <div class="left">
+        <div class="row">
+          <p class="row-label">What</p>
+          <p class="row-title">External tools can contribute report sections</p>
+          <p>A plugin system allows external diagnostic tools to inject dedicated sections into the report automatically — no manual steps, no separate viewers.</p>
+        </div>
+        <div class="row">
+          <p class="row-label">Available now</p>
+          <p class="row-title">Liberty message occurrence plugin</p>
+          <ul class="pts">
+            <li>Detects and parses Liberty server logs included in the input</li>
+            <li>Injects a dedicated section with message severity breakdown and top message IDs</li>
+            <li>No additional configuration required</li>
+          </ul>
+        </div>
+        <div class="row">
+          <p class="row-label">Planned</p>
+          <p class="row-title">Autogather integration (ELM Tool)</p>
+          <ul class="pts">
+            <li>Include <strong style="color:#fff">Autogather</strong> output in your zip or folder</li>
+            <li>Autogather data will appear as a dedicated section in the report</li>
+          </ul>
+          <p class="row-title" style="margin-top:8px;">Developer Tools Debug console output</p>
+          <ul class="pts">
+            <li>Include <strong style="color:#fff">Developer Tools</strong> debug console export in your input</li>
+            <li>Console messages and errors will appear as a dedicated section in the report</li>
+          </ul>
+        </div>
+      </div>
+      <div class="right">
+        <div class="ss-wrap">
+          <img src="screenshots/plugin_output2.png" alt="Example plugin output screenshot">
+        </div>
+        <p class="ss-caption">The Liberty System Out example plugin injects a dedicated report section with severity breakdown and top message IDs</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SLIDE 10 · LLM Integration ─────────────────────── -->
+  <div class="slide" id="slide-10-llm">
+    <div class="top-bar"></div>
+    <div class="slide-header">
+      <p class="tag">In Progress — Not yet available on Ecurep</p>
+      <h2>WatsonX AI Integration for Intelligent Tips</h2>
+    </div>
+    <div class="body">
+      <div class="left">
+        <div class="row">
+          <p class="row-label">What</p>
+          <p class="row-title">LLM-generated tips and Q&amp;A over diagnostics</p>
+          <p>A domain-aware language model will generate targeted tips and answer natural language questions over the diagnostics data. <strong style="color:#fff">Not yet available on Ecurep.</strong></p>
+        </div>
+        <div class="row">
+          <p class="row-label">How to use (planned)</p>
+          <p class="row-title">Ask questions in natural language</p>
+          <ul class="pts">
+            <li>Type questions like "show me all deadlock hints" in the report</li>
+            <li>AI tips appear alongside rule-based tips, ranked by severity</li>
+            <li>Thread and javacore names in AI responses auto-link to drill-downs</li>
+          </ul>
+        </div>
+        <div class="row">
+          <p class="row-label">Output (planned)</p>
+          <p class="row-title">AI-enhanced Tips section</p>
+          <ul class="pts">
+            <li>AI-generated tips ranked HIGH / MEDIUM / LOW with Evidence &amp; Action</li>
+            <li>Interactive Q&amp;A panel over the diagnostics data</li>
+          </ul>
+        </div>
+      </div>
+      <div class="right">
+        <div class="ss-wrap">
+          <img src="screenshots/tips_section.png" alt="Intelligent Tips section screenshot">
+        </div>
+        <p class="ss-caption">Tips section — to be enhanced with AI-generated insights and natural language search</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SLIDE 12 · Summary ──────────────────────────────── -->
+  <div class="slide" id="slide-11">
+    <div class="top-bar"></div>
+    <div class="slide-header" style="padding-bottom: 10px;">
+      <p class="tag">Summary</p>
+      <h2>Key Features at a Glance</h2>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; flex:1; padding: 4px 44px 20px 44px; min-height:0;">
+      <div class="card" style="border-left: none; border-top: 3px solid #0062FF;">
+        <p style="color:#0062FF; font-size:22.5px; font-weight:bold; margin-bottom:4px;">01</p>
+        <p class="card-title">Javacore Processing</p>
+        <p>Processes javacore snapshots → CPU Load chart, All Threads table with per-thread drill-down, and Tips flagging high-CPU threads, deadlocks and blocked threads.</p>
+      </div>
+      <div class="card" style="border-left: none; border-top: 3px solid #0062FF;">
+        <p style="color:#0062FF; font-size:22.5px; font-weight:bold; margin-bottom:4px;">02</p>
+        <p class="card-title">Verbose GC File Visualisation</p>
+        <p>Include GC logs in your input → GC Activity chart with heap, pause times and frequency appears in the report. Long STW pauses flagged in Tips.</p>
+      </div>
+      <div class="card" style="border-left: none; border-top: 3px solid #0062FF;">
+        <p style="color:#0062FF; font-size:22.5px; font-weight:bold; margin-bottom:4px;">03</p>
+        <p class="card-title">HAR File Support</p>
+        <p>Include HAR files in your input → HTTP calls table with durations, status codes and slow requests flagged in Tips.</p>
+      </div>
+      <div class="card" style="border-left: none; border-top: 3px solid #0062FF;">
+        <p style="color:#0062FF; font-size:22.5px; font-weight:bold; margin-bottom:4px;">04</p>
+        <p class="card-title">AI-Based Thread Classification</p>
+        <p>Runs automatically → Classification column in All Threads table and Thread Classification Over Time chart in the report.</p>
+      </div>
+      <div class="card" style="border-left: none; border-top: 3px solid #0062FF;">
+        <p style="color:#0062FF; font-size:22.5px; font-weight:bold; margin-bottom:4px;">05</p>
+        <p class="card-title">Tips</p>
+        <p>Runs automatically → Tips ranked HIGH/MEDIUM/LOW with Evidence, Action and Expected Impact. Thread &amp; javacore names are clickable links.</p>
+      </div>
+      <div class="card" style="border-left: none; border-top: 3px solid #0062FF;">
+        <p style="color:#0062FF; font-size:22.5px; font-weight:bold; margin-bottom:4px;">06</p>
+        <p class="card-title">Tool Integration via Plugin Architecture</p>
+        <p>Liberty logs supported now. Planned: Autogather (ELM Tool) and Developer Tools debug console output as dedicated report sections.</p>
+      </div>
+      <div class="card" style="border-left: none; border-top: 3px solid #4a90e2;">
+        <p style="color:#4a90e2; font-size:22.5px; font-weight:bold; margin-bottom:4px;">🔮</p>
+        <p class="card-title">WatsonX AI Integration for Intelligent Tips</p>
+        <p>Ask natural language questions over diagnostics data → AI-generated tips and interactive Q&amp;A in the report.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SLIDE 12 · Questions & Feedback ────────────────── -->
+  <div class="slide" id="slide-12">
+    <div class="top-bar"></div>
+    <div class="side-accent" style="position:absolute;left:0;top:5px;bottom:0;width:6px;background:#0062FF;"></div>
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 80px 60px 80px;max-width:820px;">
+      <p class="tag" style="margin-bottom:8px;">Questions &amp; Feedback</p>
+      <h1 style="color:#fff;font-size:clamp(38px,5.5vw,58px);font-weight:bold;line-height:1.1;margin-bottom:18px;">Questions</h1>
+      <div style="width:60px;height:3px;background:#0062FF;margin-bottom:28px;"></div>
+      <p style="color:#8BACD9;font-size:16px;line-height:1.65;margin-bottom:30px;">
+        Your feedback helps make WAIT2 Performance Analyser more useful. If something is missing,
+        broken, or could work better for your investigations — please let us know.
+      </p>
+      <div class="card" style="border-left:3px solid #0062FF;padding:14px 18px;margin-bottom:20px;">
+        <p class="card-title" style="font-size:13px;margin-bottom:6px;">💬 Join the conversation on Slack</p>
+        <p style="color:#8BACD9;font-size:13px;line-height:1.55;">
+          Drop questions, bug reports or feature requests in
+          <strong style="color:#7EC8E3;">#wait-necromancers</strong>
+        </p>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /deck -->
+
+<!-- ─── Navigation ────────────────────────────────────────── -->
+<div id="nav">
+  <button id="btn-prev" onclick="go(-1)" disabled>&#8592;</button>
+  <div class="dot-row" id="dots"></div>
+  <span id="counter">1 / 13</span>
+  <button id="btn-next" onclick="go(1)">&#8594;</button>
+</div>
+
+<script>
+const slides = Array.from(document.querySelectorAll('.slide'));
+const total = slides.length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+slides.forEach((_, i) => {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' active' : '');
+  d.onclick = () => jumpTo(i);
+  dotsEl.appendChild(d);
+});
+
+function jumpTo(n) {
+  slides[cur].classList.remove('active');
+  dotsEl.children[cur].classList.remove('active');
+  cur = Math.max(0, Math.min(n, total - 1));
+  slides[cur].classList.add('active');
+  dotsEl.children[cur].classList.add('active');
+  document.getElementById('counter').textContent = (cur + 1) + ' / ' + total;
+  document.getElementById('btn-prev').disabled = cur === 0;
+  document.getElementById('btn-next').disabled = cur === total - 1;
+}
+
+function go(dir) { jumpTo(cur + dir); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') go(1);
+  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   go(-1);
+});
+</script>
+
+<footer style="position:fixed;bottom:0;width:100%;text-align:center;font-size:12.5px;color:#2a3a55;padding:2px 0;pointer-events:none;">
+  Made with IBM Bob
+</footer>
+
+</body>
+</html>
