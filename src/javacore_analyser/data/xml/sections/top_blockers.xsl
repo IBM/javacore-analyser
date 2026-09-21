@@ -8,7 +8,7 @@
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
     <xsl:template name="top_blockers">
-        <h3><a id="toggletop10blocker" href="javascript:expand_it(top10blocker,toggletop10blocker)" class="expandit">Top 10 Blockers</a></h3>
+        <h3 id="toc_top_blockers"><a id="toggletop10blocker" href="javascript:expand_it(top10blocker,toggletop10blocker)" class="expandit">Top 10 Blockers</a></h3>
         <div id="top10blocker" style="display:none;">
             <xsl:choose>
                 <xsl:when test="doc/blockers/blocker">

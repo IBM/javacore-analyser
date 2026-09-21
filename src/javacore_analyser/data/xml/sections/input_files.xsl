@@ -8,7 +8,7 @@
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
     <xsl:template name="input_files">
-        <h3><a id="togglejavacores" href="javascript:expand_it(javacores,togglejavacores)" class="expandit">Input Files</a></h3>
+        <h3 id="toc_input_files"><a id="togglejavacores" href="javascript:expand_it(javacores,togglejavacores)" class="expandit">Input Files</a></h3>
         <div id="javacores" style="display:none;">
             <xsl:choose>
                 <xsl:when test="doc/report_info/javacore_list">
@@ -70,7 +70,16 @@
                                                 <td class="left">N/A</td>
                                             </xsl:when>
                                             <xsl:otherwise>
-                                                <td><xsl:value-of select="format-number(javacore_cpu_percentage, '0.##')"/></td>
+                                                <td>
+                                                    <span>
+                                                        <xsl:attribute name="class">cpu-badge <xsl:choose>
+                                                            <xsl:when test="number(javacore_cpu_percentage) &lt; 20">cpu-low</xsl:when>
+                                                            <xsl:when test="number(javacore_cpu_percentage) &lt; 50">cpu-medium</xsl:when>
+                                                            <xsl:otherwise>cpu-high</xsl:otherwise>
+                                                        </xsl:choose></xsl:attribute>
+                                                        <xsl:value-of select="format-number(javacore_cpu_percentage, '0.##')"/>
+                                                    </span>
+                                                </td>
                                             </xsl:otherwise>
                                         </xsl:choose>
                                         <xsl:choose>
