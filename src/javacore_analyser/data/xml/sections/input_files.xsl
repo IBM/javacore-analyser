@@ -70,7 +70,16 @@
                                                 <td class="left">N/A</td>
                                             </xsl:when>
                                             <xsl:otherwise>
-                                                <td><xsl:value-of select="format-number(javacore_cpu_percentage, '0.##')"/></td>
+                                                <td>
+                                                    <span>
+                                                        <xsl:attribute name="class">cpu-badge <xsl:choose>
+                                                            <xsl:when test="number(javacore_cpu_percentage) &lt; 20">cpu-low</xsl:when>
+                                                            <xsl:when test="number(javacore_cpu_percentage) &lt; 50">cpu-medium</xsl:when>
+                                                            <xsl:otherwise>cpu-high</xsl:otherwise>
+                                                        </xsl:choose></xsl:attribute>
+                                                        <xsl:value-of select="format-number(javacore_cpu_percentage, '0.##')"/>
+                                                    </span>
+                                                </td>
                                             </xsl:otherwise>
                                         </xsl:choose>
                                         <xsl:choose>
