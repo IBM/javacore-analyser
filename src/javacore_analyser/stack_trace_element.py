@@ -17,9 +17,12 @@ class StackTraceElement:
             self.set_line(line)
 
     def set_line(self, line):
+        self.line = None
+        self.kind = StackTraceKind.JAVA
         if line.startswith(STACK_TRACE):
             tokens = line.split('at ')
-            self.line = ''.join(tokens[1])
+            if len(tokens) > 1:
+                self.line = ''.join(tokens[1])
         elif line.startswith(NATIVE_STACK_TRACE):
             line = line[len(NATIVE_STACK_TRACE):]
             line = line.strip()
