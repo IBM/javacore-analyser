@@ -41,3 +41,17 @@ function expand_http_details(whichEl, link) {
 function expand_stack(whichEl, link) {
     whichEl.style.display = (whichEl.style.display == "none") ? "" : "none";
 }
+
+// Opens a collapsed section (if needed) and scrolls the heading into view.
+// contentId: the id of the collapsible <div> for the section
+// headingId:  the id of the section <h3> to scroll to
+function tocGoto(contentId, headingId) {
+    var content = document.getElementById(contentId);
+    if (content && content.style.display === 'none') {
+        content.style.display = '';
+    }
+    var heading = document.getElementById(headingId);
+    if (heading) {
+        heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
