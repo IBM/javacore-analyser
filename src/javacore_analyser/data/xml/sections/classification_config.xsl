@@ -15,7 +15,7 @@
   $noisy_classifications below.  Each name must appear between pipe characters:
   |Category Name|
 -->
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
     <xsl:variable name="noisy_classifications">|Java Internal|Liberty Internal|Wait For Condition|</xsl:variable>
 
