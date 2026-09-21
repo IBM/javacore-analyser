@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 -->
 
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
     <xsl:template name="input_files">
         <h3><a id="togglejavacores" href="javascript:expand_it(javacores,togglejavacores)" class="expandit">Input Files</a></h3>
