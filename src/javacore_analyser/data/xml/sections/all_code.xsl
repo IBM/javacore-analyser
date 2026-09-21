@@ -8,7 +8,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
     <xsl:template name="all_code">
-        <h3><a  id="toggle_all_code_collection" href="javascript:expand_it(all_code_collection,toggle_all_code_collection)" class="expandit">All Code</a></h3>
+        <h3 id="toc_all_code"><a  id="toggle_all_code_collection" href="javascript:expand_it(all_code_collection,toggle_all_code_collection)" class="expandit">All Code</a></h3>
         <div id="all_code_collection" style="display:none;" >
             <a id="togglecodedoc" href="javascript:expand_it(codedoc,togglecodedoc)" class="expandit">
                 What does this table tell me?</a>
@@ -118,6 +118,7 @@
                     </xsl:for-each>
                 </tbody>
             </table>
+            <div class="back-to-top"><a href="#doc_body">↑ Back to top</a></div>
         </div>
     </xsl:template>
 

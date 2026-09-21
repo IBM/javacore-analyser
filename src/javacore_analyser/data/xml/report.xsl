@@ -57,7 +57,25 @@
                     <b><xsl:value-of select="doc/report_info/javacores_generation_time/end_time"/></b>
                 </div>
             </xsl:if>
-            
+
+            <nav class="toc">
+                <span class="toc-label">Jump to:</span>
+                <a href="javascript:tocGoto('javacores','toc_input_files')">Input Files</a>
+                <xsl:if test="doc/system_info">
+                    <a href="javascript:tocGoto('system_properties','toc_system_information')">System Information</a>
+                </xsl:if>
+                <a href="javascript:tocGoto('intelligenttips','toc_intelligent_tips')">Intelligent Tips</a>
+                <a href="javascript:tocGoto('systemresources','toc_system_resources')">System Resources</a>
+                <xsl:if test="doc/data_types/type[text()='javacores']">
+                    <a href="javascript:tocGoto('top10blocker','toc_top_blockers')">Top Blockers</a>
+                    <a href="javascript:tocGoto('all_threads','toc_all_threads')">All Threads</a>
+                    <a href="javascript:tocGoto('all_code_collection','toc_all_code')">All Code</a>
+                </xsl:if>
+                <xsl:if test="doc/har_files">
+                    <a href="javascript:tocGoto('http_calls','toc_http_calls')">HTTP Calls</a>
+                </xsl:if>
+            </nav>
+
             <xsl:call-template name="input_files"/>
             <xsl:if test="doc/system_info">
                 <xsl:call-template name="system_information"/>
