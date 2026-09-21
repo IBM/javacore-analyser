@@ -315,14 +315,17 @@ code {
       <p class="tag">Engineering Enablement</p>
       <h1>Wait2 Performance Analyser</h1>
       <div class="divider"></div>
-      <p class="subtitle">Recently added capabilities for faster performance investigations</p>
+      <p class="subtitle">A tool for faster performance investigations</p>
       <div style="margin-bottom: 24px;">
         <p style="color:var(--cds-text-primary); font-size:13px; font-weight:600; margin-bottom:2px;">Chris Kazmierczyk</p>
         <p style="color:var(--cds-text-helper); font-size:12px;">22 September 2026</p>
       </div>
       <div class="footer-pills">
+        <span class="footer-pill">What is WAIT2 Performance Analyser</span>
+        <span class="footer-pill">The Generated Report</span>
         <span class="footer-pill">Verbose GC File Visualisation</span>
         <span class="footer-pill">HAR File Support</span>
+        <span class="footer-pill">Javacore Processing</span>
         <span class="footer-pill">AI-Based Thread Classification</span>
         <span class="footer-pill">Tips</span>
         <span class="footer-pill">Tool Integration via Plugin Architecture</span>
@@ -331,7 +334,44 @@ code {
     </div>
   </div>
 
-  <!-- ─── SLIDE 2 · What is WAIT2 ────────────────────────────── -->
+  <!-- ─── SLIDE 2 · Performance Issues ───────────────────────── -->
+  <div class="slide" id="slide-perf-challenges">
+    <div class="top-bar"></div>
+    <div class="slide-header">
+      <p class="tag">Context</p>
+      <h2>Performance Issues</h2>
+    </div>
+    <div class="body" style="display:flex; align-items:center; justify-content:center;">
+      <div style="max-width:760px; width:100%;">
+        <p style="font-size:15px; color:var(--cds-text-secondary); margin-bottom:32px;">
+          Performance problems are among the most demanding cases in software support. Three core challenges make them especially hard to resolve.
+        </p>
+        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:20px;">
+
+          <div style="background:var(--cds-layer-01); border-top:4px solid var(--cds-interactive); padding:24px 20px;">
+            <p style="font-size:11px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; color:var(--cds-text-helper); margin-bottom:12px;">Challenge 1</p>
+            <p style="font-size:17px; font-weight:600; color:var(--cds-text-primary); margin-bottom:12px;">High Visibility</p>
+            <p style="font-size:13px; color:var(--cds-text-secondary); line-height:1.6;">Performance degradations are immediately felt by end users and quickly escalate — creating pressure on support teams to deliver answers fast.</p>
+          </div>
+
+          <div style="background:var(--cds-layer-01); border-top:4px solid var(--cds-interactive); padding:24px 20px;">
+            <p style="font-size:11px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; color:var(--cds-text-helper); margin-bottom:12px;">Challenge 2</p>
+            <p style="font-size:17px; font-weight:600; color:var(--cds-text-primary); margin-bottom:12px;">Difficult to Investigate</p>
+            <p style="font-size:13px; color:var(--cds-text-secondary); line-height:1.6;">Root causes are often buried across multiple data sources — javacore files, GC logs, HAR traces — that must be correlated manually and interpreted in context.</p>
+          </div>
+
+          <div style="background:var(--cds-layer-01); border-top:4px solid var(--cds-interactive); padding:24px 20px;">
+            <p style="font-size:11px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; color:var(--cds-text-helper); margin-bottom:12px;">Challenge 3</p>
+            <p style="font-size:17px; font-weight:600; color:var(--cds-text-primary); margin-bottom:12px;">Missing Tooling</p>
+            <p style="font-size:13px; color:var(--cds-text-secondary); line-height:1.6;">Support engineers lack dedicated tools to load, visualise and analyse the diagnostic data — forcing time-consuming manual inspection of raw files.</p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SLIDE 3 · What is WAIT2 ────────────────────────────── -->
   <div class="slide" id="slide-2">
     <div class="top-bar"></div>
     <div class="slide-header">
@@ -362,7 +402,7 @@ code {
       </div>
       <div class="right">
         <div class="ss-wrap">
-          <img src="screenshots/Ecurep.png" alt="WAIT2 Performance Analyser selected in Ecurep tool launcher">
+          <img src="screenshots/Screenshot 2026-09-21 at 16.55.15.png" alt="WAIT2 Performance Analyser selected in Ecurep tool launcher">
         </div>
         <p class="ss-caption">WAIT2 Performance Analyser in the Ecurep tool launcher — select and click Launch directly from the case</p>
       </div>
@@ -408,46 +448,47 @@ code {
     </div>
   </div>
 
-  <!-- ─── SLIDE 4 · Verbose GC ────────────────────────────── -->
-  <div class="slide" id="slide-4">
+  <!-- ─── SLIDE 4 · Tips ──────────────────────────────────── -->
+  <div class="slide" id="slide-8">
     <div class="top-bar"></div>
     <div class="slide-header">
-      <p class="tag">Feature 1</p>
-      <h2>Verbose GC File Visualisation</h2>
+      <p class="tag">Feature 5</p>
+      <h2>Tips</h2>
     </div>
     <div class="body">
       <div class="left">
         <div class="row">
           <p class="row-label">What</p>
-          <p class="row-title">Built-in verbose GC analysis</p>
-          <p>Verbose GC logs are parsed alongside javacores — heap usage, GC pause times and collection frequency are visualised without any external GC tool.</p>
+          <p class="row-title">Two entry types: Warnings and Tips</p>
+          <ul class="pts">
+            <li><strong>Warning</strong> — flags a data quality or reliability issue (e.g. corrupted javacore, too few snapshots); indicates the investigation results may not be reliable</li>
+            <li><strong>Tip</strong> — identifies a potential cause of a performance problem (e.g. high CPU thread, deadlock, long GC pause); includes Evidence, Action and Expected Impact</li>
+          </ul>
         </div>
         <div class="row">
           <p class="row-label">How to use</p>
-          <p class="row-title">Include GC logs in your input</p>
+          <p class="row-title">Open the Intelligent Tips section</p>
           <ul class="pts">
-            <li>Add verbose GC log files to your zip, folder or file list</li>
-            <li>The tool auto-detects and processes them alongside javacores</li>
+            <li>Tips are generated automatically — no extra input needed</li>
+            <li>Click a thread name in a tip to jump to its drill-down</li>
+            <li>Click a javacore filename to open the javacore detail page</li>
           </ul>
         </div>
         <div class="row">
           <p class="row-label">Output</p>
-          <p class="row-title">GC Activity chart in the report</p>
+          <p class="row-title">Examples of common tips</p>
           <ul class="pts">
-            <li>Heap usage, nursery and tenured memory over time</li>
-            <li>GC pause durations overlaid as bars</li>
-            <li>Long Stop-the-World pauses automatically flagged in Tips</li>
+            <li><strong>High CPU thread</strong> — thread consuming excessive CPU across multiple snapshots; includes thread name and stack trace</li>
+            <li><strong>Long running request in HAR file</strong> — HTTP request exceeding response time threshold; URL and duration shown as evidence</li>
+            <li><strong>Long GC pause</strong> — Stop-the-World pause exceeding threshold; heap usage and pause duration shown as evidence</li>
           </ul>
         </div>
       </div>
       <div class="right">
-        <div class="ss-wrap" style="flex: 0 0 auto; max-height: 68%;">
-          <img src="screenshots/verbosegc_chart.png" alt="Garbage Collection activity chart">
+        <div class="ss-wrap">
+          <img src="screenshots/tips_report_overview.png" alt="Intelligent Tips screenshot">
         </div>
-        <p class="ss-caption">CPU Load (top) and GC Activity (bottom) — heap usage, pause times and collection frequency shown together</p>
-        <div class="card" style="margin-top:6px; flex-shrink:0;">
-          <p style="font-size:11px; line-height:1.5;">Heap oscillates between ~2–4 GB (6 GB total). A single exceptionally long pause (~30 s) is visible at <strong>02:26</strong> — a Stop-the-World event that would cause a severe application stall.</p>
-        </div>
+        <p class="ss-caption">Tips ranked HIGH / MEDIUM / LOW with Evidence, Action and Expected Impact — thread names are clickable links</p>
       </div>
     </div>
   </div>
@@ -496,7 +537,51 @@ code {
     </div>
   </div>
 
-  <!-- ─── SLIDE 6 · Javacore Processing ───────────────────── -->
+  <!-- ─── SLIDE 6 · Verbose GC ────────────────────────────── -->
+  <div class="slide" id="slide-4">
+    <div class="top-bar"></div>
+    <div class="slide-header">
+      <p class="tag">Feature 1</p>
+      <h2>Verbose GC File Visualisation</h2>
+    </div>
+    <div class="body">
+      <div class="left">
+        <div class="row">
+          <p class="row-label">What</p>
+          <p class="row-title">Built-in verbose GC analysis</p>
+          <p>Verbose GC logs are parsed alongside javacores — heap usage, GC pause times and collection frequency are visualised without any external GC tool.</p>
+        </div>
+        <div class="row">
+          <p class="row-label">How to use</p>
+          <p class="row-title">Include GC logs in your input</p>
+          <ul class="pts">
+            <li>Add verbose GC log files to your zip, folder or file list</li>
+            <li>The tool auto-detects and processes them alongside javacores</li>
+          </ul>
+        </div>
+        <div class="row">
+          <p class="row-label">Output</p>
+          <p class="row-title">GC Activity chart in the report</p>
+          <ul class="pts">
+            <li>Heap usage, nursery and tenured memory over time</li>
+            <li>GC pause durations overlaid as bars</li>
+            <li>Long Stop-the-World pauses automatically flagged in Tips</li>
+          </ul>
+        </div>
+      </div>
+      <div class="right">
+        <div class="ss-wrap" style="flex: 0 0 auto; max-height: 68%;">
+          <img src="screenshots/verbosegc_chart.png" alt="Garbage Collection activity chart">
+        </div>
+        <p class="ss-caption">CPU Load (top) and GC Activity (bottom) — heap usage, pause times and collection frequency shown together</p>
+        <div class="card" style="margin-top:6px; flex-shrink:0;">
+          <p style="font-size:11px; line-height:1.5;">Heap oscillates between ~2–4 GB (6 GB total). A single exceptionally long pause (~30 s) is visible at <strong>02:26</strong> — a Stop-the-World event that would cause a severe application stall.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SLIDE 7 · Javacore Processing ───────────────────── -->
   <div class="slide" id="slide-6-javacores">
     <div class="top-bar"></div>
     <div class="slide-header">
@@ -539,7 +624,7 @@ code {
     </div>
   </div>
 
-  <!-- ─── SLIDE 7 · ML Classification ────────────────────── -->
+  <!-- ─── SLIDE 8 · AI-Based Thread Classification ────────── -->
   <div class="slide" id="slide-6">
     <div class="top-bar"></div>
     <div class="slide-header">
@@ -580,7 +665,7 @@ code {
     </div>
   </div>
 
-  <!-- ─── SLIDE 8 · ML Classification chart ──────────────── -->
+  <!-- ─── SLIDE 9 · Visual categorisation of thread information ── -->
   <div class="slide" id="slide-7">
     <div class="top-bar"></div>
     <div class="slide-header">
@@ -628,52 +713,7 @@ code {
     </div>
   </div>
 
-  <!-- ─── SLIDE 9 · Tips ──────────────────────────────────── -->
-  <div class="slide" id="slide-8">
-    <div class="top-bar"></div>
-    <div class="slide-header">
-      <p class="tag">Feature 5</p>
-      <h2>Tips</h2>
-    </div>
-    <div class="body">
-      <div class="left">
-        <div class="row">
-          <p class="row-label">What</p>
-          <p class="row-title">Two entry types: Warnings and Tips</p>
-          <ul class="pts">
-            <li><strong>Warning</strong> — flags a data quality or reliability issue (e.g. corrupted javacore, too few snapshots); indicates the investigation results may not be reliable</li>
-            <li><strong>Tip</strong> — identifies a potential cause of a performance problem (e.g. high CPU thread, deadlock, long GC pause); includes Evidence, Action and Expected Impact</li>
-          </ul>
-        </div>
-        <div class="row">
-          <p class="row-label">How to use</p>
-          <p class="row-title">Open the Intelligent Tips section</p>
-          <ul class="pts">
-            <li>Tips are generated automatically — no extra input needed</li>
-            <li>Click a thread name in a tip to jump to its drill-down</li>
-            <li>Click a javacore filename to open the javacore detail page</li>
-          </ul>
-        </div>
-        <div class="row">
-          <p class="row-label">Output</p>
-          <p class="row-title">Examples of common tips</p>
-          <ul class="pts">
-            <li><strong>High CPU thread</strong> — thread consuming excessive CPU across multiple snapshots; includes thread name and stack trace</li>
-            <li><strong>Long running request in HAR file</strong> — HTTP request exceeding response time threshold; URL and duration shown as evidence</li>
-            <li><strong>Long GC pause</strong> — Stop-the-World pause exceeding threshold; heap usage and pause duration shown as evidence</li>
-          </ul>
-        </div>
-      </div>
-      <div class="right">
-        <div class="ss-wrap">
-          <img src="screenshots/tips_report_overview.png" alt="Intelligent Tips screenshot">
-        </div>
-        <p class="ss-caption">Tips ranked HIGH / MEDIUM / LOW with Evidence, Action and Expected Impact — thread names are clickable links</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- ─── SLIDE 10 · Plugin Architecture ──────────────────── -->
+  <!-- ─── SLIDE 8 · Plugin Architecture ──────────────────── -->
   <div class="slide" id="slide-9">
     <div class="top-bar"></div>
     <div class="slide-header">
@@ -767,42 +807,50 @@ code {
       <p class="tag">Summary</p>
       <h2>Key Features at a Glance</h2>
     </div>
-    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:1px; flex:1; padding: 16px 48px 72px 48px; min-height:0; background:var(--cds-border-subtle); overflow:hidden;">
-      <div style="background:var(--cds-background); padding:16px; border-top:3px solid var(--cds-interactive);">
-        <p style="color:var(--cds-interactive); font-size:20px; font-weight:300; margin-bottom:6px;">01</p>
-        <p class="card-title">Javacore Processing</p>
-        <p style="font-size:11px; color:var(--cds-text-secondary); line-height:1.4;">Processes javacore snapshots → CPU Load chart, All Threads table with per-thread drill-down, and Tips flagging high-CPU threads, deadlocks and blocked threads.</p>
+    <div style="flex:1; padding: 12px 80px 72px 80px; overflow-y:auto; display:flex; flex-direction:column; gap:0;">
+
+      <div style="display:flex; align-items:baseline; gap:16px; padding:10px 0; border-bottom:1px solid var(--cds-border-subtle);">
+        <span style="color:var(--cds-interactive); font-size:13px; font-weight:600; min-width:20px;">01</span>
+        <span style="font-size:14px; font-weight:600; color:var(--cds-text-primary); min-width:280px;">Tips</span>
+        <span style="font-size:12px; color:var(--cds-text-secondary); line-height:1.5;">Automatically generated after every analysis — ranked HIGH / MEDIUM / LOW with Evidence, Action and Expected Impact. Thread and javacore names are clickable links.</span>
       </div>
-      <div style="background:var(--cds-background); padding:16px; border-top:3px solid var(--cds-interactive);">
-        <p style="color:var(--cds-interactive); font-size:20px; font-weight:300; margin-bottom:6px;">02</p>
-        <p class="card-title">Verbose GC File Visualisation</p>
-        <p style="font-size:11px; color:var(--cds-text-secondary); line-height:1.4;">Include GC logs in your input → GC Activity chart with heap, pause times and frequency appears in the report. Long STW pauses flagged in Tips.</p>
+
+      <div style="display:flex; align-items:baseline; gap:16px; padding:10px 0; border-bottom:1px solid var(--cds-border-subtle);">
+        <span style="color:var(--cds-interactive); font-size:13px; font-weight:600; min-width:20px;">02</span>
+        <span style="font-size:14px; font-weight:600; color:var(--cds-text-primary); min-width:280px;">HAR File Support</span>
+        <span style="font-size:12px; color:var(--cds-text-secondary); line-height:1.5;">Include HAR files in your input → HTTP calls table with durations, status codes and slow requests flagged in Tips.</span>
       </div>
-      <div style="background:var(--cds-background); padding:16px; border-top:3px solid var(--cds-interactive);">
-        <p style="color:var(--cds-interactive); font-size:20px; font-weight:300; margin-bottom:6px;">03</p>
-        <p class="card-title">HAR File Support</p>
-        <p style="font-size:11px; color:var(--cds-text-secondary); line-height:1.4;">Include HAR files in your input → HTTP calls table with durations, status codes and slow requests flagged in Tips.</p>
+
+      <div style="display:flex; align-items:baseline; gap:16px; padding:10px 0; border-bottom:1px solid var(--cds-border-subtle);">
+        <span style="color:var(--cds-interactive); font-size:13px; font-weight:600; min-width:20px;">03</span>
+        <span style="font-size:14px; font-weight:600; color:var(--cds-text-primary); min-width:280px;">Verbose GC File Visualisation</span>
+        <span style="font-size:12px; color:var(--cds-text-secondary); line-height:1.5;">Include GC logs in your input → GC Activity chart with heap usage, pause times and collection frequency. Long Stop-the-World pauses flagged in Tips.</span>
       </div>
-      <div style="background:var(--cds-background); padding:16px; border-top:3px solid var(--cds-interactive);">
-        <p style="color:var(--cds-interactive); font-size:20px; font-weight:300; margin-bottom:6px;">04</p>
-        <p class="card-title">AI-Based Thread Classification</p>
-        <p style="font-size:11px; color:var(--cds-text-secondary); line-height:1.4;">Runs automatically → Classification column in All Threads table and Thread Classification Over Time chart in the report.</p>
+
+      <div style="display:flex; align-items:baseline; gap:16px; padding:10px 0; border-bottom:1px solid var(--cds-border-subtle);">
+        <span style="color:var(--cds-interactive); font-size:13px; font-weight:600; min-width:20px;">04</span>
+        <span style="font-size:14px; font-weight:600; color:var(--cds-text-primary); min-width:280px;">Javacore Processing</span>
+        <span style="font-size:12px; color:var(--cds-text-secondary); line-height:1.5;">Processes javacore snapshots → CPU Load chart, All Threads table with per-thread drill-down, deadlock detection and Tips flagging high-CPU threads and blocked threads.</span>
       </div>
-      <div style="background:var(--cds-background); padding:16px; border-top:3px solid var(--cds-interactive);">
-        <p style="color:var(--cds-interactive); font-size:20px; font-weight:300; margin-bottom:6px;">05</p>
-        <p class="card-title">Tips</p>
-        <p style="font-size:11px; color:var(--cds-text-secondary); line-height:1.4;">Runs automatically → Tips ranked HIGH/MEDIUM/LOW with Evidence, Action and Expected Impact. Thread &amp; javacore names are clickable links.</p>
+
+      <div style="display:flex; align-items:baseline; gap:16px; padding:10px 0; border-bottom:1px solid var(--cds-border-subtle);">
+        <span style="color:var(--cds-interactive); font-size:13px; font-weight:600; min-width:20px;">05</span>
+        <span style="font-size:14px; font-weight:600; color:var(--cds-text-primary); min-width:280px;">AI-Based Thread Classification</span>
+        <span style="font-size:12px; color:var(--cds-text-secondary); line-height:1.5;">Runs automatically → Classification column in All Threads table and Thread Classification Over Time chart showing workload shifts and bottlenecks at a glance.</span>
       </div>
-      <div style="background:var(--cds-background); padding:16px; border-top:3px solid var(--cds-interactive);">
-        <p style="color:var(--cds-interactive); font-size:20px; font-weight:300; margin-bottom:6px;">06</p>
-        <p class="card-title">Tool Integration via Plugin Architecture</p>
-        <p style="font-size:11px; color:var(--cds-text-secondary); line-height:1.4;">Liberty logs supported now. Planned: Autogather (ELM Tool) and Developer Tools debug console output as dedicated report sections.</p>
+
+      <div style="display:flex; align-items:baseline; gap:16px; padding:10px 0; border-bottom:1px solid var(--cds-border-subtle);">
+        <span style="color:var(--cds-interactive); font-size:13px; font-weight:600; min-width:20px;">06</span>
+        <span style="font-size:14px; font-weight:600; color:var(--cds-text-primary); min-width:280px;">Tool Integration via Plugin Architecture</span>
+        <span style="font-size:12px; color:var(--cds-text-secondary); line-height:1.5;">Liberty logs supported now. Planned: Autogather (ELM Tool) and Developer Tools debug console output as dedicated report sections.</span>
       </div>
-      <div style="background:var(--cds-layer-01); padding:16px; border-top:3px solid var(--cds-support-warning);">
-        <p style="color:var(--cds-text-helper); font-size:20px; font-weight:300; margin-bottom:6px;">🔮</p>
-        <p class="card-title">WatsonX AI Integration for Intelligent Tips</p>
-        <p style="font-size:11px; color:var(--cds-text-secondary); line-height:1.4;">Ask natural language questions over diagnostics data → AI-generated tips and interactive Q&amp;A in the report.</p>
+
+      <div style="display:flex; align-items:baseline; gap:16px; padding:10px 0;">
+        <span style="color:var(--cds-support-caution); font-size:13px; font-weight:600; min-width:20px;">🔮</span>
+        <span style="font-size:14px; font-weight:600; color:var(--cds-text-primary); min-width:280px;">WatsonX AI Integration for Intelligent Tips</span>
+        <span style="font-size:12px; color:var(--cds-text-secondary); line-height:1.5;">In progress — LLM-generated tips and natural language Q&amp;A over diagnostics data. Not yet available on Ecurep.</span>
       </div>
+
     </div>
   </div>
 
@@ -834,7 +882,7 @@ code {
 <div id="nav">
   <button id="btn-prev" onclick="go(-1)" disabled>&#8592;</button>
   <div class="dot-row" id="dots"></div>
-  <span id="counter">1 / 13</span>
+  <span id="counter">1 / 14</span>
   <button id="btn-next" onclick="go(1)">&#8594;</button>
 </div>
 
