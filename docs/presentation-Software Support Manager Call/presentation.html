@@ -5,15 +5,40 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Wait2 Performance Analyser</title>
 <style>
+/* ── Carbon Design System — White theme tokens ── */
+:root {
+  --cds-background:        #ffffff;
+  --cds-layer-01:          #f4f4f4;
+  --cds-layer-02:          #e0e0e0;
+  --cds-interactive:       #0f62fe;
+  --cds-interactive-hover: #0353e9;
+  --cds-text-primary:      #161616;
+  --cds-text-secondary:    #525252;
+  --cds-text-helper:       #6f6f6f;
+  --cds-text-on-color:     #ffffff;
+  --cds-border-subtle:     #e0e0e0;
+  --cds-border-strong:     #8d8d8d;
+  --cds-support-info:      #0043ce;
+  --cds-support-warning:   #f1c21b;
+  --cds-support-caution:   #ff832b;
+  --cds-tag-blue-bg:       #d0e2ff;
+  --cds-tag-blue-text:     #0043ce;
+  --cds-focus:             #0f62fe;
+  --font: 'IBM Plex Sans', 'Arial', Helvetica, sans-serif;
+}
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  font-family: Arial, Helvetica, sans-serif;
-  background: #0a0f14;
-  color: #e0e8f4;
+  font-family: var(--font);
+  background: var(--cds-background);
+  color: var(--cds-text-primary);
   overflow: hidden;
   height: 100vh;
   width: 100vw;
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
 }
 
 /* ── Slide container ── */
@@ -23,159 +48,259 @@ body {
   position: absolute; inset: 0;
   display: none;
   flex-direction: column;
-  background: #0F1923;
+  background: var(--cds-background);
 }
 .slide.active { display: flex; }
 
-/* ── Common chrome ── */
+/* ── Carbon 4px top rule (Interactive Blue) ── */
 .top-bar {
-  height: 5px; flex-shrink: 0;
-  background: #0062FF;
+  height: 4px; flex-shrink: 0;
+  background: var(--cds-interactive);
 }
+
+/* ── Slide header ── */
 .slide-header {
-  padding: 14px 44px 0 44px;
+  padding: 16px 48px 12px 48px;
   flex-shrink: 0;
+  border-bottom: 1px solid var(--cds-border-subtle);
 }
 .tag {
-  color: #0062FF; font-size: 11px; font-weight: bold;
-  letter-spacing: 2px; text-transform: uppercase; margin-bottom: 3px;
+  color: var(--cds-interactive);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
 }
 .slide-header h2 {
-  color: #fff; font-size: clamp(19px, 2.5vw, 27px);
-  font-weight: bold; margin: 0;
+  color: var(--cds-text-primary);
+  font-size: clamp(18px, 2.3vw, 26px);
+  font-weight: 300;
+  margin: 0;
+  letter-spacing: -0.01em;
 }
 
-/* ── Body: left text + right image ── */
+/* ── Body ── */
 .body {
-  display: flex; flex: 1; padding: 10px 44px 16px 44px;
-  gap: 28px; min-height: 0;
+  display: flex; flex: 1;
+  padding: 16px 48px 72px 48px;
+  gap: 32px; min-height: 0;
+  overflow: hidden;
 }
 
-/* Left column: three stacked rows */
+/* Left column */
 .left {
   flex: 0 0 50%;
   display: flex; flex-direction: column;
   gap: 0;
 }
 
-/* Each of the three rows */
+/* Row sections */
 .row {
   flex: 1; display: flex; flex-direction: column;
   justify-content: flex-start;
-  padding: 8px 12px 8px 0;
-  border-bottom: 1px solid #1a2e45;
+  padding: 10px 16px 10px 0;
+  border-bottom: 1px solid var(--cds-border-subtle);
 }
 .row:last-child { border-bottom: none; }
 
 .row-label {
-  color: #0062FF; font-size: 10px; font-weight: bold;
-  text-transform: uppercase; letter-spacing: 1.5px;
-  margin-bottom: 5px;
+  color: var(--cds-interactive);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 4px;
 }
 .row-title {
-  color: #fff; font-size: 13px; font-weight: bold;
+  color: var(--cds-text-primary);
+  font-size: 13px;
+  font-weight: 600;
   margin-bottom: 4px;
 }
 .row p {
-  color: #8BACD9; font-size: 12.5px; line-height: 1.5;
+  color: var(--cds-text-secondary);
+  font-size: 12px;
+  line-height: 1.5;
 }
 ul.pts { list-style: none; padding: 0; margin-top: 2px; }
 ul.pts li {
-  color: #C9D8F0; font-size: 12px; line-height: 1.45;
-  padding: 2px 0 2px 14px; position: relative;
+  color: var(--cds-text-secondary);
+  font-size: 12px;
+  line-height: 1.45;
+  padding: 2px 0 2px 14px;
+  position: relative;
 }
 ul.pts li::before {
-  content: "▶"; color: #0062FF; font-size: 8px;
-  position: absolute; left: 0; top: 4px;
+  content: "–";
+  color: var(--cds-interactive);
+  font-weight: 600;
+  position: absolute;
+  left: 0;
+  top: 2px;
 }
 
-/* Right column: image */
+/* Right column */
 .right {
   flex: 0 0 50%; min-width: 0;
-  display: flex; flex-direction: column; gap: 6px;
+  display: flex; flex-direction: column; gap: 8px;
 }
 .ss-wrap {
-  flex: 1; min-height: 0; border-radius: 6px; overflow: hidden;
-  border: 1px solid #1E3A5F; background: #060c13;
+  flex: 1; min-height: 0;
+  border: 1px solid var(--cds-border-subtle);
+  background: var(--cds-layer-01);
   display: flex; align-items: flex-start;
   max-height: 100%;
+  overflow: hidden;
 }
 .ss-wrap img {
-  width: 100%; height: 100%; object-fit: contain; object-position: top left;
+  width: 100%; height: 100%;
+  object-fit: contain; object-position: top left;
   display: block;
 }
 .ss-caption {
-  color: #57748a; font-size: 10px; text-align: center;
-  font-style: italic; flex-shrink: 0;
+  color: var(--cds-text-helper);
+  font-size: 10px;
+  text-align: center;
+  font-style: italic;
+  flex-shrink: 0;
 }
 
-/* ── Cards ── */
+/* ── Carbon tiles / cards ── */
 .card {
-  background: #0D1E32; border-left: 3px solid #0062FF;
-  border-radius: 5px; padding: 7px 11px; margin-top: 4px;
+  background: var(--cds-layer-01);
+  border-left: 3px solid var(--cds-interactive);
+  padding: 8px 12px;
+  margin-top: 4px;
 }
-.card-title { color: #fff; font-size: 12px; font-weight: bold; margin-bottom: 3px; }
-.card p { color: #8BACD9; font-size: 11px; line-height: 1.4; }
+.card-title {
+  color: var(--cds-text-primary);
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 3px;
+}
+.card p {
+  color: var(--cds-text-secondary);
+  font-size: 11px;
+  line-height: 1.4;
+}
 
-/* ── Tag pills ── */
+/* ── Tag pills — Carbon Tag style ── */
 .pill {
   display: inline-block;
-  background: #162236; border: 1px solid #0062FF;
-  border-radius: 3px; padding: 2px 8px;
-  color: #8BACD9; font-size: 10px;
+  background: var(--cds-tag-blue-bg);
+  border-radius: 0;
+  padding: 2px 8px;
+  color: var(--cds-tag-blue-text);
+  font-size: 11px;
+  font-weight: 400;
 }
 
 /* ── Title slide ── */
 #slide-1 { justify-content: flex-start; }
 #slide-1 .side-accent {
-  position: absolute; left: 0; top: 5px; bottom: 0; width: 6px;
-  background: #0062FF;
+  position: absolute; left: 0; top: 4px; bottom: 0; width: 4px;
+  background: var(--cds-interactive);
 }
 #slide-1 .title-content {
-  margin-left: 70px; max-width: 620px;
+  margin-left: 72px; max-width: 640px;
   flex: 1; display: flex; flex-direction: column; justify-content: center;
-  padding-bottom: 40px;
+  padding-bottom: 48px;
 }
 #slide-1 h1 {
-  color: #fff; font-size: clamp(35px, 5vw, 52.5px);
-  font-weight: bold; line-height: 1.15; margin-bottom: 10px;
+  color: var(--cds-text-primary);
+  font-size: clamp(32px, 4.5vw, 52px);
+  font-weight: 300;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin-bottom: 12px;
 }
 #slide-1 .subtitle {
-  color: #8BACD9; font-size: 17.5px; line-height: 1.5; margin-bottom: 26px;
+  color: var(--cds-text-secondary);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+  margin-bottom: 28px;
 }
-#slide-1 .divider { width: 60px; height: 3px; background: #0062FF; margin-bottom: 22px; }
-#slide-1 .footer-pills { display: grid; grid-template-columns: repeat(3, auto); justify-content: start; gap: 8px; }
+#slide-1 .divider {
+  width: 48px; height: 2px;
+  background: var(--cds-interactive);
+  margin-bottom: 24px;
+}
+#slide-1 .footer-pills {
+  display: flex; flex-wrap: wrap; gap: 6px;
+}
 #slide-1 .footer-pill {
-  background: #162236; border: 1px solid #0062FF;
-  border-radius: 4px; padding: 5px 13px;
-  color: #8BACD9; font-size: 11.25px;
+  background: var(--cds-tag-blue-bg);
+  border-radius: 0;
+  padding: 4px 12px;
+  color: var(--cds-tag-blue-text);
+  font-size: 11px;
+  font-weight: 400;
 }
 
 /* ── Navigation ── */
 #nav {
-  position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%);
-  display: flex; align-items: center; gap: 14px;
-  background: rgba(13,30,50,0.92); border: 1px solid #1E3A5F;
-  border-radius: 30px; padding: 8px 20px;
-  backdrop-filter: blur(4px);
+  position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+  display: flex; align-items: center; gap: 12px;
+  background: var(--cds-background);
+  border: 1px solid var(--cds-border-subtle);
+  padding: 8px 20px;
   z-index: 100;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 #nav button {
-  background: none; border: 1px solid #0062FF; color: #0062FF;
-  border-radius: 50%; width: 30px; height: 30px; cursor: pointer;
-  font-size: 17.5px; display: flex; align-items: center; justify-content: center;
-  transition: background 0.15s;
+  background: none;
+  border: 1px solid var(--cds-interactive);
+  color: var(--cds-interactive);
+  width: 28px; height: 28px;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.1s, color 0.1s;
+  border-radius: 0;
 }
-#nav button:hover { background: #0062FF; color: #fff; }
-#nav button:disabled { border-color: #2a3a55; color: #2a3a55; cursor: default; }
-#nav button:disabled:hover { background: none; color: #2a3a55; }
-#counter { color: #8BACD9; font-size: 13.75px; min-width: 48px; text-align: center; }
-.dot-row { display: flex; gap: 6px; }
+#nav button:hover { background: var(--cds-interactive); color: #fff; }
+#nav button:disabled {
+  border-color: var(--cds-border-subtle);
+  color: var(--cds-border-strong);
+  cursor: default;
+}
+#nav button:disabled:hover { background: none; color: var(--cds-border-strong); }
+#counter {
+  color: var(--cds-text-secondary);
+  font-size: 12px;
+  min-width: 44px;
+  text-align: center;
+}
+.dot-row { display: flex; gap: 6px; align-items: center; }
 .dot {
-  width: 7px; height: 7px; border-radius: 50%;
-  background: #2a3a55; cursor: pointer; transition: background 0.15s;
+  width: 6px; height: 6px;
+  background: var(--cds-border-subtle);
+  cursor: pointer;
+  transition: background 0.15s;
+  border-radius: 0;
 }
-.dot.active { background: #0062FF; }
+.dot.active { background: var(--cds-interactive); }
+
+/* ── Inline code ── */
+code {
+  font-family: 'IBM Plex Mono', 'Courier New', monospace;
+  background: var(--cds-layer-02);
+  padding: 1px 4px;
+  font-size: 11px;
+  color: var(--cds-text-primary);
+}
+
+/* ── WatsonX "In Progress" tag ── */
+.tag-warning {
+  color: #8a3800;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
 </style>
 </head>
 <body>
@@ -191,9 +316,9 @@ ul.pts li::before {
       <h1>Wait2 Performance Analyser</h1>
       <div class="divider"></div>
       <p class="subtitle">Recently added capabilities for faster performance investigations</p>
-      <div style="margin-bottom: 22px;">
-        <p style="color:#8BACD9; font-size:13.75px; margin-bottom:2px;">Chris Kazmierczyk</p>
-        <p style="color:#57748a; font-size:12.5px;">22 September 2026</p>
+      <div style="margin-bottom: 24px;">
+        <p style="color:var(--cds-text-primary); font-size:13px; font-weight:600; margin-bottom:2px;">Chris Kazmierczyk</p>
+        <p style="color:var(--cds-text-helper); font-size:12px;">22 September 2026</p>
       </div>
       <div class="footer-pills">
         <span class="footer-pill">Verbose GC File Visualisation</span>
@@ -224,9 +349,9 @@ ul.pts li::before {
           <p class="row-label">What it analyses</p>
           <p class="row-title">Multiple diagnostic data sources in one run</p>
           <ul class="pts">
-            <li><strong style="color:#fff">Javacore files</strong> — thread states, CPU usage, lock contention</li>
-            <li><strong style="color:#fff">Verbose GC logs</strong> — heap usage, pause times, collection frequency</li>
-            <li><strong style="color:#fff">HAR files</strong> — HTTP call durations, status codes, slow endpoints</li>
+            <li><strong>Javacore files</strong> — thread states, CPU usage, lock contention</li>
+            <li><strong>Verbose GC logs</strong> — heap usage, pause times, collection frequency</li>
+            <li><strong>HAR files</strong> — HTTP call durations, status codes, slow endpoints</li>
           </ul>
         </div>
         <div class="row">
@@ -267,10 +392,10 @@ ul.pts li::before {
           <p class="row-label">Output highlights</p>
           <p class="row-title">Rich, interactive content</p>
           <ul class="pts">
-            <li><strong style="color:#fff">Expandable sections</strong> — navigate directly to the area of interest</li>
-            <li><strong style="color:#fff">Embedded documentation</strong> — inline chart explainers</li>
-            <li><strong style="color:#fff">Intelligent tips</strong> — identify potential causes of performance issues; warns when investigation results may not be reliable</li>
-            <li><strong style="color:#fff">Interactive charts</strong> — zoom and hover to explore data</li>
+            <li><strong>Expandable sections</strong> — navigate directly to the area of interest</li>
+            <li><strong>Embedded documentation</strong> — inline chart explainers</li>
+            <li><strong>Intelligent tips</strong> — identify potential causes of performance issues; warns when investigation results may not be reliable</li>
+            <li><strong>Interactive charts</strong> — zoom and hover to explore data</li>
           </ul>
         </div>
       </div>
@@ -321,7 +446,7 @@ ul.pts li::before {
         </div>
         <p class="ss-caption">CPU Load (top) and GC Activity (bottom) — heap usage, pause times and collection frequency shown together</p>
         <div class="card" style="margin-top:6px; flex-shrink:0;">
-          <p style="color:#8BACD9; font-size:11px; line-height:1.5;">Heap oscillates between ~2–4 GB (6 GB total). A single exceptionally long pause (~30 s) is visible at <strong style="color:#fff">02:26</strong> — a Stop-the-World event that would cause a severe application stall.</p>
+          <p style="font-size:11px; line-height:1.5;">Heap oscillates between ~2–4 GB (6 GB total). A single exceptionally long pause (~30 s) is visible at <strong>02:26</strong> — a Stop-the-World event that would cause a severe application stall.</p>
         </div>
       </div>
     </div>
@@ -345,7 +470,7 @@ ul.pts li::before {
           <p class="row-label">How to use</p>
           <p class="row-title">Include HAR files in your input</p>
           <ul class="pts">
-            <li>Add <code style="color:#7EC8E3;font-size:11px">*.har</code> files to your zip, folder or file list</li>
+            <li>Add <code>*.har</code> files to your zip, folder or file list</li>
             <li>Capture HAR from a browser DevTools session</li>
             <li>The tool auto-detects and includes them — no extra steps</li>
           </ul>
@@ -365,7 +490,7 @@ ul.pts li::before {
           <img src="screenshots/har_view2.png" alt="HAR HTTP Calls table screenshot">
         </div>
         <div class="card" style="margin-top:6px; flex-shrink:0;">
-          <p style="color:#8BACD9; font-size:11px; line-height:1.5;">All call durations are below <strong style="color:#fff">900 ms</strong>, however one request fails with <strong style="color:#fff">HTTP 400</strong> — this error response is a possible cause of the performance issue being investigated.</p>
+          <p style="font-size:11px; line-height:1.5;">All call durations are below <strong>900 ms</strong>, however one request fails with <strong>HTTP 400</strong> — this error response is a possible cause of the performance issue being investigated.</p>
         </div>
       </div>
     </div>
@@ -389,10 +514,10 @@ ul.pts li::before {
           <p class="row-label">What is analysed</p>
           <p class="row-title">Per-thread and cross-snapshot data</p>
           <ul class="pts">
-            <li><strong style="color:#fff">Thread states</strong> — running, waiting, blocked, parked</li>
-            <li><strong style="color:#fff">CPU usage</strong> — top CPU consumers identified across snapshots</li>
-            <li><strong style="color:#fff">Lock contention</strong> — deadlocks and blocked threads detected automatically</li>
-            <li><strong style="color:#fff">Stack traces</strong> — per-thread drill-down with full call stack</li>
+            <li><strong>Thread states</strong> — running, waiting, blocked, parked</li>
+            <li><strong>CPU usage</strong> — top CPU consumers identified across snapshots</li>
+            <li><strong>Lock contention</strong> — deadlocks and blocked threads detected automatically</li>
+            <li><strong>Stack traces</strong> — per-thread drill-down with full call stack</li>
           </ul>
         </div>
         <div class="row">
@@ -455,7 +580,7 @@ ul.pts li::before {
     </div>
   </div>
 
-  <!-- ─── SLIDE 7 · ML Classification chart ──────────────── -->
+  <!-- ─── SLIDE 8 · ML Classification chart ──────────────── -->
   <div class="slide" id="slide-7">
     <div class="top-bar"></div>
     <div class="slide-header">
@@ -473,16 +598,16 @@ ul.pts li::before {
           <p class="row-label">Possible thread states</p>
           <p class="row-title">10 classification categories</p>
           <ul class="pts" style="columns:2; column-gap:12px;">
-            <li><strong style="color:#fff">Java Internal</strong></li>
-            <li><strong style="color:#fff">Wait For Condition</strong></li>
-            <li><strong style="color:#fff">Liberty Internal</strong></li>
-            <li><strong style="color:#fff">Display Graphics</strong></li>
-            <li><strong style="color:#fff">Read From Network</strong></li>
-            <li><strong style="color:#fff">Computing</strong></li>
-            <li><strong style="color:#fff">Read From Database</strong></li>
-            <li><strong style="color:#fff">Save To Disk</strong></li>
-            <li><strong style="color:#fff">Read From Disk</strong></li>
-            <li><strong style="color:#fff">Wait For Connection</strong></li>
+            <li><strong>Java Internal</strong></li>
+            <li><strong>Wait For Condition</strong></li>
+            <li><strong>Liberty Internal</strong></li>
+            <li><strong>Display Graphics</strong></li>
+            <li><strong>Read From Network</strong></li>
+            <li><strong>Computing</strong></li>
+            <li><strong>Read From Database</strong></li>
+            <li><strong>Save To Disk</strong></li>
+            <li><strong>Read From Disk</strong></li>
+            <li><strong>Wait For Connection</strong></li>
           </ul>
         </div>
         <div class="row">
@@ -497,13 +622,13 @@ ul.pts li::before {
         </div>
         <p class="ss-caption">Thread counts per class over time — workload shifts visible at a glance without reading stack traces</p>
         <div class="card" style="margin-top:6px; flex-shrink:0;">
-          <p style="color:#8BACD9; font-size:11px; line-height:1.5;">At <strong style="color:#fff">7:08</strong> and <strong style="color:#fff">7:20</strong> a large number of threads are classified as <strong style="color:#fff">Read From Network</strong>. This spike indicates threads waiting on a network response — an external service is a likely cause of the performance degradation observed at those times.</p>
+          <p style="font-size:11px; line-height:1.5;">At <strong>7:08</strong> and <strong>7:20</strong> a large number of threads are classified as <strong>Read From Network</strong>. This spike indicates threads waiting on a network response — an external service is a likely cause of the performance degradation observed at those times.</p>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ─── SLIDE 8 · Tips ──────────────────────────────────── -->
+  <!-- ─── SLIDE 9 · Tips ──────────────────────────────────── -->
   <div class="slide" id="slide-8">
     <div class="top-bar"></div>
     <div class="slide-header">
@@ -516,8 +641,8 @@ ul.pts li::before {
           <p class="row-label">What</p>
           <p class="row-title">Two entry types: Warnings and Tips</p>
           <ul class="pts">
-            <li><strong style="color:#fff">Warning</strong> — flags a data quality or reliability issue (e.g. corrupted javacore, too few snapshots); indicates the investigation results may not be reliable</li>
-            <li><strong style="color:#fff">Tip</strong> — identifies a potential cause of a performance problem (e.g. high CPU thread, deadlock, long GC pause); includes Evidence, Action and Expected Impact</li>
+            <li><strong>Warning</strong> — flags a data quality or reliability issue (e.g. corrupted javacore, too few snapshots); indicates the investigation results may not be reliable</li>
+            <li><strong>Tip</strong> — identifies a potential cause of a performance problem (e.g. high CPU thread, deadlock, long GC pause); includes Evidence, Action and Expected Impact</li>
           </ul>
         </div>
         <div class="row">
@@ -533,9 +658,9 @@ ul.pts li::before {
           <p class="row-label">Output</p>
           <p class="row-title">Examples of common tips</p>
           <ul class="pts">
-            <li><strong style="color:#fff">High CPU thread</strong> — thread consuming excessive CPU across multiple snapshots; includes thread name and stack trace</li>
-            <li><strong style="color:#fff">Long running request in HAR file</strong> — HTTP request exceeding response time threshold; URL and duration shown as evidence</li>
-            <li><strong style="color:#fff">Long GC pause</strong> — Stop-the-World pause exceeding threshold; heap usage and pause duration shown as evidence</li>
+            <li><strong>High CPU thread</strong> — thread consuming excessive CPU across multiple snapshots; includes thread name and stack trace</li>
+            <li><strong>Long running request in HAR file</strong> — HTTP request exceeding response time threshold; URL and duration shown as evidence</li>
+            <li><strong>Long GC pause</strong> — Stop-the-World pause exceeding threshold; heap usage and pause duration shown as evidence</li>
           </ul>
         </div>
       </div>
@@ -548,7 +673,7 @@ ul.pts li::before {
     </div>
   </div>
 
-  <!-- ─── SLIDE 9 · Plugin Architecture ──────────────────── -->
+  <!-- ─── SLIDE 10 · Plugin Architecture ──────────────────── -->
   <div class="slide" id="slide-9">
     <div class="top-bar"></div>
     <div class="slide-header">
@@ -575,12 +700,12 @@ ul.pts li::before {
           <p class="row-label">Planned</p>
           <p class="row-title">Autogather integration (ELM Tool)</p>
           <ul class="pts">
-            <li>Include <strong style="color:#fff">Autogather</strong> output in your zip or folder</li>
+            <li>Include <strong>Autogather</strong> output in your zip or folder</li>
             <li>Autogather data will appear as a dedicated section in the report</li>
           </ul>
           <p class="row-title" style="margin-top:8px;">Developer Tools Debug console output</p>
           <ul class="pts">
-            <li>Include <strong style="color:#fff">Developer Tools</strong> debug console export in your input</li>
+            <li>Include <strong>Developer Tools</strong> debug console export in your input</li>
             <li>Console messages and errors will appear as a dedicated section in the report</li>
           </ul>
         </div>
@@ -594,11 +719,11 @@ ul.pts li::before {
     </div>
   </div>
 
-  <!-- ─── SLIDE 10 · LLM Integration ─────────────────────── -->
+  <!-- ─── SLIDE 11 · LLM Integration ─────────────────────── -->
   <div class="slide" id="slide-10-llm">
     <div class="top-bar"></div>
     <div class="slide-header">
-      <p class="tag">In Progress — Not yet available on Ecurep</p>
+      <p class="tag tag-warning">In Progress — Not yet available on Ecurep</p>
       <h2>WatsonX AI Integration for Intelligent Tips</h2>
     </div>
     <div class="body">
@@ -606,7 +731,7 @@ ul.pts li::before {
         <div class="row">
           <p class="row-label">What</p>
           <p class="row-title">LLM-generated tips and Q&amp;A over diagnostics</p>
-          <p>A domain-aware language model will generate targeted tips and answer natural language questions over the diagnostics data. <strong style="color:#fff">Not yet available on Ecurep.</strong></p>
+          <p>A domain-aware language model will generate targeted tips and answer natural language questions over the diagnostics data. <strong>Not yet available on Ecurep.</strong></p>
         </div>
         <div class="row">
           <p class="row-label">How to use (planned)</p>
@@ -638,66 +763,66 @@ ul.pts li::before {
   <!-- ─── SLIDE 12 · Summary ──────────────────────────────── -->
   <div class="slide" id="slide-11">
     <div class="top-bar"></div>
-    <div class="slide-header" style="padding-bottom: 10px;">
+    <div class="slide-header" style="padding-bottom: 12px;">
       <p class="tag">Summary</p>
       <h2>Key Features at a Glance</h2>
     </div>
-    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; flex:1; padding: 4px 44px 20px 44px; min-height:0;">
-      <div class="card" style="border-left: none; border-top: 3px solid #0062FF;">
-        <p style="color:#0062FF; font-size:22.5px; font-weight:bold; margin-bottom:4px;">01</p>
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:1px; flex:1; padding: 16px 48px 72px 48px; min-height:0; background:var(--cds-border-subtle); overflow:hidden;">
+      <div style="background:var(--cds-background); padding:16px; border-top:3px solid var(--cds-interactive);">
+        <p style="color:var(--cds-interactive); font-size:20px; font-weight:300; margin-bottom:6px;">01</p>
         <p class="card-title">Javacore Processing</p>
-        <p>Processes javacore snapshots → CPU Load chart, All Threads table with per-thread drill-down, and Tips flagging high-CPU threads, deadlocks and blocked threads.</p>
+        <p style="font-size:11px; color:var(--cds-text-secondary); line-height:1.4;">Processes javacore snapshots → CPU Load chart, All Threads table with per-thread drill-down, and Tips flagging high-CPU threads, deadlocks and blocked threads.</p>
       </div>
-      <div class="card" style="border-left: none; border-top: 3px solid #0062FF;">
-        <p style="color:#0062FF; font-size:22.5px; font-weight:bold; margin-bottom:4px;">02</p>
+      <div style="background:var(--cds-background); padding:16px; border-top:3px solid var(--cds-interactive);">
+        <p style="color:var(--cds-interactive); font-size:20px; font-weight:300; margin-bottom:6px;">02</p>
         <p class="card-title">Verbose GC File Visualisation</p>
-        <p>Include GC logs in your input → GC Activity chart with heap, pause times and frequency appears in the report. Long STW pauses flagged in Tips.</p>
+        <p style="font-size:11px; color:var(--cds-text-secondary); line-height:1.4;">Include GC logs in your input → GC Activity chart with heap, pause times and frequency appears in the report. Long STW pauses flagged in Tips.</p>
       </div>
-      <div class="card" style="border-left: none; border-top: 3px solid #0062FF;">
-        <p style="color:#0062FF; font-size:22.5px; font-weight:bold; margin-bottom:4px;">03</p>
+      <div style="background:var(--cds-background); padding:16px; border-top:3px solid var(--cds-interactive);">
+        <p style="color:var(--cds-interactive); font-size:20px; font-weight:300; margin-bottom:6px;">03</p>
         <p class="card-title">HAR File Support</p>
-        <p>Include HAR files in your input → HTTP calls table with durations, status codes and slow requests flagged in Tips.</p>
+        <p style="font-size:11px; color:var(--cds-text-secondary); line-height:1.4;">Include HAR files in your input → HTTP calls table with durations, status codes and slow requests flagged in Tips.</p>
       </div>
-      <div class="card" style="border-left: none; border-top: 3px solid #0062FF;">
-        <p style="color:#0062FF; font-size:22.5px; font-weight:bold; margin-bottom:4px;">04</p>
+      <div style="background:var(--cds-background); padding:16px; border-top:3px solid var(--cds-interactive);">
+        <p style="color:var(--cds-interactive); font-size:20px; font-weight:300; margin-bottom:6px;">04</p>
         <p class="card-title">AI-Based Thread Classification</p>
-        <p>Runs automatically → Classification column in All Threads table and Thread Classification Over Time chart in the report.</p>
+        <p style="font-size:11px; color:var(--cds-text-secondary); line-height:1.4;">Runs automatically → Classification column in All Threads table and Thread Classification Over Time chart in the report.</p>
       </div>
-      <div class="card" style="border-left: none; border-top: 3px solid #0062FF;">
-        <p style="color:#0062FF; font-size:22.5px; font-weight:bold; margin-bottom:4px;">05</p>
+      <div style="background:var(--cds-background); padding:16px; border-top:3px solid var(--cds-interactive);">
+        <p style="color:var(--cds-interactive); font-size:20px; font-weight:300; margin-bottom:6px;">05</p>
         <p class="card-title">Tips</p>
-        <p>Runs automatically → Tips ranked HIGH/MEDIUM/LOW with Evidence, Action and Expected Impact. Thread &amp; javacore names are clickable links.</p>
+        <p style="font-size:11px; color:var(--cds-text-secondary); line-height:1.4;">Runs automatically → Tips ranked HIGH/MEDIUM/LOW with Evidence, Action and Expected Impact. Thread &amp; javacore names are clickable links.</p>
       </div>
-      <div class="card" style="border-left: none; border-top: 3px solid #0062FF;">
-        <p style="color:#0062FF; font-size:22.5px; font-weight:bold; margin-bottom:4px;">06</p>
+      <div style="background:var(--cds-background); padding:16px; border-top:3px solid var(--cds-interactive);">
+        <p style="color:var(--cds-interactive); font-size:20px; font-weight:300; margin-bottom:6px;">06</p>
         <p class="card-title">Tool Integration via Plugin Architecture</p>
-        <p>Liberty logs supported now. Planned: Autogather (ELM Tool) and Developer Tools debug console output as dedicated report sections.</p>
+        <p style="font-size:11px; color:var(--cds-text-secondary); line-height:1.4;">Liberty logs supported now. Planned: Autogather (ELM Tool) and Developer Tools debug console output as dedicated report sections.</p>
       </div>
-      <div class="card" style="border-left: none; border-top: 3px solid #4a90e2;">
-        <p style="color:#4a90e2; font-size:22.5px; font-weight:bold; margin-bottom:4px;">🔮</p>
+      <div style="background:var(--cds-layer-01); padding:16px; border-top:3px solid var(--cds-support-warning);">
+        <p style="color:var(--cds-text-helper); font-size:20px; font-weight:300; margin-bottom:6px;">🔮</p>
         <p class="card-title">WatsonX AI Integration for Intelligent Tips</p>
-        <p>Ask natural language questions over diagnostics data → AI-generated tips and interactive Q&amp;A in the report.</p>
+        <p style="font-size:11px; color:var(--cds-text-secondary); line-height:1.4;">Ask natural language questions over diagnostics data → AI-generated tips and interactive Q&amp;A in the report.</p>
       </div>
     </div>
   </div>
 
-  <!-- ─── SLIDE 12 · Questions & Feedback ────────────────── -->
+  <!-- ─── SLIDE 13 · Questions & Feedback ────────────────── -->
   <div class="slide" id="slide-12">
     <div class="top-bar"></div>
-    <div class="side-accent" style="position:absolute;left:0;top:5px;bottom:0;width:6px;background:#0062FF;"></div>
-    <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 80px 60px 80px;max-width:820px;">
-      <p class="tag" style="margin-bottom:8px;">Questions &amp; Feedback</p>
-      <h1 style="color:#fff;font-size:clamp(38px,5.5vw,58px);font-weight:bold;line-height:1.1;margin-bottom:18px;">Questions</h1>
-      <div style="width:60px;height:3px;background:#0062FF;margin-bottom:28px;"></div>
-      <p style="color:#8BACD9;font-size:16px;line-height:1.65;margin-bottom:30px;">
+    <div class="side-accent" style="position:absolute;left:0;top:4px;bottom:0;width:4px;background:var(--cds-interactive);"></div>
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 80px 80px 80px;max-width:780px;">
+      <p class="tag" style="margin-bottom:10px;">Questions &amp; Feedback</p>
+      <h1 style="color:var(--cds-text-primary);font-size:clamp(36px,5vw,56px);font-weight:300;letter-spacing:-0.02em;line-height:1.1;margin-bottom:20px;">Questions</h1>
+      <div style="width:48px;height:2px;background:var(--cds-interactive);margin-bottom:28px;"></div>
+      <p style="color:var(--cds-text-secondary);font-size:15px;line-height:1.65;margin-bottom:28px;">
         Your feedback helps make WAIT2 Performance Analyser more useful. If something is missing,
         broken, or could work better for your investigations — please let us know.
       </p>
-      <div class="card" style="border-left:3px solid #0062FF;padding:14px 18px;margin-bottom:20px;">
+      <div class="card" style="padding:14px 18px;margin-bottom:0;">
         <p class="card-title" style="font-size:13px;margin-bottom:6px;">💬 Join the conversation on Slack</p>
-        <p style="color:#8BACD9;font-size:13px;line-height:1.55;">
+        <p style="font-size:13px;line-height:1.55;">
           Drop questions, bug reports or feature requests in
-          <strong style="color:#7EC8E3;">#wait-necromancers</strong>
+          <strong style="color:var(--cds-interactive);">#wait-necromancers</strong>
         </p>
       </div>
     </div>
@@ -745,7 +870,7 @@ document.addEventListener('keydown', e => {
 });
 </script>
 
-<footer style="position:fixed;bottom:0;width:100%;text-align:center;font-size:12.5px;color:#2a3a55;padding:2px 0;pointer-events:none;">
+<footer style="position:fixed;bottom:0;width:100%;text-align:center;font-size:11px;color:var(--cds-text-helper);padding:3px 0;pointer-events:none;border-top:1px solid var(--cds-border-subtle);background:var(--cds-background);">
   Made with IBM Bob
 </footer>
 
