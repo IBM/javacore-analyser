@@ -39,10 +39,7 @@ jobs:
         # requirements.txt pulls in heavy optional deps (torch, transformers,
         # ibm-watsonx-ai) that are not required here and slow the runner down.
         run: |
-          pip install hypothesis \
-            py7zr lxml pyana importlib-resources tqdm haralyzer \
-            numpy xgboost scikit-learn \
-            "idna>=3.15" "filelock>=3.20.3"
+          pip install --require-hashes -r requirements-test.txt
 
       - name: Run Hypothesis fuzz tests
         run: PYTHONPATH=src:test python -m unittest test.test_hypothesis_fuzz -v
