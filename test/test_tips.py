@@ -30,6 +30,8 @@ class TestTips(unittest.TestCase):
         javacore_set = javacore_set.create(temp_dir_path)
         result = tips.TooFewJavacoresTip.generate(javacore_set)
         self.assertTrue(len(result) > 0, "Missing tip for too few javacores")
+        tip_type, _ = result[0]
+        self.assertEqual(tips.TipType.WARNING, tip_type, "TooFewJavacoresTip should be WARNING type")
         temp_dir.cleanup()
 
     def test_TooExcludedJAvacoresTip(self):
@@ -47,7 +49,9 @@ class TestTips(unittest.TestCase):
         javacore_set = javacore_set.create(temp_dir_path)
         result = tips.ExcludedJavacoresTip.generate(javacore_set)
         self.assertEqual(2, len(result), "Wrong number of excluded javacores")
-        self.assertRegex(result[0], "javacore.20220606.1149",  # Excluded files are generated at 11:49
+        tip_type, tip_text = result[0]
+        self.assertEqual(tips.TipType.WARNING, tip_type, "ExcludedJavacoresTip should be WARNING type")
+        self.assertRegex(tip_text, "javacore.20220606.1149",  # Excluded files are generated at 11:49
                          "javacore.20220606.114948.32888.0011.txt is not added to excluded file list")
         temp_dir.cleanup()
 
@@ -63,7 +67,8 @@ class TestTips(unittest.TestCase):
         javacore_set.populate_snapshot_collections()
         result = tips.BlockingThreadsTip.generate(javacore_set)
         self.assertEqual(1, len(result), "Wrong number of tips for blocking threads")
-        tip_text = result[0]
+        tip_type, tip_text = result[0]
+        self.assertEqual(tips.TipType.TIP, tip_type, "BlockingThreadsTip should be TIP type")
         self.assertIn("JTS Status check", tip_text, "Tip text does not contain blocking thread name")
         self.assertIn('<a href=', tip_text, "Tip text does not contain a hyperlink for the blocking thread")
         temp_dir.cleanup()
@@ -80,7 +85,8 @@ class TestTips(unittest.TestCase):
         javacore_set.populate_snapshot_collections()
         result = tips.BlockingThreadsTip.generate(javacore_set)
         self.assertEqual(5, len(result), "Wrong number of tips for blocking threads")
-        self.assertTrue(all('<a href=' in t for t in result), "All blocking thread tips should contain hyperlinks")
+        self.assertTrue(all('<a href=' in text for _, text in result),
+                        "All blocking thread tips should contain hyperlinks")
         temp_dir.cleanup()
 
     def test_highCpuUsageTip(self):
@@ -98,13 +104,14 @@ class TestTips(unittest.TestCase):
         high_gc_usage_tip_found = False
         qm_asynchronous_task_found = False
         qm_asynchronous_task_link_found = False
-        for tip in result:
-            if "The verbose GC threads are using high CPU" in tip:
+        for tip_type, tip_text in result:
+            self.assertEqual(tips.TipType.TIP, tip_type, "HighCpuUsageTip should be TIP type")
+            if "The verbose GC threads are using high CPU" in tip_text:
                 high_gc_usage_tip_found = True
-            elif "qm: AsynchronousTaskRunner-12" in tip:
+            elif "qm: AsynchronousTaskRunner-12" in tip_text:
                 qm_asynchronous_task_found = True
-                qm_asynchronous_task_link_found = '<a href=' in tip
-            self.assertFalse("dcc: AsynchronousTaskRunner-10" in tip,
+                qm_asynchronous_task_link_found = '<a href=' in tip_text
+            self.assertFalse("dcc: AsynchronousTaskRunner-10" in tip_text,
                              "The thread \"dcc: AsynchronousTaskRunner-10\" should not appear in high "
                              "CPU usage tip but it is there")
         self.assertTrue(high_gc_usage_tip_found, "High CPU usage tip not found")
@@ -156,9 +163,9 @@ class TestTips(unittest.TestCase):
         t3.total_cpu = 40
         result = tips.InvalidAccumulatedCpuTimeTip.generate(javacore_set)
         logging.debug("Test 3: %s" % result)
-        expected_result = '[WARNING] The CPU usage data is invalid for thread excel.'
-        failure_message = "Wrong tip is displayed"
-        self.assertTrue(expected_result in result[0], failure_message)
+        tip_type, tip_text = result[0]
+        self.assertEqual(tips.TipType.WARNING, tip_type, "InvalidAccumulatedCpuTimeTip should be WARNING type")
+        self.assertIn('The CPU usage data is invalid for thread excel.', tip_text, "Wrong tip is displayed")
 
         # test 4, two threads with invalid CPU (<0)
         t1.total_cpu = 30
@@ -166,9 +173,9 @@ class TestTips(unittest.TestCase):
         t3.total_cpu = -2
         result = tips.InvalidAccumulatedCpuTimeTip.generate(javacore_set)
         logging.debug("Test 4: %s" % result)
-        expected_result = '[WARNING] 2 threads have invalid accumulated CPU.'
-        failure_message = "Wrong tip is displayed"
-        self.assertTrue(expected_result in result[0], failure_message)
+        tip_type, tip_text = result[0]
+        self.assertEqual(tips.TipType.WARNING, tip_type, "InvalidAccumulatedCpuTimeTip should be WARNING type")
+        self.assertIn('2 threads have invalid accumulated CPU.', tip_text, "Wrong tip is displayed")
 
         # test 5, one thread with total CPU = 0
         t1.total_cpu = 0
@@ -239,16 +246,16 @@ class TestTips(unittest.TestCase):
         
         result = tips.LongGcPauseTip.generate(javacore_set)
         self.assertEqual(1, len(result), "Should return one tip message")
-        
-        tip_text = result[0]
-        self.assertIn("[TIP]", tip_text, "Tip should contain TIP")
-        self.assertIn("3 GC pause(s) longer than 1000ms", tip_text, 
-                     "Should report 3 pauses over 1000ms threshold")
+
+        tip_type, tip_text = result[0]
+        self.assertEqual(tips.TipType.TIP, tip_type, "LongGcPauseTip should be TIP type")
+        self.assertIn("3 GC pause(s) longer than 1000ms", tip_text,
+                      "Should report 3 pauses over 1000ms threshold")
         self.assertIn("1 GC pause(s) longer than 2000ms", tip_text,
-                     "Should report 1 pause over 2000ms threshold")
+                      "Should report 1 pause over 2000ms threshold")
         self.assertIn("2500", tip_text, "Should report longest pause of 2500ms")
-        self.assertIn("2023-04-25T11:04:15.857", tip_text, 
-                     "Should report timestamp of longest pause")
+        self.assertIn("2023-04-25T11:04:15.857", tip_text,
+                      "Should report timestamp of longest pause")
 
 
     def test_SystemExitInMainThreadTip_with_system_exit(self):
@@ -284,10 +291,11 @@ class TestTips(unittest.TestCase):
 
         result = tips.SystemExitInMainThreadTip.generate(javacore_set)
         self.assertEqual(1, len(result), "Should return one warning message")
-        self.assertIn("[WARNING]", result[0], "Tip should contain WARNING")
-        self.assertIn("System.exit", result[0], "Tip should mention System.exit")
-        self.assertIn("test_javacore.txt", result[0], "Tip should mention the javacore filename")
-        self.assertIn("main", result[0], "Tip should mention the thread name")
+        tip_type, tip_text = result[0]
+        self.assertEqual(tips.TipType.WARNING, tip_type, "SystemExitInMainThreadTip should be WARNING type")
+        self.assertIn("System.exit", tip_text, "Tip should mention System.exit")
+        self.assertIn("test_javacore.txt", tip_text, "Tip should mention the javacore filename")
+        self.assertIn("main", tip_text, "Tip should mention the thread name")
 
     def test_SystemExitInMainThreadTip_without_system_exit(self):
         """Test SystemExitInMainThreadTip when System.exit is not present"""
@@ -356,10 +364,11 @@ class TestTips(unittest.TestCase):
 
         result = tips.SystemExitInMainThreadTip.generate(javacore_set)
         self.assertEqual(1, len(result), "Should return one warning message")
-        self.assertIn("[WARNING]", result[0], "Tip should contain WARNING")
-        self.assertIn("System.exit", result[0], "Tip should mention System.exit")
-        self.assertIn("Worker-Thread-1", result[0], "Tip should mention the worker thread name")
-        self.assertIn("test_javacore.txt", result[0], "Tip should mention the javacore filename")
+        tip_type, tip_text = result[0]
+        self.assertEqual(tips.TipType.WARNING, tip_type, "SystemExitInMainThreadTip should be WARNING type")
+        self.assertIn("System.exit", tip_text, "Tip should mention System.exit")
+        self.assertIn("Worker-Thread-1", tip_text, "Tip should mention the worker thread name")
+        self.assertIn("test_javacore.txt", tip_text, "Tip should mention the javacore filename")
 
     def _make_thread(self, name, thread_id, states):
         """Helper: build a Thread with one ThreadSnapshot per state string."""
@@ -430,9 +439,10 @@ class TestTips(unittest.TestCase):
         )
         result = tips.PermanentlyBlockedThreadsTip.generate(javacore_set)
         self.assertEqual(1, len(result), "Should return one warning for one permanently blocked thread")
-        self.assertIn("[WARNING]", result[0], "Tip should contain WARNING")
-        self.assertIn("stuck-thread", result[0], "Tip should contain the thread name")
-        self.assertIn("3", result[0], "Tip should mention the number of snapshots")
+        tip_type, tip_text = result[0]
+        self.assertEqual(tips.TipType.WARNING, tip_type, "PermanentlyBlockedThreadsTip should be WARNING type")
+        self.assertIn("stuck-thread", tip_text, "Tip should contain the thread name")
+        self.assertIn("3", tip_text, "Tip should mention the number of snapshots")
 
     def test_PermanentlyBlockedThreadsTip_partially_blocked_thread(self):
         """Returns empty list when a thread is blocked in some but not all snapshots."""
@@ -465,8 +475,8 @@ class TestTips(unittest.TestCase):
             )
         result = tips.PermanentlyBlockedThreadsTip.generate(javacore_set)
         self.assertEqual(3, len(result), "Should return one warning per permanently blocked thread")
-        for tip_text in result:
-            self.assertIn("[WARNING]", tip_text)
+        for tip_type, _ in result:
+            self.assertEqual(tips.TipType.WARNING, tip_type)
 
     def test_PermanentlyBlockedThreadsTip_capped_at_max(self):
         """Never returns more warnings than MAX_TIPS."""
@@ -564,28 +574,32 @@ class TestTips(unittest.TestCase):
         from javacore_analyser.har_file import HarFile
         har_path = "test/data/javacores/jazz.net_Archive [25-01-03 11-07-56].har"
         har_file = HarFile(har_path)
-        
+
         javacore_set = JavacoreSet("")
         javacore_set.har_files = [har_file]
-        
+
         result = tips.FailingHttpCallsTip.generate(javacore_set)
         self.assertEqual(1, len(result), "Should have 1 tip for failing HTTP calls")
-        self.assertIn("[WARNING] Detected", result[0])
-        self.assertIn("failing HTTP call(s) in HAR file", result[0])
-        self.assertIn("returned status 400", result[0])
+        tip_type, tip_text = result[0]
+        self.assertEqual(tips.TipType.WARNING, tip_type, "FailingHttpCallsTip should be WARNING type")
+        self.assertIn("Detected", tip_text)
+        self.assertIn("failing HTTP call(s) in HAR file", tip_text)
+        self.assertIn("returned status 400", tip_text)
 
     def test_LongHttpCallsTip(self):
         from javacore_analyser.har_file import HarFile
         har_path = "test/data/javacores/jazz.net_Archive [25-01-03 11-07-56].har"
         har_file = HarFile(har_path)
-        
+
         javacore_set = JavacoreSet("")
         javacore_set.har_files = [har_file]
-        
+
         result_triggered = tips.LongHttpCallsTip.generate(javacore_set)
         self.assertTrue(len(result_triggered) > 0, "Should have triggered long HTTP calls tip")
-        self.assertIn("[WARNING] Detected", result_triggered[0])
-        self.assertIn("HTTP call(s) longer than 5000ms", result_triggered[0])
+        tip_type, tip_text = result_triggered[0]
+        self.assertEqual(tips.TipType.WARNING, tip_type, "LongHttpCallsTip should be WARNING type")
+        self.assertIn("Detected", tip_text)
+        self.assertIn("HTTP call(s) longer than 5000ms", tip_text)
 
     # ------------------------------------------------------------------
     # LowCompRatioTip
@@ -634,8 +648,8 @@ class TestTips(unittest.TestCase):
         ]
         result = tips.LowCompRatioTip.generate(javacore_set)
         self.assertEqual(1, len(result), "Should return one warning when majority are above 50%")
-        tip_text = result[0]
-        self.assertIn("[WARNING]", tip_text, "Tip should contain WARNING")
+        tip_type, tip_text = result[0]
+        self.assertEqual(tips.TipType.WARNING, tip_type, "LowCompRatioTip should be WARNING type")
         self.assertIn("3 out of 4", tip_text, "Tip should report count correctly")
         self.assertIn("50%", tip_text, "Tip should mention the warning threshold")
         self.assertIn("-Xmx", tip_text, "Tip should mention increasing -Xmx")
@@ -651,8 +665,8 @@ class TestTips(unittest.TestCase):
         ]
         result = tips.LowCompRatioTip.generate(javacore_set)
         self.assertEqual(1, len(result), "Should return one warning when majority are above 70%")
-        tip_text = result[0]
-        self.assertIn("[WARNING]", tip_text, "Tip should contain WARNING")
+        tip_type, tip_text = result[0]
+        self.assertEqual(tips.TipType.WARNING, tip_type, "LowCompRatioTip should be WARNING type")
         self.assertIn("3 out of 4", tip_text, "Tip should report count correctly")
         self.assertIn("70%", tip_text, "Tip should mention the critical threshold")
         self.assertIn("memory leaks", tip_text, "Tip should mention memory leaks")
