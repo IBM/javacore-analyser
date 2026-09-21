@@ -61,8 +61,8 @@
                                                 <xsl:attribute name="href">
                                                     <xsl:value-of select="concat('javacores/', javacore_file_name, '.html')"/>
                                                 </xsl:attribute>
+                                                <xsl:value-of select="javacore_file_name"/>
                                             </a>
-                                            <xsl:value-of select="javacore_file_name"/>
                                         </td>
                                         <td class="left"><xsl:value-of select="javacore_file_time_stamp"/></td>
                                         <xsl:choose>
