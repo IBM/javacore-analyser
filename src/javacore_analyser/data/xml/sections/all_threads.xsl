@@ -8,7 +8,7 @@
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
     <xsl:template name="all_threads">
-        <h3><a  id="toggle_all_threads" href="javascript:expand_it(all_threads,toggle_all_threads)" class="expandit">All Threads</a></h3>
+        <h3 id="toc_all_threads"><a  id="toggle_all_threads" href="javascript:expand_it(all_threads,toggle_all_threads)" class="expandit">All Threads</a></h3>
         <div id="all_threads"  style="display:none;">
             <details class="doc-toggle">
                 <summary>What does this table tell me?</summary>
@@ -255,6 +255,7 @@
                     </xsl:for-each>
                 </tbody>
             </table>
+            <div class="back-to-top"><a href="#doc_body">↑ Back to top</a></div>
         </div>
     </xsl:template>
 

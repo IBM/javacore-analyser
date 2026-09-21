@@ -8,7 +8,7 @@
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
     <xsl:template name="system_resources">
-        <h3 id="system_resource_utilization_h3"><a id="toggleresourcesutil" href="javascript:expand_it(systemresources,toggleresourcesutil)" class="expandit">System resources utilization</a></h3>
+        <h3 id="toc_system_resources"><a id="toggleresourcesutil" href="javascript:expand_it(systemresources,toggleresourcesutil)" class="expandit">System resources utilization</a></h3>
         <div id="systemresources"  style="display:none;">
             <xsl:choose>
                 <xsl:when test="//javacore_count = 0">
