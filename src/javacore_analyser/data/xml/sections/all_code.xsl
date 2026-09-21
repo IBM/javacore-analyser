@@ -10,9 +10,8 @@
     <xsl:template name="all_code">
         <h3><a  id="toggle_all_code_collection" href="javascript:expand_it(all_code_collection,toggle_all_code_collection)" class="expandit">All Code</a></h3>
         <div id="all_code_collection" style="display:none;" >
-            <a id="togglecodedoc" href="javascript:expand_it(codedoc,togglecodedoc)" class="expandit">
-                What does this table tell me?</a>
-                <div id="codedoc" style="display:none;">
+            <details class="doc-toggle">
+                <summary>What does this table tell me?</summary>
                 The table shows resource usage of code that is being executed by the JVM,
                 regardless of the thread it is run in.
                 The table can be sorted by clicking on a column header.
@@ -43,7 +42,7 @@
                         point, based on the data in the javacore files.
                     </li>
                 </ul>
-            </div>
+            </details>
             <table id="allCodeTable" class="tablesorter">
                 <thead>
                     <tr>

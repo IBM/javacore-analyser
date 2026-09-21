@@ -10,9 +10,8 @@
     <xsl:template name="all_threads">
         <h3><a  id="toggle_all_threads" href="javascript:expand_it(all_threads,toggle_all_threads)" class="expandit">All Threads</a></h3>
         <div id="all_threads"  style="display:none;">
-            <a id="togglethreadsdoc" href="javascript:expand_it(threadsdoc,togglethreadsdoc)" class="expandit">
-                What does this table tell me?</a>
-            <div id="threadsdoc" style="display:none;">
+            <details class="doc-toggle">
+                <summary>What does this table tell me?</summary>
                 This table contains information about all the threads found in all the javacore files in the data set.
                 Note that the thread is identified by a combination of its ID and name. This makes sense for pool threads
                 that may be reused for unrelated tasks. Two tasks with different thread names are therefore treated
@@ -56,13 +55,13 @@
                     <xsl:choose>
                         <xsl:when test="//@use_ml='True'">
                             <li><strong>Classification</strong>
-                                Machine learning based classification of the thread activity. 
+                                Machine learning based classification of the thread activity.
                                 Entries are sorted by the number of occurrences in the thread.
                             </li>
                         </xsl:when>
                     </xsl:choose>
                 </ul>
-            </div>
+            </details>
             <table id="all_threads_table" class="tablesorter">
                 <thead>
                     <tr>
