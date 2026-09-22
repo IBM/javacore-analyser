@@ -1,4 +1,20 @@
 # Changelog
+## [4.0.3] - 2026-09-22
+## What's Changed
+* Mark Long GC Pause as a Tip by @Hashim1999164 in https://github.com/IBM/javacore-analyser/pull/403
+* #397 Provide hints regarding operating on charts by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/398
+* #392 hide noisy classifications by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/399
+* #412 Add GPG signing step to release.sh\n\n- Add step 5 to sign… by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/413
+* #404 Handle javacores without a current thread by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/405
+* #391 add comp ratio to gc chart by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/401
+* #446 reduce the accuracy of duration in har files by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/447
+* #461 Color badges in javacore list by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/462
+* #463 Added more navigation links by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/464
+
+## New Contributors
+* @Hashim1999164 made their first contribution in https://github.com/IBM/javacore-analyser/pull/403
+
+**Full Changelog**: https://github.com/IBM/javacore-analyser/compare/4.0.1...4.0.3
 
 ## [4.0.1] - 2026-09-08
 ## What's Changed
