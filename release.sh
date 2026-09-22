@@ -165,6 +165,8 @@ if should_run 4; then
 
   echo "Installing $WHL[full] ..."
   "$VENV_DIR/bin/pip" install --quiet "$WHL[full]"
+  echo "Installing hypothesis (for tests)"
+  "$VENV_DIR/bin/pip" install --quiet "hypothesis==6.168.0"
 
   echo "Running tests against the installed package ..."
   PYTHONPATH=test "$VENV_DIR/bin/python" -m unittest discover -s test -v
