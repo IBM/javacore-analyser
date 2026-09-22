@@ -10,7 +10,7 @@
     <xsl:template name="http_calls">
         <xsl:choose>
             <xsl:when test="doc/har_files">
-                <h3 id="toc_http_calls"><a  id="toggle_http_calls" href="javascript:expand_it(http_calls,toggle_http_calls)" class="expandit">HTTP calls</a></h3>
+                <h3><a  id="toggle_http_calls" href="javascript:expand_it(http_calls,toggle_http_calls)" class="expandit">HTTP calls</a></h3>
                 <div id="http_calls" style="display:none;" >
                     <a id="togglehttpcallsdoc" href="javascript:expand_it(httpcallsdoc,togglehttpcallsdoc)" class="expandit">
                         What does this table tell me?</a>
