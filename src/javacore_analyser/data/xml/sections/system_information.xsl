@@ -8,7 +8,7 @@
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
     <xsl:template name="system_information">
-        <h3 id="toc_system_information"><a id="toggle_system_properties"
+        <h3><a id="toggle_system_properties"
                href="javascript:expand_it(system_properties, toggle_system_properties)"
                class="expandit">System Information</a></h3>
         <div id="system_properties" style="display:none;">
