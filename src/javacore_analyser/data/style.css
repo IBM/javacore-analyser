@@ -79,9 +79,9 @@ th {
 
 .cds--data-table {
     width: 100%;
-    table-layout: unset;
+    table-layout: auto;
     border-radius: unset;
-    min-width: max-content;
+    min-width: 600px;
 }
 
 .cds--data-table, .cds--data-table th, .cds--data-table td {
