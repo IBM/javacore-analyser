@@ -52,7 +52,7 @@
                             <li>Click on a legend item to show or hide that data series.</li>
                         </ul>
                     </div>
-                    <div class="cds--tile" style="margin-bottom:1rem;overflow-x:auto;min-height:350px;position:relative;">
+                    <div class="cds--tile" style="margin-bottom:1rem;overflow-x:auto;min-height:250px;position:relative;">
                         <canvas id="myChartCPUUsage"></canvas>
                     </div>
                 </xsl:otherwise>
@@ -119,7 +119,7 @@
                             <li>Click on a legend item to show or hide that data series.</li>
                         </ul>
                     </div>
-                    <div id="systemresources_myChartGC" class="cds--tile hide" style="margin-bottom:1rem;overflow-x:auto;min-height:350px;position:relative;">
+                    <div id="systemresources_myChartGC" class="cds--tile hide" style="margin-bottom:1rem;overflow-x:auto;min-height:250px;position:relative;">
                         <canvas id="myChartGC"></canvas>
                     </div>
                         </xsl:otherwise>
@@ -156,7 +156,7 @@
                     </ul>
 
                 </div>
-                <div class="cds--tile" style="margin-bottom:1rem;overflow-x:auto;min-height:350px;position:relative;">
+                <div class="cds--tile" style="margin-bottom:1rem;overflow-x:auto;min-height:250px;position:relative;">
                     <canvas id="myChartThreadClassifications"></canvas>
                 </div>
                 <!-- Hidden data table consumed by loadChartThreadClassifications() in wait2scripts.js.
