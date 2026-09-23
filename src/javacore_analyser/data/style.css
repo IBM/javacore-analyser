@@ -64,11 +64,24 @@ th {
     background-color: var(--color-layer-01);
 }
 
+/* Remove Carbon's 25% right-padding on accordion content that holds a data table,
+   and ensure the wrapper does not clip horizontal scroll */
+.cds--accordion__content:has(.cds--data-table-container),
+.cds--accordion__content:has(.cds--data-table-content) {
+    padding-inline-end: 0;
+}
+
 /* Do not override Carbon's own table/th/td styling for cds--data-table */
+.cds--data-table-container {
+    overflow-x: auto;
+    width: 100%;
+}
+
 .cds--data-table {
     width: 100%;
     table-layout: unset;
     border-radius: unset;
+    min-width: max-content;
 }
 
 .cds--data-table, .cds--data-table th, .cds--data-table td {
@@ -85,17 +98,18 @@ th {
     color: unset;
 }
 
-th.ninety      { width: 90%; }
-th.sixty       { width: 60%; }
-th.fifty       { width: 50%; }
-th.forty       { width: 40%; }
-th.thirty      { width: 30%; }
-th.twenty      { width: 20%; }
-th.twenty-five { width: 25%; }
-th.fifteen     { width: 15%; }
-th.ten         { width: 10%; }
-th.http-small  { width: 5%; }
-th.http-medium { width: 13%; }
+/* Width helpers — more specific than .cds--data-table th so they win the reset */
+.cds--data-table th.ninety,      th.ninety      { width: 90%; }
+.cds--data-table th.sixty,       th.sixty       { width: 60%; }
+.cds--data-table th.fifty,       th.fifty       { width: 50%; }
+.cds--data-table th.forty,       th.forty       { width: 40%; }
+.cds--data-table th.thirty,      th.thirty      { width: 30%; }
+.cds--data-table th.twenty,      th.twenty      { width: 20%; }
+.cds--data-table th.twenty-five, th.twenty-five { width: 25%; }
+.cds--data-table th.fifteen,     th.fifteen     { width: 15%; }
+.cds--data-table th.ten,         th.ten         { width: 10%; }
+.cds--data-table th.http-small,  th.http-small  { width: 5%; }
+.cds--data-table th.http-medium, th.http-medium { width: 13%; }
 
 td {
     text-align:right;
@@ -295,6 +309,14 @@ td.http_slow.secondary {
 .ml-write-database   { background-color: var(--cds-tag-background-cyan,    #d1ecf1); color: var(--cds-tag-color-cyan,    #0c5460); }
 .ml-write-network    { background-color: var(--cds-tag-background-cyan,    #bee5eb); color: var(--cds-tag-color-cyan,    #0a4650); }
 .ml-unknown          { background-color: var(--cds-tag-background-gray,    #e9ecef); color: var(--cds-tag-color-gray,    #495057); }
+
+/* ── Chart canvas heights ────────────────────────────────────────────────── */
+
+#myChartCPUUsage,
+#myChartGC,
+#myChartThreadClassifications {
+    height: 250px !important;
+}
 
 /* CPU usage badge colours (green < 20%, amber 20–50%, red > 50%) */
 .cpu-badge  { display: inline-block; padding: 1px 6px; border-radius: 3px; font-size: 0.85em; }
