@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 -->
 
-<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
     <xsl:template name="all_threads">
         <h3><a  id="toggle_all_threads" href="javascript:expand_it(all_threads,toggle_all_threads)" class="expandit">All Threads</a></h3>
