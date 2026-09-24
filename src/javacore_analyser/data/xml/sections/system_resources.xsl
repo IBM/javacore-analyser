@@ -5,7 +5,13 @@
 # SPDX-License-Identifier: Apache-2.0
 -->
 
-<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+
+    <!-- Key for Muenchian grouping of classification_entry elements by their @value attribute.
+         Used to find the set of distinct classification labels across all javacores. -->
+    <xsl:key name="classif-by-value"
+             match="javacore_classifications/classification_entry"
+             use="@value"/>
 
     <xsl:template name="system_resources">
         <h3 id="system_resource_utilization_h3"><a id="toggleresourcesutil" href="javascript:expand_it(systemresources,toggleresourcesutil)" class="expandit">System resources utilization</a></h3>
@@ -150,10 +156,11 @@
                             <tr>
                                 <th>timestamp</th>
                                 <!-- Emit exactly one header cell per distinct classification label
-                                     found across ALL javacore nodes, using xsl:for-each-group.
+                                     found across ALL javacore nodes, using Muenchian grouping
+                                     (XSLT 1.0 compatible alternative to xsl:for-each-group).
                                      Noisy categories (defined in classification_config.xsl) get
                                      data-noisy="true" so the JS strokes them out by default. -->
-                                <xsl:for-each-group select="doc/report_info/javacore_list/javacore/javacore_classifications/classification_entry" group-by="@value">
+                                <xsl:for-each select="doc/report_info/javacore_list/javacore/javacore_classifications/classification_entry[generate-id() = generate-id(key('classif-by-value', @value)[1])]">
                                     <xsl:choose>
                                         <xsl:when test="contains($noisy_classifications, concat('|', @value, '|'))">
                                             <th data-noisy="true"><xsl:value-of select="@value"/></th>
@@ -162,7 +169,7 @@
                                             <th><xsl:value-of select="@value"/></th>
                                         </xsl:otherwise>
                                     </xsl:choose>
-                                </xsl:for-each-group>
+                                </xsl:for-each>
                             </tr>
                         </thead>
                         <tbody>
@@ -170,8 +177,9 @@
                                 <xsl:variable name="jc" select="."/>
                                 <tr>
                                     <td><xsl:value-of select="javacore_file_time_stamp"/></td>
-                                    <!-- One cell per distinct category (grouped); look up this javacore's count (0 if absent). -->
-                                    <xsl:for-each-group select="//javacore_list/javacore/javacore_classifications/classification_entry" group-by="@value">
+                                    <!-- One cell per distinct category; look up this javacore's count (0 if absent).
+                                         Uses the same Muenchian grouping key to iterate unique category labels. -->
+                                    <xsl:for-each select="//javacore_list/javacore/javacore_classifications/classification_entry[generate-id() = generate-id(key('classif-by-value', @value)[1])]">
                                         <xsl:variable name="cat" select="@value"/>
                                         <xsl:variable name="entry" select="$jc/javacore_classifications/classification_entry[@value=$cat]"/>
                                         <td>
@@ -180,7 +188,7 @@
                                                 <xsl:otherwise>0</xsl:otherwise>
                                             </xsl:choose>
                                         </td>
-                                    </xsl:for-each-group>
+                                    </xsl:for-each>
                                 </tr>
                             </xsl:for-each>
                         </tbody>
