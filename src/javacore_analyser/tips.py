@@ -5,12 +5,21 @@
 import logging
 import os
 import re
+from enum import Enum
 
 from javacore_analyser.properties import Properties
 from javacore_analyser.har_file import HttpCall
 
 # This is a module containing list of the tips.
 # Each tip has to implement dynamic method generate(javacore_set)
+# generate() must return a list of (TipType, str) tuples.
+
+
+class TipType(Enum):
+    """Severity / kind of an intelligent tip."""
+    WARNING = "WARNING"
+    TIP = "TIP"
+    INFO = "INFO"
 
 # List of the tips on which run the tool
 TIPS_LIST = ["DifferentIssuesTip", "ExcludedJavacoresTip", "InvalidAccumulatedCpuTimeTip", "TooFewJavacoresTip",
@@ -133,16 +142,16 @@ class TestTip:
     @staticmethod
     def generate(javacore_set):
         logging.info(javacore_set)
-        return ["this is a test tip. Ignore it."]
+        return [(TipType.TIP, "this is a test tip. Ignore it.")]
 
 
 class InvalidAccumulatedCpuTimeTip:
     # Usually the javacores should not have thread with accumulated CPU time < 0ms
 
-    ONE_BAD_THREAD_WARNING = '''[WARNING] The CPU usage data is invalid for thread {0}.
+    ONE_BAD_THREAD_WARNING = '''The CPU usage data is invalid for thread {0}.
                               Probably one or more javacore files are corrupted.'''
 
-    MANY_THREADS_WARNING = '''[WARNING] {0} threads have invalid accumulated CPU.
+    MANY_THREADS_WARNING = '''{0} threads have invalid accumulated CPU.
                                 Probably one or more javacore files are corrupted.'''
 
     @staticmethod
@@ -155,10 +164,10 @@ class InvalidAccumulatedCpuTimeTip:
             if len(bad_thread) == 1:
                 # only 1 bad thread, display it thread name with link if available
                 thread_link = get_thread_link(javacore_set, bad_thread[0].name)
-                return [InvalidAccumulatedCpuTimeTip.ONE_BAD_THREAD_WARNING.format(thread_link)]
+                return [(TipType.WARNING, InvalidAccumulatedCpuTimeTip.ONE_BAD_THREAD_WARNING.format(thread_link))]
             else:
                 # more than 1 bad threads, display the number of bad threads
-                return [InvalidAccumulatedCpuTimeTip.MANY_THREADS_WARNING.format(len(bad_thread))]
+                return [(TipType.WARNING, InvalidAccumulatedCpuTimeTip.MANY_THREADS_WARNING.format(len(bad_thread)))]
         else:
             return []  # if nothing wrong
 
@@ -166,7 +175,7 @@ class InvalidAccumulatedCpuTimeTip:
 class OOMEGenerationTip:
     # Tip generated when one of Javacores is generated on OOME, not by user
 
-    SIG_INFO_TEXT = '''[WARNING] The Javacore {0} is generated on OutOfMemoryError.
+    SIG_INFO_TEXT = '''The Javacore {0} is generated on OutOfMemoryError.
     The signal that triggered the javacore: '{1}'.
     You may need another tool, like Memory Analyzer Tool, to troubleshoot the issue'''
 
@@ -179,7 +188,7 @@ class OOMEGenerationTip:
             if OOMEGenerationTip.OUT_OF_MEMORY_ERROR in siginfo:
                 javacore_link = get_javacore_link(javacore_set, jc.basefilename())
                 msg = OOMEGenerationTip.SIG_INFO_TEXT.format(javacore_link, jc.siginfo)
-                return [msg]
+                return [(TipType.WARNING, msg)]
         return []  # no issues with generation signal. Returning empty tip
 
 
@@ -188,7 +197,7 @@ class DifferentIssuesTip:
     # If the interval is higher, then it is probably from different issue.
 
     MAX_INTERVAL_FOR_JAVACORES = 330  # 330 seconds (5 minutes and a little more time)
-    DIFFERENT_ISSUES_MESSAGE = """[WARNING] The time interval between javacore {0} and {1} is {2:.0f} seconds, while
+    DIFFERENT_ISSUES_MESSAGE = """The time interval between javacore {0} and {1} is {2:.0f} seconds, while
     the recommended maximum interval between two javacores is 300 seconds (5 minutes). It is likely that these
     two javacores do not correspond to one occurrence of a single issue. Please review the list of javacores
     and the tool only against the ones that are applicable for the issue you are investigating. """
@@ -211,7 +220,7 @@ class DifferentIssuesTip:
             jc1_link = get_javacore_link(javacore_set, max_interval_previous_jc_base_filename)
             jc2_link = get_javacore_link(javacore_set, max_interval_jc_base_filename)
             msg = DifferentIssuesTip.DIFFERENT_ISSUES_MESSAGE.format(jc1_link, jc2_link, max_interval)
-            return [msg]
+            return [(TipType.WARNING, msg)]
         else:
             return []
 
@@ -221,26 +230,26 @@ class TooFewJavacoresTip:
 
     MIN_NUMBER_OF_JAVACORES = 10
 
-    ONE_JAVACORE_WARNING = '''[WARNING] You generated this the report with only one javacore. 
+    ONE_JAVACORE_WARNING = '''You generated this the report with only one javacore.
                                 CPU usage calculation is not possible.'''
 
-    NOT_ENOUGH_JAVACORES_MESSAGE = """[WARNING] You ran the tool against {0} Javacores. The analysis 
-    might not be reliable. The minimal number of Javacores should be 5. The recommended number of Javacores 
+    NOT_ENOUGH_JAVACORES_MESSAGE = """You ran the tool against {0} Javacores. The analysis
+    might not be reliable. The minimal number of Javacores should be 5. The recommended number of Javacores
     is at least 10."""
 
-    NO_JAVACORES_INFO = """[INFO] You ran the tool against no Javacores. The analysis is limited only to verbose GC 
+    NO_JAVACORES_INFO = """You ran the tool against no Javacores. The analysis is limited only to verbose GC
     data and har files"""
 
     @staticmethod
     def generate(javacore_set):
         jc_number = len(javacore_set.javacores)
         if jc_number == 1:
-            return [TooFewJavacoresTip.ONE_JAVACORE_WARNING]
+            return [(TipType.WARNING, TooFewJavacoresTip.ONE_JAVACORE_WARNING)]
         if jc_number == 0:
-            # return [TooFewJavacoresTip.NO_JAVACORES_INFO]
-            return [] #Assuming that we have hars or verbose gc data. No tip is needed.
+            # return [(TipType.INFO, TooFewJavacoresTip.NO_JAVACORES_INFO)]
+            return []  # Assuming that we have hars or verbose gc data. No tip is needed.
         elif jc_number < TooFewJavacoresTip.MIN_NUMBER_OF_JAVACORES:
-            return [TooFewJavacoresTip.NOT_ENOUGH_JAVACORES_MESSAGE.format(jc_number)]
+            return [(TipType.WARNING, TooFewJavacoresTip.NOT_ENOUGH_JAVACORES_MESSAGE.format(jc_number))]
         else:
             return []
 
@@ -248,21 +257,21 @@ class TooFewJavacoresTip:
 class ExcludedJavacoresTip:
     # Generates the tip if we excluded some javacores
 
-    SMALL_SIZE_JAVACORES = """[WARNING] The file {0} has very small size of {1} bytes. It is probably corrupted.
+    SMALL_SIZE_JAVACORES = """The file {0} has very small size of {1} bytes. It is probably corrupted.
      It has been excluded from processing."""
 
     @staticmethod
     def generate(javacore_set):
         result = []
         for excluded in javacore_set.excluded_javacores:
-            result.append(excluded["reason"])
+            result.append((TipType.WARNING, excluded["reason"]))
         return result
 
 
 class BlockingThreadsTip:
     # Generates the tip that one or more threads are blocking many another threads
 
-    BLOCKING_THREADS_TEXT = """[TIP] a thread {0} is blocking on average {1:.1f} another threads per javacore.
+    BLOCKING_THREADS_TEXT = """a thread {0} is blocking on average {1:.1f} another threads per javacore.
     This lock might cause performance degradation."""
 
     MAX_BLOCKING_THREADS_NO = 5
@@ -281,8 +290,8 @@ class BlockingThreadsTip:
             """
             if blocked_size > javacores_no:
                 blocker_link = get_thread_link(javacore_set, blocker_name)
-                result.append(BlockingThreadsTip.BLOCKING_THREADS_TEXT.format(blocker_link,
-                                                                              blocked_size / javacores_no))
+                result.append((TipType.TIP, BlockingThreadsTip.BLOCKING_THREADS_TEXT.format(
+                    blocker_link, blocked_size / javacores_no)))
                 if len(result) >= BlockingThreadsTip.MAX_BLOCKING_THREADS_NO:
                     break
         return result
@@ -298,10 +307,10 @@ class HighCpuUsageTip:
 
     MAX_NUMBER_OF_HIGH_CPU_USAGE_THREADS = 5
 
-    HIGH_CPU_USAGE_TEXT = """[TIP] The following thread is using {0:.0f}% CPU: {1}.
+    HIGH_CPU_USAGE_TEXT = """The following thread is using {0:.0f}% CPU: {1}.
     This thread might cause performance issues. Consider checking what this thread is doing"""
 
-    HIGH_GC_USAGE_TEXT = """[TIP] The verbose GC threads are using high CPU. You are likely having memory issues.
+    HIGH_GC_USAGE_TEXT = """The verbose GC threads are using high CPU. You are likely having memory issues.
     Consider revieving verbose GC for further investigation."""
 
     @staticmethod
@@ -321,56 +330,57 @@ class HighCpuUsageTip:
                 if cpu_percent_usage > HighCpuUsageTip.CRITICAL_CPU_USAGE:
                     if high_blocking_threads_no < HighCpuUsageTip.MAX_NUMBER_OF_HIGH_CPU_USAGE_THREADS:
                         thread_link = get_thread_link(javacore_set, thread_name)
-                        result.append(HighCpuUsageTip.HIGH_CPU_USAGE_TEXT.format(cpu_percent_usage, thread_link))
+                        result.append((TipType.TIP,
+                                       HighCpuUsageTip.HIGH_CPU_USAGE_TEXT.format(cpu_percent_usage, thread_link)))
                         high_blocking_threads_no += 1
                     else:
                         continue
 
         if has_gc_performance_issues:
-            result.append(HighCpuUsageTip.HIGH_GC_USAGE_TEXT)
+            result.append((TipType.TIP, HighCpuUsageTip.HIGH_GC_USAGE_TEXT))
         return result
 
 
 class LongGcPauseTip:
     # Generates a tip when GC pauses exceed configurable thresholds
-    
+
     # Configurable thresholds in milliseconds
     THRESHOLD_1 = 1000  # 1 second
     THRESHOLD_2 = 2000  # 2 seconds
-    
-    LONG_GC_PAUSE_TIP = """[TIP] Detected {0} GC pause(s) longer than {1}ms and {2} GC pause(s) longer than {3}ms.
+
+    LONG_GC_PAUSE_TIP = """Detected {0} GC pause(s) longer than {1}ms and {2} GC pause(s) longer than {3}ms.
     The longest GC pause was {4:.0f}ms at {5}.
     Long GC pauses can cause performance issues and application freezes."""
-    
-    NO_VERBOSE_GC_INFO = """[INFO] No verbose GC data available. Cannot analyze GC pause times."""
-    
+
+    NO_VERBOSE_GC_INFO = """No verbose GC data available. Cannot analyze GC pause times."""
+
     @staticmethod
     def generate(javacore_set):
         # Get all GC collections from the parser
         collects = javacore_set.gc_parser.get_collects()
-        
+
         if not collects:
             return []  # No verbose GC data, return empty tip
-        
+
         # Count pauses exceeding thresholds
         pauses_over_threshold_1 = 0
         pauses_over_threshold_2 = 0
         longest_pause = 0.0
         longest_pause_time = ""
-        
+
         for collect in collects:
             duration = collect.duration
-            
+
             if duration > LongGcPauseTip.THRESHOLD_1:
                 pauses_over_threshold_1 += 1
-            
+
             if duration > LongGcPauseTip.THRESHOLD_2:
                 pauses_over_threshold_2 += 1
-            
+
             if duration > longest_pause:
                 longest_pause = duration
                 longest_pause_time = collect.start_time_str
-        
+
         # Generate tip if any pauses exceed threshold 1
         if pauses_over_threshold_1 > 0:
             msg = LongGcPauseTip.LONG_GC_PAUSE_TIP.format(
@@ -381,8 +391,8 @@ class LongGcPauseTip:
                 longest_pause,
                 longest_pause_time
             )
-            return [msg]
-        
+            return [(TipType.TIP, msg)]
+
         return []  # No long pauses detected
 
 
@@ -395,7 +405,7 @@ class PermanentlyBlockedThreadsTip:
     MIN_SNAPSHOTS = 3
 
     PERMANENTLY_BLOCKED_TEXT = (
-        """[WARNING] Thread {0} is in blocked state (B) in all {1} javacores it appears in. """
+        """Thread {0} is in blocked state (B) in all {1} javacores it appears in. """
         """This thread never made progress and may be deadlocked or permanently starved. """
         """Check what lock it is waiting for."""
     )
@@ -411,11 +421,12 @@ class PermanentlyBlockedThreadsTip:
                 continue
             if all(s.state == "B" for s in snapshots):
                 thread_link = get_thread_link(javacore_set, thread.name)
-                result.append(
+                result.append((
+                    TipType.WARNING,
                     PermanentlyBlockedThreadsTip.PERMANENTLY_BLOCKED_TEXT.format(
                         thread_link, len(snapshots)
                     )
-                )
+                ))
                 if len(result) >= PermanentlyBlockedThreadsTip.MAX_TIPS:
                     break
         return result
@@ -424,7 +435,7 @@ class PermanentlyBlockedThreadsTip:
 class SystemExitInMainThreadTip:
     # Detects if any thread's stack trace contains System.exit call
 
-    SYSTEM_EXIT_WARNING = """[WARNING] Thread '{0}' in javacore {1} contains System.exit call.
+    SYSTEM_EXIT_WARNING = """Thread '{0}' in javacore {1} contains System.exit call.
     This indicates the application is shutting down."""
 
     @staticmethod
@@ -441,7 +452,7 @@ class SystemExitInMainThreadTip:
                         javacore_link = get_javacore_link(javacore_set, jc.basefilename())
                         msg = SystemExitInMainThreadTip.SYSTEM_EXIT_WARNING.format(
                             thread_name, javacore_link)
-                        return [msg]
+                        return [(TipType.WARNING, msg)]
 
         return []  # No System.exit detected in any thread
 
@@ -450,7 +461,7 @@ class FailingHttpCallsTip:
     # Generates a tip for failing HTTP calls in HAR files.
 
     MAX_TIPS = 5
-    FAILING_CALLS_WARNING = """[WARNING] Detected {0} failing HTTP call(s) in HAR file {1}.
+    FAILING_CALLS_WARNING = """Detected {0} failing HTTP call(s) in HAR file {1}.
     Example failing call: {2} {3} returned status {4}."""
 
     @staticmethod
@@ -463,7 +474,7 @@ class FailingHttpCallsTip:
                     http_call = HttpCall(entry)
                     if not http_call._calculate_success():
                         failing_calls.append(http_call)
-            
+
             if failing_calls:
                 filename = os.path.basename(har_file.path)
                 example = failing_calls[0]
@@ -474,7 +485,7 @@ class FailingHttpCallsTip:
                     example.url,
                     example.status
                 )
-                result.append(msg)
+                result.append((TipType.WARNING, msg))
                 if len(result) >= FailingHttpCallsTip.MAX_TIPS:
                     break
         return result
@@ -485,7 +496,7 @@ class LongHttpCallsTip:
 
     THRESHOLD = 5000  # 5 seconds
     MAX_TIPS = 5
-    LONG_CALLS_WARNING = """[WARNING] Detected {0} HTTP call(s) longer than {1}ms in HAR file {2}.
+    LONG_CALLS_WARNING = """Detected {0} HTTP call(s) longer than {1}ms in HAR file {2}.
     The longest call took {3:.0f}ms: {4} {5}."""
 
     @staticmethod
@@ -495,7 +506,7 @@ class LongHttpCallsTip:
             long_calls = []
             longest_duration = -1
             longest_call = None
-            
+
             for page in har_file.har.pages:
                 for entry in page.entries:
                     http_call = HttpCall(entry)
@@ -505,7 +516,7 @@ class LongHttpCallsTip:
                     if duration > longest_duration:
                         longest_duration = duration
                         longest_call = http_call
-            
+
             if long_calls and longest_call:
                 filename = os.path.basename(har_file.path)
                 msg = LongHttpCallsTip.LONG_CALLS_WARNING.format(
@@ -516,7 +527,7 @@ class LongHttpCallsTip:
                     longest_call.method,
                     longest_call.url
                 )
-                result.append(msg)
+                result.append((TipType.WARNING, msg))
                 if len(result) >= LongHttpCallsTip.MAX_TIPS:
                     break
         return result
@@ -536,13 +547,13 @@ class LowCompRatioTip:
     FRACTION_THRESHOLD = 0.5
 
     CRITICAL_WARNING = (
-        "[WARNING] {0} out of {1} GC collections ({2:.0f}%) have a compression ratio above {3}%."
+        "{0} out of {1} GC collections ({2:.0f}%) have a compression ratio above {3}%."
         " This indicates severe memory pressure."
         " Investigate for memory leaks or consider architectural changes to reduce heap usage."
     )
 
     HIGH_WARNING = (
-        "[WARNING] {0} out of {1} GC collections ({2:.0f}%) have a compression ratio above {3}%."
+        "{0} out of {1} GC collections ({2:.0f}%) have a compression ratio above {3}%."
         " GC is reclaiming a large portion of the heap each cycle."
         " Consider increasing the maximum heap size (-Xmx)."
     )
@@ -559,13 +570,13 @@ class LowCompRatioTip:
         warning_count = sum(1 for c in collects if c.comp_ratio() > LowCompRatioTip.THRESHOLD_WARNING)
 
         if critical_count / total >= LowCompRatioTip.FRACTION_THRESHOLD:
-            return [LowCompRatioTip.CRITICAL_WARNING.format(
+            return [(TipType.WARNING, LowCompRatioTip.CRITICAL_WARNING.format(
                 critical_count, total, critical_count / total * 100, LowCompRatioTip.THRESHOLD_CRITICAL
-            )]
+            ))]
 
         if warning_count / total >= LowCompRatioTip.FRACTION_THRESHOLD:
-            return [LowCompRatioTip.HIGH_WARNING.format(
+            return [(TipType.WARNING, LowCompRatioTip.HIGH_WARNING.format(
                 warning_count, total, warning_count / total * 100, LowCompRatioTip.THRESHOLD_WARNING
-            )]
+            ))]
 
         return []

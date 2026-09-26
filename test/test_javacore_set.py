@@ -43,8 +43,8 @@ class TestJavacoreSet(unittest.TestCase):
 
     # Note: the test below rely on the javacores stored in test directory
     def test_have_tips(self):
-        self.assertTrue(any("OutOfMemoryError" in tip for tip in self.javacore_set_from_test_data.tips))
-        self.assertTrue(any("[WARNING] The time interval between javacore" in tip for tip in
+        self.assertTrue(any("OutOfMemoryError" in text for _, text in self.javacore_set_from_test_data.tips))
+        self.assertTrue(any("The time interval between javacore" in text for _, text in
                             self.javacore_set_from_test_data.tips))
 
     # Note: the test below rely on the javacores stored in test directory
