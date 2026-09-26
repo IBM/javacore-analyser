@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 -->
 
-<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
     <xsl:template name="intelligent_tips">
         <h3><a id="toggleintelligenttips" href="javascript:expand_it(intelligenttips,toggleintelligenttips)" class="expandit">Intelligent tips</a></h3>
