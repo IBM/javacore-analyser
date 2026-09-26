@@ -13,8 +13,8 @@
             <xsl:choose>
                 <xsl:when test="doc/report_info/javacore_list">
                     <h4>Javacore Files</h4>
-                    <a id="togglejavacoredoc" href="javascript:expand_it(javacoredoc,togglejavacoredoc)" class="expandit">What does this table tell me?</a>
-                    <div id="javacoredoc" style="display:none;">
+                    <details class="doc-toggle">
+                        <summary>What does this table tell me?</summary>
                         This table shows all the javacore files that are included in the data set.
                         <ul>
                             <li>
@@ -31,18 +31,18 @@
                                 This value is computed incrementally
                                 with relation to the previous javacore, hence it is not available ("N/A") for the first
                                 javacore file.
-                                </li>
-                                <li>
-                                    <strong>CPU Load</strong>
-                                    is the total CPU usage of all the threads in the javacore.
-                                    Load of 1 means that 1 core is fully used.
-                                    The maximum possible value is therefore the number of cores
-                                    This value is computed incrementally
-                                    with relation to the previous javacore, hence it is not available ("N/A") for the first
-                                    javacore file.
-                                </li>
-                            </ul>
-                        </div>
+                            </li>
+                            <li>
+                                <strong>CPU Load</strong>
+                                is the total CPU usage of all the threads in the javacore.
+                                Load of 1 means that 1 core is fully used.
+                                The maximum possible value is therefore the number of cores
+                                This value is computed incrementally
+                                with relation to the previous javacore, hence it is not available ("N/A") for the first
+                                javacore file.
+                            </li>
+                        </ul>
+                    </details>
                         <table id="javacores_files_table">
                             <thead>
                                 <tr>
@@ -121,9 +121,8 @@
                 <xsl:choose>
                     <xsl:when test="doc/report_info/verbose_gc_list/verbose_gc">
                         <h4>Verbose GC files</h4>
-                        <a id="toggleverbosegcdoc" href="javascript:expand_it(verbosegcdoc,toggleverbosegcdoc)" class="expandit">
-                            What does this table tell me?</a>
-                        <div id="verbosegcdoc" style="display:none;">
+                        <details class="doc-toggle">
+                            <summary>What does this table tell me?</summary>
                             This table shows all the verbose GC log files that are included in the data set.
                             <ul>
                                 <li>
@@ -142,7 +141,7 @@
                                     were generated.
                                 </li>
                             </ul>
-                        </div>
+                        </details>
                         <table id="verbose_gc_files_table">
                             <thead>
                                 <tr>
@@ -176,9 +175,8 @@
                 <xsl:choose>
                     <xsl:when test="doc/har_files">
                         <h4>HAR files</h4>
-                        <a id="togglehardoc" href="javascript:expand_it(hardoc,togglehardoc)" class="expandit">
-                            What does this table tell me?</a>
-                        <div id="hardoc" style="display:none;">
+                        <details class="doc-toggle">
+                            <summary>What does this table tell me?</summary>
                             This table shows all the HAR files that are included in the data set.
                             <ul>
                                 <li>
@@ -194,7 +192,7 @@
                                     contains information about the browser that was used to collect the HAR file.
                                 </li>
                             </ul>
-                        </div>
+                        </details>
                         <table id="har_files_table">
                             <thead>
                                 <tr>
@@ -220,9 +218,8 @@
                 <xsl:choose>
                     <xsl:when test="doc/plugins/*">
                         <h4>Plugin files</h4>
-                        <a id="toggleplugindoc" href="javascript:expand_it(plugindoc,toggleplugindoc)" class="expandit">
-                            What does this table tell me?</a>
-                        <div id="plugindoc" style="display:none;">
+                        <details class="doc-toggle">
+                            <summary>What does this table tell me?</summary>
                             This table shows all the files processed by custom plugins.
                             <ul>
                                 <li>
@@ -238,7 +235,7 @@
                                     is the number of messages or entries found in the file (if applicable).
                                 </li>
                             </ul>
-                        </div>
+                        </details>
                         <table id="plugin_files_table">
                             <thead>
                                 <tr>
