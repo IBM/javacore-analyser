@@ -25,9 +25,8 @@
                 </xsl:when>
                 <xsl:otherwise>
                     <h4>CPU Load</h4>
-                    <a id="togglecpuloaddoc" href="javascript:expand_it(cpuloaddoc,togglecpuloaddoc)" class="expandit">
-                        What does this chart tell me?</a>
-                    <div id="cpuloaddoc" style="display:none;">
+                    <details class="doc-toggle">
+                        <summary>What does this chart tell me?</summary>
                         This chart shows the total CPU usage of all the threads in the javacore, expressed as percentage
                         of all the processor cores. The maximum possible value is therefore 100%, which
                         would indicate all the cores are completely busy. Each bar represents one javacore in the data set.
@@ -38,7 +37,7 @@
                             <li>Draw a rectangle on the chart to zoom into that area. Use the <em>Reset zoom</em> button to return to the full view.</li>
                             <li>Click on a legend item to show or hide that data series.</li>
                         </ul>
-                    </div>
+                    </details>
                     <div class="chart-container" style="overflow-x:auto;">
                         <canvas id="myChartCPUUsage" height="200" width="1400"
                                 title="Draw a rectangle to zoom in. Use the Reset zoom button to return to the full view. Click on a legend item to show or hide that data series."></canvas>
@@ -54,56 +53,55 @@
                         </xsl:when>
                         <xsl:otherwise>
                             <h4>Garbage Collection Activity</h4>
-                            <a id="togglememusagedoc" href="javascript:expand_it(memusagedoc,togglememusagedoc)" class="expandit">
-                                What does this chart tell me?</a>
-                            <div id="memusagedoc" style="display:none;">
-                            This chart shows all the garbage collections that happened between the time
-                            of the first and the last javacore in the data set.
-                            Garbage collections that happened before the first
-                            or after the last javacore generation time are not included.
-                            If there are none or only one javacore provided, then the chart shows the data from all verbose GC log files.
-                            <ul>
-                                <li><strong>Heap Usage</strong>
-                                    is the available Java heap memory over time,
-                                    based on the garbage collection data from the verbose GC log files.
-                                </li>
-                                <li><strong>Total Heap</strong>
-                                    is the maximum size of the Java heap, configured by using the Xmx Java argument,
-                                    expressed in megabytes.
-                                </li>
-                                <li><strong>GC Pause Time</strong>
-                                    is the duration of each garbage collection pause in milliseconds,
-                                    indicating how long the application was stopped during garbage collection.
-                                </li>
-                                <li><strong>Nursery Usage</strong>
-                                    shows the free memory in the nursery (young generation) space before and after each garbage collection,
-                                    expressed in bytes. The nursery is where new objects are allocated.
-                                </li>
-                                <li><strong>Nursery Total</strong>
-                                    is the total size of the nursery (young generation) space,
-                                    expressed in bytes.
-                                </li>
-                                <li><strong>Tenure Usage</strong>
-                                    shows the free memory in the tenure (old generation) space before and after each garbage collection,
-                                    expressed in bytes. The tenure space holds long-lived objects.
-                                </li>
-                                <li><strong>Tenure Total</strong>
-                                    is the total size of the tenure (old generation) space,
-                                    expressed in bytes.
-                                </li>
-                                <li><strong>Comp Ratio (%)</strong>
-                                    is the compression ratio for each garbage collection,
-                                    calculated as the percentage of used heap memory that was freed by the collection.
-                                    A high value indicates an efficient collection that recovered a large fraction of live objects;
-                                    a low or declining comp ratio over time is a sign of memory pressure.
-                                </li>
-                        </ul>
-                        <p><strong>Chart interactions:</strong></p>
-                        <ul>
-                            <li>Draw a rectangle on the chart to zoom into that area. Use the <em>Reset zoom</em> button to return to the full view.</li>
-                            <li>Click on a legend item to show or hide that data series.</li>
-                        </ul>
-                    </div>
+                            <details class="doc-toggle">
+                                <summary>What does this chart tell me?</summary>
+                                This chart shows all the garbage collections that happened between the time
+                                of the first and the last javacore in the data set.
+                                Garbage collections that happened before the first
+                                or after the last javacore generation time are not included.
+                                If there are none or only one javacore provided, then the chart shows the data from all verbose GC log files.
+                                <ul>
+                                    <li><strong>Heap Usage</strong>
+                                        is the available Java heap memory over time,
+                                        based on the garbage collection data from the verbose GC log files.
+                                    </li>
+                                    <li><strong>Total Heap</strong>
+                                        is the maximum size of the Java heap, configured by using the Xmx Java argument,
+                                        expressed in megabytes.
+                                    </li>
+                                    <li><strong>GC Pause Time</strong>
+                                        is the duration of each garbage collection pause in milliseconds,
+                                        indicating how long the application was stopped during garbage collection.
+                                    </li>
+                                    <li><strong>Nursery Usage</strong>
+                                        shows the free memory in the nursery (young generation) space before and after each garbage collection,
+                                        expressed in bytes. The nursery is where new objects are allocated.
+                                    </li>
+                                    <li><strong>Nursery Total</strong>
+                                        is the total size of the nursery (young generation) space,
+                                        expressed in bytes.
+                                    </li>
+                                    <li><strong>Tenure Usage</strong>
+                                        shows the free memory in the tenure (old generation) space before and after each garbage collection,
+                                        expressed in bytes. The tenure space holds long-lived objects.
+                                    </li>
+                                    <li><strong>Tenure Total</strong>
+                                        is the total size of the tenure (old generation) space,
+                                        expressed in bytes.
+                                    </li>
+                                    <li><strong>Comp Ratio (%)</strong>
+                                        is the compression ratio for each garbage collection,
+                                        calculated as the percentage of used heap memory that was freed by the collection.
+                                        A high value indicates an efficient collection that recovered a large fraction of live objects;
+                                        a low or declining comp ratio over time is a sign of memory pressure.
+                                    </li>
+                                </ul>
+                                <p><strong>Chart interactions:</strong></p>
+                                <ul>
+                                    <li>Draw a rectangle on the chart to zoom into that area. Use the <em>Reset zoom</em> button to return to the full view.</li>
+                                    <li>Click on a legend item to show or hide that data series.</li>
+                                </ul>
+                            </details>
                     <div id="systemresources_myChartGC" class="chart-container hide" style="overflow-x:auto;">
                         <canvas id="myChartGC" height="200" width="1400"
                                 title="Draw a rectangle to zoom in. Use the Reset zoom button to return to the full view. Click on a legend item to show or hide that data series."></canvas>
@@ -121,9 +119,8 @@
                  and at least two javacores are present so there is a time dimension. -->
             <xsl:if test="//@use_ml='True' and //javacore_count &gt; 1">
                 <h4>Thread Classification Over Time</h4>
-                <a id="toggleclassificationdoc" href="javascript:expand_it(classificationdoc,toggleclassificationdoc)" class="expandit">
-                    What does this chart tell me?</a>
-                <div id="classificationdoc" style="display:none;">
+                <details class="doc-toggle">
+                    <summary>What does this chart tell me?</summary>
                     This chart shows how the number of thread snapshots belonging to each
                     machine-learning classification category changes over time.
                     The X axis represents the javacore generation time and the Y axis shows
@@ -133,14 +130,12 @@
                     <em>Wait For Condition</em> are disabled in the chart by default because
                     they tend to dominate the chart and obscure more interesting activity.
                     Click their legend entries to toggle them back on.
-
                     <p><strong>Chart interactions:</strong></p>
                     <ul>
                         <li>Draw a rectangle on the chart to zoom into that area. Use the <em>Reset zoom</em> button to return to the full view.</li>
                         <li>Click on a legend item to show or hide that data series.</li>
                     </ul>
-
-                </div>
+                </details>
                 <div class="chart-container" style="overflow-x:auto;">
                     <canvas id="myChartThreadClassifications" height="200" width="1400"
                             title="Draw a rectangle to zoom in. Use the Reset zoom button to return to the full view. Click on a legend item to show or hide that data series."></canvas>

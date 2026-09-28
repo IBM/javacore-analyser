@@ -225,6 +225,21 @@ div.margined {
     margin: 10px;
 }
 
+/* Native <details>/<summary> doc toggles */
+details.doc-toggle {
+    margin-bottom: 8px;
+}
+details.doc-toggle > summary {
+    cursor: pointer;
+    color: #0066cc;
+    font-size: 0.95em;
+    list-style: none;         /* hide default triangle in Firefox */
+    display: inline;
+}
+details.doc-toggle > summary::-webkit-details-marker { display: none; } /* hide triangle in Chrome/Safari */
+details.doc-toggle > summary::before { content: "\25BA\00A0"; font-size: 0.8em; } /* ▶ closed */
+details.doc-toggle[open] > summary::before { content: "\25BC\00A0"; font-size: 0.8em; } /* ▼ open  */
+
 /* HTTP call details styling */
 .http-show-button {
     margin-top: 5px;

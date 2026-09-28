@@ -12,9 +12,8 @@
             <xsl:when test="doc/har_files">
                 <h3><a  id="toggle_http_calls" href="javascript:expand_it(http_calls,toggle_http_calls)" class="expandit">HTTP calls</a></h3>
                 <div id="http_calls" style="display:none;" >
-                    <a id="togglehttpcallsdoc" href="javascript:expand_it(httpcallsdoc,togglehttpcallsdoc)" class="expandit">
-                        What does this table tell me?</a>
-                        <div id="httpcallsdoc" style="display:none;">
+                    <details class="doc-toggle">
+                        <summary>What does this table tell me?</summary>
                         The table shows the HTTP calls that are included in the HAR files from the data set.
                         The table can be sorted by clicking on a column header.
                         Rows highlighted in <span style="background-color:#ffcccc;padding:0 4px;">red</span> finished
@@ -41,7 +40,7 @@
                                 is size of the response body, in bytes.
                             </li>
                         </ul>
-                    </div>
+                    </details>
                     <table id="HttpCallTable" class="tablesorter">
                         <thead>
                             <tr>
