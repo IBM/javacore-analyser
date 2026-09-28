@@ -12,9 +12,8 @@
         <div id="top10blocker" style="display:none;">
             <xsl:choose>
                 <xsl:when test="doc/blockers/blocker">
-                    <a id="toggleblockersdoc" href="javascript:expand_it(blockersdoc,toggleblockersdoc)" class="expandit">
-                        What does this table tell me?</a>
-                    <div id="blockersdoc" style="display:none;">
+                    <details class="doc-toggle">
+                        <summary>What does this table tell me?</summary>
                         This table shows top ten threads that were blocking other threads most frequently,
                         based on the information in the javacore files.
                         <ul>
@@ -28,7 +27,7 @@
                                 blocking any other thread.
                             </li>
                         </ul>
-                    </div>
+                    </details>
                     <table id="top10_blocker_table" class="tablesorter">
                         <thead>
                             <tr>
