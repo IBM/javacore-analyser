@@ -283,10 +283,11 @@ class ReportGenerator:
 
         tips_node = doc.createElement("tips")
         report_info_node.appendChild(tips_node)
-        for tip in javacore_set.tips:
+        for tip_type, tip_text in javacore_set.tips:
             tip_node = doc.createElement("tip")
+            tip_node.setAttribute("type", tip_type.value)
             tips_node.appendChild(tip_node)
-            tip_node.appendChild(doc.createTextNode(tip))
+            tip_node.appendChild(doc.createTextNode(tip_text))
         tips_node.setAttribute("ai_tips", javacore_set.ai_tips)
 
         if system_info_node is not None and javacore_set.jvm_info is not None:
