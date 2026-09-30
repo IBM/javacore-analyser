@@ -153,22 +153,30 @@
                  and at least two javacores are present so there is a time dimension. -->
             <xsl:if test="//@use_ml='True' and //javacore_count &gt; 1">
                 <h4>Thread Classification Over Time</h4>
-                <div>
-                    This chart shows how the number of thread snapshots belonging to each
-                    machine-learning classification category changes over time.
-                    The X axis represents the javacore generation time and the Y axis shows
-                    the number of thread snapshots with that classification in each javacore.
-                    Each line corresponds to one classification category.
-                    Categories such as <em>Java Internal</em>, <em>Liberty Internal</em> and
-                    <em>Wait For Condition</em> are disabled in the chart by default because
-                    they tend to dominate the chart and obscure more interesting activity.
-                    Click their legend entries to toggle them back on.
-                    <p><strong>Chart interactions:</strong></p>
-                    <ul>
-                        <li>Draw a rectangle on the chart to zoom into that area. Use the <em>Reset zoom</em> button to return to the full view.</li>
-                        <li>Click on a legend item to show or hide that data series.</li>
-                    </ul>
-
+                <div class="cds--accordion cds--accordion--sm help-accordion">
+                    <div class="cds--accordion__item">
+                        <button type="button" class="cds--accordion__heading" aria-expanded="false" aria-controls="help-thread-classification"
+                                onclick="this.closest('.cds--accordion__item').classList.toggle('cds--accordion__item--active'); this.setAttribute('aria-expanded', this.closest('.cds--accordion__item').classList.contains('cds--accordion__item--active')?'true':'false');">
+                            <svg class="cds--accordion__arrow" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M11 8L6 13 4.6 11.6 8.2 8 4.6 4.4 6 3z"/></svg>
+                            <span class="cds--accordion__title">What does this chart tell me?</span>
+                        </button>
+                        <div class="cds--accordion__wrapper"><div id="help-thread-classification" class="cds--accordion__content">
+                            This chart shows how the number of thread snapshots belonging to each
+                            machine-learning classification category changes over time.
+                            The X axis represents the javacore generation time and the Y axis shows
+                            the number of thread snapshots with that classification in each javacore.
+                            Each line corresponds to one classification category.
+                            Categories such as <em>Java Internal</em>, <em>Liberty Internal</em> and
+                            <em>Wait For Condition</em> are disabled in the chart by default because
+                            they tend to dominate the chart and obscure more interesting activity.
+                            Click their legend entries to toggle them back on.
+                            <p><strong>Chart interactions:</strong></p>
+                            <ul>
+                                <li>Draw a rectangle on the chart to zoom into that area. Use the <em>Reset zoom</em> button to return to the full view.</li>
+                                <li>Click on a legend item to show or hide that data series.</li>
+                            </ul>
+                        </div></div>
+                    </div>
                 </div>
                 <div class="cds--tile" style="margin-bottom:1rem;overflow-x:auto;min-height:250px;position:relative;">
                     <canvas id="myChartThreadClassifications"></canvas>
