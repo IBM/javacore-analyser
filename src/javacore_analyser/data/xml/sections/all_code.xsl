@@ -79,9 +79,14 @@
                     <xsl:for-each select="doc/CodeSnapshotCollection/all_snapshot_collection/snapshot_collection">
                         <tr>
                             <td class="left">
-                                <xsl:for-each select="*[starts-with(name(), 'stack_trace')]">
-                                    <xsl:value-of select="current()"/><br/>
-                                </xsl:for-each>
+                                <div class="toggle_expand">
+                                    <a href="javaScript:;" class="show">[+] Expand</a>
+                                </div>
+                                <p class="stacktrace">
+                                    <xsl:for-each select="*[starts-with(name(), 'stack_trace')]">
+                                        <xsl:value-of select="current()"/><br/>
+                                    </xsl:for-each>
+                                </p>
                             </td>
                             <td>
                                 <xsl:choose>
@@ -122,18 +127,20 @@
                                 </xsl:choose>
                             </td>
                             <td><xsl:value-of select='format-number(average_memory div 1024 div 1024, "0.00")'/></td>
-                            <td  class="left">
-                                <xsl:for-each select="threads/thread">
-                                            <a target="_blank">
-                                                <xsl:attribute name="href">
-                                                    <xsl:value-of select="concat('threads/thread_', @hash, '.html')"/>
-                                                </xsl:attribute>
-                                                <xsl:attribute name="title">
-                                                    <xsl:value-of select="@name" />
-                                                </xsl:attribute>
-                                                <xsl:value-of select="@id" />
-                                            </a>;
-                                </xsl:for-each>
+                            <td class="left">
+                                <div class="threads-list">
+                                    <xsl:for-each select="threads/thread">
+                                        <a target="_blank">
+                                            <xsl:attribute name="href">
+                                                <xsl:value-of select="concat('threads/thread_', @hash, '.html')"/>
+                                            </xsl:attribute>
+                                            <xsl:attribute name="title">
+                                                <xsl:value-of select="@name" />
+                                            </xsl:attribute>
+                                            <xsl:value-of select="@id" />
+                                        </a>;
+                                    </xsl:for-each>
+                                </div>
                             </td>
                         </tr>
                     </xsl:for-each>

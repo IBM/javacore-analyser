@@ -77,15 +77,24 @@ th {
     width: 100%;
 }
 
+/* Force fixed layout on Carbon data tables so th width classes are respected */
 .cds--data-table {
     width: 100%;
-    table-layout: auto;
+    table-layout: fixed !important;
     border-radius: unset;
-    min-width: 600px;
+    min-width: 0;
+    min-inline-size: 0 !important;
 }
 
 .cds--data-table, .cds--data-table th, .cds--data-table td {
     border: unset;
+}
+
+/* Limit height of thread-link list cells so they don't inflate rows */
+.threads-list {
+    max-height: 90px;
+    overflow: hidden;
+    display: block;
 }
 
 .cds--data-table th {
