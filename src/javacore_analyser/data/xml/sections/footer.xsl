@@ -8,7 +8,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
     <xsl:template name="footer">
-        <footer style="margin-top:2rem;padding-top:1rem;border-top:1px solid var(--cds-border-subtle-01,#e0e0e0);">
+        <footer class="report-footer">
             <div class="margined">
                 <a class="cds--link" href="https://github.com/IBM/javacore-analyser/wiki" target="_blank">Documentation</a>
             </div>

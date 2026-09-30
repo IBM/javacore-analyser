@@ -82,7 +82,8 @@
                     </div>
                 </xsl:when>
                 <xsl:otherwise>
-                    <div class="cds--inline-notification cds--inline-notification--low-contrast cds--inline-notification--info" role="status">
+                    <div class="cds--inline-notification cds--inline-notification--low-contrast cds--inline-notification--info report-notification" role="status">
+                        <svg class="cds--inline-notification__icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true"><path d="M17 22v-8h-4v2h2v6h-3v2h8v-2zm-1-12a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/><path d="M16 2C8.3 2 2 8.3 2 16s6.3 14 14 14 14-6.3 14-14S23.7 2 16 2zm0 26C9.4 28 4 22.6 4 16S9.4 4 16 4s12 5.4 12 12-5.4 12-12 12z"/></svg>
                         <div class="cds--inline-notification__details">
                             <p class="cds--inline-notification__text">There are no blocking threads in javacores</p>
                         </div>

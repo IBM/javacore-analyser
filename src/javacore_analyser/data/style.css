@@ -229,9 +229,8 @@ td {
 
 /* ── Main content padding below the fixed Carbon header ─────────────────── */
 
-.cds--content {
-    padding-top: 3rem;  /* offset for the 48px Carbon header */
-}
+/* Carbon sets margin-block-start: 3rem on .cds--content itself via its stylesheet,
+   which already clears the 48px fixed header. Do not add extra padding-top here. */
 
 .content {
     padding-bottom: 30px;
@@ -253,8 +252,53 @@ span.native {
 
 h3 { margin: 10px; }
 
+/* ── Section h4 headings ─────────────────────────────────────────────────── */
+
+h4 {
+    font-size: var(--cds-heading-compact-01-font-size, 0.875rem);
+    font-weight: var(--cds-heading-compact-01-font-weight, 600);
+    line-height: var(--cds-heading-compact-01-line-height, 1.28572);
+    letter-spacing: var(--cds-heading-compact-01-letter-spacing, 0.16px);
+    margin-block-end: 0.5rem;
+    color: var(--color-text-primary);
+}
+
 div.margined { margin: 10px; }
 p.margined   { margin: 10px; }
+
+/* ── Inline notification overrides ───────────────────────────────────────── */
+
+/* Override Carbon's max-inline-size cap so notifications fill their container,
+   and add spacing between consecutive notification banners. */
+.report-notification {
+    max-width: 100%;
+    max-inline-size: 100%;
+    margin-bottom: 0.5rem;
+}
+
+/* ── Chart tile container ────────────────────────────────────────────────── */
+
+.chart-tile {
+    margin-bottom: 1rem;
+    overflow-x: auto;
+    min-height: 250px;
+    position: relative;
+}
+
+/* ── Footer ──────────────────────────────────────────────────────────────── */
+
+.report-footer {
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--cds-border-subtle-01, #e0e0e0);
+}
+
+/* ── AI tile label ────────────────────────────────────────────────────────── */
+
+.ai-tile-label {
+    color: var(--cds-text-secondary);
+    margin-bottom: 0.5rem;
+}
 
 /* ── HTTP call detail panel ───────────────────────────────────────────────── */
 

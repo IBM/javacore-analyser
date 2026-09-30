@@ -24,14 +24,16 @@
             <div class="cds--accordion__wrapper"><div id="content-system-resources" class="cds--accordion__content">
             <xsl:choose>
                 <xsl:when test="//javacore_count = 0">
-                    <div class="cds--inline-notification cds--inline-notification--warning" role="status" style="max-width:100%;">
+                    <div class="cds--inline-notification cds--inline-notification--warning report-notification" role="status">
+                        <svg class="cds--inline-notification__icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true"><path d="M16 2C8.3 2 2 8.3 2 16s6.3 14 14 14 14-6.3 14-14S23.7 2 16 2zm-1.1 6h2.2v11h-2.2V8zM16 25c-.8 0-1.5-.7-1.5-1.5S15.2 22 16 22s1.5.7 1.5 1.5S16.8 25 16 25z"/></svg>
                         <div class="cds--inline-notification__details">
                             <p class="cds--inline-notification__text">No javacore files were provided, so CPU utilization data cannot be calculated.</p>
                         </div>
                     </div>
                 </xsl:when>
                 <xsl:when test="//javacore_count = 1">
-                    <div class="cds--inline-notification cds--inline-notification--warning" role="status" style="max-width:100%;">
+                    <div class="cds--inline-notification cds--inline-notification--warning report-notification" role="status">
+                        <svg class="cds--inline-notification__icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true"><path d="M16 2C8.3 2 2 8.3 2 16s6.3 14 14 14 14-6.3 14-14S23.7 2 16 2zm-1.1 6h2.2v11h-2.2V8zM16 25c-.8 0-1.5-.7-1.5-1.5S15.2 22 16 22s1.5.7 1.5 1.5S16.8 25 16 25z"/></svg>
                         <div class="cds--inline-notification__details">
                             <p class="cds--inline-notification__text">Only one javacore file was provided, so CPU utilization data cannot be calculated.</p>
                         </div>
@@ -60,7 +62,7 @@
                             </div></div>
                         </div>
                     </div>
-                    <div class="cds--tile" style="margin-bottom:1rem;overflow-x:auto;min-height:250px;position:relative;">
+                    <div class="cds--tile chart-tile">
                         <canvas id="myChartCPUUsage"></canvas>
                     </div>
                 </xsl:otherwise>
@@ -69,7 +71,8 @@
                 <xsl:when test="doc/report_info/verbose_gc_list/verbose_gc">
                     <xsl:choose>
                         <xsl:when test="//verbose_gc_list/@total_collects_in_time_limits = 0">
-                            <div class="cds--inline-notification cds--inline-notification--low-contrast cds--inline-notification--info" role="status" style="max-width:100%;">
+                            <div class="cds--inline-notification cds--inline-notification--low-contrast cds--inline-notification--info report-notification" role="status">
+                                <svg class="cds--inline-notification__icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true"><path d="M17 22v-8h-4v2h2v6h-3v2h8v-2zm-1-12a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/><path d="M16 2C8.3 2 2 8.3 2 16s6.3 14 14 14 14-6.3 14-14S23.7 2 16 2zm0 26C9.4 28 4 22.6 4 16S9.4 4 16 4s12 5.4 12 12-5.4 12-12 12z"/></svg>
                                 <div class="cds--inline-notification__details">
                                     <p class="cds--inline-notification__text">There were no garbage collections within the javacore time limits.</p>
                                 </div>
@@ -134,14 +137,15 @@
                                     </div></div>
                                 </div>
                             </div>
-                    <div id="systemresources_myChartGC" class="cds--tile hide" style="margin-bottom:1rem;overflow-x:auto;min-height:250px;position:relative;">
+                    <div id="systemresources_myChartGC" class="cds--tile chart-tile hide">
                         <canvas id="myChartGC"></canvas>
                     </div>
                         </xsl:otherwise>
                     </xsl:choose>
                 </xsl:when>
                 <xsl:otherwise>
-                    <div class="cds--inline-notification cds--inline-notification--low-contrast cds--inline-notification--info" role="status" style="max-width:100%;">
+                    <div class="cds--inline-notification cds--inline-notification--low-contrast cds--inline-notification--info report-notification" role="status">
+                        <svg class="cds--inline-notification__icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true"><path d="M17 22v-8h-4v2h2v6h-3v2h8v-2zm-1-12a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/><path d="M16 2C8.3 2 2 8.3 2 16s6.3 14 14 14 14-6.3 14-14S23.7 2 16 2zm0 26C9.4 28 4 22.6 4 16S9.4 4 16 4s12 5.4 12 12-5.4 12-12 12z"/></svg>
                         <div class="cds--inline-notification__details">
                             <p class="cds--inline-notification__text">No verbose GC logs were provided, so verbose GC data cannot be shown.</p>
                         </div>
@@ -178,7 +182,7 @@
                         </div></div>
                     </div>
                 </div>
-                <div class="cds--tile" style="margin-bottom:1rem;overflow-x:auto;min-height:250px;position:relative;">
+                <div class="cds--tile chart-tile">
                     <canvas id="myChartThreadClassifications"></canvas>
                 </div>
                 <!-- Hidden data table consumed by loadChartThreadClassifications() in wait2scripts.js.
