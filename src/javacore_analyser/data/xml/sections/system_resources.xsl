@@ -68,56 +68,63 @@
                         </xsl:when>
                         <xsl:otherwise>
                             <h4>Garbage Collection Activity</h4>
-                            <a id="togglememusagedoc" href="javascript:expand_it(memusagedoc,togglememusagedoc)" class="expandit">
-                                What does this chart tell me?</a>
-                            <div id="memusagedoc" style="display:none;">
-                            This chart shows all the garbage collections that happened between the time
-                            of the first and the last javacore in the data set.
-                            Garbage collections that happened before the first
-                            or after the last javacore generation time are not included.
-                            If there are none or only one javacore provided, then the chart shows the data from all verbose GC log files.
-                            <ul>
-                                <li><strong>Heap Usage</strong>
-                                    is the available Java heap memory over time,
-                                    based on the garbage collection data from the verbose GC log files.
-                                </li>
-                                <li><strong>Total Heap</strong>
-                                    is the maximum size of the Java heap, configured by using the Xmx Java argument,
-                                    expressed in megabytes.
-                                </li>
-                                <li><strong>GC Pause Time</strong>
-                                    is the duration of each garbage collection pause in milliseconds,
-                                    indicating how long the application was stopped during garbage collection.
-                                </li>
-                                <li><strong>Nursery Usage</strong>
-                                    shows the free memory in the nursery (young generation) space before and after each garbage collection,
-                                    expressed in bytes. The nursery is where new objects are allocated.
-                                </li>
-                                <li><strong>Nursery Total</strong>
-                                    is the total size of the nursery (young generation) space,
-                                    expressed in bytes.
-                                </li>
-                                <li><strong>Tenure Usage</strong>
-                                    shows the free memory in the tenure (old generation) space before and after each garbage collection,
-                                    expressed in bytes. The tenure space holds long-lived objects.
-                                </li>
-                                <li><strong>Tenure Total</strong>
-                                    is the total size of the tenure (old generation) space,
-                                    expressed in bytes.
-                                </li>
-                                <li><strong>Comp Ratio (%)</strong>
-                                    is the compression ratio for each garbage collection,
-                                    calculated as the percentage of used heap memory that was freed by the collection.
-                                    A high value indicates an efficient collection that recovered a large fraction of live objects;
-                                    a low or declining comp ratio over time is a sign of memory pressure.
-                                </li>
-                        </ul>
-                        <p><strong>Chart interactions:</strong></p>
-                        <ul>
-                            <li>Draw a rectangle on the chart to zoom into that area. Use the <em>Reset zoom</em> button to return to the full view.</li>
-                            <li>Click on a legend item to show or hide that data series.</li>
-                        </ul>
-                    </div>
+                            <div class="cds--accordion cds--accordion--sm help-accordion">
+                                <div class="cds--accordion__item">
+                                    <button type="button" class="cds--accordion__heading" aria-expanded="false" aria-controls="help-gc-chart"
+                                            onclick="this.closest('.cds--accordion__item').classList.toggle('cds--accordion__item--active'); this.setAttribute('aria-expanded', this.closest('.cds--accordion__item').classList.contains('cds--accordion__item--active')?'true':'false');">
+                                        <svg class="cds--accordion__arrow" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M11 8L6 13 4.6 11.6 8.2 8 4.6 4.4 6 3z"/></svg>
+                                        <span class="cds--accordion__title">What does this chart tell me?</span>
+                                    </button>
+                                    <div class="cds--accordion__wrapper"><div id="help-gc-chart" class="cds--accordion__content">
+                                        This chart shows all the garbage collections that happened between the time
+                                        of the first and the last javacore in the data set.
+                                        Garbage collections that happened before the first
+                                        or after the last javacore generation time are not included.
+                                        If there are none or only one javacore provided, then the chart shows the data from all verbose GC log files.
+                                        <ul>
+                                            <li><strong>Heap Usage</strong>
+                                                is the available Java heap memory over time,
+                                                based on the garbage collection data from the verbose GC log files.
+                                            </li>
+                                            <li><strong>Total Heap</strong>
+                                                is the maximum size of the Java heap, configured by using the Xmx Java argument,
+                                                expressed in megabytes.
+                                            </li>
+                                            <li><strong>GC Pause Time</strong>
+                                                is the duration of each garbage collection pause in milliseconds,
+                                                indicating how long the application was stopped during garbage collection.
+                                            </li>
+                                            <li><strong>Nursery Usage</strong>
+                                                shows the free memory in the nursery (young generation) space before and after each garbage collection,
+                                                expressed in bytes. The nursery is where new objects are allocated.
+                                            </li>
+                                            <li><strong>Nursery Total</strong>
+                                                is the total size of the nursery (young generation) space,
+                                                expressed in bytes.
+                                            </li>
+                                            <li><strong>Tenure Usage</strong>
+                                                shows the free memory in the tenure (old generation) space before and after each garbage collection,
+                                                expressed in bytes. The tenure space holds long-lived objects.
+                                            </li>
+                                            <li><strong>Tenure Total</strong>
+                                                is the total size of the tenure (old generation) space,
+                                                expressed in bytes.
+                                            </li>
+                                            <li><strong>Comp Ratio (%)</strong>
+                                                is the compression ratio for each garbage collection,
+                                                calculated as the percentage of used heap memory that was freed by the collection.
+                                                A high value indicates an efficient collection that recovered a large fraction of live objects;
+                                                a low or declining comp ratio over time is a sign of memory pressure.
+                                            </li>
+                                        </ul>
+                                        <p><strong>Chart interactions:</strong></p>
+                                        <ul>
+                                            <li>Draw a rectangle on the chart to zoom into that area. Use the <em>Reset zoom</em> button to return to the full view.</li>
+                                            <li>Click on a legend item to show or hide that data series.</li>
+                                        </ul>
+                                    </div></div>
+                                </div>
+                            </div>
                     <div id="systemresources_myChartGC" class="cds--tile hide" style="margin-bottom:1rem;overflow-x:auto;min-height:250px;position:relative;">
                         <canvas id="myChartGC"></canvas>
                     </div>
