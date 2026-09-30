@@ -18,8 +18,7 @@
             <div class="cds--accordion__wrapper"><div id="content-top-blockers" class="cds--accordion__content">
             <xsl:choose>
                 <xsl:when test="doc/blockers/blocker">
-                    <details class="doc-toggle">
-                        <summary>What does this table tell me?</summary>
+                    <div>
                         This table shows top ten threads that were blocking other threads most frequently,
                         based on the information in the javacore files.
                         <ul>

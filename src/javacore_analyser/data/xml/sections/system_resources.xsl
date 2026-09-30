@@ -39,8 +39,7 @@
                 </xsl:when>
                 <xsl:otherwise>
                     <h4>CPU Load</h4>
-                    <details class="doc-toggle">
-                        <summary>What does this chart tell me?</summary>
+                    <div>
                         This chart shows the total CPU usage of all the threads in the javacore, expressed as percentage
                         of all the processor cores. The maximum possible value is therefore 100%, which
                         would indicate all the cores are completely busy. Each bar represents one javacore in the data set.
@@ -138,8 +137,7 @@
                  and at least two javacores are present so there is a time dimension. -->
             <xsl:if test="//@use_ml='True' and //javacore_count &gt; 1">
                 <h4>Thread Classification Over Time</h4>
-                <details class="doc-toggle">
-                    <summary>What does this chart tell me?</summary>
+                <div>
                     This chart shows how the number of thread snapshots belonging to each
                     machine-learning classification category changes over time.
                     The X axis represents the javacore generation time and the Y axis shows
