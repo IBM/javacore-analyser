@@ -18,20 +18,29 @@
             <div class="cds--accordion__wrapper"><div id="content-top-blockers" class="cds--accordion__content">
             <xsl:choose>
                 <xsl:when test="doc/blockers/blocker">
-                    <div>
-                        This table shows top ten threads that were blocking other threads most frequently,
-                        based on the information in the javacore files.
-                        <ul>
-                            <li>
-                                <strong>Thread name</strong>
-                                is the name of the thread.
-                            </li>
-                            <li>
-                                <strong>Number of different blocked threads</strong>
-                                is the total number of times, across all javacore files, this thread was
-                                blocking any other thread.
-                            </li>
-                        </ul>
+                    <div class="cds--accordion cds--accordion--sm help-accordion">
+                        <div class="cds--accordion__item">
+                            <button type="button" class="cds--accordion__heading" aria-expanded="false" aria-controls="help-top-blockers"
+                                    onclick="this.closest('.cds--accordion__item').classList.toggle('cds--accordion__item--active'); this.setAttribute('aria-expanded', this.closest('.cds--accordion__item').classList.contains('cds--accordion__item--active')?'true':'false');">
+                                <svg class="cds--accordion__arrow" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M11 8L6 13 4.6 11.6 8.2 8 4.6 4.4 6 3z"/></svg>
+                                <span class="cds--accordion__title">What does this table tell me?</span>
+                            </button>
+                            <div class="cds--accordion__wrapper"><div id="help-top-blockers" class="cds--accordion__content">
+                                This table shows top ten threads that were blocking other threads most frequently,
+                                based on the information in the javacore files.
+                                <ul>
+                                    <li>
+                                        <strong>Thread name</strong>
+                                        is the name of the thread.
+                                    </li>
+                                    <li>
+                                        <strong>Number of different blocked threads</strong>
+                                        is the total number of times, across all javacore files, this thread was
+                                        blocking any other thread.
+                                    </li>
+                                </ul>
+                            </div></div>
+                        </div>
                     </div>
                     <div class="cds--data-table-container">
                     <div class="cds--data-table-content">
