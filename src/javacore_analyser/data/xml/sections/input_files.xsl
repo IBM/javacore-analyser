@@ -134,7 +134,7 @@
                         </div>
                     </xsl:when>
                     <xsl:otherwise>
-                        <div class="cds--inline-notification cds--inline-notification--info" role="status">
+                        <div class="cds--inline-notification cds--inline-notification--low-contrast cds--inline-notification--info" role="status">
                             <div class="cds--inline-notification__details">
                                 <p class="cds--inline-notification__text">No javacore files</p>
                             </div>
@@ -206,7 +206,7 @@
                         </div>
                     </xsl:when>
                     <xsl:otherwise>
-                        <div class="cds--inline-notification cds--inline-notification--info" role="status">
+                        <div class="cds--inline-notification cds--inline-notification--low-contrast cds--inline-notification--info" role="status">
                             <div class="cds--inline-notification__details">
                                 <p class="cds--inline-notification__text">No verbose GC files</p>
                             </div>
@@ -267,7 +267,7 @@
                         </div>
                     </xsl:when>
                     <xsl:otherwise>
-                        <div class="cds--inline-notification cds--inline-notification--info" role="status">
+                        <div class="cds--inline-notification cds--inline-notification--low-contrast cds--inline-notification--info" role="status">
                             <div class="cds--inline-notification__details">
                                 <p class="cds--inline-notification__text">No HAR files</p>
                             </div>
@@ -352,7 +352,7 @@
                         </div>
                     </xsl:when>
                     <xsl:otherwise>
-                        <div class="cds--inline-notification cds--inline-notification--info" role="status">
+                        <div class="cds--inline-notification cds--inline-notification--low-contrast cds--inline-notification--info" role="status">
                             <div class="cds--inline-notification__details">
                                 <p class="cds--inline-notification__text">No plugin files</p>
                             </div>

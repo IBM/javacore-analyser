@@ -69,7 +69,7 @@
                 <xsl:when test="doc/report_info/verbose_gc_list/verbose_gc">
                     <xsl:choose>
                         <xsl:when test="//verbose_gc_list/@total_collects_in_time_limits = 0">
-                            <div class="cds--inline-notification cds--inline-notification--info" role="status" style="max-width:100%;">
+                            <div class="cds--inline-notification cds--inline-notification--low-contrast cds--inline-notification--info" role="status" style="max-width:100%;">
                                 <div class="cds--inline-notification__details">
                                     <p class="cds--inline-notification__text">There were no garbage collections within the javacore time limits.</p>
                                 </div>
@@ -141,7 +141,7 @@
                     </xsl:choose>
                 </xsl:when>
                 <xsl:otherwise>
-                    <div class="cds--inline-notification cds--inline-notification--info" role="status" style="max-width:100%;">
+                    <div class="cds--inline-notification cds--inline-notification--low-contrast cds--inline-notification--info" role="status" style="max-width:100%;">
                         <div class="cds--inline-notification__details">
                             <p class="cds--inline-notification__text">No verbose GC logs were provided, so verbose GC data cannot be shown.</p>
                         </div>

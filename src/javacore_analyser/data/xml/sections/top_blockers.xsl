@@ -82,7 +82,7 @@
                     </div>
                 </xsl:when>
                 <xsl:otherwise>
-                    <div class="cds--inline-notification cds--inline-notification--info" role="status">
+                    <div class="cds--inline-notification cds--inline-notification--low-contrast cds--inline-notification--info" role="status">
                         <div class="cds--inline-notification__details">
                             <p class="cds--inline-notification__text">There are no blocking threads in javacores</p>
                         </div>
