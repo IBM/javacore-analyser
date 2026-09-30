@@ -16,39 +16,46 @@
                 <span class="cds--accordion__title">All Code</span>
             </button>
             <div class="cds--accordion__wrapper"><div id="content-all-code" class="cds--accordion__content">
-            <a id="togglecodedoc" href="javascript:expand_it(codedoc,togglecodedoc)" class="expandit">
-                What does this table tell me?</a>
-                <div id="codedoc" style="display:none;">
-                The table shows resource usage of code that is being executed by the JVM,
-                regardless of the thread it is run in.
-                The table can be sorted by clicking on a column header.
-                <ul>
-                    <li><strong>Stack</strong>
-                        shows the top 5 methods from the top stack,
-                        or fewer if the stack trace is shallower than 5.
-                    </li>
-                    <li><strong>Total CPU Usage</strong>
-                        is the total number of seconds the code was using CPU time,
-                        when executed in any thread in any javacore file.
-                    </li>
-                    <li><strong>% CPU Usage</strong>
-                        is the total CPU usage of the thread, expressed as percentage
-                        of a single processor core. The code can run simultanously in more than one thread,
-                        each thread using one CPU core at a time, the maximum possible value may be therefore
-                        greater than 100%.
-                    </li>
-                    <li><strong>Average memory allocated since last GC</strong>
-                        is the amount of memory, in megabytes, allocated by all the threads since the last GC cycle,
-                        while they were running the given code. Note that this number does not represent the total
-                        amount of memory allocated by the code and is only suitable for relative comparison between
-                        different pieces of code. This number is only meaningful if a sufficient number of javacores
-                        is present in the data set, 10 being the absolute minimum in most cases.
-                    </li>
-                    <li><strong>Threads</strong>
-                        is a list of links to threads that are known to have executed the given piece of code at any
-                        point, based on the data in the javacore files.
-                    </li>
-                </ul>
+            <div class="cds--accordion cds--accordion--sm help-accordion">
+                <div class="cds--accordion__item">
+                    <button type="button" class="cds--accordion__heading" aria-expanded="false" aria-controls="help-all-code"
+                            onclick="this.closest('.cds--accordion__item').classList.toggle('cds--accordion__item--active'); this.setAttribute('aria-expanded', this.closest('.cds--accordion__item').classList.contains('cds--accordion__item--active')?'true':'false');">
+                        <svg class="cds--accordion__arrow" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M11 8L6 13 4.6 11.6 8.2 8 4.6 4.4 6 3z"/></svg>
+                        <span class="cds--accordion__title">What does this table tell me?</span>
+                    </button>
+                    <div class="cds--accordion__wrapper"><div id="help-all-code" class="cds--accordion__content">
+                        The table shows resource usage of code that is being executed by the JVM,
+                        regardless of the thread it is run in.
+                        The table can be sorted by clicking on a column header.
+                        <ul>
+                            <li><strong>Stack</strong>
+                                shows the top 5 methods from the top stack,
+                                or fewer if the stack trace is shallower than 5.
+                            </li>
+                            <li><strong>Total CPU Usage</strong>
+                                is the total number of seconds the code was using CPU time,
+                                when executed in any thread in any javacore file.
+                            </li>
+                            <li><strong>% CPU Usage</strong>
+                                is the total CPU usage of the thread, expressed as percentage
+                                of a single processor core. The code can run simultanously in more than one thread,
+                                each thread using one CPU core at a time, the maximum possible value may be therefore
+                                greater than 100%.
+                            </li>
+                            <li><strong>Average memory allocated since last GC</strong>
+                                is the amount of memory, in megabytes, allocated by all the threads since the last GC cycle,
+                                while they were running the given code. Note that this number does not represent the total
+                                amount of memory allocated by the code and is only suitable for relative comparison between
+                                different pieces of code. This number is only meaningful if a sufficient number of javacores
+                                is present in the data set, 10 being the absolute minimum in most cases.
+                            </li>
+                            <li><strong>Threads</strong>
+                                is a list of links to threads that are known to have executed the given piece of code at any
+                                point, based on the data in the javacore files.
+                            </li>
+                        </ul>
+                    </div></div>
+                </div>
             </div>
             <div class="cds--data-table-container">
             <div class="cds--data-table-content">

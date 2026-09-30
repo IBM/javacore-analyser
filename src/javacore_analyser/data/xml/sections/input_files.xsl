@@ -19,35 +19,44 @@
             <xsl:choose>
                 <xsl:when test="doc/report_info/javacore_list">
                     <h4>Javacore Files</h4>
-                    <div>
-                        This table shows all the javacore files that are included in the data set.
-                        <ul>
-                            <li>
-                                <strong>File Name</strong>
-                                is the name of the javacore file.
-                            </li>
-                            <li>
-                                <strong>Time Stamp</strong>
-                                is the time when the javacore was generated.
-                            </li>
-                            <li>
-                                <strong>CPU usage (%)</strong>
-                                is the total CPU usage of all the threads in the javacore. The maximum possible value is therefore 100%
-                                This value is computed incrementally
-                                with relation to the previous javacore, hence it is not available ("N/A") for the first
-                                javacore file.
-                                </li>
-                                <li>
-                                    <strong>CPU Load</strong>
-                                    is the total CPU usage of all the threads in the javacore.
-                                    Load of 1 means that 1 core is fully used.
-                                    The maximum possible value is therefore the number of cores
-                                    This value is computed incrementally
-                                    with relation to the previous javacore, hence it is not available ("N/A") for the first
-                                    javacore file.
-                                </li>
-                            </ul>
+                    <div class="cds--accordion cds--accordion--sm help-accordion">
+                        <div class="cds--accordion__item">
+                            <button type="button" class="cds--accordion__heading" aria-expanded="false" aria-controls="help-javacore-files"
+                                    onclick="this.closest('.cds--accordion__item').classList.toggle('cds--accordion__item--active'); this.setAttribute('aria-expanded', this.closest('.cds--accordion__item').classList.contains('cds--accordion__item--active')?'true':'false');">
+                                <svg class="cds--accordion__arrow" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M11 8L6 13 4.6 11.6 8.2 8 4.6 4.4 6 3z"/></svg>
+                                <span class="cds--accordion__title">What does this table tell me?</span>
+                            </button>
+                            <div class="cds--accordion__wrapper"><div id="help-javacore-files" class="cds--accordion__content">
+                                This table shows all the javacore files that are included in the data set.
+                                <ul>
+                                    <li>
+                                        <strong>File Name</strong>
+                                        is the name of the javacore file.
+                                    </li>
+                                    <li>
+                                        <strong>Time Stamp</strong>
+                                        is the time when the javacore was generated.
+                                    </li>
+                                    <li>
+                                        <strong>CPU usage (%)</strong>
+                                        is the total CPU usage of all the threads in the javacore. The maximum possible value is therefore 100%
+                                        This value is computed incrementally
+                                        with relation to the previous javacore, hence it is not available ("N/A") for the first
+                                        javacore file.
+                                    </li>
+                                    <li>
+                                        <strong>CPU Load</strong>
+                                        is the total CPU usage of all the threads in the javacore.
+                                        Load of 1 means that 1 core is fully used.
+                                        The maximum possible value is therefore the number of cores
+                                        This value is computed incrementally
+                                        with relation to the previous javacore, hence it is not available ("N/A") for the first
+                                        javacore file.
+                                    </li>
+                                </ul>
+                            </div></div>
                         </div>
+                    </div>
                         <div class="cds--data-table-container">
                         <div class="cds--data-table-content">
                         <table id="javacores_files_table" class="cds--data-table cds--data-table--zebra">
@@ -136,25 +145,34 @@
                 <xsl:choose>
                     <xsl:when test="doc/report_info/verbose_gc_list/verbose_gc">
                         <h4>Verbose GC files</h4>
-                        <div>
-                            This table shows all the verbose GC log files that are included in the data set.
-                            <ul>
-                                <li>
-                                    <strong>File Name</strong>
-                                    is the name of the verbose GC log file.
-                                </li>
-                                <li>
-                                    <strong>Number of collections in javacore time limits</strong>
-                                    is the number of garbage collections in the verbose GC log file,
-                                    that happened between the time of the first and the last javacore in the data set.
-                                </li>
-                                <li>
-                                    <strong>Total number of collections in the file</strong>
-                                    is the number of all garbage collections found in the verbose GC log file,
-                                    regardless of when they happened with relation to the time the javacores
-                                    were generated.
-                                </li>
-                            </ul>
+                        <div class="cds--accordion cds--accordion--sm help-accordion">
+                            <div class="cds--accordion__item">
+                                <button type="button" class="cds--accordion__heading" aria-expanded="false" aria-controls="help-verbose-gc-files"
+                                        onclick="this.closest('.cds--accordion__item').classList.toggle('cds--accordion__item--active'); this.setAttribute('aria-expanded', this.closest('.cds--accordion__item').classList.contains('cds--accordion__item--active')?'true':'false');">
+                                    <svg class="cds--accordion__arrow" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M11 8L6 13 4.6 11.6 8.2 8 4.6 4.4 6 3z"/></svg>
+                                    <span class="cds--accordion__title">What does this table tell me?</span>
+                                </button>
+                                <div class="cds--accordion__wrapper"><div id="help-verbose-gc-files" class="cds--accordion__content">
+                                    This table shows all the verbose GC log files that are included in the data set.
+                                    <ul>
+                                        <li>
+                                            <strong>File Name</strong>
+                                            is the name of the verbose GC log file.
+                                        </li>
+                                        <li>
+                                            <strong>Number of collections in javacore time limits</strong>
+                                            is the number of garbage collections in the verbose GC log file,
+                                            that happened between the time of the first and the last javacore in the data set.
+                                        </li>
+                                        <li>
+                                            <strong>Total number of collections in the file</strong>
+                                            is the number of all garbage collections found in the verbose GC log file,
+                                            regardless of when they happened with relation to the time the javacores
+                                            were generated.
+                                        </li>
+                                    </ul>
+                                </div></div>
+                            </div>
                         </div>
                         <div class="cds--data-table-container">
                         <div class="cds--data-table-content">
@@ -199,22 +217,31 @@
                 <xsl:choose>
                     <xsl:when test="doc/har_files">
                         <h4>HAR files</h4>
-                        <div>
-                            This table shows all the HAR files that are included in the data set.
-                            <ul>
-                                <li>
-                                    <strong>File Name</strong>
-                                    is the name of the HAR file.
-                                </li>
-                                <li>
-                                    <strong>Hostname</strong>
-                                    is the name of the server machine for which the HAR file was collected.
-                                </li>
-                                <li>
-                                    <strong>Browser</strong>
-                                    contains information about the browser that was used to collect the HAR file.
-                                </li>
-                            </ul>
+                        <div class="cds--accordion cds--accordion--sm help-accordion">
+                            <div class="cds--accordion__item">
+                                <button type="button" class="cds--accordion__heading" aria-expanded="false" aria-controls="help-har-files"
+                                        onclick="this.closest('.cds--accordion__item').classList.toggle('cds--accordion__item--active'); this.setAttribute('aria-expanded', this.closest('.cds--accordion__item').classList.contains('cds--accordion__item--active')?'true':'false');">
+                                    <svg class="cds--accordion__arrow" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M11 8L6 13 4.6 11.6 8.2 8 4.6 4.4 6 3z"/></svg>
+                                    <span class="cds--accordion__title">What does this table tell me?</span>
+                                </button>
+                                <div class="cds--accordion__wrapper"><div id="help-har-files" class="cds--accordion__content">
+                                    This table shows all the HAR files that are included in the data set.
+                                    <ul>
+                                        <li>
+                                            <strong>File Name</strong>
+                                            is the name of the HAR file.
+                                        </li>
+                                        <li>
+                                            <strong>Hostname</strong>
+                                            is the name of the server machine for which the HAR file was collected.
+                                        </li>
+                                        <li>
+                                            <strong>Browser</strong>
+                                            contains information about the browser that was used to collect the HAR file.
+                                        </li>
+                                    </ul>
+                                </div></div>
+                            </div>
                         </div>
                         <div class="cds--data-table-container">
                         <div class="cds--data-table-content">
@@ -251,22 +278,31 @@
                 <xsl:choose>
                     <xsl:when test="doc/plugins/*">
                         <h4>Plugin files</h4>
-                        <div>
-                            This table shows all the files processed by custom plugins.
-                            <ul>
-                                <li>
-                                    <strong>Plugin Name</strong>
-                                    is the name of the plugin that processed the files.
-                                </li>
-                                <li>
-                                    <strong>File Name</strong>
-                                    is the name of the file processed by the plugin.
-                                </li>
-                                <li>
-                                    <strong>Message Count</strong>
-                                    is the number of messages or entries found in the file (if applicable).
-                                </li>
-                            </ul>
+                        <div class="cds--accordion cds--accordion--sm help-accordion">
+                            <div class="cds--accordion__item">
+                                <button type="button" class="cds--accordion__heading" aria-expanded="false" aria-controls="help-plugin-files"
+                                        onclick="this.closest('.cds--accordion__item').classList.toggle('cds--accordion__item--active'); this.setAttribute('aria-expanded', this.closest('.cds--accordion__item').classList.contains('cds--accordion__item--active')?'true':'false');">
+                                    <svg class="cds--accordion__arrow" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M11 8L6 13 4.6 11.6 8.2 8 4.6 4.4 6 3z"/></svg>
+                                    <span class="cds--accordion__title">What does this table tell me?</span>
+                                </button>
+                                <div class="cds--accordion__wrapper"><div id="help-plugin-files" class="cds--accordion__content">
+                                    This table shows all the files processed by custom plugins.
+                                    <ul>
+                                        <li>
+                                            <strong>Plugin Name</strong>
+                                            is the name of the plugin that processed the files.
+                                        </li>
+                                        <li>
+                                            <strong>File Name</strong>
+                                            is the name of the file processed by the plugin.
+                                        </li>
+                                        <li>
+                                            <strong>Message Count</strong>
+                                            is the number of messages or entries found in the file (if applicable).
+                                        </li>
+                                    </ul>
+                                </div></div>
+                            </div>
                         </div>
                         <div class="cds--data-table-container">
                         <div class="cds--data-table-content">

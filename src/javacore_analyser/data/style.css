@@ -64,6 +64,29 @@ th {
     background-color: var(--color-layer-01);
 }
 
+/* ── Help accordion (nested "What does this tell me?" toggles) ───────────── */
+
+/* Strip the heavy outer border and reduce overall padding for the nested helper */
+.help-accordion.cds--accordion {
+    margin-bottom: 0.75rem;
+}
+.help-accordion .cds--accordion__heading {
+    background-color: var(--color-layer-01);
+    min-height: 2rem;
+    padding-block: 0.375rem;
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+}
+.help-accordion .cds--accordion__title {
+    font-size: 0.875rem;
+}
+.help-accordion .cds--accordion__content {
+    padding-block-start: 0.5rem;
+    padding-block-end: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+}
+
 /* Remove Carbon's 25% right-padding on accordion content that holds a data table,
    and ensure the wrapper does not clip horizontal scroll */
 .cds--accordion__content:has(.cds--data-table-container),

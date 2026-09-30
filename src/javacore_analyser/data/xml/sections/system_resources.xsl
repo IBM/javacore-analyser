@@ -39,17 +39,26 @@
                 </xsl:when>
                 <xsl:otherwise>
                     <h4>CPU Load</h4>
-                    <div>
-                        This chart shows the total CPU usage of all the threads in the javacore, expressed as percentage
-                        of all the processor cores. The maximum possible value is therefore 100%, which
-                        would indicate all the cores are completely busy. Each bar represents one javacore in the data set.
-                        This value is computed incrementally with relation to the previous javacore,
-                        hence it is not available for the first javacore file.
-                        <p><strong>Chart interactions:</strong></p>
-                        <ul>
-                            <li>Draw a rectangle on the chart to zoom into that area. Use the <em>Reset zoom</em> button to return to the full view.</li>
-                            <li>Click on a legend item to show or hide that data series.</li>
-                        </ul>
+                    <div class="cds--accordion cds--accordion--sm help-accordion">
+                        <div class="cds--accordion__item">
+                            <button type="button" class="cds--accordion__heading" aria-expanded="false" aria-controls="help-cpu-load"
+                                    onclick="this.closest('.cds--accordion__item').classList.toggle('cds--accordion__item--active'); this.setAttribute('aria-expanded', this.closest('.cds--accordion__item').classList.contains('cds--accordion__item--active')?'true':'false');">
+                                <svg class="cds--accordion__arrow" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M11 8L6 13 4.6 11.6 8.2 8 4.6 4.4 6 3z"/></svg>
+                                <span class="cds--accordion__title">What does this chart tell me?</span>
+                            </button>
+                            <div class="cds--accordion__wrapper"><div id="help-cpu-load" class="cds--accordion__content">
+                                This chart shows the total CPU usage of all the threads in the javacore, expressed as percentage
+                                of all the processor cores. The maximum possible value is therefore 100%, which
+                                would indicate all the cores are completely busy. Each bar represents one javacore in the data set.
+                                This value is computed incrementally with relation to the previous javacore,
+                                hence it is not available for the first javacore file.
+                                <p><strong>Chart interactions:</strong></p>
+                                <ul>
+                                    <li>Draw a rectangle on the chart to zoom into that area. Use the <em>Reset zoom</em> button to return to the full view.</li>
+                                    <li>Click on a legend item to show or hide that data series.</li>
+                                </ul>
+                            </div></div>
+                        </div>
                     </div>
                     <div class="cds--tile" style="margin-bottom:1rem;overflow-x:auto;min-height:250px;position:relative;">
                         <canvas id="myChartCPUUsage"></canvas>
