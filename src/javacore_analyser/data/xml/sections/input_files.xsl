@@ -19,8 +19,7 @@
             <xsl:choose>
                 <xsl:when test="doc/report_info/javacore_list">
                     <h4>Javacore Files</h4>
-                    <details class="doc-toggle">
-                        <summary>What does this table tell me?</summary>
+                    <div>
                         This table shows all the javacore files that are included in the data set.
                         <ul>
                             <li>
@@ -137,8 +136,7 @@
                 <xsl:choose>
                     <xsl:when test="doc/report_info/verbose_gc_list/verbose_gc">
                         <h4>Verbose GC files</h4>
-                        <details class="doc-toggle">
-                            <summary>What does this table tell me?</summary>
+                        <div>
                             This table shows all the verbose GC log files that are included in the data set.
                             <ul>
                                 <li>
@@ -201,8 +199,7 @@
                 <xsl:choose>
                     <xsl:when test="doc/har_files">
                         <h4>HAR files</h4>
-                        <details class="doc-toggle">
-                            <summary>What does this table tell me?</summary>
+                        <div>
                             This table shows all the HAR files that are included in the data set.
                             <ul>
                                 <li>
@@ -254,8 +251,7 @@
                 <xsl:choose>
                     <xsl:when test="doc/plugins/*">
                         <h4>Plugin files</h4>
-                        <details class="doc-toggle">
-                            <summary>What does this table tell me?</summary>
+                        <div>
                             This table shows all the files processed by custom plugins.
                             <ul>
                                 <li>
