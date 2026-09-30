@@ -139,7 +139,7 @@ const CLASSIFICATION_COLOURS = [
  * @returns {string}
  */
 function getCellText(row, cellIndex) {
-  return row.cells[cellIndex].innerHTML.trim();
+  return row.cells[cellIndex].innerText.trim();
 }
 
 /**
@@ -230,7 +230,10 @@ const loadChartCPUUsage = function() {
 
   for (let i = 1; i < coresNumber; i++) {
     const rowEl = javacoresTable.rows[i];
-    inputData.push(Number(getCellText(rowEl, 2)));
+    const cpuText = getCellText(rowEl, 2);
+    const cpuVal = Number(cpuText);
+    if (isNaN(cpuVal)) continue;   // skip rows where CPU is "N/A" (first javacore)
+    inputData.push(cpuVal);
     labels.push(new Date(getCellText(rowEl, 1)).valueOf());
     totalCPUs.push(TOTAL_CPU_PERCENTAGE);
   }
