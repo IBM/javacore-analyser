@@ -18,35 +18,42 @@
                         <span class="cds--accordion__title">HTTP Calls</span>
                     </button>
                     <div class="cds--accordion__wrapper"><div id="content-http-calls" class="cds--accordion__content">
-                    <a id="togglehttpcallsdoc" href="javascript:expand_it(httpcallsdoc,togglehttpcallsdoc)" class="expandit">
-                        What does this table tell me?</a>
-                        <div id="httpcallsdoc" style="display:none;">
-                        The table shows the HTTP calls that are included in the HAR files from the data set.
-                        The table can be sorted by clicking on a column header.
-                        Rows highlighted in <span style="background-color:#ffcccc;padding:0 4px;">red</span> finished
-                        with a 4xx or 5xx error status. Rows highlighted in
-                        <span style="background-color:#fff3cd;padding:0 4px;">yellow</span> took longer than 5 seconds.
-                        <ul>
-                            <li><strong>Request URL and Details</strong>
-                                is the URL of the HTTP request. Click "Details" to view request and response details,
-                                including a traffic timing breakdown (DNS, connect, SSL, send, wait, receive).
-                            </li>
-                            <li><strong>Method</strong>
-                                is the HTTP method used (GET, POST, PUT, DELETE, etc.).
-                            </li>
-                            <li><strong>Status</strong>
-                                is the HTTP response code.
-                            </li>
-                            <li><strong>Start time</strong>
-                                is the time when the HTTP request was made.
-                            </li>
-                            <li><strong>Duration</strong>
-                                is the amount of time it took to complete the HTTP call, in milliseconds.
-                            </li>
-                            <li><strong>Size</strong>
-                                is size of the response body, in bytes.
-                            </li>
-                        </ul>
+                    <div class="cds--accordion cds--accordion--sm help-accordion">
+                        <div class="cds--accordion__item">
+                            <button type="button" class="cds--accordion__heading" aria-expanded="false" aria-controls="help-http-calls"
+                                    onclick="this.closest('.cds--accordion__item').classList.toggle('cds--accordion__item--active'); this.setAttribute('aria-expanded', this.closest('.cds--accordion__item').classList.contains('cds--accordion__item--active')?'true':'false');">
+                                <svg class="cds--accordion__arrow" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M11 8L6 13 4.6 11.6 8.2 8 4.6 4.4 6 3z"/></svg>
+                                <span class="cds--accordion__title">What does this table tell me?</span>
+                            </button>
+                            <div class="cds--accordion__wrapper"><div id="help-http-calls" class="cds--accordion__content">
+                                The table shows the HTTP calls that are included in the HAR files from the data set.
+                                The table can be sorted by clicking on a column header.
+                                Rows highlighted in <span style="background-color:#ffcccc;padding:0 4px;">red</span> finished
+                                with a 4xx or 5xx error status. Rows highlighted in
+                                <span style="background-color:#fff3cd;padding:0 4px;">yellow</span> took longer than 5 seconds.
+                                <ul>
+                                    <li><strong>Request URL and Details</strong>
+                                        is the URL of the HTTP request. Click "Details" to view request and response details,
+                                        including a traffic timing breakdown (DNS, connect, SSL, send, wait, receive).
+                                    </li>
+                                    <li><strong>Method</strong>
+                                        is the HTTP method used (GET, POST, PUT, DELETE, etc.).
+                                    </li>
+                                    <li><strong>Status</strong>
+                                        is the HTTP response code.
+                                    </li>
+                                    <li><strong>Start time</strong>
+                                        is the time when the HTTP request was made.
+                                    </li>
+                                    <li><strong>Duration</strong>
+                                        is the amount of time it took to complete the HTTP call, in milliseconds.
+                                    </li>
+                                    <li><strong>Size</strong>
+                                        is size of the response body, in bytes.
+                                    </li>
+                                </ul>
+                            </div></div>
+                        </div>
                     </div>
                     <div class="cds--data-table-container">
                     <div class="cds--data-table-content">
