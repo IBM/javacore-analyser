@@ -8,42 +8,58 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
     <xsl:template name="input_files">
-        <h3><a id="togglejavacores" href="javascript:expand_it(javacores,togglejavacores)" class="expandit">Input Files</a></h3>
-        <div id="javacores" style="display:none;">
+        <div class="cds--accordion__item" id="accordion-input-files">
+            <button type="button" class="cds--accordion__heading"
+                    aria-expanded="false" aria-controls="content-input-files"
+                    onclick="this.closest('.cds--accordion__item').classList.toggle('cds--accordion__item--active'); this.setAttribute('aria-expanded', this.closest('.cds--accordion__item').classList.contains('cds--accordion__item--active')?'true':'false');">
+                <svg class="cds--accordion__arrow" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M11 8L6 13 4.6 11.6 8.2 8 4.6 4.4 6 3z"/></svg>
+                <span class="cds--accordion__title">Input Files</span>
+            </button>
+            <div class="cds--accordion__wrapper"><div id="content-input-files" class="cds--accordion__content">
             <xsl:choose>
                 <xsl:when test="doc/report_info/javacore_list">
                     <h4>Javacore Files</h4>
-                    <details class="doc-toggle">
-                        <summary>What does this table tell me?</summary>
-                        This table shows all the javacore files that are included in the data set.
-                        <ul>
-                            <li>
-                                <strong>File Name</strong>
-                                is the name of the javacore file.
-                            </li>
-                            <li>
-                                <strong>Time Stamp</strong>
-                                is the time when the javacore was generated.
-                            </li>
-                            <li>
-                                <strong>CPU usage (%)</strong>
-                                is the total CPU usage of all the threads in the javacore. The maximum possible value is therefore 100%
-                                This value is computed incrementally
-                                with relation to the previous javacore, hence it is not available ("N/A") for the first
-                                javacore file.
-                            </li>
-                            <li>
-                                <strong>CPU Load</strong>
-                                is the total CPU usage of all the threads in the javacore.
-                                Load of 1 means that 1 core is fully used.
-                                The maximum possible value is therefore the number of cores
-                                This value is computed incrementally
-                                with relation to the previous javacore, hence it is not available ("N/A") for the first
-                                javacore file.
-                            </li>
-                        </ul>
-                    </details>
-                        <table id="javacores_files_table">
+                    <div class="cds--accordion cds--accordion--sm help-accordion">
+                        <div class="cds--accordion__item">
+                            <button type="button" class="cds--accordion__heading" aria-expanded="false" aria-controls="help-javacore-files"
+                                    onclick="this.closest('.cds--accordion__item').classList.toggle('cds--accordion__item--active'); this.setAttribute('aria-expanded', this.closest('.cds--accordion__item').classList.contains('cds--accordion__item--active')?'true':'false');">
+                                <svg class="cds--accordion__arrow" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M11 8L6 13 4.6 11.6 8.2 8 4.6 4.4 6 3z"/></svg>
+                                <span class="cds--accordion__title">What does this table tell me?</span>
+                            </button>
+                            <div class="cds--accordion__wrapper"><div id="help-javacore-files" class="cds--accordion__content">
+                                This table shows all the javacore files that are included in the data set.
+                                <ul>
+                                    <li>
+                                        <strong>File Name</strong>
+                                        is the name of the javacore file.
+                                    </li>
+                                    <li>
+                                        <strong>Time Stamp</strong>
+                                        is the time when the javacore was generated.
+                                    </li>
+                                    <li>
+                                        <strong>CPU usage (%)</strong>
+                                        is the total CPU usage of all the threads in the javacore. The maximum possible value is therefore 100%
+                                        This value is computed incrementally
+                                        with relation to the previous javacore, hence it is not available ("N/A") for the first
+                                        javacore file.
+                                    </li>
+                                    <li>
+                                        <strong>CPU Load</strong>
+                                        is the total CPU usage of all the threads in the javacore.
+                                        Load of 1 means that 1 core is fully used.
+                                        The maximum possible value is therefore the number of cores
+                                        This value is computed incrementally
+                                        with relation to the previous javacore, hence it is not available ("N/A") for the first
+                                        javacore file.
+                                    </li>
+                                </ul>
+                            </div></div>
+                        </div>
+                    </div>
+                        <div class="cds--data-table-container">
+                        <div class="cds--data-table-content">
+                        <table id="javacores_files_table" class="cds--data-table cds--data-table--zebra">
                             <thead>
                                 <tr>
                                     <th class="thirty">File Name</th>
@@ -114,35 +130,54 @@
                                 </xsl:for-each>
                             </tbody>
                         </table>
+                        </div>
+                        </div>
                     </xsl:when>
-                    <xsl:otherwise> No javacore files </xsl:otherwise>
+                    <xsl:otherwise>
+                        <div class="cds--inline-notification cds--inline-notification--low-contrast cds--inline-notification--info report-notification" role="status">
+                            <svg class="cds--inline-notification__icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true"><path d="M17 22v-8h-4v2h2v6h-3v2h8v-2zm-1-12a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/><path d="M16 2C8.3 2 2 8.3 2 16s6.3 14 14 14 14-6.3 14-14S23.7 2 16 2zm0 26C9.4 28 4 22.6 4 16S9.4 4 16 4s12 5.4 12 12-5.4 12-12 12z"/></svg>
+                            <div class="cds--inline-notification__details">
+                                <p class="cds--inline-notification__text">No javacore files</p>
+                            </div>
+                        </div>
+                    </xsl:otherwise>
                 </xsl:choose>
                 <br/>
                 <xsl:choose>
                     <xsl:when test="doc/report_info/verbose_gc_list/verbose_gc">
                         <h4>Verbose GC files</h4>
-                        <details class="doc-toggle">
-                            <summary>What does this table tell me?</summary>
-                            This table shows all the verbose GC log files that are included in the data set.
-                            <ul>
-                                <li>
-                                    <strong>File Name</strong>
-                                    is the name of the verbose GC log file.
-                                </li>
-                                <li>
-                                    <strong>Number of collections in javacore time limits</strong>
-                                    is the number of garbage collections in the verbose GC log file,
-                                    that happened between the time of the first and the last javacore in the data set.
-                                </li>
-                                <li>
-                                    <strong>Total number of collections in the file</strong>
-                                    is the number of all garbage collections found in the verbose GC log file,
-                                    regardless of when they happened with relation to the time the javacores
-                                    were generated.
-                                </li>
-                            </ul>
-                        </details>
-                        <table id="verbose_gc_files_table">
+                        <div class="cds--accordion cds--accordion--sm help-accordion">
+                            <div class="cds--accordion__item">
+                                <button type="button" class="cds--accordion__heading" aria-expanded="false" aria-controls="help-verbose-gc-files"
+                                        onclick="this.closest('.cds--accordion__item').classList.toggle('cds--accordion__item--active'); this.setAttribute('aria-expanded', this.closest('.cds--accordion__item').classList.contains('cds--accordion__item--active')?'true':'false');">
+                                    <svg class="cds--accordion__arrow" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M11 8L6 13 4.6 11.6 8.2 8 4.6 4.4 6 3z"/></svg>
+                                    <span class="cds--accordion__title">What does this table tell me?</span>
+                                </button>
+                                <div class="cds--accordion__wrapper"><div id="help-verbose-gc-files" class="cds--accordion__content">
+                                    This table shows all the verbose GC log files that are included in the data set.
+                                    <ul>
+                                        <li>
+                                            <strong>File Name</strong>
+                                            is the name of the verbose GC log file.
+                                        </li>
+                                        <li>
+                                            <strong>Number of collections in javacore time limits</strong>
+                                            is the number of garbage collections in the verbose GC log file,
+                                            that happened between the time of the first and the last javacore in the data set.
+                                        </li>
+                                        <li>
+                                            <strong>Total number of collections in the file</strong>
+                                            is the number of all garbage collections found in the verbose GC log file,
+                                            regardless of when they happened with relation to the time the javacores
+                                            were generated.
+                                        </li>
+                                    </ul>
+                                </div></div>
+                            </div>
+                        </div>
+                        <div class="cds--data-table-container">
+                        <div class="cds--data-table-content">
+                        <table id="verbose_gc_files_table" class="cds--data-table cds--data-table--zebra">
                             <thead>
                                 <tr>
                                     <th class="sixty">File Name</th>
@@ -168,32 +203,51 @@
                                 </xsl:for-each>
                             </tbody>
                         </table>
+                        </div>
+                        </div>
                     </xsl:when>
-                    <xsl:otherwise> No verbose GC files </xsl:otherwise>
+                    <xsl:otherwise>
+                        <div class="cds--inline-notification cds--inline-notification--low-contrast cds--inline-notification--info report-notification" role="status">
+                            <svg class="cds--inline-notification__icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true"><path d="M17 22v-8h-4v2h2v6h-3v2h8v-2zm-1-12a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/><path d="M16 2C8.3 2 2 8.3 2 16s6.3 14 14 14 14-6.3 14-14S23.7 2 16 2zm0 26C9.4 28 4 22.6 4 16S9.4 4 16 4s12 5.4 12 12-5.4 12-12 12z"/></svg>
+                            <div class="cds--inline-notification__details">
+                                <p class="cds--inline-notification__text">No verbose GC files</p>
+                            </div>
+                        </div>
+                    </xsl:otherwise>
                 </xsl:choose>
                 <br/>
                 <xsl:choose>
                     <xsl:when test="doc/har_files">
                         <h4>HAR files</h4>
-                        <details class="doc-toggle">
-                            <summary>What does this table tell me?</summary>
-                            This table shows all the HAR files that are included in the data set.
-                            <ul>
-                                <li>
-                                    <strong>File Name</strong>
-                                    is the name of the HAR file.
-                                </li>
-                                <li>
-                                    <strong>Hostname</strong>
-                                    is the name of the server machine for which the HAR file was collected.
-                                </li>
-                                <li>
-                                    <strong>Browser</strong>
-                                    contains information about the browser that was used to collect the HAR file.
-                                </li>
-                            </ul>
-                        </details>
-                        <table id="har_files_table">
+                        <div class="cds--accordion cds--accordion--sm help-accordion">
+                            <div class="cds--accordion__item">
+                                <button type="button" class="cds--accordion__heading" aria-expanded="false" aria-controls="help-har-files"
+                                        onclick="this.closest('.cds--accordion__item').classList.toggle('cds--accordion__item--active'); this.setAttribute('aria-expanded', this.closest('.cds--accordion__item').classList.contains('cds--accordion__item--active')?'true':'false');">
+                                    <svg class="cds--accordion__arrow" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M11 8L6 13 4.6 11.6 8.2 8 4.6 4.4 6 3z"/></svg>
+                                    <span class="cds--accordion__title">What does this table tell me?</span>
+                                </button>
+                                <div class="cds--accordion__wrapper"><div id="help-har-files" class="cds--accordion__content">
+                                    This table shows all the HAR files that are included in the data set.
+                                    <ul>
+                                        <li>
+                                            <strong>File Name</strong>
+                                            is the name of the HAR file.
+                                        </li>
+                                        <li>
+                                            <strong>Hostname</strong>
+                                            is the name of the server machine for which the HAR file was collected.
+                                        </li>
+                                        <li>
+                                            <strong>Browser</strong>
+                                            contains information about the browser that was used to collect the HAR file.
+                                        </li>
+                                    </ul>
+                                </div></div>
+                            </div>
+                        </div>
+                        <div class="cds--data-table-container">
+                        <div class="cds--data-table-content">
+                        <table id="har_files_table" class="cds--data-table cds--data-table--zebra">
                             <thead>
                                 <tr>
                                     <th class="sixty">File Name</th>
@@ -211,32 +265,51 @@
                                 </xsl:for-each>
                             </tbody>
                         </table>
+                        </div>
+                        </div>
                     </xsl:when>
-                    <xsl:otherwise> No HAR files </xsl:otherwise>
+                    <xsl:otherwise>
+                        <div class="cds--inline-notification cds--inline-notification--low-contrast cds--inline-notification--info report-notification" role="status">
+                            <svg class="cds--inline-notification__icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true"><path d="M17 22v-8h-4v2h2v6h-3v2h8v-2zm-1-12a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/><path d="M16 2C8.3 2 2 8.3 2 16s6.3 14 14 14 14-6.3 14-14S23.7 2 16 2zm0 26C9.4 28 4 22.6 4 16S9.4 4 16 4s12 5.4 12 12-5.4 12-12 12z"/></svg>
+                            <div class="cds--inline-notification__details">
+                                <p class="cds--inline-notification__text">No HAR files</p>
+                            </div>
+                        </div>
+                    </xsl:otherwise>
                 </xsl:choose>
                 <br/>
                 <xsl:choose>
                     <xsl:when test="doc/plugins/*">
                         <h4>Plugin files</h4>
-                        <details class="doc-toggle">
-                            <summary>What does this table tell me?</summary>
-                            This table shows all the files processed by custom plugins.
-                            <ul>
-                                <li>
-                                    <strong>Plugin Name</strong>
-                                    is the name of the plugin that processed the files.
-                                </li>
-                                <li>
-                                    <strong>File Name</strong>
-                                    is the name of the file processed by the plugin.
-                                </li>
-                                <li>
-                                    <strong>Message Count</strong>
-                                    is the number of messages or entries found in the file (if applicable).
-                                </li>
-                            </ul>
-                        </details>
-                        <table id="plugin_files_table">
+                        <div class="cds--accordion cds--accordion--sm help-accordion">
+                            <div class="cds--accordion__item">
+                                <button type="button" class="cds--accordion__heading" aria-expanded="false" aria-controls="help-plugin-files"
+                                        onclick="this.closest('.cds--accordion__item').classList.toggle('cds--accordion__item--active'); this.setAttribute('aria-expanded', this.closest('.cds--accordion__item').classList.contains('cds--accordion__item--active')?'true':'false');">
+                                    <svg class="cds--accordion__arrow" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M11 8L6 13 4.6 11.6 8.2 8 4.6 4.4 6 3z"/></svg>
+                                    <span class="cds--accordion__title">What does this table tell me?</span>
+                                </button>
+                                <div class="cds--accordion__wrapper"><div id="help-plugin-files" class="cds--accordion__content">
+                                    This table shows all the files processed by custom plugins.
+                                    <ul>
+                                        <li>
+                                            <strong>Plugin Name</strong>
+                                            is the name of the plugin that processed the files.
+                                        </li>
+                                        <li>
+                                            <strong>File Name</strong>
+                                            is the name of the file processed by the plugin.
+                                        </li>
+                                        <li>
+                                            <strong>Message Count</strong>
+                                            is the number of messages or entries found in the file (if applicable).
+                                        </li>
+                                    </ul>
+                                </div></div>
+                            </div>
+                        </div>
+                        <div class="cds--data-table-container">
+                        <div class="cds--data-table-content">
+                        <table id="plugin_files_table" class="cds--data-table cds--data-table--zebra">
                             <thead>
                                 <tr>
                                     <th class="forty">Plugin Name</th>
@@ -278,10 +351,21 @@
                                 </xsl:for-each>
                             </tbody>
                         </table>
+                        </div>
+                        </div>
                     </xsl:when>
-                    <xsl:otherwise> No plugin files </xsl:otherwise>
+                    <xsl:otherwise>
+                        <div class="cds--inline-notification cds--inline-notification--low-contrast cds--inline-notification--info report-notification" role="status">
+                            <svg class="cds--inline-notification__icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true"><path d="M17 22v-8h-4v2h2v6h-3v2h8v-2zm-1-12a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/><path d="M16 2C8.3 2 2 8.3 2 16s6.3 14 14 14 14-6.3 14-14S23.7 2 16 2zm0 26C9.4 28 4 22.6 4 16S9.4 4 16 4s12 5.4 12 12-5.4 12-12 12z"/></svg>
+                            <div class="cds--inline-notification__details">
+                                <p class="cds--inline-notification__text">No plugin files</p>
+                            </div>
+                        </div>
+                    </xsl:otherwise>
                 </xsl:choose>
             </div>
+            </div>
+        </div>
     </xsl:template>
 
 </xsl:stylesheet>

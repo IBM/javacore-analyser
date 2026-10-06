@@ -10,6 +10,8 @@
     <xsl:template match="/">
         <html height="100%">
             <head>
+                <link rel="stylesheet" href="../data/carbon/ibm-plex.css"/>
+                <link rel="stylesheet" href="../data/carbon/carbon.min.css"/>
                 <link rel="stylesheet" href="../data/style.css"/>
                 <link rel="stylesheet" href="../data/jquery/jq.css" />
                 <link rel="stylesheet" href="../data/jquery/theme.blue.css" />
@@ -22,22 +24,44 @@
                 <script type="text/javascript" src="../data/expand.js"> _ </script>
                 <script src="../data/jquery/jquery.mark.min.js"> _ </script>
                 <script type="text/javascript" src="../data/jquery/search.js"> _ </script>
+                <script type="text/javascript" src="../data/carbon/carbon-components.min.js"> _ </script>
             </head>
 
-            <body id="doc_body" height="100%">
-                <div class="searchbar">
-                    <input id="search-input" type="search" />
-                    <button data-search="search" id="search-button">Search</button>
-                    <button data-search="next">Next</button>
-                    <button data-search="prev">Prev</button>
-                    <button data-search="clear">✖</button>
-                    <span id="search-counter" class="search-counter"></span>
-                </div>
+            <body id="doc_body" class="cds--white" height="100%">
+                <header class="cds--header" role="banner">
+                    <a class="cds--header__name" href="../index.html">
+                        <span class="cds--header__name--prefix">IBM</span>&#160;Javacore Analyser
+                    </a>
+                    <div class="cds--header__global">
+                        <div class="cds--search cds--search--sm cds--search--light" role="search" aria-label="Search">
+                            <input id="search-input" class="cds--search-input" type="search" placeholder="Search…" aria-label="Search" />
+                            <button data-search="search" id="search-button" class="cds--search-button" aria-label="Search">
+                                <svg class="cds--search-magnifier" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16" fill="currentColor"><path d="M15.14 13.73L11 9.58A5.88 5.88 0 0 0 7 0a6 6 0 1 0 4.36 10.08l4.05 4.09a1 1 0 0 0 1.41 0 1 1 0 0 0-.68-1.44zM7 10a4 4 0 1 1 4-4 4 4 0 0 1-4 4z"/></svg>
+                            </button>
+                            <button data-search="clear" class="cds--search-close" aria-label="Clear search">✖</button>
+                        </div>
+                        <button data-search="prev" class="cds--btn cds--btn--ghost cds--btn--sm cds--header__action" aria-label="Previous result">◂</button>
+                        <button data-search="next" class="cds--btn cds--btn--ghost cds--btn--sm cds--header__action" aria-label="Next result">▸</button>
+                        <span id="search-counter" class="search-counter"></span>
+                    </div>
+                </header>
+                <main class="cds--content" id="main-content">
+                <nav aria-label="Breadcrumb" class="cds--breadcrumb cds--breadcrumb--no-trailing-slash margined">
+                    <ol class="cds--breadcrumb__list">
+                        <li class="cds--breadcrumb-item">
+                            <a href="../index.html" class="cds--link">Javacore Analyser Report</a>
+                        </li>
+                        <li class="cds--breadcrumb-item cds--breadcrumb-item--current" aria-current="page">
+                            Javacore Detail
+                        </li>
+                    </ol>
+                </nav>
                 <div class="content">
-                    <p class="right"><a href="../index.html"> Back to Main page </a></p>
                     <h2>Wait Report for: <b>{id}</b></h2>
                     <div id="all_threads">
-                        <table id="javacore_threads_table" class="tablesorter_blue">
+                    <div class="cds--data-table-container">
+                    <div class="cds--data-table-content">
+                        <table id="javacore_threads_table" class="cds--data-table cds--data-table--zebra">
                             <thead>
                                 <tr>
                                     <th class="sixty">Thread name</th>
@@ -126,13 +150,13 @@
                                         <td><xsl:value-of select='java_stack_depth'/></td>
                                         <xsl:choose>
                                         <xsl:when test="state='CW'">
-                                            <td class="waiting">Waiting on condition</td>
+                                            <td><span class="ml-badge state-waiting">Waiting on condition</span></td>
                                         </xsl:when>
                                         <xsl:when test="state='R'">
-                                            <td class="runnable">Runnable</td>
+                                            <td><span class="ml-badge state-runnable">Runnable</span></td>
                                         </xsl:when>
                                         <xsl:when test="state='P'">
-                                            <td class="parked">
+                                            <td><span class="ml-badge state-parked">
                                                 <xsl:choose>
                                                     <xsl:when test="blocked_by=''">
                                                         Parked
@@ -149,10 +173,10 @@
                                                         </a>
                                                     </xsl:otherwise>
                                                 </xsl:choose>
-                                            </td>
+                                            </span></td>
                                         </xsl:when>
                                         <xsl:when test="state='B'">
-                                            <td class="blocked">
+                                            <td><span class="ml-badge state-blocked">
                                                 <a target="_blank">
                                                     <xsl:attribute name="href">
                                                         <xsl:value-of select="concat('../threads/thread_', blocked_by/@thread_hash, '.html')"/>
@@ -162,7 +186,7 @@
                                                     </xsl:attribute>
                                                     Blocked by <xsl:value-of select="blocked_by/@thread_id"/>
                                                 </a>
-                                            </td>
+                                            </span></td>
                                         </xsl:when>
                                         <xsl:otherwise>
                                              <td><xsl:value-of select="state"/></td>
@@ -198,7 +222,10 @@
                             </tbody>
                         </table>
                     </div>
+                    </div>
+                    </div>
                 </div>
+                </main>
             </body>
             <script type="text/javascript" src="../data/expand.js"> _ <!-- underscore character is required to prevent converting to <script /> which does not work --> </script>
         </html>
