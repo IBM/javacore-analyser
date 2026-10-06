@@ -223,7 +223,8 @@ fi
 # ---------------------------------------------------------------------------
 if should_run 6; then
   echo "=== [6/9] Generating Sigstore provenance attestations ==="
-  pip install --quiet "sigstore>=3.0"
+  echo "sigstore==4.5.0 --hash=sha256:f045b207f2e12605cf775ec38e89c5eda625d71ffa7830477db65e47ec2bc8b2" \
+    | pip install --quiet --require-hashes -r /dev/stdin
   ATTESTED=0
   for artifact in dist/javacore_analyser-*.whl dist/javacore_analyser-*.tar.gz; do
     [[ -f "$artifact" ]] || continue
