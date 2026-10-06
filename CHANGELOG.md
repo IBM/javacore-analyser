@@ -1,4 +1,16 @@
 # Changelog
+
+## [4.0.4] - 2026-10-01
+## What's Changed
+* Revert "#463 Added more navigation links" by @PiotrAniola82 in https://github.com/IBM/javacore-analyser/pull/474
+* #453 Add TipType field to tips and highlight warnings/tips in rep… by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/458
+* #459 Self-closing anchor tags in the Input Files table are wrong by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/460
+* #465 improve display of embedded help by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/466
+* Revert "#454 Migrate to XSL 2.0" by @PiotrAniola82 in https://github.com/IBM/javacore-analyser/pull/489
+
+**Full Changelog**: https://github.com/IBM/javacore-analyser/compare/4.0.3...4.0.4
+
+
 ## [4.0.3] - 2026-09-22
 ## What's Changed
 * Mark Long GC Pause as a Tip by @Hashim1999164 in https://github.com/IBM/javacore-analyser/pull/403
