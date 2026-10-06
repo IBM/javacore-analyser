@@ -4,7 +4,7 @@
 #
 # Usage:
 #   bash release.sh <VERSION>             # run all steps (1-7)
-#   bash release.sh <VERSION> --from 3   # resume from step 3 onwards
+#   bash release.sh <VERSION> --from 3   # resume from step 3 onwards (1-9)
 #   bash release.sh --help
 
 set -euo pipefail
@@ -21,7 +21,7 @@ usage() {
 Usage: $0 <VERSION> [--from STEP] [--help]
 
   VERSION       The release version tag to create, e.g. 4.0beta2, 3.1, 2.0.1
-  --from STEP   Start execution from STEP (1-8). Skips earlier steps.
+  --from STEP   Start execution from STEP (1-9). Skips earlier steps.
   --help        Show this help message.
 
 Steps:
@@ -30,9 +30,10 @@ Steps:
   3  Build distribution packages (python -m build)
   4  Install built package in a temporary venv and run tests
   5  Sign dist artifacts with GPG (creates .asc detached signatures)
-  6  Upload to PyPI (twine upload dist/*.whl dist/*.tar.gz dist/*.asc)
-  7  Create GitHub release draft
-  8  Copy release notes to CHANGELOG.md
+  6  Generate Sigstore provenance attestations (creates .sigstore bundles)
+  7  Upload to PyPI (twine upload dist/*.whl dist/*.tar.gz dist/*.asc dist/*.sigstore)
+  8  Create GitHub release draft
+  9  Copy release notes to CHANGELOG.md
 
 Examples:
   bash $0 4.0beta2
@@ -45,8 +46,8 @@ EOF
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --from)
-      if [[ -z "${2-}" || ! "$2" =~ ^[1-8]$ ]]; then
-        echo "ERROR: --from requires a step number between 1 and 8"
+      if [[ -z "${2-}" || ! "$2" =~ ^[1-9]$ ]]; then
+        echo "ERROR: --from requires a step number between 1 and 9"
         exit 1
       fi
       START_STEP="$2"
@@ -80,7 +81,7 @@ fi
 echo "Release:      $VERSION"
 echo "Repository:   $REPO"
 echo "Python:       $(python --version 2>&1)"
-echo "Starting from step $START_STEP / 8."
+echo "Starting from step $START_STEP / 9."
 echo ""
 
 # ---------------------------------------------------------------------------
@@ -108,7 +109,7 @@ gpg_key_id() {
 # Step 1 — Verify preconditions
 # ---------------------------------------------------------------------------
 if should_run 1; then
-  echo "=== [1/8] Verifying preconditions ==="
+  echo "=== [1/9] Verifying preconditions ==="
   BRANCH=$(git rev-parse --abbrev-ref HEAD)
   if [[ "$BRANCH" != "main" ]]; then
     echo "ERROR: must be on 'main' branch (currently on '$BRANCH')"
@@ -126,7 +127,7 @@ fi
 # Step 2 — Create and push git tag
 # ---------------------------------------------------------------------------
 if should_run 2; then
-  echo "=== [2/8] Creating and pushing git tag $VERSION ==="
+  echo "=== [2/9] Creating and pushing git tag $VERSION ==="
   git tag "$VERSION"
   git push --tags
   echo "Tag $VERSION pushed."
@@ -137,7 +138,7 @@ fi
 # Step 3 — Build distribution packages
 # ---------------------------------------------------------------------------
 if should_run 3; then
-  echo "=== [3/7] Building distribution packages ==="
+  echo "=== [3/9] Building distribution packages ==="
   echo "build==1.6.1 --hash=sha256:ecd351a4be9d35a9eaaba244a7687143c9c7d4aea6ac964e7e7ddab20cbcf4e7" \
     | pip install --quiet --require-hashes -r /dev/stdin
   python -m build
@@ -150,7 +151,7 @@ fi
 # Step 4 — Install built package in a temporary venv and run tests
 # ---------------------------------------------------------------------------
 if should_run 4; then
-  echo "=== [4/8] Testing the built package ==="
+  echo "=== [4/9] Testing the built package ==="
 
   VENV_DIR=$(mktemp -d)
   WHL=$(ls -t dist/javacore_analyser-*.whl 2>/dev/null | head -n1)
@@ -180,7 +181,7 @@ fi
 # Step 5 — Sign dist artifacts with GPG
 # ---------------------------------------------------------------------------
 if should_run 5; then
-  echo "=== [5/8] Signing dist artifacts with GPG ==="
+  echo "=== [5/9] Signing dist artifacts with GPG ==="
 
   KEY_ID=$(gpg_key_id)
   if [[ -z "$KEY_ID" ]]; then
@@ -218,22 +219,45 @@ if should_run 5; then
 fi
 
 # ---------------------------------------------------------------------------
-# Step 6 — Upload to PyPI
+# Step 6 — Generate Sigstore provenance attestations
 # ---------------------------------------------------------------------------
 if should_run 6; then
-  echo "=== [6/8] Uploading to PyPI ==="
-  # Use __token__ as the username and your PyPI API token as the password when prompted.
-  echo "twine==7.0.0 --hash=sha256:b854164df26db268af05f49aa5c0344b10e27a494343ff05b1e0bad3b135f5a7" \
-    | pip install --quiet --require-hashes -r /dev/stdin
-  twine upload dist/*
+  echo "=== [6/9] Generating Sigstore provenance attestations ==="
+  pip install --quiet "sigstore>=3.0"
+  ATTESTED=0
+  for artifact in dist/javacore_analyser-*.whl dist/javacore_analyser-*.tar.gz; do
+    [[ -f "$artifact" ]] || continue
+    python -m sigstore sign "$artifact"
+    echo "  Attested: $artifact  →  ${artifact}.sigstore.json"
+    ATTESTED=$((ATTESTED + 1))
+  done
+  if [[ "$ATTESTED" -eq 0 ]]; then
+    echo "ERROR: No dist artifacts found to attest. Run step 3 first."
+    exit 1
+  fi
+  echo "Provenance bundles in dist/:"
+  ls dist/*.sigstore.json
   echo ""
 fi
 
 # ---------------------------------------------------------------------------
-# Step 7 — Create GitHub release (draft)
+# Step 7 — Upload to PyPI
 # ---------------------------------------------------------------------------
 if should_run 7; then
-  echo "=== [7/8] Creating GitHub release (draft) ==="
+  echo "=== [7/9] Uploading to PyPI ==="
+  # Use __token__ as the username and your PyPI API token as the password when prompted.
+  # Upload only the wheel, sdist and GPG signatures — PyPI rejects .sigstore.json files.
+  echo "twine==7.0.0 --hash=sha256:b854164df26db268af05f49aa5c0344b10e27a494343ff05b1e0bad3b135f5a7" \
+    | pip install --quiet --require-hashes -r /dev/stdin
+  twine upload dist/javacore_analyser-*.whl dist/javacore_analyser-*.tar.gz dist/javacore_analyser-*.asc
+  echo ""
+fi
+
+# ---------------------------------------------------------------------------
+# Step 8 — Create GitHub release (draft)
+# ---------------------------------------------------------------------------
+if should_run 8; then
+  echo "=== [8/9] Creating GitHub release (draft) ==="
   gh release create "$VERSION" dist/* \
     --repo "$REPO" \
     --generate-notes \
@@ -248,10 +272,10 @@ if should_run 7; then
 fi
 
 # ---------------------------------------------------------------------------
-# Step 8 — Copy release notes to CHANGELOG.md
+# Step 9 — Copy release notes to CHANGELOG.md
 # ---------------------------------------------------------------------------
-if should_run 8; then
-  echo "=== [8/8] Copying release notes to CHANGELOG.md ==="
+if should_run 9; then
+  echo "=== [9/9] Copying release notes to CHANGELOG.md ==="
   NOTES=$(gh release view "$VERSION" --json body --jq '.body' --repo "$REPO")
   TMP=$(mktemp)
   {
@@ -265,4 +289,4 @@ if should_run 8; then
   echo ""
 fi
 
-echo "=== Release $VERSION complete (started from step $START_STEP / 8) ==="
+echo "=== Release $VERSION complete (started from step $START_STEP / 9) ==="
