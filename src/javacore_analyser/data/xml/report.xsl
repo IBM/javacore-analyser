@@ -9,6 +9,7 @@
 
     <xsl:variable name="displayed_stack_depth" select="50" />
     <xsl:variable name="javacore_count" select="index/doc/javacore_count" />
+    <xsl:variable name="use_ml" select="index/doc/@use_ml" />
 
     <!-- Import section templates -->
     <xsl:include href="sections/classification_config.xsl"/>

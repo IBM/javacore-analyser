@@ -7,6 +7,7 @@
 
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:variable name="javacore_count" select="/index/doc/javacore_count" />
+    <xsl:variable name="use_ml" select="/index/doc/@use_ml" />
     <xsl:template match="text()"/> <!-- these are not the threads you're looking for -->
     <xsl:template match="/index/doc/Thread/all_snapshot_collection/snapshot_collection[thread_hash='{id}']">
         <html height="100%">
@@ -75,7 +76,7 @@
                                     <th>State</th>
                                     <th>Blocking</th>
                                     <xsl:choose>
-                                        <xsl:when test="//@use_ml='True'">
+                                        <xsl:when test="$use_ml='True'">
                                             <th>Classification</th>
                                         </xsl:when>
                                     </xsl:choose>
@@ -221,7 +222,7 @@
                                              </xsl:choose>
                                     </td>
                                     <xsl:choose>
-                                        <xsl:when test="//@use_ml='True'">
+                                        <xsl:when test="$use_ml='True'">
                                             <td>
                                                 <xsl:variable name="cls" select="ml_classification"/>
                                                 <span>

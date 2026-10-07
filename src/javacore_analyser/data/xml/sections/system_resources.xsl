@@ -117,7 +117,7 @@
 
             <!-- Thread Classification Over Time chart – only shown when ML is enabled
                  and at least two javacores are present so there is a time dimension. -->
-            <xsl:if test="//@use_ml='True' and $javacore_count &gt; 1">
+            <xsl:if test="$use_ml='True' and $javacore_count &gt; 1">
                 <h4>Thread Classification Over Time</h4>
                 <details class="doc-toggle">
                     <summary>What does this chart tell me?</summary>
