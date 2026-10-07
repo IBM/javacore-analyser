@@ -21,6 +21,10 @@
         <script type="text/javascript" src="data/jquery/chartjs-plugin-zoom.min.js"> _ </script>
         <script type="text/javascript" src="data/jquery/wait2scripts.js"> _ </script>
         <script src="data/jquery/jquery.mark.min.js"> _ </script>
+        <!-- thread_stacks.js is auto-generated and contains all stack trace data.
+             thread_stacks_loader.js provides populateStackPlaceholder / populateAllStackPlaceholders. -->
+        <script type="text/javascript" src="data/thread_stacks.js"> _ </script>
+        <script type="text/javascript" src="data/jquery/thread_stacks_loader.js"> _ </script>
         <script type="text/javascript" src="data/jquery/search.js"> _ </script>
         <script type="text/javascript" src="data/jquery/tablesorter-init.js"> _ </script>
     </xsl:template>

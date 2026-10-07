@@ -100,48 +100,18 @@
                                         <br/>
                                     </xsl:when>
                                 </xsl:choose>
-                                <div  style="display:none;" >
+                                <!--
+                                    Stack trace content is NOT rendered here to keep the XSL transformation fast.
+                                    All stack trace data is written to data/thread_stacks.js during report generation
+                                    and loaded lazily: expand.js populates this placeholder on first click, and
+                                    search.js populates all placeholders before running a search so that
+                                    jquery.mark can find matches inside stack traces.
+                                -->
+                                <div style="display:none;">
                                     <xsl:attribute name="id"><xsl:value-of select="concat('stack',$i)"/></xsl:attribute>
-                                    java/lang/Thread:<xsl:value-of select="thread_address"/>
-                                    <xsl:for-each select="*[starts-with(name(), 'stack')]">
-                                            <br /><strong>Timestamp: <xsl:value-of select="timestamp"/></strong>
-                                        <div>
-                                            <xsl:choose>
-                                                <xsl:when test="stack_depth &gt; 0">
-                                                    <div class="toggle_expand">
-                                                        <a href="javaScript:;" class="show">[+] Expand</a> <!-- "show" class is used in expand.js -->
-                                                    </div>
-                                                    <p class="stacktrace">
-                                                        <xsl:for-each select="*[starts-with(name(), 'line')]">
-                                                            <xsl:choose>
-                                                                <xsl:when test="@order &lt; $displayed_stack_depth">
-                                                                    <span>
-                                                                        <xsl:attribute name="class">
-                                                                            <xsl:value-of select="@kind"/>
-                                                                        </xsl:attribute>
-                                                                        <xsl:value-of select="current()"/>
-                                                                    </span>
-                                                                    <br/>
-                                                                </xsl:when>
-                                                            </xsl:choose>
-                                                        </xsl:for-each>
-
-                                                        <xsl:choose>
-                                                            <xsl:when test="stack_depth &gt; $displayed_stack_depth">
-                                                                <span>
-                                                                    ...
-                                                                </span>
-                                                                <br/>
-                                                            </xsl:when>
-                                                        </xsl:choose>
-                                                    </p>
-                                                </xsl:when>
-                                                <xsl:otherwise>
-                                                    No Stack
-                                                </xsl:otherwise>
-                                            </xsl:choose>
-                                        </div>
-                                    </xsl:for-each>
+                                    <xsl:attribute name="data-stack-index"><xsl:value-of select="$i - 1"/></xsl:attribute>
+                                    <xsl:attribute name="data-thread-address"><xsl:value-of select="thread_address"/></xsl:attribute>
+                                    <!-- populated lazily from window.THREAD_STACKS by expand.js / search.js -->
                                 </div>
                             </td>
                             <td>
