@@ -90,7 +90,7 @@
                                     <xsl:value-of select="thread_name"/>
                                 </a>
                                 <xsl:choose>
-                                        <xsl:when test="@has_drill_down='True'">
+                                    <xsl:when test="@has_drill_down='True'">
                                         <a class="right" target="_blank">
                                             <xsl:attribute name="href">
                                                 <xsl:value-of select="concat('threads/thread_', thread_hash, '.html')"/>
@@ -100,48 +100,10 @@
                                         <br/>
                                     </xsl:when>
                                 </xsl:choose>
-                                <div  style="display:none;" >
+                                <!-- Stack content is loaded lazily from the thread detail page on first expand. -->
+                                <div style="display:none;">
                                     <xsl:attribute name="id"><xsl:value-of select="concat('stack',$i)"/></xsl:attribute>
-                                    java/lang/Thread:<xsl:value-of select="thread_address"/>
-                                    <xsl:for-each select="*[starts-with(name(), 'stack')]">
-                                            <br /><strong>Timestamp: <xsl:value-of select="timestamp"/></strong>
-                                        <div>
-                                            <xsl:choose>
-                                                <xsl:when test="stack_depth &gt; 0">
-                                                    <div class="toggle_expand">
-                                                        <a href="javaScript:;" class="show">[+] Expand</a> <!-- "show" class is used in expand.js -->
-                                                    </div>
-                                                    <p class="stacktrace">
-                                                        <xsl:for-each select="*[starts-with(name(), 'line')]">
-                                                            <xsl:choose>
-                                                                <xsl:when test="@order &lt; $displayed_stack_depth">
-                                                                    <span>
-                                                                        <xsl:attribute name="class">
-                                                                            <xsl:value-of select="@kind"/>
-                                                                        </xsl:attribute>
-                                                                        <xsl:value-of select="current()"/>
-                                                                    </span>
-                                                                    <br/>
-                                                                </xsl:when>
-                                                            </xsl:choose>
-                                                        </xsl:for-each>
-
-                                                        <xsl:choose>
-                                                            <xsl:when test="stack_depth &gt; $displayed_stack_depth">
-                                                                <span>
-                                                                    ...
-                                                                </span>
-                                                                <br/>
-                                                            </xsl:when>
-                                                        </xsl:choose>
-                                                    </p>
-                                                </xsl:when>
-                                                <xsl:otherwise>
-                                                    No Stack
-                                                </xsl:otherwise>
-                                            </xsl:choose>
-                                        </div>
-                                    </xsl:for-each>
+                                    <xsl:attribute name="data-thread-url"><xsl:value-of select="concat('threads/thread_', thread_hash, '.html')"/></xsl:attribute>
                                 </div>
                             </td>
                             <td>
