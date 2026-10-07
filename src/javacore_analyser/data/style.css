@@ -120,7 +120,9 @@ td {
   padding-left: 5;
   height:auto;
   overflow:visible;
-  text-overflow: none
+  text-overflow: none;
+  display: block;
+  -webkit-line-clamp: unset;
 }
 .toggle_expand {
   text-align: left;
