@@ -44,13 +44,7 @@ $(function() {
   }
 
   /**
-   * Ensures the <mark> element at currentIndex is visible by revealing any
-   * collapsed ancestors, then scrolls to it.
-   *
-   * Two kinds of hiding can affect marks inside stack traces:
-   *  1. The stack container <div> has inline style="display:none" (not yet expanded).
-   *  2. The <p class="stacktrace"> is CSS-clipped (overflow:hidden, height:45px) and
-   *     needs the "show-all" class to be fully visible.
+   * Jumps to the element matching the currentIndex
    */
   function jumpTo() {
     if ($results.length) {
@@ -58,18 +52,6 @@ $(function() {
       $results.removeClass(currentClass);
       if ($current.length) {
         $current.addClass(currentClass);
-
-        // Reveal any display:none ancestor between the mark and .content.
-        $current.parentsUntil('.content').each(function() {
-          if (this.style && this.style.display === 'none') {
-            this.style.display = '';
-          }
-        });
-
-        // Expand any clipped .stacktrace ancestor so the mark is not behind overflow:hidden.
-        $current.closest('p.stacktrace').addClass('show-all');
-
-        // Re-query offset after revealing ancestors (layout may have changed).
         const position = $current.offset().top - offsetTop;
         window.scrollTo(0, position - 100);
       }
@@ -155,12 +137,6 @@ $(function() {
 
   function performSearch() {
     const searchTerm = document.getElementById('search-input').value;
-    // Populate all stack-trace placeholders before searching so that
-    // jquery.mark can find matches inside thread stack traces.
-    // The function is a no-op when thread_stacks.js is not present (non-javacore reports).
-    if (typeof populateAllStackPlaceholders === 'function') {
-      populateAllStackPlaceholders();
-    }
     search(searchTerm);
     highlight(searchTerm);
   }

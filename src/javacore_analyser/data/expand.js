@@ -39,9 +39,5 @@ function expand_http_details(whichEl, link) {
 }
 
 function expand_stack(whichEl, link) {
-    // Lazily populate the stack placeholder the first time it is expanded.
-    if (typeof populateStackPlaceholder === 'function') {
-        populateStackPlaceholder(whichEl);
-    }
     whichEl.style.display = (whichEl.style.display == "none") ? "" : "none";
 }

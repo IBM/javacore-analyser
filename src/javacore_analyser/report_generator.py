@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-import json
 import logging
 import os
 import shutil
@@ -89,7 +88,6 @@ class ReportGenerator:
         temp_dir_name = temp_dir.name
         logging.info("Created temp dir: " + temp_dir_name)
         self._create_report_xml(temp_dir_name + "/report.xml")
-        self._generate_thread_stacks_js()
         self._generate_placeholder_htmls(os.path.join(self.output_dir, "threads"), self.javacore_set.threads, "thread")
         self._generate_placeholder_htmls(os.path.join(self.output_dir, "javacores"), self.javacore_set.javacores, "")
         self._create_index_html(temp_dir_name)
@@ -113,63 +111,6 @@ class ReportGenerator:
                     filename = filename[1:]
                 shutil.copy2(placeholder_file, os.path.join(directory, filename))
         logging.info("Finished generating placeholder htmls")
-
-    def _generate_thread_stacks_js(self):
-        """
-        Generate data/thread_stacks.js with all thread stack traces as a static JS object.
-
-        The file assigns ``window.THREAD_STACKS`` – a plain object mapping a per-thread
-        integer index (matching ``data-stack-index`` attributes in index.html) to an array
-        of snapshot objects.  Each snapshot object has the shape::
-
-            {
-                "timestamp": "dd-mm-yy HH:MM:SS",
-                "address":   "0x...",
-                "stack_depth": 42,
-                "lines": [{"kind": "java", "text": "..."}, ...]
-            }
-
-        Keeping the data in a separate JS file rather than inlining it into the XSL output
-        is what makes the XSL/XML transformation fast: the XSLT processor never has to iterate
-        over thousands of ``<line>`` nodes.  The browser loads the small JS file once and the
-        existing expand / search logic reads from it instead of the DOM.
-        """
-        if 'javacores' not in self.javacore_set.data_types:
-            return
-
-        logging.info("Generating thread_stacks.js")
-        stacks = {}
-
-        idx = 0
-        for thread in self.javacore_set.threads:
-            snapshots_data = []
-            for snapshot in thread.thread_snapshots:
-                timestamp_str = datetime.fromtimestamp(snapshot.javacore.timestamp).strftime('%d-%m-%y %H:%M:%S')
-                lines = []
-                if snapshot.stack_trace:
-                    for el in snapshot.stack_trace:
-                        lines.append({"kind": el.get_kind_str(), "text": el.get_line()})
-                snapshots_data.append({
-                    "timestamp": timestamp_str,
-                    "address": thread.thread_address,
-                    "stack_depth": snapshot.get_java_stack_depth(),
-                    "lines": lines,
-                })
-            stacks[str(idx)] = snapshots_data
-            idx += 1
-
-        data_dir = os.path.join(self.output_dir, "data")
-        os.makedirs(data_dir, exist_ok=True)
-        output_path = os.path.join(data_dir, "thread_stacks.js")
-        with open(output_path, "w", encoding="utf-8") as f:
-            f.write("/* Copyright IBM Corp. 2024 - 2026\n")
-            f.write("   SPDX-License-Identifier: Apache-2.0\n")
-            f.write("   Auto-generated – do not edit by hand. */\n")
-            f.write("'use strict';\n")
-            f.write("window.THREAD_STACKS = ")
-            json.dump(stacks, f, ensure_ascii=False, separators=(",", ":"))
-            f.write(";\n")
-        logging.info(f"Generated thread_stacks.js at {output_path}")
 
     def _generate_htmls_for_threads(self, temp_dir_name: str):
         self._create_xml_xsl_for_collection(
