@@ -139,7 +139,7 @@ const CLASSIFICATION_COLOURS = [
  * @returns {string}
  */
 function getCellText(row, cellIndex) {
-  return row.cells[cellIndex].innerHTML.trim();
+  return row.cells[cellIndex].textContent.trim();
 }
 
 /**
