@@ -17,10 +17,10 @@
         <h3 id="system_resource_utilization_h3"><a id="toggleresourcesutil" href="javascript:expand_it(systemresources,toggleresourcesutil)" class="expandit">System resources utilization</a></h3>
         <div id="systemresources"  style="display:none;">
             <xsl:choose>
-                <xsl:when test="//javacore_count = 0">
+                <xsl:when test="$javacore_count = 0">
                     No javacore files were provided, so CPU utilization data cannot be calculated.
                 </xsl:when>
-                <xsl:when test="//javacore_count = 1">
+                <xsl:when test="$javacore_count = 1">
                     Only one javacore file were provided, so CPU utilization data cannot be calculated.
                 </xsl:when>
                 <xsl:otherwise>
@@ -117,7 +117,7 @@
 
             <!-- Thread Classification Over Time chart – only shown when ML is enabled
                  and at least two javacores are present so there is a time dimension. -->
-            <xsl:if test="//@use_ml='True' and //javacore_count &gt; 1">
+            <xsl:if test="//@use_ml='True' and $javacore_count &gt; 1">
                 <h4>Thread Classification Over Time</h4>
                 <details class="doc-toggle">
                     <summary>What does this chart tell me?</summary>

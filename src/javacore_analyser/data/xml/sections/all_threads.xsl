@@ -146,7 +146,7 @@
                             </td>
                             <td>
                                 <xsl:choose>
-                                <xsl:when test="//javacore_count = 1">
+                                <xsl:when test="$javacore_count = 1">
                                     N/A
                                 </xsl:when>
                                     <xsl:otherwise>
@@ -165,7 +165,7 @@
                             </td>
                             <td>
                                 <xsl:choose>
-                                    <xsl:when test="//javacore_count = 1">
+                                    <xsl:when test="$javacore_count = 1">
                                         N/A
                                     </xsl:when>
                                     <xsl:otherwise>

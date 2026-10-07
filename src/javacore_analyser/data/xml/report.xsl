@@ -8,6 +8,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
     <xsl:variable name="displayed_stack_depth" select="50" />
+    <xsl:variable name="javacore_count" select="index/doc/javacore_count" />
 
     <!-- Import section templates -->
     <xsl:include href="sections/classification_config.xsl"/>

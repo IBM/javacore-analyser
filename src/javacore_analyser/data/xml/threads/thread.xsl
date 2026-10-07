@@ -6,6 +6,7 @@
 -->
 
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+    <xsl:variable name="javacore_count" select="/index/doc/javacore_count" />
     <xsl:template match="text()"/> <!-- these are not the threads you're looking for -->
     <xsl:template match="/index/doc/Thread/all_snapshot_collection/snapshot_collection[thread_hash='{id}']">
         <html height="100%">
@@ -42,7 +43,7 @@
                         java/lang/Thread:<xsl:value-of select="thread_address"/>
                     </h2>
                     <xsl:choose>
-                        <xsl:when test="//javacore_count = 1">
+                        <xsl:when test="$javacore_count = 1">
                             System resource utilization data cannot be calculated with only a single javacore.
                         </xsl:when>
                         <xsl:otherwise>
