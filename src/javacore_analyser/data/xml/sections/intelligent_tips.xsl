@@ -9,7 +9,7 @@
 
     <xsl:template name="intelligent_tips">
         <h3><a id="toggleintelligenttips" href="javascript:expand_it(intelligenttips,toggleintelligenttips)" class="expandit">Intelligent tips</a></h3>
-        <div id="intelligenttips"  style="display:none;">
+        <div id="intelligenttips">
             <p>
                 <a id="toggleintelligenttipshelp" 
                         href="javascript:expand_it(intelligenttipshelp,toggleintelligenttipshelp)" class="expandit">
@@ -52,7 +52,7 @@
                             </ul>
                         </xsl:when>
                         <xsl:otherwise>
-                            We did not find any tips for you.
+                            The system looks healthy. We didn't find any recommendations for you.
                         </xsl:otherwise>
                     </xsl:choose>
                 </xsl:otherwise>
