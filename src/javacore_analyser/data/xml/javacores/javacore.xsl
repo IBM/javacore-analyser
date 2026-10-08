@@ -6,6 +6,7 @@
 -->
 
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+    <xsl:variable name="use_ml" select="/index/doc/@use_ml" />
     <xsl:template match="text()"/> <!-- these are not the nodes you're looking for -->
     <xsl:template match="/">
         <html height="100%">
@@ -47,7 +48,7 @@
                                     <th>Java stack depth</th>
                                     <th>Status</th>
                                     <xsl:choose>
-                                        <xsl:when test="//@use_ml='True'">
+                                        <xsl:when test="$use_ml='True'">
                                             <th>Classification</th>
                                         </xsl:when>
                                     </xsl:choose>
@@ -169,7 +170,7 @@
                                          </xsl:otherwise>
                                      </xsl:choose>
                                      <xsl:choose>
-                                         <xsl:when test="//@use_ml='True'">
+                                         <xsl:when test="$use_ml='True'">
                                              <td>
                                                  <xsl:variable name="cls" select="ml_classification"/>
                                                  <span>
