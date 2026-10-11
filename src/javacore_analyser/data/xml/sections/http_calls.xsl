@@ -10,46 +10,98 @@
     <xsl:template name="http_calls">
         <xsl:choose>
             <xsl:when test="doc/har_files">
-                <h3><a  id="toggle_http_calls" href="javascript:expand_it(http_calls,toggle_http_calls)" class="expandit">HTTP calls</a></h3>
-                <div id="http_calls" style="display:none;" >
-                    <details class="doc-toggle">
-                        <summary>What does this table tell me?</summary>
-                        The table shows the HTTP calls that are included in the HAR files from the data set.
-                        The table can be sorted by clicking on a column header.
-                        Rows highlighted in <span style="background-color:#ffcccc;padding:0 4px;">red</span> finished
-                        with a 4xx or 5xx error status. Rows highlighted in
-                        <span style="background-color:#fff3cd;padding:0 4px;">yellow</span> took longer than 5 seconds.
-                        <ul>
-                            <li><strong>Request URL and Details</strong>
-                                is the URL of the HTTP request. Click "Details" to view request and response details,
-                                including a traffic timing breakdown (DNS, connect, SSL, send, wait, receive).
-                            </li>
-                            <li><strong>Method</strong>
-                                is the HTTP method used (GET, POST, PUT, DELETE, etc.).
-                            </li>
-                            <li><strong>Status</strong>
-                                is the HTTP response code.
-                            </li>
-                            <li><strong>Start time</strong>
-                                is the time when the HTTP request was made.
-                            </li>
-                            <li><strong>Duration</strong>
-                                is the amount of time it took to complete the HTTP call, in milliseconds.
-                            </li>
-                            <li><strong>Size</strong>
-                                is size of the response body, in bytes.
-                            </li>
-                        </ul>
-                    </details>
-                    <table id="HttpCallTable" class="tablesorter">
+                <div class="cds--accordion__item" id="accordion-http-calls">
+                    <button type="button" class="cds--accordion__heading"
+                            aria-expanded="false" aria-controls="content-http-calls"
+                            onclick="this.closest('.cds--accordion__item').classList.toggle('cds--accordion__item--active'); this.setAttribute('aria-expanded', this.closest('.cds--accordion__item').classList.contains('cds--accordion__item--active')?'true':'false');">
+                        <svg class="cds--accordion__arrow" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M11 8L6 13 4.6 11.6 8.2 8 4.6 4.4 6 3z"/></svg>
+                        <span class="cds--accordion__title">HTTP Calls</span>
+                    </button>
+                    <div class="cds--accordion__wrapper"><div id="content-http-calls" class="cds--accordion__content">
+                    <div class="cds--accordion cds--accordion--sm help-accordion">
+                        <div class="cds--accordion__item">
+                            <button type="button" class="cds--accordion__heading" aria-expanded="false" aria-controls="help-http-calls"
+                                    onclick="this.closest('.cds--accordion__item').classList.toggle('cds--accordion__item--active'); this.setAttribute('aria-expanded', this.closest('.cds--accordion__item').classList.contains('cds--accordion__item--active')?'true':'false');">
+                                <svg class="cds--accordion__arrow" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M11 8L6 13 4.6 11.6 8.2 8 4.6 4.4 6 3z"/></svg>
+                                <span class="cds--accordion__title">What does this table tell me?</span>
+                            </button>
+                            <div class="cds--accordion__wrapper"><div id="help-http-calls" class="cds--accordion__content">
+                                The table shows the HTTP calls that are included in the HAR files from the data set.
+                                The table can be sorted by clicking on a column header.
+                                Rows highlighted in <span style="background-color:#ffcccc;padding:0 4px;">red</span> finished
+                                with a 4xx or 5xx error status. Rows highlighted in
+                                <span style="background-color:#fff3cd;padding:0 4px;">yellow</span> took longer than 5 seconds.
+                                <ul>
+                                    <li><strong>Request URL and Details</strong>
+                                        is the URL of the HTTP request. Click "Details" to view request and response details,
+                                        including a traffic timing breakdown (DNS, connect, SSL, send, wait, receive).
+                                    </li>
+                                    <li><strong>Method</strong>
+                                        is the HTTP method used (GET, POST, PUT, DELETE, etc.).
+                                    </li>
+                                    <li><strong>Status</strong>
+                                        is the HTTP response code.
+                                    </li>
+                                    <li><strong>Start time</strong>
+                                        is the time when the HTTP request was made.
+                                    </li>
+                                    <li><strong>Duration</strong>
+                                        is the amount of time it took to complete the HTTP call, in milliseconds.
+                                    </li>
+                                    <li><strong>Size</strong>
+                                        is size of the response body, in bytes.
+                                    </li>
+                                </ul>
+                            </div></div>
+                        </div>
+                    </div>
+                    <div class="cds--data-table-container">
+                    <div class="cds--data-table-content">
+                    <table id="HttpCallTable" class="cds--data-table cds--data-table--zebra cds--data-table--sort">
                         <thead>
                             <tr>
-                                <th class="sixty">Request URL and Details</th>
-                                <th class="http-small">Method</th>
-                                <th class="http-small">Status</th>
-                                <th class="http-medium">Start Time</th>
-                                <th class="http-small">Duration</th>
-                                <th class="http-small">Size</th>
+                                <th class="fifty cds--table-sort__header" data-col="0">
+                                    <button class="cds--table-sort" data-col="0" aria-label="Sort by Request URL">
+                                        <span class="cds--table-header-label">Request URL and Details</span>
+                                        <svg class="cds--table-sort__icon-unsorted" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M27.6 20.6L24 24.2V4h-2v20.2l-3.6-3.6L17 22l6 6 6-6zM9 4L3 10l1.4 1.4L8 7.8V28h2V7.8l3.6 3.6L15 10z"/></svg>
+                                        <svg class="cds--table-sort__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M27.6 20.6L24 24.2V4h-2v20.2l-3.6-3.6L17 22l6 6 6-6zM9 4L3 10l1.4 1.4L8 7.8V28h2V7.8l3.6 3.6L15 10z"/></svg>
+                                    </button>
+                                </th>
+                                <th class="http-small cds--table-sort__header" data-col="1">
+                                    <button class="cds--table-sort" data-col="1" aria-label="Sort by Method">
+                                        <span class="cds--table-header-label">Method</span>
+                                        <svg class="cds--table-sort__icon-unsorted" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M27.6 20.6L24 24.2V4h-2v20.2l-3.6-3.6L17 22l6 6 6-6zM9 4L3 10l1.4 1.4L8 7.8V28h2V7.8l3.6 3.6L15 10z"/></svg>
+                                        <svg class="cds--table-sort__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M27.6 20.6L24 24.2V4h-2v20.2l-3.6-3.6L17 22l6 6 6-6zM9 4L3 10l1.4 1.4L8 7.8V28h2V7.8l3.6 3.6L15 10z"/></svg>
+                                    </button>
+                                </th>
+                                <th class="http-small cds--table-sort__header" data-col="2">
+                                    <button class="cds--table-sort" data-col="2" aria-label="Sort by Status">
+                                        <span class="cds--table-header-label">Status</span>
+                                        <svg class="cds--table-sort__icon-unsorted" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M27.6 20.6L24 24.2V4h-2v20.2l-3.6-3.6L17 22l6 6 6-6zM9 4L3 10l1.4 1.4L8 7.8V28h2V7.8l3.6 3.6L15 10z"/></svg>
+                                        <svg class="cds--table-sort__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M27.6 20.6L24 24.2V4h-2v20.2l-3.6-3.6L17 22l6 6 6-6zM9 4L3 10l1.4 1.4L8 7.8V28h2V7.8l3.6 3.6L15 10z"/></svg>
+                                    </button>
+                                </th>
+                                <th class="http-medium cds--table-sort__header" data-col="3">
+                                    <button class="cds--table-sort" data-col="3" aria-label="Sort by Start Time">
+                                        <span class="cds--table-header-label">Start Time</span>
+                                        <svg class="cds--table-sort__icon-unsorted" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M27.6 20.6L24 24.2V4h-2v20.2l-3.6-3.6L17 22l6 6 6-6zM9 4L3 10l1.4 1.4L8 7.8V28h2V7.8l3.6 3.6L15 10z"/></svg>
+                                        <svg class="cds--table-sort__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M27.6 20.6L24 24.2V4h-2v20.2l-3.6-3.6L17 22l6 6 6-6zM9 4L3 10l1.4 1.4L8 7.8V28h2V7.8l3.6 3.6L15 10z"/></svg>
+                                    </button>
+                                </th>
+                                <th class="http-medium cds--table-sort__header" data-col="4">
+                                    <button class="cds--table-sort" data-col="4" aria-label="Sort by Duration">
+                                        <span class="cds--table-header-label">Duration</span>
+                                        <svg class="cds--table-sort__icon-unsorted" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M27.6 20.6L24 24.2V4h-2v20.2l-3.6-3.6L17 22l6 6 6-6zM9 4L3 10l1.4 1.4L8 7.8V28h2V7.8l3.6 3.6L15 10z"/></svg>
+                                        <svg class="cds--table-sort__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M27.6 20.6L24 24.2V4h-2v20.2l-3.6-3.6L17 22l6 6 6-6zM9 4L3 10l1.4 1.4L8 7.8V28h2V7.8l3.6 3.6L15 10z"/></svg>
+                                    </button>
+                                </th>
+                                <th class="http-medium cds--table-sort__header" data-col="5">
+                                    <button class="cds--table-sort" data-col="5" aria-label="Sort by Size">
+                                        <span class="cds--table-header-label">Size</span>
+                                        <svg class="cds--table-sort__icon-unsorted" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M27.6 20.6L24 24.2V4h-2v20.2l-3.6-3.6L17 22l6 6 6-6zM9 4L3 10l1.4 1.4L8 7.8V28h2V7.8l3.6 3.6L15 10z"/></svg>
+                                        <svg class="cds--table-sort__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M27.6 20.6L24 24.2V4h-2v20.2l-3.6-3.6L17 22l6 6 6-6zM9 4L3 10l1.4 1.4L8 7.8V28h2V7.8l3.6 3.6L15 10z"/></svg>
+                                    </button>
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
@@ -61,17 +113,17 @@
                                             <xsl:value-of select="@url"/>
                                         </div>
                                         <div class="http-show-button">
-                                            <a class="expandit">
+                                            <a class="cds--btn cds--btn--ghost cds--btn--sm expandit">
                                                 <xsl:attribute name="id">
                                                     <xsl:text>toggle_</xsl:text>
                                                     <xsl:value-of select="$call_id"/>
                                                 </xsl:attribute>
                                                 <xsl:attribute name="href">
-                                                    <xsl:text>javascript:expand_http_details(</xsl:text>
+                                                    <xsl:text>javascript:expand_http_details(document.getElementById('</xsl:text>
                                                     <xsl:value-of select="$call_id"/>
-                                                    <xsl:text>_details,toggle_</xsl:text>
+                                                    <xsl:text>_details'),document.getElementById('toggle_</xsl:text>
                                                     <xsl:value-of select="$call_id"/>
-                                                    <xsl:text>)</xsl:text>
+                                                    <xsl:text>'))</xsl:text>
                                                 </xsl:attribute>
                                                 Details
                                             </a>
@@ -84,122 +136,111 @@
                                             <xsl:attribute name="style">display:none;</xsl:attribute>
                                             <div class="http-call-details">
                                                 <h4>Traffic Timing Breakdown</h4>
-                                                <table class="timing-table">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Phase</th>
-                                                            <th>Duration (ms)</th>
-                                                            <th>Bar</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <xsl:if test="@timing_blocked &gt;= 0">
-                                                            <tr>
-                                                                <td>Blocked</td>
-                                                                <td><xsl:value-of select="format-number(@timing_blocked, '0.000')"/></td>
-                                                                <td class="timing-bar-cell">
-                                                                    <div class="timing-bar timing-blocked">
-                                                                        <xsl:attribute name="style">
-                                                                            <xsl:text>width:</xsl:text>
-                                                                            <xsl:value-of select="@timing_blocked div @duration * 100"/>
-                                                                            <xsl:text>%</xsl:text>
-                                                                        </xsl:attribute>
-                                                                    </div>
-                                                                </td>
-                                                            </tr>
-                                                        </xsl:if>
-                                                        <xsl:if test="@timing_dns &gt;= 0">
-                                                            <tr>
-                                                                <td>DNS</td>
-                                                                <td><xsl:value-of select="format-number(@timing_dns, '0.000')"/></td>
-                                                                <td class="timing-bar-cell">
-                                                                    <div class="timing-bar timing-dns">
-                                                                        <xsl:attribute name="style">
-                                                                            <xsl:text>width:</xsl:text>
-                                                                            <xsl:value-of select="@timing_dns div @duration * 100"/>
-                                                                            <xsl:text>%</xsl:text>
-                                                                        </xsl:attribute>
-                                                                    </div>
-                                                                </td>
-                                                            </tr>
-                                                        </xsl:if>
-                                                        <xsl:if test="@timing_connect &gt;= 0">
-                                                            <tr>
-                                                                <td>Connect</td>
-                                                                <td><xsl:value-of select="format-number(@timing_connect, '0.000')"/></td>
-                                                                <td class="timing-bar-cell">
-                                                                    <div class="timing-bar timing-connect">
-                                                                        <xsl:attribute name="style">
-                                                                            <xsl:text>width:</xsl:text>
-                                                                            <xsl:value-of select="@timing_connect div @duration * 100"/>
-                                                                            <xsl:text>%</xsl:text>
-                                                                        </xsl:attribute>
-                                                                    </div>
-                                                                </td>
-                                                            </tr>
-                                                        </xsl:if>
-                                                        <xsl:if test="@timing_ssl &gt;= 0">
-                                                            <tr>
-                                                                <td>SSL</td>
-                                                                <td><xsl:value-of select="format-number(@timing_ssl, '0.000')"/></td>
-                                                                <td class="timing-bar-cell">
-                                                                    <div class="timing-bar timing-ssl">
-                                                                        <xsl:attribute name="style">
-                                                                            <xsl:text>width:</xsl:text>
-                                                                            <xsl:value-of select="@timing_ssl div @duration * 100"/>
-                                                                            <xsl:text>%</xsl:text>
-                                                                        </xsl:attribute>
-                                                                    </div>
-                                                                </td>
-                                                            </tr>
-                                                        </xsl:if>
-                                                        <xsl:if test="@timing_send &gt;= 0">
-                                                            <tr>
-                                                                <td>Send</td>
-                                                                <td><xsl:value-of select="format-number(@timing_send, '0.000')"/></td>
-                                                                <td class="timing-bar-cell">
-                                                                    <div class="timing-bar timing-send">
-                                                                        <xsl:attribute name="style">
-                                                                            <xsl:text>width:</xsl:text>
-                                                                            <xsl:value-of select="@timing_send div @duration * 100"/>
-                                                                            <xsl:text>%</xsl:text>
-                                                                        </xsl:attribute>
-                                                                    </div>
-                                                                </td>
-                                                            </tr>
-                                                        </xsl:if>
-                                                        <xsl:if test="@timing_wait &gt;= 0">
-                                                            <tr>
-                                                                <td>Wait</td>
-                                                                <td><xsl:value-of select="format-number(@timing_wait, '0.000')"/></td>
-                                                                <td class="timing-bar-cell">
-                                                                    <div class="timing-bar timing-wait">
-                                                                        <xsl:attribute name="style">
-                                                                            <xsl:text>width:</xsl:text>
-                                                                            <xsl:value-of select="@timing_wait div @duration * 100"/>
-                                                                            <xsl:text>%</xsl:text>
-                                                                        </xsl:attribute>
-                                                                    </div>
-                                                                </td>
-                                                            </tr>
-                                                        </xsl:if>
-                                                        <xsl:if test="@timing_receive &gt;= 0">
-                                                            <tr>
-                                                                <td>Receive</td>
-                                                                <td><xsl:value-of select="format-number(@timing_receive, '0.000')"/></td>
-                                                                <td class="timing-bar-cell">
-                                                                    <div class="timing-bar timing-receive">
-                                                                        <xsl:attribute name="style">
-                                                                            <xsl:text>width:</xsl:text>
-                                                                            <xsl:value-of select="@timing_receive div @duration * 100"/>
-                                                                            <xsl:text>%</xsl:text>
-                                                                        </xsl:attribute>
-                                                                    </div>
-                                                                </td>
-                                                            </tr>
-                                                        </xsl:if>
-                                                    </tbody>
-                                                </table>
+                                                 <!-- Div-based layout avoids nested <th>/<tr>/<td> inside the outer
+                                                      sortable table, which would confuse tablesorter's header detection. -->
+                                                 <div class="timing-grid">
+                                                     <div class="timing-grid__header">Phase</div>
+                                                     <div class="timing-grid__header">Duration (ms)</div>
+                                                     <div class="timing-grid__header">Bar</div>
+                                                     <xsl:if test="@timing_blocked &gt;= 0">
+                                                         <div class="timing-grid__cell">Blocked</div>
+                                                         <div class="timing-grid__cell"><xsl:value-of select="@timing_blocked"/></div>
+                                                         <div class="timing-grid__cell timing-bar-cell">
+                                                             <div class="timing-bar timing-blocked">
+                                                                 <xsl:attribute name="style">
+                                                                     <xsl:text>width:</xsl:text>
+                                                                     <xsl:value-of select="@timing_blocked div @duration * 100"/>
+                                                                     <xsl:text>%</xsl:text>
+                                                                 </xsl:attribute>
+                                                                 <xsl:text> </xsl:text>
+                                                             </div>
+                                                         </div>
+                                                     </xsl:if>
+                                                     <xsl:if test="@timing_dns &gt;= 0">
+                                                         <div class="timing-grid__cell">DNS</div>
+                                                         <div class="timing-grid__cell"><xsl:value-of select="@timing_dns"/></div>
+                                                         <div class="timing-grid__cell timing-bar-cell">
+                                                             <div class="timing-bar timing-dns">
+                                                                 <xsl:attribute name="style">
+                                                                     <xsl:text>width:</xsl:text>
+                                                                     <xsl:value-of select="@timing_dns div @duration * 100"/>
+                                                                     <xsl:text>%</xsl:text>
+                                                                 </xsl:attribute>
+                                                                 <xsl:text> </xsl:text>
+                                                             </div>
+                                                         </div>
+                                                     </xsl:if>
+                                                     <xsl:if test="@timing_connect &gt;= 0">
+                                                         <div class="timing-grid__cell">Connect</div>
+                                                         <div class="timing-grid__cell"><xsl:value-of select="@timing_connect"/></div>
+                                                         <div class="timing-grid__cell timing-bar-cell">
+                                                             <div class="timing-bar timing-connect">
+                                                                 <xsl:attribute name="style">
+                                                                     <xsl:text>width:</xsl:text>
+                                                                     <xsl:value-of select="@timing_connect div @duration * 100"/>
+                                                                     <xsl:text>%</xsl:text>
+                                                                 </xsl:attribute>
+                                                                 <xsl:text> </xsl:text>
+                                                             </div>
+                                                         </div>
+                                                     </xsl:if>
+                                                     <xsl:if test="@timing_ssl &gt;= 0">
+                                                         <div class="timing-grid__cell">SSL</div>
+                                                         <div class="timing-grid__cell"><xsl:value-of select="@timing_ssl"/></div>
+                                                         <div class="timing-grid__cell timing-bar-cell">
+                                                             <div class="timing-bar timing-ssl">
+                                                                 <xsl:attribute name="style">
+                                                                     <xsl:text>width:</xsl:text>
+                                                                     <xsl:value-of select="@timing_ssl div @duration * 100"/>
+                                                                     <xsl:text>%</xsl:text>
+                                                                 </xsl:attribute>
+                                                                 <xsl:text> </xsl:text>
+                                                             </div>
+                                                         </div>
+                                                     </xsl:if>
+                                                     <xsl:if test="@timing_send &gt;= 0">
+                                                         <div class="timing-grid__cell">Send</div>
+                                                         <div class="timing-grid__cell"><xsl:value-of select="@timing_send"/></div>
+                                                         <div class="timing-grid__cell timing-bar-cell">
+                                                             <div class="timing-bar timing-send">
+                                                                 <xsl:attribute name="style">
+                                                                     <xsl:text>width:</xsl:text>
+                                                                     <xsl:value-of select="@timing_send div @duration * 100"/>
+                                                                     <xsl:text>%</xsl:text>
+                                                                 </xsl:attribute>
+                                                                 <xsl:text> </xsl:text>
+                                                             </div>
+                                                         </div>
+                                                     </xsl:if>
+                                                     <xsl:if test="@timing_wait &gt;= 0">
+                                                         <div class="timing-grid__cell">Wait</div>
+                                                         <div class="timing-grid__cell"><xsl:value-of select="@timing_wait"/></div>
+                                                         <div class="timing-grid__cell timing-bar-cell">
+                                                             <div class="timing-bar timing-wait">
+                                                                 <xsl:attribute name="style">
+                                                                     <xsl:text>width:</xsl:text>
+                                                                     <xsl:value-of select="@timing_wait div @duration * 100"/>
+                                                                     <xsl:text>%</xsl:text>
+                                                                 </xsl:attribute>
+                                                                 <xsl:text> </xsl:text>
+                                                             </div>
+                                                         </div>
+                                                     </xsl:if>
+                                                     <xsl:if test="@timing_receive &gt;= 0">
+                                                         <div class="timing-grid__cell">Receive</div>
+                                                         <div class="timing-grid__cell"><xsl:value-of select="@timing_receive"/></div>
+                                                         <div class="timing-grid__cell timing-bar-cell">
+                                                             <div class="timing-bar timing-receive">
+                                                                 <xsl:attribute name="style">
+                                                                     <xsl:text>width:</xsl:text>
+                                                                     <xsl:value-of select="@timing_receive div @duration * 100"/>
+                                                                     <xsl:text>%</xsl:text>
+                                                                 </xsl:attribute>
+                                                                 <xsl:text> </xsl:text>
+                                                             </div>
+                                                         </div>
+                                                     </xsl:if>
+                                                 </div>
 
                                                 <h4>Request Details</h4>
                                                 <xsl:if test="string-length(@request_headers) > 0">
@@ -259,14 +300,7 @@
                                     <td>
                                         <xsl:choose>
                                             <xsl:when test="@success='False'">
-                                                <xsl:attribute name="class">http_error</xsl:attribute>
-                                            </xsl:when>
-                                        </xsl:choose>
-                                        <xsl:choose>
-                                            <xsl:when test="@success='False'">
-                                                <div class="info"><xsl:value-of select="@status"/>
-                                                    <span class="infotooltip">Request failed with status <xsl:value-of select="@status"/></span>
-                                                </div>
+                                                <span class="cds--tag cds--tag--red"><xsl:value-of select="@status"/></span>
                                             </xsl:when>
                                             <xsl:otherwise>
                                                 <xsl:value-of select="@status"/>
@@ -298,6 +332,10 @@
                             </xsl:for-each>
                         </tbody>
                     </table>
+                    </div>
+                    </div>
+                    </div>
+                    </div>
                 </div>
             </xsl:when>
         </xsl:choose>

@@ -1,17 +1,52 @@
 <!DOCTYPE html>
 
 <!--
-# Copyright IBM Corp. 2024 - 2024
+# Copyright IBM Corp. 2024 - 2025
 # SPDX-License-Identifier: Apache-2.0
 -->
 
-<html lang="en">
+<html lang="en" class="cds--white">
 <head>
     <meta http-equiv="refresh" content="30" /> <!-- Refresh this page every 30s until generated page appears -->
     <meta charset="UTF-8">
-    <title>The page is being generated</title>
+    <title>Generating report…</title>
+    <link rel="stylesheet" href="data/carbon/ibm-plex.css"/>
+    <link rel="stylesheet" href="data/carbon/carbon.min.css"/>
+    <style>
+        body {
+            font-family: var(--cds-body-short-01-font-family, 'IBM Plex Sans', sans-serif);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: var(--cds-background, #f4f4f4);
+            color: var(--cds-text-primary, #161616);
+        }
+        .loading-wrapper {
+            text-align: center;
+        }
+        .cds--loading {
+            margin: 0 auto 1.5rem;
+        }
+        p {
+            font-size: 1rem;
+            color: var(--cds-text-secondary, #525252);
+            max-width: 400px;
+        }
+    </style>
 </head>
 <body>
-    <h1>The page is being generated. Once it is ready, it will appear here.</h1>
+    <div class="loading-wrapper">
+        <div class="cds--loading" aria-live="assertive">
+            <svg class="cds--loading__svg" viewBox="0 0 100 100">
+                <title>Loading</title>
+                <circle class="cds--loading__background" cx="50%" cy="50%" r="44"/>
+                <circle class="cds--loading__stroke" cx="50%" cy="50%" r="44"/>
+            </svg>
+        </div>
+        <p>Report is being generated. This page will refresh automatically once it is ready.</p>
+    </div>
 </body>
 </html>

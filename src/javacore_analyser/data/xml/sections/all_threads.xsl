@@ -8,69 +8,105 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
     <xsl:template name="all_threads">
-        <h3><a  id="toggle_all_threads" href="javascript:expand_it(all_threads,toggle_all_threads)" class="expandit">All Threads</a></h3>
-        <div id="all_threads"  style="display:none;">
-            <details class="doc-toggle">
-                <summary>What does this table tell me?</summary>
-                This table contains information about all the threads found in all the javacore files in the data set.
-                Note that the thread is identified by a combination of its ID and name. This makes sense for pool threads
-                that may be reused for unrelated tasks. Two tasks with different thread names are therefore treated
-                as separate threads for the purpose of this report, even if they are executed in the scope of the same
-                Thread java object.
-                The address of the java Thread object is included for each thread. This corresponds to the address reported in Java heapdumps.
-                The table can be sorted by clicking on any column header.
-                The following information is displayed for each thread:
-                <ul>
-                    <li><strong>Thread name</strong>
-                        The name is clickable, and when clicked it opens a view that allows you to see the stack trace
-                        of the code that the thread was executing in each of the javacores in which it appears.
-                        Note that there may be multiple threads with the same name,
-                        since the names of threads are not unique over time, and may be reused.
-                        A 'More' link may appear next to the thread name to allow to drilldown into that thread's individual page
-                        The drilldown may be supressed for threads that don't appear to be doing anything interesting.
-                    </li>
-                    <li><strong>Total CPU usage</strong>
-                        is the total number of seconds the thread was using CPU time since the first javacore,
-                        in which the thread appears until the last.
-                    </li>
-                    <li><strong>% CPU Usage</strong>
-                        is the total CPU usage of the thread, expressed as percentage
-                        of a single processor core. A thread can only use one CPU core at a time,
-                        the maximum possible value is therefore 100%.
-                    </li>
-                    <li><strong>Average memory allocated since last GC</strong>
-                        is the amount of memory, in megabytes, allocated by the thread since the last GC cycle,
-                        averaged across all the javacores. Note that this number does not represent the total amount
-                        of memory allocated by a thread and is only suitable for relative comparison between threads.
-                        This number is only meaningful if a sufficient number of javacores is present in the data set,
-                        10 being the absolute minimum in most cases.
-                    </li>
-                    <li><strong>Average stack depth</strong>
-                        is the depth of the stack of the thread, averaged across all the javacore files in the
-                        data set, in which the thread appears.
-                    </li>
-                    <li><strong>Blocking information</strong>
-                        includes a list of links to threads which are blocking or being blocked by the given thread
-                    </li>
-                    <xsl:choose>
-                        <xsl:when test="//@use_ml='True'">
-                            <li><strong>Classification</strong>
-                                Machine learning based classification of the thread activity.
-                                Entries are sorted by the number of occurrences in the thread.
+        <div class="cds--accordion__item" id="accordion-all-threads">
+            <button type="button" class="cds--accordion__heading"
+                    aria-expanded="false" aria-controls="content-all-threads"
+                    onclick="this.closest('.cds--accordion__item').classList.toggle('cds--accordion__item--active'); this.setAttribute('aria-expanded', this.closest('.cds--accordion__item').classList.contains('cds--accordion__item--active')?'true':'false');">
+                <svg class="cds--accordion__arrow" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M11 8L6 13 4.6 11.6 8.2 8 4.6 4.4 6 3z"/></svg>
+                <span class="cds--accordion__title">All Threads</span>
+            </button>
+            <div class="cds--accordion__wrapper"><div id="content-all-threads" class="cds--accordion__content">
+            <div class="cds--accordion cds--accordion--sm help-accordion">
+                <div class="cds--accordion__item">
+                    <button type="button" class="cds--accordion__heading" aria-expanded="false" aria-controls="help-all-threads"
+                            onclick="this.closest('.cds--accordion__item').classList.toggle('cds--accordion__item--active'); this.setAttribute('aria-expanded', this.closest('.cds--accordion__item').classList.contains('cds--accordion__item--active')?'true':'false');">
+                        <svg class="cds--accordion__arrow" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M11 8L6 13 4.6 11.6 8.2 8 4.6 4.4 6 3z"/></svg>
+                        <span class="cds--accordion__title">What does this table tell me?</span>
+                    </button>
+                    <div class="cds--accordion__wrapper"><div id="help-all-threads" class="cds--accordion__content">
+                        This table contains information about all the threads found in all the javacore files in the data set.
+                        Note that the thread is identified by a combination of its ID and name. This makes sense for pool threads
+                        that may be reused for unrelated tasks. Two tasks with different thread names are therefore treated
+                        as separate threads for the purpose of this report, even if they are executed in the scope of the same
+                        Thread java object.
+                        The address of the java Thread object is included for each thread. This corresponds to the address reported in Java heapdumps.
+                        The table can be sorted by clicking on any column header.
+                        The following information is displayed for each thread:
+                        <ul>
+                            <li><strong>Thread name</strong>
+                                The name is clickable, and when clicked it opens a view that allows you to see the stack trace
+                                of the code that the thread was executing in each of the javacores in which it appears.
+                                Note that there may be multiple threads with the same name,
+                                since the names of threads are not unique over time, and may be reused.
+                                A 'More' link may appear next to the thread name to allow to drilldown into that thread's individual page
+                                The drilldown may be supressed for threads that don't appear to be doing anything interesting.
                             </li>
-                        </xsl:when>
-                    </xsl:choose>
-                </ul>
-            </details>
-            <table id="all_threads_table" class="tablesorter">
+                            <li><strong>Total CPU usage</strong>
+                                is the total number of seconds the thread was using CPU time since the first javacore,
+                                in which the thread appears until the last.
+                            </li>
+                            <li><strong>% CPU Usage</strong>
+                                is the total CPU usage of the thread, expressed as percentage
+                                of a single processor core. A thread can only use one CPU core at a time,
+                                the maximum possible value is therefore 100%.
+                            </li>
+                            <li><strong>Average memory allocated since last GC</strong>
+                                is the amount of memory, in megabytes, allocated by the thread since the last GC cycle,
+                                averaged across all the javacores. Note that this number does not represent the total amount
+                                of memory allocated by a thread and is only suitable for relative comparison between threads.
+                                This number is only meaningful if a sufficient number of javacores is present in the data set,
+                                10 being the absolute minimum in most cases.
+                            </li>
+                            <li><strong>Average stack depth</strong>
+                                is the depth of the stack of the thread, averaged across all the javacore files in the
+                                data set, in which the thread appears.
+                            </li>
+                            <li><strong>Blocking information</strong>
+                                includes a list of links to threads which are blocking or being blocked by the given thread
+                            </li>
+                            <xsl:choose>
+                                <xsl:when test="//@use_ml='True'">
+                                    <li><strong>Classification</strong>
+                                        Machine learning based classification of the thread activity.
+                                        Entries are sorted by the number of occurrences in the thread.
+                                    </li>
+                                </xsl:when>
+                            </xsl:choose>
+                        </ul>
+                    </div></div>
+                </div>
+            </div>
+            <div class="cds--data-table-container">
+            <div class="cds--data-table-content">
+            <table id="all_threads_table" class="cds--data-table cds--data-table--zebra cds--data-table--sort" data-sort-initial-col="2" data-sort-initial-dir="desc">
                 <thead>
                     <tr>
-                        <th class="sixty">Thread name</th>
-                        <th>Total CPU usage (s)</th>
-                        <th>% CPU usage</th>
-                        <th>Average memory allocated since last GC (MB)</th>
-                        <th>Average stack depth</th>
-                        <th>Blocking information</th>
+                        <xsl:call-template name="sort_th">
+                            <xsl:with-param name="col">0</xsl:with-param>
+                            <xsl:with-param name="label">Thread name</xsl:with-param>
+                            <xsl:with-param name="class">forty</xsl:with-param>
+                        </xsl:call-template>
+                        <xsl:call-template name="sort_th">
+                            <xsl:with-param name="col">1</xsl:with-param>
+                            <xsl:with-param name="label">Total CPU usage (s)</xsl:with-param>
+                            <xsl:with-param name="class">ten</xsl:with-param>
+                        </xsl:call-template>
+                        <xsl:call-template name="sort_th">
+                            <xsl:with-param name="col">2</xsl:with-param>
+                            <xsl:with-param name="label">% CPU usage</xsl:with-param>
+                            <xsl:with-param name="class">ten</xsl:with-param>
+                        </xsl:call-template>
+                        <xsl:call-template name="sort_th">
+                            <xsl:with-param name="col">3</xsl:with-param>
+                            <xsl:with-param name="label">Average memory allocated since last GC (MB)</xsl:with-param>
+                            <xsl:with-param name="class">ten</xsl:with-param>
+                        </xsl:call-template>
+                        <xsl:call-template name="sort_th">
+                            <xsl:with-param name="col">4</xsl:with-param>
+                            <xsl:with-param name="label">Average stack depth</xsl:with-param>
+                            <xsl:with-param name="class">ten</xsl:with-param>
+                        </xsl:call-template>
+                        <th class="ten">Blocking information</th>
                         <xsl:choose>
                             <xsl:when test="//@use_ml='True'">
                                 <th>Classification</th>
@@ -255,6 +291,10 @@
                     </xsl:for-each>
                 </tbody>
             </table>
+            </div>
+            </div>
+            </div>
+            </div>
         </div>
     </xsl:template>
 

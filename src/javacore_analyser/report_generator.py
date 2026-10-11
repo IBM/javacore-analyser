@@ -425,7 +425,7 @@ class ReportGenerator:
                                 section_title=plugin.get_display_name(),
                                 description=plugin.get_description(),
                             )
-                            full_html = section_header + html_content + '\n</div>\n'
+                            full_html = section_header + html_content + '\n    </div></div>\n</div>\n'
                             plugins_body += plugin_entry_template.format(
                                 plugin_display_name=plugin.get_display_name(),
                                 full_html=full_html,
