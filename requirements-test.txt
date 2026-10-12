@@ -1109,9 +1109,9 @@ sortedcontainers==2.4.0 \
     --hash=sha256:25caa5a06cc30b6b83d11423433f65d1f9d76c4c6a0c90e3379eaa43b9bfdb88 \
     --hash=sha256:a163dcaede0f1c021485e957a39245190e74249897e2ae4b2aa38595db237ee0
     # via hypothesis
-texttable==1.7.0 \
-    --hash=sha256:2d2068fb55115807d3ac77a4ca68fa48803e84ebb0ee2340f858107a36522638 \
-    --hash=sha256:72227d592c82b3d7f672731ae73e4d1f88cd8e2ef5b075a7a7f01a23a3743917
+texttable==1.7.1 \
+    --hash=sha256:ce71fc5928ede6cd7a60dbe3cb2845e6df8f5598fe435252ea1b31722415fda7 \
+    --hash=sha256:f1af220bea35ea5cf2bc86105a46a3ca4c5acadf3949cb5a8d3a088d6c03dbda
     # via py7zr
 threadpoolctl==3.7.0 \
     --hash=sha256:61348cfb77d53b9242e0017029244b559b810c142ced65b4e21eeca1843959a7 \
