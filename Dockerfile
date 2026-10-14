@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-FROM python:3@sha256:ed55936fa91ebf02a0be412f9b020c1ad95eaf858985ad65753ce48e580116c9
+FROM python:3@sha256:5b1bbb0c5b4034f1b22c604663363ca3aa572fa06c526fa045aafab1ad7f1c82
 
 LABEL org.opencontainers.image.source="https://github.com/IBM/javacore-analyser"
 LABEL org.opencontainers.image.description="This is a tool to analyse IBM Javacore files and provide the report used to analyse hang/outage and performance issues."
