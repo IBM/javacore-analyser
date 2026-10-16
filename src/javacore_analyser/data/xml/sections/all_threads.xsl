@@ -53,7 +53,7 @@
                         includes a list of links to threads which are blocking or being blocked by the given thread
                     </li>
                     <xsl:choose>
-                        <xsl:when test="//@use_ml='True'">
+                        <xsl:when test="$use_ml='True'">
                             <li><strong>Classification</strong>
                                 Machine learning based classification of the thread activity.
                                 Entries are sorted by the number of occurrences in the thread.
@@ -72,7 +72,7 @@
                         <th>Average stack depth</th>
                         <th>Blocking information</th>
                         <xsl:choose>
-                            <xsl:when test="//@use_ml='True'">
+                            <xsl:when test="$use_ml='True'">
                                 <th>Classification</th>
                             </xsl:when>
                         </xsl:choose>
@@ -146,7 +146,7 @@
                             </td>
                             <td>
                                 <xsl:choose>
-                                <xsl:when test="//javacore_count = 1">
+                                <xsl:when test="$javacore_count = 1">
                                     N/A
                                 </xsl:when>
                                     <xsl:otherwise>
@@ -165,7 +165,7 @@
                             </td>
                             <td>
                                 <xsl:choose>
-                                    <xsl:when test="//javacore_count = 1">
+                                    <xsl:when test="$javacore_count = 1">
                                         N/A
                                     </xsl:when>
                                     <xsl:otherwise>
@@ -220,7 +220,7 @@
                                     </xsl:choose>
                             </td>
                             <xsl:choose>
-                                <xsl:when test="//@use_ml='True'">
+                                <xsl:when test="$use_ml='True'">
                                     <td>
                                         <!-- Display classification as 'Category (count)' entries, sorted by occurrence count -->
                                         <xsl:choose>
