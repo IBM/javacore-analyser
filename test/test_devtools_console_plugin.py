@@ -20,7 +20,7 @@ from xml.dom.minidom import Document
 # Ensure both src/ and docs/ are importable when running from project root.
 _repo_root = Path(__file__).parent.parent
 sys.path.insert(0, str(_repo_root / "src"))
-sys.path.insert(0, str(_repo_root / "docs"))
+sys.path.insert(0, str(_repo_root / "plugins"))
 
 from devtools_console_plugin.plugin import DevToolsConsolePlugin, _parse_console_log
 
