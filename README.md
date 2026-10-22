@@ -43,11 +43,11 @@ Javacore Analyser supports a plugin system that allows you to extend the tool wi
 
 2. Create your plugin in `~/.javacore_analyser/plugins/your_plugin/`
 
-3. See the [example plugin](docs/example_plugin/) for a complete reference implementation
+3. See the [example plugin](plugins/example_plugin/) for a complete reference implementation
 
 ### Documentation
 - [Plugin Architecture Design](docs/PLUGIN_ARCHITECTURE_DESIGN.md) - Complete design and API reference
-- [Example Plugin](docs/example_plugin/) - Working example with detailed comments
+- [Example Plugin](plugins/example_plugin/) - Working example with detailed comments
 
   
 <!-- A more detailed Usage or detailed explanation of the repository here -->
