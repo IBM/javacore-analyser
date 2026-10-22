@@ -14,11 +14,13 @@ This module tests the plugin architecture including:
 """
 
 import os
+import shutil
+import sys
 import tempfile
 import unittest
 from pathlib import Path
 from typing import Any, Dict, List, Optional
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 from xml.dom.minidom import Document
 
 from javacore_analyser.plugin_interface import DataSourcePlugin
@@ -225,12 +227,28 @@ class TestPluginManager(unittest.TestCase):
         self.temp_dir = tempfile.mkdtemp()
         self.plugin_dir = Path(self.temp_dir) / "plugins"
         self.plugin_dir.mkdir(parents=True, exist_ok=True)
+        # Prevent a previously loaded Properties singleton (from other test modules
+        # that call load_properties with a config.ini containing plugin_directory)
+        # from causing _get_plugin_directory() to bypass the Path.home() mock.
+        mock_props = MagicMock()
+        mock_props.get_property.return_value = None
+        self._properties_patch = patch(
+            'javacore_analyser.plugin_manager.Properties.get_instance',
+            return_value=mock_props,
+        )
+        self._properties_patch.start()
 
     def tearDown(self):
         """Clean up test fixtures."""
-        import shutil
+        self._properties_patch.stop()
         if os.path.exists(self.temp_dir):
             shutil.rmtree(self.temp_dir)
+        # Remove any dynamically loaded plugin modules from sys.modules so that
+        # class definitions from one test do not leak into subsequent tests via
+        # the module cache used by _load_plugin / importlib.util.
+        for key in list(sys.modules.keys()):
+            if key.startswith("javacore_analyser_plugin_"):
+                del sys.modules[key]
 
     @patch('javacore_analyser.plugin_manager.Path.home')
     def test_plugin_directory_creation(self, mock_home):
