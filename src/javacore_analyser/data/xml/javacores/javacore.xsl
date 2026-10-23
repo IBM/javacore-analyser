@@ -50,16 +50,6 @@
                     </div>
                 </header>
                 <main class="cds--content" id="main-content">
-                <nav aria-label="Breadcrumb" class="cds--breadcrumb cds--breadcrumb--no-trailing-slash margined">
-                    <ol class="cds--breadcrumb__list">
-                        <li class="cds--breadcrumb-item">
-                            <a href="../index.html" class="cds--link">Javacore Analyser Report</a>
-                        </li>
-                        <li class="cds--breadcrumb-item cds--breadcrumb-item--current" aria-current="page">
-                            Javacore Detail
-                        </li>
-                    </ol>
-                </nav>
                 <div class="content">
                     <h2>Wait Report for: <b>{id}</b></h2>
                     <div id="all_threads">

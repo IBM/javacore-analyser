@@ -609,6 +609,8 @@ const loadChart = function() {
         {
           label: '% CPU Usage',
           data: inputData,
+          borderColor: 'rgba(54,162,235,1)',
+          backgroundColor: 'rgba(104,185,240,0.5)',
           borderWidth: 1,
           minBarLength: 7,
         },
