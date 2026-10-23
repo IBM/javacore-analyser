@@ -8,6 +8,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
     <xsl:template name="header">
+        <title>Javacore Analyser Report</title>
         <link rel="stylesheet" href="data/carbon/ibm-plex.css" />
         <link rel="stylesheet" href="data/carbon/carbon.min.css" />
         <link rel="stylesheet" href="data/style.css" />

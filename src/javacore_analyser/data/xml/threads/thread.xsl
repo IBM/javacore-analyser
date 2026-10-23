@@ -12,6 +12,7 @@
     <xsl:template match="/index/doc/Thread/all_snapshot_collection/snapshot_collection[thread_hash='{id}']">
         <html height="100%">
             <head>
+                <title>Thread Detail - Javacore Analyser Report</title>
                 <link rel="stylesheet" href="../data/carbon/ibm-plex.css"/>
                 <link rel="stylesheet" href="../data/carbon/carbon.min.css"/>
                 <link rel="stylesheet" href="../data/style.css"/>

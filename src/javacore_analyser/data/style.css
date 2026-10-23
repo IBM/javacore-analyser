@@ -456,3 +456,17 @@ td.http_slow.secondary {
 .timing-send     { background-color: var(--color-interactive); }
 .timing-wait     { background-color: var(--color-support-error); }
 .timing-receive  { background-color: var(--cds-interactive-01,  #0f62fe); }
+
+/* ── Print: keep the report title, drop the interactive search controls ──── */
+
+@media print {
+    .cds--header {
+        position: static;
+    }
+    .cds--header__global {
+        display: none;
+    }
+    .cds--content {
+        margin-block-start: 0;
+    }
+}

@@ -11,6 +11,7 @@
     <xsl:template match="/">
         <html height="100%">
             <head>
+                <title>Javacore Detail - Javacore Analyser Report</title>
                 <link rel="stylesheet" href="../data/carbon/ibm-plex.css"/>
                 <link rel="stylesheet" href="../data/carbon/carbon.min.css"/>
                 <link rel="stylesheet" href="../data/style.css"/>
