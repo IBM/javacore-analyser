@@ -374,6 +374,9 @@ td.http_slow.secondary {
     font-weight: bold;
 }
 
+/* Keep short tags (e.g. HTTP status codes) on a single line inside narrow table cells */
+.cds--data-table .cds--tag { white-space: nowrap; }
+
 /* ── ML classification badges ────────────────────────────────────────────── */
 
 .ml-badge {
