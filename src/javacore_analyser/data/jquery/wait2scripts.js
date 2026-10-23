@@ -129,6 +129,58 @@ const CLASSIFICATION_COLOURS = [
 ];
 
 // ---------------------------------------------------------------------------
+// Theme support (light / dark / device) — see ../theme.js
+// ---------------------------------------------------------------------------
+
+/**
+ * Returns the value of a Carbon CSS variable on the root element, or the
+ * fallback if it is not defined.
+ * @param {string} name      CSS custom property name, e.g. '--cds-text-primary'.
+ * @param {string} fallback  Value used when the variable is not set.
+ * @returns {string}
+ */
+function cssVar(name, fallback) {
+  const value = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  return value || fallback;
+}
+
+/**
+ * Colour for reference lines (e.g. "Total Heap", "Total CPUs") that must stay
+ * visible on both light and dark backgrounds.  Used as a scriptable option, so
+ * it is re-evaluated on every chart update.
+ * @returns {string}
+ */
+function referenceLineColour() {
+  return cssVar('--cds-text-primary', 'black');
+}
+
+/**
+ * Applies the current Carbon theme colours to the Chart.js global defaults.
+ * Does nothing if Chart.js is not loaded on the page.
+ */
+function applyChartTheme() {
+  if (typeof Chart === 'undefined') return;
+  Chart.defaults.color = cssVar('--cds-text-secondary', '#666');
+  Chart.defaults.borderColor = cssVar('--cds-border-subtle-01', 'rgba(0,0,0,0.1)');
+}
+
+/**
+ * Registers the chart so it is redrawn when the user switches theme.
+ * Call this right after creating a Chart instance.
+ * @param {Chart} chart
+ */
+function registerThemedChart(chart) {
+  themedCharts.push(chart);
+}
+
+const themedCharts = [];
+
+document.addEventListener('themechange', function() {
+  applyChartTheme();
+  themedCharts.forEach(function(chart) { chart.update('none'); });
+});
+
+// ---------------------------------------------------------------------------
 // DOM helpers
 // ---------------------------------------------------------------------------
 
@@ -238,6 +290,7 @@ const loadChartCPUUsage = function() {
     totalCPUs.push(TOTAL_CPU_PERCENTAGE);
   }
 
+  applyChartTheme();
   const cpuChart = new Chart(ctx, {
     type: 'bar',
     responsive: true,
@@ -255,9 +308,9 @@ const loadChartCPUUsage = function() {
           label: '% Total CPUs',
           data: totalCPUs,
           borderWidth: 1,
-          fillColor: 'black',
-          borderColor: 'black',
-          backgroundColor: 'black',
+          fillColor: referenceLineColour,
+          borderColor: referenceLineColour,
+          backgroundColor: referenceLineColour,
           pointRadius: 0.0,
           type: 'line',
         },
@@ -278,6 +331,7 @@ const loadChartCPUUsage = function() {
       },
     },
   });
+  registerThemedChart(cpuChart);
   createChartResetButton('myChartCPUUsage', cpuChart);
 };
 
@@ -380,6 +434,7 @@ const loadChartGC = function() {
     labels.push(gcEndTime.valueOf());
   });
 
+  applyChartTheme();
   const gcChart = new Chart(ctx, {
     type: 'line',
     responsive: true,
@@ -400,9 +455,9 @@ const loadChartGC = function() {
           label: 'Total Heap (MB)',
           data: totalHeap,
           borderWidth: 1,
-          fillColor: 'black',
-          borderColor: 'black',
-          backgroundColor: 'black',
+          fillColor: referenceLineColour,
+          borderColor: referenceLineColour,
+          backgroundColor: referenceLineColour,
           pointRadius: 0.0,
           yAxisID: 'y',
         },
@@ -516,6 +571,7 @@ const loadChartGC = function() {
       },
     },
   });
+  registerThemedChart(gcChart);
   createChartResetButton('myChartGC', gcChart);
 
   console.log('GC Chart created successfully');
@@ -543,6 +599,7 @@ const loadChart = function() {
     }
   }
 
+  applyChartTheme();
   const threadChart = new Chart(ctx, {
     type: 'bar',
     responsive: true,
@@ -588,6 +645,7 @@ const loadChart = function() {
       },
     },
   });
+  registerThemedChart(threadChart);
   createChartResetButton('myChart', threadChart);
 };
 
@@ -650,6 +708,7 @@ const loadChartThreadClassifications = function() {
     };
   });
 
+  applyChartTheme();
   const classificationChart = new Chart(ctx, {
     type: 'line',
     responsive: true,
@@ -678,6 +737,7 @@ const loadChartThreadClassifications = function() {
       },
     },
   });
+  registerThemedChart(classificationChart);
   createChartResetButton('myChartThreadClassifications', classificationChart);
 
   console.log('Thread classifications chart created successfully');

@@ -28,9 +28,9 @@
                             <div class="cds--accordion__wrapper"><div id="help-http-calls" class="cds--accordion__content">
                                 The table shows the HTTP calls that are included in the HAR files from the data set.
                                 The table can be sorted by clicking on a column header.
-                                Rows highlighted in <span style="background-color:#ffcccc;padding:0 4px;">red</span> finished
+                                Rows highlighted in <span class="legend-error">red</span> finished
                                 with a 4xx or 5xx error status. Rows highlighted in
-                                <span style="background-color:#fff3cd;padding:0 4px;">yellow</span> took longer than 5 seconds.
+                                <span class="legend-slow">yellow</span> took longer than 5 seconds.
                                 <ul>
                                     <li><strong>Request URL and Details</strong>
                                         is the URL of the HTTP request. Click "Details" to view request and response details,

@@ -359,6 +359,7 @@ td.http_error,
 td.http_error.primary,
 td.http_error.secondary {
     background-color: #ffcccc !important;
+    color: #161616;
     font-weight: bold;
 }
 
@@ -366,6 +367,7 @@ td.http_slow,
 td.http_slow.primary,
 td.http_slow.secondary {
     background-color: #fff3cd !important;
+    color: #161616;
     font-weight: bold;
 }
 
@@ -415,6 +417,29 @@ td.http_slow.secondary {
 .cpu-low    { background-color: #d4edda; color: #155724; }
 .cpu-medium { background-color: #fff3cd; color: #856404; }
 .cpu-high   { background-color: #f8d7da; color: #842029; }
+
+/* Legend swatches in the HTTP calls help text */
+.legend-error, .legend-slow { padding: 0 4px; color: #161616; }
+.legend-error { background-color: #ffcccc; }
+.legend-slow  { background-color: #fff3cd; }
+.cds--g100 .legend-error { background-color: #6b1d22; color: #f4f4f4; }
+.cds--g100 .legend-slow  { background-color: #5c4a0a; color: #f4f4f4; }
+
+/* Dark theme overrides for hardcoded status colours */
+.cds--g100 td.http_error,
+.cds--g100 td.http_error.primary,
+.cds--g100 td.http_error.secondary { background-color: #6b1d22 !important; color: #f4f4f4; }
+
+.cds--g100 td.http_slow,
+.cds--g100 td.http_slow.primary,
+.cds--g100 td.http_slow.secondary { background-color: #5c4a0a !important; color: #f4f4f4; }
+
+.cds--g100 .cpu-low    { background-color: #0e6027; color: #defbe6; }
+.cds--g100 .cpu-medium { background-color: #5c4a0a; color: #fcf4d6; }
+.cds--g100 .cpu-high   { background-color: #750e13; color: #fff1f1; }
+
+/* Theme toggle button in the Carbon header */
+.theme-toggle { color: var(--cds-text-on-color, #ffffff); white-space: nowrap; }
 
 /* ── Thread state tags ───────────────────────────────────────────────────── */
 

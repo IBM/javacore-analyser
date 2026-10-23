@@ -14,11 +14,32 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
     <link rel="stylesheet" href="{{ url_for('static', filename='jquery/jq.css') }}"/>
     <link rel="stylesheet" href="{{ url_for('static', filename='jquery/theme.blue.css') }}"/>
+    <script type="text/javascript" src="{{ url_for('static', filename='theme.js') }}"> _ </script>
+    <style>
+      /* This page does not load Carbon, so define the few tokens it needs for the dark theme. */
+      html.cds--g100 {
+        --cds-background: #161616;
+        --cds-text-primary: #f4f4f4;
+        --cds-text-secondary: #c6c6c6;
+        --cds-layer-01: #262626;
+        --cds-layer-02: #393939;
+        --cds-border-subtle-01: #393939;
+        color-scheme: dark;
+      }
+      html.cds--g100 a { color: #78a9ff; }
+      html.cds--g100 table.tablesorter-blue td,
+      html.cds--g100 table.tablesorter-blue tbody > tr > td { background-color: #262626; color: #f4f4f4; }
+      html.cds--g100 table.tablesorter-blue th,
+      html.cds--g100 table.tablesorter-blue thead td { background-color: #393939; color: #f4f4f4; }
+      html.cds--g100 table.tablesorter-blue tbody > tr:nth-child(even) > td { background-color: #303030; }
+      .theme-toggle { float: right; cursor: pointer; color: var(--cds-text-primary, #161616); }
+    </style>
     <script type="text/javascript" src="{{ url_for('static', filename='jquery/jquery.min.js') }}"> _ </script>
     <script type="text/javascript" src="{{ url_for('static', filename='jquery/jquery.tablesorter.min.js') }}"> _ </script>
     <script type="text/javascript" src="{{ url_for('static', filename='style.js')}}"></script>
   </head>
   <body>
+    <button type="button" data-theme-toggle="" class="theme-toggle">Theme</button>
     <h1>Javacore Analyser</h1>
 
     <h1>Generate report:</h1>

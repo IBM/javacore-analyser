@@ -87,6 +87,7 @@
                 <button data-search="prev" class="cds--btn cds--btn--ghost cds--btn--sm cds--header__action" aria-label="Previous result">◂</button>
                 <button data-search="next" class="cds--btn cds--btn--ghost cds--btn--sm cds--header__action" aria-label="Next result">▸</button>
                 <span id="search-counter" class="search-counter"></span>
+                <button type="button" data-theme-toggle="" class="cds--btn cds--btn--ghost cds--btn--sm cds--header__action theme-toggle">Theme</button>
             </div>
         </header>
 

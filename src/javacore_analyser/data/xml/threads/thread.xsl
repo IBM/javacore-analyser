@@ -19,6 +19,7 @@
                 <link rel="stylesheet" href="../data/jquery/jq.css" />
                 <link rel="stylesheet" href="../data/jquery/theme.blue.css" />
                 <link rel="stylesheet" href="../data/jquery/theme.default.min.css" />
+                <script type="text/javascript" src="../data/theme.js"> _ </script>
                 <script type="text/javascript" src="../data/jquery/jquery.min.js"> _ </script>
                 <script type="text/javascript" src="../data/jquery/jquery.tablesorter.min.js"> _ </script>
                 <script type="text/javascript" src="../data/jquery/jquery.tablesorter.widgets.min.js"> _ </script>
@@ -31,7 +32,7 @@
                 <script type="text/javascript" src="../data/jquery/search.js"> _ </script>
                 <script type="text/javascript" src="../data/carbon/carbon-components.min.js"> _ </script>
             </head>
-            <body id="doc_body" class="cds--white" height="100%">
+            <body id="doc_body" height="100%">
                 <header class="cds--header" role="banner">
                     <a class="cds--header__name" href="../index.html">
                         <span class="cds--header__name--prefix">IBM</span>&#160;Javacore Analyser
@@ -47,6 +48,7 @@
                         <button data-search="prev" class="cds--btn cds--btn--ghost cds--btn--sm cds--header__action" aria-label="Previous result">◂</button>
                         <button data-search="next" class="cds--btn cds--btn--ghost cds--btn--sm cds--header__action" aria-label="Next result">▸</button>
                         <span id="search-counter" class="search-counter"></span>
+                        <button type="button" data-theme-toggle="" class="cds--btn cds--btn--ghost cds--btn--sm cds--header__action theme-toggle">Theme</button>
                     </div>
                 </header>
                 <main class="cds--content" id="main-content">

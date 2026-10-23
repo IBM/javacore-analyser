@@ -15,6 +15,7 @@
         <link rel="stylesheet" href="data/jquery/theme.default.min.css" />
         <link rel="stylesheet" href="data/jquery/jq.css" />
         <link rel="stylesheet" href="data/jquery/theme.blue.css" />
+        <script type="text/javascript" src="data/theme.js" > _ </script>
         <script type="text/javascript" src="data/jquery/jquery.min.js" > _ </script>
         <script type="text/javascript" src="data/jquery/jquery.tablesorter.min.js" > _ </script>
         <script type="text/javascript" src="data/jquery/jquery.tablesorter.widgets.min.js" > _ </script>
