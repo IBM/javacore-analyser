@@ -496,6 +496,15 @@ class ReportGenerator:
 
         source_parser = etree.XMLParser(resolve_entities=True)
         source_doc = etree.parse(temp_dir_name + "/index.xml", source_parser)
+
+        # Strip every <stack …> element from the Thread nodes before the index transform.
+        # The inline stacks were rendered inside hidden <div> elements in index.html but
+        # are now loaded lazily from the pre-generated thread pages.  Removing them here
+        # keeps the in-memory DOM small without touching report.xml on disk (which still
+        # needs the full stack data for the per-thread page transforms).
+        for stack_node in source_doc.findall(".//Thread//stack"):
+            stack_node.getparent().remove(stack_node)
+
         output_doc = xslt_transformer(source_doc)
 
         output_html_file = self.output_dir + "/index.html"
