@@ -293,6 +293,19 @@ p.margined   { margin: 10px; }
     border-top: 1px solid var(--cds-border-subtle-01, #e0e0e0);
 }
 
+/* Override legacy jq.css global div font so footer text matches Carbon body text and the links */
+.report-footer div,
+.report-footer .cds--link {
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    line-height: 1.28572;
+    color: var(--cds-text-secondary, #525252);
+}
+
+.report-footer .cds--link {
+    color: var(--cds-link-primary, #0f62fe);
+}
+
 /* ── AI tile label ────────────────────────────────────────────────────────── */
 
 .ai-tile-label {
