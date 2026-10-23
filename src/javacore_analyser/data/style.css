@@ -438,8 +438,32 @@ td.http_slow.secondary {
 .cds--g100 .cpu-medium { background-color: #5c4a0a; color: #fcf4d6; }
 .cds--g100 .cpu-high   { background-color: #750e13; color: #fff1f1; }
 
-/* Theme toggle button in the Carbon header */
-.theme-toggle { color: var(--cds-text-on-color, #ffffff); white-space: nowrap; }
+/* Theme toggle button: icon + label, visible on both light and dark headers */
+.theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: auto;
+    min-width: 0;
+    height: 2rem;
+    padding: 0 0.75rem;
+    margin-inline: 0.5rem 1rem;
+    align-self: center;
+    flex: 0 0 auto;
+    white-space: nowrap;
+    cursor: pointer;
+    color: var(--cds-text-primary, #161616);
+    background: transparent;
+    border: 1px solid var(--cds-border-strong-01, #8d8d8d);
+    border-radius: 1rem;
+    font-size: 0.875rem;
+}
+.theme-toggle:hover { background: var(--cds-layer-hover-01, #e8e8e8); }
+.theme-toggle:focus-visible { outline: 2px solid var(--cds-focus, #0f62fe); outline-offset: 1px; }
+.theme-toggle .theme-icon { display: none; flex: 0 0 auto; }
+html[data-theme-mode="system"] .theme-icon--system,
+html[data-theme-mode="light"] .theme-icon--light,
+html[data-theme-mode="dark"] .theme-icon--dark { display: inline-block; }
 
 /* ── Thread state tags ───────────────────────────────────────────────────── */
 

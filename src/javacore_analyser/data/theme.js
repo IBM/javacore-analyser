@@ -52,12 +52,27 @@
     return mode;
   }
 
+  // Static icon markup (monitor / sun / moon). CSS shows the one matching html[data-theme-mode].
+  const ICON_ATTRS = 'class="theme-icon theme-icon--%s" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" ' +
+    'width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" ' +
+    'stroke-linejoin="round" aria-hidden="true" focusable="false"';
+  const BUTTON_HTML =
+    '<svg ' + ICON_ATTRS.replace('%s', 'system') + '><rect x="1" y="2" width="14" height="9" rx="1"/>' +
+    '<path d="M5 14h6M8 11v3"/></svg>' +
+    '<svg ' + ICON_ATTRS.replace('%s', 'light') + '><circle cx="8" cy="8" r="3"/>' +
+    '<path d="M8 1v2M8 13v2M1 8h2M13 8h2M3 3l1.4 1.4M11.6 11.6L13 13M3 13l1.4-1.4M11.6 4.4L13 3"/></svg>' +
+    '<svg ' + ICON_ATTRS.replace('%s', 'dark') + '><path d="M13 9.5A5.5 5.5 0 0 1 6.5 3a5.5 5.5 0 1 0 6.5 6.5z"/></svg>' +
+    '<span class="theme-toggle__label" data-theme-label=""></span>';
+
   function updateButtons(mode) {
     const label = 'Theme: ' + MODE_LABELS[mode];
     document.querySelectorAll('[data-theme-toggle]').forEach(function(button) {
-      button.textContent = label;
+      if (!button.querySelector('[data-theme-label]')) {
+        button.innerHTML = BUTTON_HTML;
+      }
+      button.querySelector('[data-theme-label]').textContent = label;
       button.setAttribute('aria-label', label + '. Activate to change theme.');
-      button.setAttribute('title', label);
+      button.setAttribute('title', label + ' (click to change)');
     });
   }
 
