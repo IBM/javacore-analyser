@@ -8,52 +8,90 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
     <xsl:template name="top_blockers">
-        <h3><a id="toggletop10blocker" href="javascript:expand_it(top10blocker,toggletop10blocker)" class="expandit">Top 10 Blockers</a></h3>
-        <div id="top10blocker" style="display:none;">
+        <div class="cds--accordion__item" id="accordion-top-blockers">
+            <button type="button" class="cds--accordion__heading"
+                    aria-expanded="false" aria-controls="content-top-blockers"
+                    onclick="this.closest('.cds--accordion__item').classList.toggle('cds--accordion__item--active'); this.setAttribute('aria-expanded', this.closest('.cds--accordion__item').classList.contains('cds--accordion__item--active')?'true':'false');">
+                <svg class="cds--accordion__arrow" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M11 8L6 13 4.6 11.6 8.2 8 4.6 4.4 6 3z"/></svg>
+                <span class="cds--accordion__title">Top 10 Blockers</span>
+            </button>
+            <div class="cds--accordion__wrapper"><div id="content-top-blockers" class="cds--accordion__content">
             <xsl:choose>
                 <xsl:when test="doc/blockers/blocker">
-                    <details class="doc-toggle">
-                        <summary>What does this table tell me?</summary>
-                        This table shows top ten threads that were blocking other threads most frequently,
-                        based on the information in the javacore files.
-                        <ul>
-                            <li>
-                                <strong>Thread name</strong>
-                                is the name of the thread.
-                            </li>
-                            <li>
-                                <strong>Number of different blocked threads</strong>
-                                is the total number of times, across all javacore files, this thread was
-                                blocking any other thread.
-                            </li>
-                        </ul>
-                    </details>
-                    <table id="top10_blocker_table" class="tablesorter">
+                    <div class="cds--accordion cds--accordion--sm help-accordion">
+                        <div class="cds--accordion__item">
+                            <button type="button" class="cds--accordion__heading" aria-expanded="false" aria-controls="help-top-blockers"
+                                    onclick="this.closest('.cds--accordion__item').classList.toggle('cds--accordion__item--active'); this.setAttribute('aria-expanded', this.closest('.cds--accordion__item').classList.contains('cds--accordion__item--active')?'true':'false');">
+                                <svg class="cds--accordion__arrow" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M11 8L6 13 4.6 11.6 8.2 8 4.6 4.4 6 3z"/></svg>
+                                <span class="cds--accordion__title">What does this table tell me?</span>
+                            </button>
+                            <div class="cds--accordion__wrapper"><div id="help-top-blockers" class="cds--accordion__content">
+                                This table shows top ten threads that were blocking other threads most frequently,
+                                based on the information in the javacore files.
+                                <ul>
+                                    <li>
+                                        <strong>Thread name</strong>
+                                        is the name of the thread.
+                                    </li>
+                                    <li>
+                                        <strong>Number of different blocked threads</strong>
+                                        is the total number of times, across all javacore files, this thread was
+                                        blocking any other thread.
+                                    </li>
+                                </ul>
+                            </div></div>
+                        </div>
+                    </div>
+                    <div class="cds--data-table-container">
+                    <div class="cds--data-table-content">
+                    <table id="top10_blocker_table" class="cds--data-table cds--data-table--zebra cds--data-table--sort" data-sort-initial-col="1" data-sort-initial-dir="desc">
                         <thead>
                             <tr>
-                                <th class="ninety">Thread name</th>
-                                <th>Number of different blocked threads</th>
+                                <xsl:call-template name="sort_th">
+                                    <xsl:with-param name="col">0</xsl:with-param>
+                                    <xsl:with-param name="label">Thread name</xsl:with-param>
+                                    <xsl:with-param name="class">ninety</xsl:with-param>
+                                </xsl:call-template>
+                                <xsl:call-template name="sort_th">
+                                    <xsl:with-param name="col">1</xsl:with-param>
+                                    <xsl:with-param name="label">Number of different blocked threads</xsl:with-param>
+                                </xsl:call-template>
                             </tr>
                         </thead>
                         <tbody>
                             <xsl:for-each select="doc/blockers/blocker">
                                 <tr>
                                     <td class="left">
-                                        <a class="right" target="_blank">
+                                        <a class="cds--link" target="_blank">
                                             <xsl:attribute name="href">
                                                 <xsl:value-of select="concat('threads/thread_', blocker_hash, '.html')"/>
                                             </xsl:attribute>
                                             <xsl:value-of select="blocker_name"/>
                                         </a>
                                     </td>
-                                    <td><xsl:value-of select="blocker_size"/></td>
+                                    <td>
+                                        <span class="cds--tag cds--tag--red">
+                                            <xsl:value-of select="blocker_size"/>
+                                        </span>
+                                    </td>
                                 </tr>
                             </xsl:for-each>
                         </tbody>
                     </table>
+                    </div>
+                    </div>
                 </xsl:when>
-                <xsl:otherwise> There are no blocking threads in Javacores </xsl:otherwise>
+                <xsl:otherwise>
+                    <div class="cds--inline-notification cds--inline-notification--low-contrast cds--inline-notification--info report-notification" role="status">
+                        <svg class="cds--inline-notification__icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true"><path d="M17 22v-8h-4v2h2v6h-3v2h8v-2zm-1-12a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/><path d="M16 2C8.3 2 2 8.3 2 16s6.3 14 14 14 14-6.3 14-14S23.7 2 16 2zm0 26C9.4 28 4 22.6 4 16S9.4 4 16 4s12 5.4 12 12-5.4 12-12 12z"/></svg>
+                        <div class="cds--inline-notification__details">
+                            <p class="cds--inline-notification__text">There are no blocking threads in javacores</p>
+                        </div>
+                    </div>
+                </xsl:otherwise>
             </xsl:choose>
+            </div>
+            </div>
         </div>
     </xsl:template>
 

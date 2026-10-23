@@ -1,0 +1,15 @@
+/*
+ * Copyright IBM Corp. 2024 - 2026
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * IBM Plex font face declarations (subset: Sans 400/600, Mono 400)
+ * Loaded from Google Fonts CDN with a local system-font fallback chain.
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400&family=IBM+Plex+Sans:wght@400;600&display=swap');
+
+/* Fallback stack used when offline */
+:root {
+  --cds-font-family-sans: 'IBM Plex Sans', 'Helvetica Neue', Arial, sans-serif;
+  --cds-font-family-mono: 'IBM Plex Mono', 'Courier New', Courier, monospace;
+}
