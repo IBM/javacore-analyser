@@ -670,3 +670,97 @@ class TestTips(unittest.TestCase):
         self.assertIn("3 out of 4", tip_text, "Tip should report count correctly")
         self.assertIn("70%", tip_text, "Tip should mention the critical threshold")
         self.assertIn("memory leaks", tip_text, "Tip should mention memory leaks")
+
+    # ------------------------------------------------------------------
+    # HighGcOverheadTip
+    # ------------------------------------------------------------------
+
+    def _make_gc_parser_with_overhead(self, overhead_percent):
+        """Helper: build a VerboseGcParser whose gc_overhead_percent() returns overhead_percent.
+
+        Two collections are used. The first starts at T=0 and has zero duration; the second
+        starts at T=elapsed and has duration=total_gc_ms, so that:
+            elapsed_ms = T_last_start + T_last_duration - T_first_start
+            overhead   = total_gc_ms / elapsed_ms * 100
+        Simplest parametrisation: first duration=0 at epoch, second at
+        T = (100 / overhead_percent) * pause_ms  from first start.
+        We use pause_ms = 1000 ms for the last collection.
+        """
+        from javacore_analyser.verbose_gc import GcCollection, VerboseGcParser
+        from datetime import datetime, timedelta
+
+        pause_ms = 1000.0
+        # elapsed must satisfy overhead_percent = pause_ms / elapsed * 100
+        elapsed_ms = pause_ms / overhead_percent * 100
+
+        base = datetime(2023, 4, 25, 11, 0, 0, 0)
+        second_start = base + timedelta(milliseconds=elapsed_ms - pause_ms)
+
+        c1 = GcCollection()
+        c1.start_time_str = base.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]
+        c1.duration = 0.0
+
+        c2 = GcCollection()
+        c2.start_time_str = second_start.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]
+        c2.duration = pause_ms
+
+        parser = VerboseGcParser()
+        parser._VerboseGcParser__collects = [c1, c2]
+        return parser
+
+    def test_HighGcOverheadTip_no_verbose_gc(self):
+        """Returns empty list when no verbose GC data is available."""
+        javacore_set = JavacoreSet("")
+        result = tips.HighGcOverheadTip.generate(javacore_set)
+        self.assertEqual(0, len(result), "Should return empty list when no verbose GC data")
+
+    def test_HighGcOverheadTip_below_warning_threshold(self):
+        """Returns empty list when GC overhead is below the warning threshold."""
+        javacore_set = JavacoreSet("")
+        javacore_set.gc_parser = self._make_gc_parser_with_overhead(4.0)
+        result = tips.HighGcOverheadTip.generate(javacore_set)
+        self.assertEqual(0, len(result), "Should return empty list for low GC overhead")
+
+    def test_HighGcOverheadTip_warning_level(self):
+        """Returns a TIP when GC overhead is between warning and critical thresholds."""
+        javacore_set = JavacoreSet("")
+        javacore_set.gc_parser = self._make_gc_parser_with_overhead(15.0)
+        result = tips.HighGcOverheadTip.generate(javacore_set)
+        self.assertEqual(1, len(result), "Should return one tip for notable GC overhead")
+        tip_type, tip_text = result[0]
+        self.assertEqual(tips.TipType.TIP, tip_type, "Should be TIP severity for notable overhead")
+        self.assertIn("15.0%", tip_text, "Tip should report the overhead percentage")
+        self.assertIn("-Xmx", tip_text, "Tip should mention heap sizing")
+
+    def test_HighGcOverheadTip_critical_level(self):
+        """Returns a WARNING when GC overhead exceeds the critical threshold."""
+        javacore_set = JavacoreSet("")
+        javacore_set.gc_parser = self._make_gc_parser_with_overhead(30.0)
+        result = tips.HighGcOverheadTip.generate(javacore_set)
+        self.assertEqual(1, len(result), "Should return one warning for severe GC overhead")
+        tip_type, tip_text = result[0]
+        self.assertEqual(tips.TipType.WARNING, tip_type, "Should be WARNING severity for severe overhead")
+        self.assertIn("30.0%", tip_text, "Tip should report the overhead percentage")
+        self.assertIn("memory leaks", tip_text, "Tip should mention memory leaks")
+
+    def test_HighGcOverheadTip_exactly_at_warning_threshold(self):
+        """Returns a TIP when overhead equals the warning threshold exactly."""
+        javacore_set = JavacoreSet("")
+        javacore_set.gc_parser = self._make_gc_parser_with_overhead(
+            tips.HighGcOverheadTip.THRESHOLD_WARNING
+        )
+        result = tips.HighGcOverheadTip.generate(javacore_set)
+        self.assertEqual(1, len(result))
+        tip_type, _ = result[0]
+        self.assertEqual(tips.TipType.TIP, tip_type)
+
+    def test_HighGcOverheadTip_exactly_at_critical_threshold(self):
+        """Returns a WARNING when overhead equals the critical threshold exactly."""
+        javacore_set = JavacoreSet("")
+        javacore_set.gc_parser = self._make_gc_parser_with_overhead(
+            tips.HighGcOverheadTip.THRESHOLD_CRITICAL
+        )
+        result = tips.HighGcOverheadTip.generate(javacore_set)
+        self.assertEqual(1, len(result))
+        tip_type, _ = result[0]
+        self.assertEqual(tips.TipType.WARNING, tip_type)
