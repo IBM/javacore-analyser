@@ -24,6 +24,8 @@ TIMESTAMP = "timestamp"
 DURATION = "durationms"
 GC_COLLECTION = "gc-collection"
 GC_COLLECTIONS = "gc-collections"
+GC_OVERHEAD_PERCENT = "gc-overhead-percent"
+CUMULATIVE_GC_OVERHEAD_PERCENT = "cumulative-gc-overhead-percent"
 MEM = "mem"
 TYPE = "type"
 NURSERY = "nursery"
@@ -79,10 +81,54 @@ class VerboseGcParser:
         self.__collects.sort(key=lambda c: c.get_start_time())
         logging.info("Finished parsing GC files")
 
+    def gc_overhead_percent(self):
+        """Return GC overhead as a percentage of elapsed time (0-100), or 0.0 if not computable.
+
+        Overhead = (total GC pause time in ms) / (total elapsed time in ms) * 100.
+        Total elapsed time is measured from the start of the first collection to the end of the
+        last collection (start_time + duration).  Returns 0.0 when there are fewer than two
+        collections or when elapsed time is zero.
+        """
+        if len(self.__collects) < 1:
+            return 0.0
+        total_gc_ms = sum(c.duration for c in self.__collects)
+        if len(self.__collects) == 1:
+            # Single collection: overhead is 100% of itself by definition; elapsed == duration
+            elapsed_ms = self.__collects[0].duration
+        else:
+            first_start = self.__collects[0].get_start_time()
+            last = self.__collects[-1]
+            last_end_ms = last.get_start_time().timestamp() * 1000 + last.duration
+            first_start_ms = first_start.timestamp() * 1000
+            elapsed_ms = last_end_ms - first_start_ms
+        if elapsed_ms <= 0:
+            return 0.0
+        overhead = round(total_gc_ms / elapsed_ms * 100, 2)
+        if overhead > 100.0:
+            logging.warning(
+                f"GC overhead calculated as {overhead:.2f}% (total GC time {total_gc_ms:.0f} ms,"
+                f" elapsed time {elapsed_ms:.0f} ms). This may indicate overlapping collections"
+                f" or corrupted timestamps in the verbose GC log."
+            )
+        return overhead
+
     def get_xml(self, doc):
         element = doc.createElement(GC_COLLECTIONS)
-        for gcc in self.__collects:
-            element.appendChild(gcc.get_xml(doc))
+        element.setAttribute(GC_OVERHEAD_PERCENT, str(self.gc_overhead_percent()))
+        if self.__collects:
+            first_start_ms = self.__collects[0].get_start_time().timestamp() * 1000
+            cumulative_gc_ms = 0.0
+            for gcc in self.__collects:
+                cumulative_gc_ms += gcc.duration
+                last_end_ms = gcc.get_start_time().timestamp() * 1000 + gcc.duration
+                elapsed_ms = last_end_ms - first_start_ms
+                if elapsed_ms > 0:
+                    cumulative_overhead = round(cumulative_gc_ms / elapsed_ms * 100, 2)
+                else:
+                    cumulative_overhead = 0.0
+                child = gcc.get_xml(doc)
+                child.setAttribute(CUMULATIVE_GC_OVERHEAD_PERCENT, str(cumulative_overhead))
+                element.appendChild(child)
         return element
 
 
