@@ -8,9 +8,9 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
     <xsl:template name="intelligent_tips">
-        <div class="cds--accordion__item" id="accordion-intelligent-tips">
+        <div class="cds--accordion__item cds--accordion__item--active" id="accordion-intelligent-tips">
             <button type="button" class="cds--accordion__heading"
-                    aria-expanded="false" aria-controls="content-intelligent-tips"
+                    aria-expanded="true" aria-controls="content-intelligent-tips"
                     onclick="this.closest('.cds--accordion__item').classList.toggle('cds--accordion__item--active'); this.setAttribute('aria-expanded', this.closest('.cds--accordion__item').classList.contains('cds--accordion__item--active')?'true':'false');">
                 <svg class="cds--accordion__arrow" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M11 8L6 13 4.6 11.6 8.2 8 4.6 4.4 6 3z"/></svg>
                 <span class="cds--accordion__title">Intelligent Tips</span>
@@ -52,7 +52,7 @@
                                 <div class="cds--inline-notification cds--inline-notification--low-contrast cds--inline-notification--info report-notification" role="status">
                                     <svg class="cds--inline-notification__icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true"><path d="M17 22v-8h-4v2h2v6h-3v2h8v-2zm-1-12a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/><path d="M16 2C8.3 2 2 8.3 2 16s6.3 14 14 14 14-6.3 14-14S23.7 2 16 2zm0 26C9.4 28 4 22.6 4 16S9.4 4 16 4s12 5.4 12 12-5.4 12-12 12z"/></svg>
                                     <div class="cds--inline-notification__details">
-                                        <p class="cds--inline-notification__text">No tips found for this data set.</p>
+                                        <p class="cds--inline-notification__text">The system looks healthy. We didn't find any recommendations for you.</p>
                                     </div>
                                 </div>
                             </xsl:otherwise>

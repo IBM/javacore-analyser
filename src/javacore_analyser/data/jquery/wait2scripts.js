@@ -191,7 +191,7 @@ document.addEventListener('themechange', function() {
  * @returns {string}
  */
 function getCellText(row, cellIndex) {
-  return row.cells[cellIndex].innerText.trim();
+  return row.cells[cellIndex].textContent.trim();
 }
 
 /**

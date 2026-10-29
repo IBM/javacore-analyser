@@ -106,11 +106,11 @@
                         </xsl:if>
 
                         <div class="cds--accordion">
+                            <xsl:call-template name="intelligent_tips"/>
                             <xsl:call-template name="input_files"/>
                             <xsl:if test="doc/data_types/type[text()='javacores']">
                                 <xsl:call-template name="system_information"/>
                             </xsl:if>
-                            <xsl:call-template name="intelligent_tips"/>
                             <xsl:call-template name="system_resources"/>
                             <xsl:if test="doc/data_types/type[text()='javacores']">
                                 <xsl:call-template name="top_blockers"/>
