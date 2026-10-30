@@ -1,5 +1,30 @@
 # Changelog
 
+## [4.0.5] - 2026-10-30
+## What's Changed
+* #470 Bash build fails for tests by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/471
+* Revert "#463 Added more navigation links" by @PiotrAniola82 in https://github.com/IBM/javacore-analyser/pull/474
+* #453 Add TipType field to tips and highlight warnings/tips in rep… by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/458
+* #459 Self-closing anchor tags in the Input Files table are wrong by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/460
+* #465 improve display of embedded help by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/466
+* Revert "#454 Migrate to XSL 2.0" by @PiotrAniola82 in https://github.com/IBM/javacore-analyser/pull/489
+* #508 added Sigstore provenance attestation step to release.sh. by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/509
+* #511 pinned depndencies for sigstore by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/512
+* #540 Enable autmerge for renovate bot by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/541
+* #515 Performance improvements in generating index.html by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/516
+* #550 enable automerge from renovate bot by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/551
+* #552 Enforce certifi>=2026.10.19 due to security vulnerability by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/554
+* #387 create a plugin for dev tools console log by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/475
+* #564 Remove redundant Hypothesis fuzzing workflow by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/565
+* #578 Update dependency to filelock 4.2.1 by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/579
+* #496 Fix displaying cpu usage on the report by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/497
+* #478 Move intelligent tips to the top by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/514
+
+
+**Full Changelog**: https://github.com/IBM/javacore-analyser/compare/4.0.3...4.0.5
+
+
+
 ## [4.0.4] - 2026-10-01
 ## What's Changed
 * Revert "#463 Added more navigation links" by @PiotrAniola82 in https://github.com/IBM/javacore-analyser/pull/474
