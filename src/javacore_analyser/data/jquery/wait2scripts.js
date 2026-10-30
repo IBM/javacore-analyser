@@ -129,6 +129,58 @@ const CLASSIFICATION_COLOURS = [
 ];
 
 // ---------------------------------------------------------------------------
+// Theme support (light / dark / device) — see ../theme.js
+// ---------------------------------------------------------------------------
+
+/**
+ * Returns the value of a Carbon CSS variable on the root element, or the
+ * fallback if it is not defined.
+ * @param {string} name      CSS custom property name, e.g. '--cds-text-primary'.
+ * @param {string} fallback  Value used when the variable is not set.
+ * @returns {string}
+ */
+function cssVar(name, fallback) {
+  const value = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  return value || fallback;
+}
+
+/**
+ * Colour for reference lines (e.g. "Total Heap", "Total CPUs") that must stay
+ * visible on both light and dark backgrounds.  Used as a scriptable option, so
+ * it is re-evaluated on every chart update.
+ * @returns {string}
+ */
+function referenceLineColour() {
+  return cssVar('--cds-text-primary', 'black');
+}
+
+/**
+ * Applies the current Carbon theme colours to the Chart.js global defaults.
+ * Does nothing if Chart.js is not loaded on the page.
+ */
+function applyChartTheme() {
+  if (typeof Chart === 'undefined') return;
+  Chart.defaults.color = cssVar('--cds-text-secondary', '#666');
+  Chart.defaults.borderColor = cssVar('--cds-border-subtle-01', 'rgba(0,0,0,0.1)');
+}
+
+/**
+ * Registers the chart so it is redrawn when the user switches theme.
+ * Call this right after creating a Chart instance.
+ * @param {Chart} chart
+ */
+function registerThemedChart(chart) {
+  themedCharts.push(chart);
+}
+
+const themedCharts = [];
+
+document.addEventListener('themechange', function() {
+  applyChartTheme();
+  themedCharts.forEach(function(chart) { chart.update('none'); });
+});
+
+// ---------------------------------------------------------------------------
 // DOM helpers
 // ---------------------------------------------------------------------------
 
@@ -230,11 +282,15 @@ const loadChartCPUUsage = function() {
 
   for (let i = 1; i < coresNumber; i++) {
     const rowEl = javacoresTable.rows[i];
-    inputData.push(Number(getCellText(rowEl, 2)));
+    const cpuText = getCellText(rowEl, 2);
+    const cpuVal = Number(cpuText);
+    if (isNaN(cpuVal)) continue;   // skip rows where CPU is "N/A" (first javacore)
+    inputData.push(cpuVal);
     labels.push(new Date(getCellText(rowEl, 1)).valueOf());
     totalCPUs.push(TOTAL_CPU_PERCENTAGE);
   }
 
+  applyChartTheme();
   const cpuChart = new Chart(ctx, {
     type: 'bar',
     responsive: true,
@@ -252,15 +308,16 @@ const loadChartCPUUsage = function() {
           label: '% Total CPUs',
           data: totalCPUs,
           borderWidth: 1,
-          fillColor: 'black',
-          borderColor: 'black',
-          backgroundColor: 'black',
+          fillColor: referenceLineColour,
+          borderColor: referenceLineColour,
+          backgroundColor: referenceLineColour,
           pointRadius: 0.0,
           type: 'line',
         },
       ],
     },
     options: {
+      maintainAspectRatio: false,
       scales: {
         y: { beginAtZero: true },
         x: {
@@ -274,6 +331,7 @@ const loadChartCPUUsage = function() {
       },
     },
   });
+  registerThemedChart(cpuChart);
   createChartResetButton('myChartCPUUsage', cpuChart);
 };
 
@@ -376,6 +434,7 @@ const loadChartGC = function() {
     labels.push(gcEndTime.valueOf());
   });
 
+  applyChartTheme();
   const gcChart = new Chart(ctx, {
     type: 'line',
     responsive: true,
@@ -396,9 +455,9 @@ const loadChartGC = function() {
           label: 'Total Heap (MB)',
           data: totalHeap,
           borderWidth: 1,
-          fillColor: 'black',
-          borderColor: 'black',
-          backgroundColor: 'black',
+          fillColor: referenceLineColour,
+          borderColor: referenceLineColour,
+          backgroundColor: referenceLineColour,
           pointRadius: 0.0,
           yAxisID: 'y',
         },
@@ -471,6 +530,7 @@ const loadChartGC = function() {
       ],
     },
     options: {
+      maintainAspectRatio: false,
       scales: {
         y: {
           beginAtZero: true,
@@ -511,6 +571,7 @@ const loadChartGC = function() {
       },
     },
   });
+  registerThemedChart(gcChart);
   createChartResetButton('myChartGC', gcChart);
 
   console.log('GC Chart created successfully');
@@ -538,6 +599,7 @@ const loadChart = function() {
     }
   }
 
+  applyChartTheme();
   const threadChart = new Chart(ctx, {
     type: 'bar',
     responsive: true,
@@ -547,12 +609,15 @@ const loadChart = function() {
         {
           label: '% CPU Usage',
           data: inputData,
+          borderColor: 'rgba(54,162,235,1)',
+          backgroundColor: 'rgba(104,185,240,0.5)',
           borderWidth: 1,
           minBarLength: 7,
         },
       ],
     },
     options: {
+      maintainAspectRatio: false,
       layout: {
         padding: {
           // Fixes #179 — right-most bar was truncated
@@ -582,6 +647,7 @@ const loadChart = function() {
       },
     },
   });
+  registerThemedChart(threadChart);
   createChartResetButton('myChart', threadChart);
 };
 
@@ -644,6 +710,7 @@ const loadChartThreadClassifications = function() {
     };
   });
 
+  applyChartTheme();
   const classificationChart = new Chart(ctx, {
     type: 'line',
     responsive: true,
@@ -652,6 +719,7 @@ const loadChartThreadClassifications = function() {
       datasets: datasets,
     },
     options: {
+      maintainAspectRatio: false,
       scales: {
         y: {
           beginAtZero: true,
@@ -671,7 +739,82 @@ const loadChartThreadClassifications = function() {
       },
     },
   });
+  registerThemedChart(classificationChart);
   createChartResetButton('myChartThreadClassifications', classificationChart);
 
   console.log('Thread classifications chart created successfully');
 };
+
+// ---------------------------------------------------------------------------
+// Carbon-native column sort – generic, works on every cds--data-table--sort
+// ---------------------------------------------------------------------------
+
+/**
+ * initCarbonSort – wires up Carbon-style column sorting for every
+ * <table class="cds--data-table--sort"> in the document.
+ *
+ * Each sortable column header must contain a <button class="cds--table-sort"
+ * data-col="N"> where N is the zero-based column index.
+ *
+ * Optional table-level attributes control the initial sort state:
+ *   data-sort-initial-col  – column index to sort on load (default: none)
+ *   data-sort-initial-dir  – "asc" or "desc" (default: "asc")
+ *
+ * Carbon sort state classes applied to the active <button>:
+ *   cds--table-sort--active      – this column is the active sort key
+ *   cds--table-sort--descending  – active column is sorted descending
+ */
+const initCarbonSort = function() {
+  document.querySelectorAll('table.cds--data-table--sort').forEach(function(table) {
+    const tbody = table.querySelector('tbody');
+    if (!tbody) return;
+
+    const buttons = table.querySelectorAll('thead .cds--table-sort');
+    if (!buttons.length) return;
+
+    let activeCol = -1;
+    let ascending = true;
+
+    function sortBy(col, asc) {
+      activeCol = col;
+      ascending = asc;
+
+      buttons.forEach(function(b) {
+        b.classList.remove('cds--table-sort--active', 'cds--table-sort--descending');
+      });
+      const activeBtn = table.querySelector('thead .cds--table-sort[data-col="' + col + '"]');
+      if (activeBtn) {
+        activeBtn.classList.add('cds--table-sort--active');
+        if (!asc) activeBtn.classList.add('cds--table-sort--descending');
+      }
+
+      const rows = Array.from(tbody.querySelectorAll(':scope > tr'));
+      rows.sort(function(a, b) {
+        const aText = (a.cells[col] ? a.cells[col].innerText.trim() : '');
+        const bText = (b.cells[col] ? b.cells[col].innerText.trim() : '');
+        const aNum = parseFloat(aText);
+        const bNum = parseFloat(bText);
+        const numeric = !isNaN(aNum) && !isNaN(bNum);
+        const cmp = numeric ? (aNum - bNum) : aText.localeCompare(bText);
+        return asc ? cmp : -cmp;
+      });
+      rows.forEach(function(row) { tbody.appendChild(row); });
+    }
+
+    buttons.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        const col = parseInt(btn.getAttribute('data-col'), 10);
+        sortBy(col, activeCol === col ? !ascending : true);
+      });
+    });
+
+    // Apply initial sort if declared on the table element
+    const initCol = table.getAttribute('data-sort-initial-col');
+    if (initCol !== null) {
+      const initDir = table.getAttribute('data-sort-initial-dir');
+      sortBy(parseInt(initCol, 10), initDir !== 'desc');
+    }
+  });
+};
+
+document.addEventListener('DOMContentLoaded', initCarbonSort);

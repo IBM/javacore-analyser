@@ -249,3 +249,106 @@ SPDX-License-Identifier: Apache-2.0
 	cursor: pointer;
 	background-color: #e6bf99;
 }
+
+/* ── Dark theme (Carbon Gray 100, set on <html> by theme.js) ─────────────── */
+.cds--g100 .tablesorter-blue {
+	background-color: #262626;
+	border-color: #525252;
+}
+.cds--g100 .tablesorter-blue th,
+.cds--g100 .tablesorter-blue td {
+	border-color: #525252;
+}
+.cds--g100 .tablesorter-blue th,
+.cds--g100 .tablesorter-blue thead td {
+	color: #f4f4f4;
+	background-color: #393939;
+	text-shadow: none;
+}
+.cds--g100 .tablesorter-blue .header,
+.cds--g100 .tablesorter-blue .tablesorter-header {
+	/* white (unsorted) double arrow */
+	background-image: url(data:image/gif;base64,R0lGODlhFQAJAIAAAP///////yH5BAEAAAEALAAAAAAVAAkAAAIXjI+AywnaYnhUMoqt3gZXPmVg94yJVQAAOw==);
+}
+.cds--g100 .tablesorter-blue .headerSortUp,
+.cds--g100 .tablesorter-blue .tablesorter-headerSortUp,
+.cds--g100 .tablesorter-blue .tablesorter-headerAsc {
+	background-color: #4c4c4c;
+	/* white asc arrow */
+	background-image: url(data:image/gif;base64,R0lGODlhFQAEAIAAAP///////yH5BAEAAAEALAAAAAAVAAQAAAINjI8Bya2wnINUMopZAQA7);
+}
+.cds--g100 .tablesorter-blue .headerSortDown,
+.cds--g100 .tablesorter-blue .tablesorter-headerSortDown,
+.cds--g100 .tablesorter-blue .tablesorter-headerDesc {
+	background-color: #5a5a5a;
+	/* white desc arrow */
+	background-image: url(data:image/gif;base64,R0lGODlhFQAEAIAAAP///////yH5BAEAAAEALAAAAAAVAAQAAAINjB+gC+jP2ptn0WskLQA7);
+}
+.cds--g100 .tablesorter-blue thead .sorter-false {
+	background-image: none;
+}
+.cds--g100 .tablesorter-blue td {
+	color: #f4f4f4;
+	background-color: #262626;
+}
+.cds--g100 .tablesorter-blue tbody tr.odd > td {
+	background-color: #303030;
+}
+.cds--g100 .tablesorter-blue tbody tr.even > td {
+	background-color: #262626;
+}
+.cds--g100 .tablesorter-blue tbody > tr.hover > td,
+.cds--g100 .tablesorter-blue tbody > tr:hover > td,
+.cds--g100 .tablesorter-blue tbody > tr:hover + tr.tablesorter-childRow > td,
+.cds--g100 .tablesorter-blue tbody > tr:hover + tr.tablesorter-childRow + tr.tablesorter-childRow > td,
+.cds--g100 .tablesorter-blue tbody > tr.even.hover > td,
+.cds--g100 .tablesorter-blue tbody > tr.even:hover > td,
+.cds--g100 .tablesorter-blue tbody > tr.odd.hover > td,
+.cds--g100 .tablesorter-blue tbody > tr.odd:hover > td {
+	background-color: #393939;
+}
+/* Column widget (sorted column highlight) */
+.cds--g100 .tablesorter-blue td.primary,
+.cds--g100 .tablesorter-blue tr.odd td.primary {
+	background-color: #3d3d3d;
+}
+.cds--g100 .tablesorter-blue tr.even td.primary {
+	background-color: #353535;
+}
+.cds--g100 .tablesorter-blue td.secondary,
+.cds--g100 .tablesorter-blue tr.odd td.secondary {
+	background-color: #353535;
+}
+.cds--g100 .tablesorter-blue tr.even td.secondary {
+	background-color: #2e2e2e;
+}
+.cds--g100 .tablesorter-blue td.tertiary,
+.cds--g100 .tablesorter-blue tr.odd td.tertiary {
+	background-color: #2e2e2e;
+}
+.cds--g100 .tablesorter-blue tr.even td.tertiary {
+	background-color: #292929;
+}
+/* Thread-state cells keep their signal colours (overriding the zebra/hover rules
+   above); text colour is forced for contrast */
+.cds--g100 .tablesorter-blue tbody tr td.runnable { background-color: green; color: #ffffff; }
+.cds--g100 .tablesorter-blue tbody tr td.waiting { background-color: orange; color: #161616; }
+.cds--g100 .tablesorter-blue tbody tr td.parked { background-color: yellow; color: #161616; }
+.cds--g100 .tablesorter-blue tbody tr td.blocked,
+.cds--g100 .tablesorter-blue tbody tr td.http_failure { background-color: red; color: #ffffff; }
+.cds--g100 .tablesorter-blue > caption {
+	background-color: #262626;
+}
+.cds--g100 .tablesorter-blue .tablesorter-filter-row,
+.cds--g100 .tablesorter-blue .tablesorter-filter-row td {
+	background-color: #393939;
+}
+.cds--g100 .tablesorter-blue input.tablesorter-filter,
+.cds--g100 .tablesorter-blue select.tablesorter-filter {
+	background-color: #262626;
+	border-color: #6f6f6f;
+	color: #f4f4f4;
+}
+.cds--g100 .tablesorter .tablesorter-errorRow td {
+	background-color: #5c4a0a;
+}

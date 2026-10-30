@@ -1,11 +1,11 @@
 html { box-sizing: border-box; }
 *, *:before, *:after { box-sizing: inherit; }
 body,div,h1 {font-family:'trebuchet ms', verdana, arial;margin:3px;padding:3px;}
-body {background-color:#fff;color:#333;margin:10px;padding:10px;}
+body {background-color:var(--cds-background, #fff);color:var(--cds-text-primary, #333);margin:10px;padding:10px;}
 h1,h2 {font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;margin:10;}
 h1 {font-size:large;font-weight:400;}
-h2 {color:#333;font-size:small;font-weight:400;}
-h3 {color:#444;}
+h2 {color:var(--cds-text-primary, #333);font-size:small;font-weight:400;}
+h3 {color:var(--cds-text-primary, #444);}
 kbd {margin:0px 0.1em; padding:0.1em 0.6em;border-radius: 3px;border: 1px solid rgb(204, 204, 204);color: rgb(51, 51, 51);line-height: 1.4;font-family: Arial,Helvetica,sans-serif;font-size: 10px;display: inline-block;box-shadow: 0px 1px 0px rgba(0,0,0,0.2), inset 0px 0px 0px 2px #ffffff;background-color: rgb(247, 247, 247);-moz-box-shadow: 0 1px 0px rgba(0, 0, 0, 0.2), 0 0 0 2px #ffffff inset;-webkit-box-shadow: 0 1px 0px rgba(0, 0, 0, 0.2), 0 0 0 2px #ffffff inset;-moz-border-radius: 3px;-webkit-border-radius: 3px;text-shadow: 0 1px 0 #fff;}
 .demo {width:600px;margin:20px auto;}
 .demo h1,.demo h1 a {font-size:120%;text-align:center;text-decoration:none;color:#000;}
@@ -97,7 +97,7 @@ span.alert { padding: 1px 3px; }
 .tablesorter .accordion .accordion-link { margin-top: 11px; }
 .remark, .error { font-weight: bold; color: red; font-size: 18px; }
 table th.nobold { font-weight: normal; }
-table th a { text-decoration: underline; color: #000; }
+table th a { text-decoration: underline; color: var(--cds-text-primary, #000); }
 #group .ui-slider,#align .ui-slider { width: 100px; height: 3px; font-size: 0.8em; display: inline-block; margin-left: 10px; }
 #group .demo-label,#align .demo-label { display: inline-block; min-width: 125px; }
 #align .demo-label { display: inline-block; min-width: 150px; }
@@ -124,15 +124,15 @@ table th a { text-decoration: underline; color: #000; }
 .chart-toolbar-btn {
   padding: 3px 10px;
   font-size: 12px;
-  border: 1px solid #aaa;
+  border: 1px solid var(--cds-border-strong-01, #8d8d8d);
   border-radius: 3px;
-  background: #f5f5f5;
-  color: #333;
+  background: var(--cds-layer-01, #f4f4f4);
+  color: var(--cds-text-primary, #161616);
   cursor: pointer;
   line-height: 1.4;
 }
 
 .chart-toolbar-btn:hover {
-  background: #e0e0e0;
+  background: var(--cds-layer-hover-01, #e8e8e8);
 }
 
