@@ -129,21 +129,6 @@ th {
     font-size: unset;
     color: unset;
 }
-/* Drilldown pages apply the tablesorter-blue theme to Carbon tables; keep the header look
-   identical to the main page (Carbon's thead background, font and colour). */
-.cds--data-table.tablesorter-blue th,
-.cds--data-table.tablesorter-blue thead td {
-    background-color: transparent;
-    color: var(--cds-text-primary, #161616);
-    font-family: inherit;
-    font-weight: 600;
-    font-size: 0.8125rem;
-    line-height: 1.25;
-    padding-block: 0.25rem;
-    padding-inline: 0.5rem;
-    text-shadow: none;
-}
-
 /* Width helpers — more specific than .cds--data-table th so they win the reset */
 .cds--data-table th.ninety,      th.ninety      { width: 90%; }
 .cds--data-table th.sixty,       th.sixty       { width: 60%; }

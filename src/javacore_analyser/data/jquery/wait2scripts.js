@@ -243,28 +243,6 @@ function estimateHeapSizeFromGC(gcCollections) {
 }
 
 // ---------------------------------------------------------------------------
-// jQuery / tablesorter initialisation
-// ---------------------------------------------------------------------------
-
-$(function() {
-  $('#all_threads_table_thread_xsl').tablesorter({
-    theme: 'blue',
-    headers: {
-      0: { sorter: false },
-      1: { sorter: false },
-      2: { sorter: false },
-      3: { sorter: false },
-      4: { sorter: false },
-      5: { sorter: false },
-    },
-  });
-});
-
-// Needed for tooltips. See https://jqueryui.com/tooltip/
-$(function() {
-  $(document).tooltip();
-});
-
 // ---------------------------------------------------------------------------
 // Chart: CPU Usage
 // ---------------------------------------------------------------------------
