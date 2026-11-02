@@ -22,7 +22,6 @@
         <script src="data/jquery/jquery.mark.min.js"> _ </script>
         <script type="text/javascript" src="data/jquery/search.js"> _ </script>
         <script type="text/javascript" src="data/jquery/tablesorter-init.js"> _ </script>
-        <script type="text/javascript" src="data/carbon/carbon-components.min.js"> _ </script>
     </xsl:template>
 
 </xsl:stylesheet>

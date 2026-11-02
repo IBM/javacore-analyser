@@ -22,7 +22,6 @@
                 <script type="text/javascript" src="../data/expand.js"> _ </script>
                 <script src="../data/jquery/jquery.mark.min.js"> _ </script>
                 <script type="text/javascript" src="../data/jquery/search.js"> _ </script>
-                <script type="text/javascript" src="../data/carbon/carbon-components.min.js"> _ </script>
             </head>
 
             <body id="doc_body" height="100%">
