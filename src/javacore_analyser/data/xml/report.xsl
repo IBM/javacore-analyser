@@ -84,8 +84,8 @@
                     </button>
                     <button data-search="clear" class="cds--search-close" aria-label="Clear search">✖</button>
                 </div>
-                <button data-search="prev" class="cds--btn cds--btn--ghost cds--btn--sm cds--header__action" aria-label="Previous result">◂</button>
-                <button data-search="next" class="cds--btn cds--btn--ghost cds--btn--sm cds--header__action" aria-label="Next result">▸</button>
+                <button data-search="prev" class="cds--btn cds--btn--ghost cds--btn--sm cds--header__action" aria-label="Previous result"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M11 2v12L4 8z"/></svg></button>
+                <button data-search="next" class="cds--btn cds--btn--ghost cds--btn--sm cds--header__action" aria-label="Next result"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M5 2v12l7-6z"/></svg></button>
                 <span id="search-counter" class="search-counter"></span>
                 <button type="button" data-theme-toggle="" class="theme-toggle">Theme</button>
             </div>

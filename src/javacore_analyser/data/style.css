@@ -254,6 +254,21 @@ td {
     align-self: center;
 }
 
+/* Previous/next result arrows (identical inline SVG triangles) */
+button[data-search='prev'],
+button[data-search='next'] {
+    padding: 0 0.75rem;
+    min-width: 2.5rem;
+    justify-content: center;
+    align-items: center;
+}
+
+button[data-search='prev'] svg,
+button[data-search='next'] svg {
+    width: 24px;
+    height: 24px;
+}
+
 /* ── Main content padding below the fixed Carbon header ─────────────────── */
 
 /* Carbon sets margin-block-start: 3rem on .cds--content itself via its stylesheet,
