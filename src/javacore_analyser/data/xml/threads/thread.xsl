@@ -73,8 +73,8 @@
                                     <li>Click on a legend item to show or hide that data series.</li>
                                 </ul>
                             </details>
-                            <div class="chart-container" height="25%" style="overflow-x:auto;">
-                                <canvas id="myChart" height="300" width="1400"
+                            <div class="cds--tile chart-tile">
+                                <canvas id="myChart"
                                         title="Draw a rectangle to zoom in. Use the Reset zoom button to return to the full view."></canvas>
                             </div>
                         </xsl:otherwise>

@@ -452,6 +452,7 @@ td.http_slow.secondary {
 
 /* ── Chart canvas heights ────────────────────────────────────────────────── */
 
+#myChart,
 #myChartCPUUsage,
 #myChartGC,
 #myChartThreadClassifications {
