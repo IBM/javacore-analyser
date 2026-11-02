@@ -818,3 +818,111 @@ const initCarbonSort = function() {
 };
 
 document.addEventListener('DOMContentLoaded', initCarbonSort);
+
+/*
+ * initColumnResize – attach a drag handle to every <th> in every
+ * .cds--data-table so the user can resize columns with the mouse.
+ *
+ * Technique:
+ *   1. A thin <div class="col-resize-handle"> is appended to each <th>.
+ *   2. mousedown on the handle captures the starting X position and the
+ *      current <th> offsetWidth.
+ *   3. mousemove on the document updates the <th> inline width.
+ *   4. mouseup removes the temporary listeners and clears the drag state.
+ *
+ * localStorage persistence: each table must have an id attribute.
+ * Widths are saved under the key "colResize:<tableId>:<colIndex>" so they
+ * survive page reloads.
+ */
+const initColumnResize = function() {
+  document.querySelectorAll('table.cds--data-table').forEach(function(table) {
+    // Guard against double-initialisation (DOMContentLoaded + explicit call)
+    if (table.dataset.colResizeInit) return;
+    table.dataset.colResizeInit = '1';
+
+    const headers = table.querySelectorAll('thead th');
+    if (!headers.length) return;
+
+    const tableId = table.id || '';
+
+    // Restore saved widths from localStorage
+    if (tableId) {
+      headers.forEach(function(th, i) {
+        const saved = localStorage.getItem('colResize:' + tableId + ':' + i);
+        if (saved) {
+          th.style.width = saved;
+          th.style.minWidth = saved;
+        }
+      });
+    }
+
+    headers.forEach(function(th, i) {
+      // position:relative is needed so the absolute handle sits on the right edge
+      th.style.position = 'relative';
+
+      const handle = document.createElement('div');
+      handle.className = 'col-resize-handle';
+      handle.setAttribute('data-col-index', i);
+      handle.setAttribute('aria-hidden', 'true');
+      th.appendChild(handle);
+    });
+
+    // Use capture-phase listener on document so it fires before jQuery
+    // tablesorter's bubble-phase mousedown handler on <th>, which would
+    // otherwise call stopImmediatePropagation and swallow the event.
+    document.addEventListener('mousedown', function(e) {
+      const handle = e.target.closest('.col-resize-handle');
+      if (!handle) return;
+      // Confirm this handle belongs to this table
+      const th = handle.closest('th');
+      if (!th || !table.contains(th)) return;
+
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+
+      const i = parseInt(handle.getAttribute('data-col-index'), 10);
+
+      // Snapshot every column's current rendered pixel width
+      const startWidths = Array.from(headers).map(function(h) {
+        return h.getBoundingClientRect().width;
+      });
+      const startX = e.pageX;
+
+      // Switch to auto layout and pin every column to its current pixel
+      // width so only the dragged column changes during the move.
+      table.style.tableLayout = 'auto';
+      headers.forEach(function(h, idx) {
+        h.style.width    = startWidths[idx] + 'px';
+        h.style.minWidth = startWidths[idx] + 'px';
+      });
+
+      function onMouseMove(ev) {
+        const newWidth = Math.max(40, startWidths[i] + ev.pageX - startX);
+        th.style.width    = newWidth + 'px';
+        th.style.minWidth = newWidth + 'px';
+      }
+
+      function onMouseUp() {
+        document.removeEventListener('mousemove', onMouseMove);
+        document.removeEventListener('mouseup',   onMouseUp);
+
+        // Restore fixed layout so the rest of the page behaves normally.
+        table.style.tableLayout = '';
+
+        // Persist the new width
+        if (tableId) {
+          localStorage.setItem(
+            'colResize:' + tableId + ':' + i,
+            th.style.width
+          );
+        }
+      }
+
+      document.addEventListener('mousemove', onMouseMove);
+      document.addEventListener('mouseup',   onMouseUp);
+    }, true); // capture: true — fires before any bubble-phase handler
+  });
+};
+
+document.addEventListener('DOMContentLoaded', initColumnResize);

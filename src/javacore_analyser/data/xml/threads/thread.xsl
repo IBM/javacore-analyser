@@ -272,7 +272,7 @@
                 </div>
                 </main>
             </body>
-            <script>loadChart();</script>
+            <script>loadChart();initColumnResize();</script>
             <script type="text/javascript" src="../data/expand.js"> _ <!-- underscore character is required to prevent converting to <script /> which does not work --> </script>
         </html>
         <xsl:call-template name="expand_it"/>

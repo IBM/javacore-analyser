@@ -129,6 +129,20 @@ th {
     font-size: unset;
     color: unset;
 }
+/* Drilldown pages apply the tablesorter-blue theme to Carbon tables; keep the header look
+   identical to the main page (Carbon's thead background, font and colour). */
+.cds--data-table.tablesorter-blue th,
+.cds--data-table.tablesorter-blue thead td {
+    background-color: transparent;
+    color: var(--cds-text-primary, #161616);
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 0.8125rem;
+    line-height: 1.25;
+    padding-block: 0.25rem;
+    padding-inline: 0.5rem;
+    text-shadow: none;
+}
 
 /* Width helpers — more specific than .cds--data-table th so they win the reset */
 .cds--data-table th.ninety,      th.ninety      { width: 90%; }
@@ -447,6 +461,28 @@ td.http_slow.secondary {
 .ml-write-database   { background-color: var(--cds-tag-background-cyan,    #d1ecf1); color: var(--cds-tag-color-cyan,    #0c5460); }
 .ml-write-network    { background-color: var(--cds-tag-background-cyan,    #bee5eb); color: var(--cds-tag-color-cyan,    #0a4650); }
 .ml-unknown          { background-color: var(--cds-tag-background-gray,    #e9ecef); color: var(--cds-tag-color-gray,    #495057); }
+
+/* ── Column resize handle ───────────────────────────────────────────────── */
+
+.col-resize-handle {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 6px;
+    height: 100%;
+    cursor: col-resize;
+    z-index: 1;
+    /* A subtle 1px visual divider; invisible until hovered */
+    border-right: 2px solid transparent;
+    transition: border-color 0.15s;
+    /* Don't participate in text selection during drag */
+    user-select: none;
+}
+
+.col-resize-handle:hover,
+.col-resize-handle:active {
+    border-right-color: var(--cds-interactive-04, #0f62fe);
+}
 
 /* ── Chart canvas heights ────────────────────────────────────────────────── */
 
