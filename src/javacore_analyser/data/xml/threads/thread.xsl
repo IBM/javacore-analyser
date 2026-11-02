@@ -91,7 +91,7 @@
                                     <th>% CPU usage</th>
                                     <th class='sixty'>Stack trace</th>
                                     <th>State</th>
-                                    <th>Blocking</th>
+                                    <th class="ten">Blocking</th>
                                     <xsl:choose>
                                         <xsl:when test="$use_ml='True'">
                                             <th>Classification</th>
