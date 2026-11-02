@@ -247,11 +247,15 @@ td {
 /* ── Search counter (shown in Carbon Header) ─────────────────────────────── */
 
 .search-counter {
-    color: var(--cds-text-on-color, #ffffff);
+    color: var(--cds-text-primary, #161616);
     margin-left: 10px;
     font-size: 14px;
     vertical-align: middle;
     align-self: center;
+    /* Reserve space so the header layout does not shift when results appear */
+    min-width: 4.5rem;
+    text-align: center;
+    white-space: nowrap;
 }
 
 /* Previous/next result arrows (identical inline SVG triangles) */
