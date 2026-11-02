@@ -182,23 +182,21 @@ td {
 
 /* ── Stack traces ─────────────────────────────────────────────────────────── */
 
+/* The collapsed height is a whole number of lines, so a line is never cut in half.
+   Change --stacktrace-collapsed-lines to show more or fewer lines. */
 .stacktrace {
+    --stacktrace-collapsed-lines: 3;
     margin: 0;
     padding-left: 5px;
-    height: 45px;
+    line-height: 1.5;
+    height: calc(var(--stacktrace-collapsed-lines) * 1.5em);
     overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 5;
     font-family: var(--font-mono);
     font-size: 12px;
 }
 .stacktrace.show-all {
-    margin: 0;
-    padding-left: 5px;
-    height:auto;
-    overflow:visible;
-    text-overflow: none;
+    height: auto;
+    overflow: visible;
 }
 .toggle_expand {
     text-align: left;
