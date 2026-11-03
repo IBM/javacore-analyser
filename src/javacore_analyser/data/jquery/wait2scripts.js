@@ -11,6 +11,13 @@ const TOTAL_CPU_PERCENTAGE = 100;
 const HEAP_PADDING_PERCENTAGE = 0.01;
 const MB_SIZE = Math.pow(1024, 2);
 
+// Colours used for the pause time bars of known GC types. Other types get a color from GC_TYPE_FALLBACK_COLORS.
+const GC_TYPE_COLORS = {
+  scavenge: '54,162,235',
+  global:   '220,53,69',
+};
+const GC_TYPE_FALLBACK_COLORS = ['255,193,7', '40,167,69', '111,66,193', '23,162,184'];
+
 // ---------------------------------------------------------------------------
 // Shared Chart.js configuration fragments
 // ---------------------------------------------------------------------------
@@ -314,6 +321,7 @@ const loadChartGC = function() {
   gcCollectionElements.forEach(function(element) {
     gcCollections.push({
       startTime:          element.getAttribute('timestamp'),
+      gcType:             element.getAttribute('gc-type') || 'unknown',
       duration:           element.getAttribute('durationms'),
       freeBefore:         element.getAttribute('free-before'),
       freeAfter:          element.getAttribute('free-after'),
@@ -334,7 +342,8 @@ const loadChartGC = function() {
   // Build chart datasets
   const inputData       = [];
   const totalHeap       = [];
-  const pauseTimeData   = [];
+  const gcTypeData      = [];
+  const pauseTimeByType = {};
   const nurseryUsageData = [];
   const tenureUsageData  = [];
   const nurseryTotalData = [];
@@ -346,6 +355,10 @@ const loadChartGC = function() {
   console.log(`HEAP_SIZE: ${HEAP_SIZE} bytes (${HEAP_SIZE / MB_SIZE} MB)`);
 
   gcCollections.forEach(function(element) {
+    if (!(element['gcType'] in pauseTimeByType)) {
+      // Pad the new type's series with nulls for the data points already processed
+      pauseTimeByType[element['gcType']] = new Array(labels.length).fill(null);
+    }
     const durationMs   = Number(element['duration']);
     const gcStartTime  = new Date(element['startTime']).valueOf();
     const nurseryTotal = Number(element['nurseryTotal']);
@@ -359,7 +372,10 @@ const loadChartGC = function() {
     nurseryTotalData.push(nurseryTotal > 0 ? nurseryTotal / MB_SIZE : null);
     tenureTotalData.push(tenureTotal > 0  ? tenureTotal  / MB_SIZE : null);
     labels.push(gcStartTime);
-    pauseTimeData.push(durationMs);
+    gcTypeData.push(element['gcType']);
+    Object.keys(pauseTimeByType).forEach(function(type) {
+      pauseTimeByType[type].push(type === element['gcType'] ? durationMs : null);
+    });
     compRatioData.push(Number(element['compRatio']));
 
     // Data point: state after GC
@@ -369,11 +385,34 @@ const loadChartGC = function() {
     tenureUsageData.push(tenureTotal > 0  ? (tenureTotal  - Number(element['tenureFreeAfter']))  / MB_SIZE : null);
     nurseryTotalData.push(nurseryTotal > 0 ? nurseryTotal / MB_SIZE : null);
     tenureTotalData.push(tenureTotal > 0  ? tenureTotal  / MB_SIZE : null);
-    pauseTimeData.push(null);
+    gcTypeData.push(element['gcType']);
+    Object.keys(pauseTimeByType).forEach(function(type) {
+      pauseTimeByType[type].push(null);
+    });
     compRatioData.push(null);
     const gcEndTime = new Date(element['startTime']);
     gcEndTime.setMilliseconds(gcEndTime.getMilliseconds() + durationMs);
     labels.push(gcEndTime.valueOf());
+  });
+
+  // One pause time bar dataset per GC type, so that the legend allows toggling each type
+  let fallbackColorIndex = 0;
+  const pauseTimeDatasets = Object.keys(pauseTimeByType).map(function(type) {
+    const color = GC_TYPE_COLORS[type] || GC_TYPE_FALLBACK_COLORS[fallbackColorIndex++ % GC_TYPE_FALLBACK_COLORS.length];
+    return {
+      label: `Pause Time - ${type} (ms)`,
+      data: pauseTimeByType[type],
+      type: 'bar',
+      borderWidth: 1,
+      borderColor: `rgba(${color},1)`,
+      backgroundColor: `rgba(${color},0.5)`,
+      yAxisID: 'yPause',
+      barPercentage: 1.0,
+      categoryPercentage: 1.0,
+      barThickness: 6,
+      maxBarThickness: 9,
+      order: 1,
+    };
   });
 
   const gcChart = new Chart(ctx, {
@@ -402,20 +441,7 @@ const loadChartGC = function() {
           pointRadius: 0.0,
           yAxisID: 'y',
         },
-        {
-          label: 'Pause Time (ms)',
-          data: pauseTimeData,
-          type: 'bar',
-          borderWidth: 1,
-          borderColor: 'rgba(54,162,235,1)',
-          backgroundColor: 'rgba(54,162,235,0.5)',
-          yAxisID: 'yPause',
-          barPercentage: 1.0,
-          categoryPercentage: 1.0,
-          barThickness: 6,
-          maxBarThickness: 9,
-          order: 1,
-        },
+        ...pauseTimeDatasets,
         {
           label: 'Nursery Usage (MB)',
           data: nurseryUsageData,
@@ -508,6 +534,13 @@ const loadChartGC = function() {
       plugins: {
         zoom: zoomPluginConfig(),
         legend: legendConfig(),
+        tooltip: {
+          callbacks: {
+            afterBody: function(tooltipItems) {
+              return tooltipItems.length > 0 ? `GC type: ${gcTypeData[tooltipItems[0].dataIndex]}` : '';
+            },
+          },
+        },
       },
     },
   });
