@@ -21,7 +21,6 @@ twine>=7.0.0
 
 #Requiremnets for machine learning
 xgboost
-pandas
 scikit-learn
 
 #Property-based testing / fuzzing
