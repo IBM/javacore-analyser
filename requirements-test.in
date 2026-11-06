@@ -16,7 +16,6 @@
 
 py7zr
 lxml
-pyana
 importlib-resources
 tqdm
 haralyzer

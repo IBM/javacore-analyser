@@ -865,9 +865,6 @@ py7zr==1.1.4 \
     --hash=sha256:7674697559bd06b697bf6e8249985cee6dc704a4b07b8e11f24d0b1695707c3e \
     --hash=sha256:f6f868a457a6bd485b78d26e619045718bcd0b7720a6bf97d5fe86a1523423e8
     # via -r requirements-test.in
-pyana==0.2.7 \
-    --hash=sha256:1dd56eead397bd6581b6545f00211d52c3e51f24d2a260f8293b1bc966738649
-    # via -r requirements-test.in
 pybcj==1.0.8 \
     --hash=sha256:0074af187b1acce9e31717fc9aa42bc36b67f1a44088a8b44f4f4792af688ee6 \
     --hash=sha256:0657c9534d480a43b11743cad4209d140d09d417adaf19213ff395686ed08812 \

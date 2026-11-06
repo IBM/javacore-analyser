@@ -287,7 +287,6 @@ test/data/
 ### Core Dependencies
 - `py7zr` - Archive extraction
 - `lxml` - XML/XSL processing
-- `pyana` - Analysis utilities
 - `importlib-resources` - Resource loading
 - `tqdm` - Progress bars
 - `haralyzer` - HAR file parsing
