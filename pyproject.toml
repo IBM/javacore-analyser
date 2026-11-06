@@ -64,7 +64,6 @@ ollama = [
 huggingface = [
     "torch>=2.13.0",
     "transformers",
-    "pandas",
     "Markdown",
 ]
 watsonx = [
@@ -78,7 +77,6 @@ full = [
     "Markdown",
     "torch>=2.13.0",
     "transformers",
-    "pandas",
     "ibm-watsonx-ai",
 ]
 

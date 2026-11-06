@@ -294,7 +294,7 @@ test/data/
 ### Optional Dependencies
 - `flask`, `waitress` - Web interface
 - `ollama`, `Markdown` - Ollama LLM integration
-- `torch`, `transformers`, `pandas` - HuggingFace LLM integration
+- `torch`, `transformers` - HuggingFace LLM integration
 
 ## Build and Distribution
 
