@@ -208,9 +208,25 @@ class TestJavacoreAnalyser(unittest.TestCase):
         """Test processing HAR files without javacores"""
         self.runMainWithParams(self.har_only_args)
     
+    def test_har_only_displays_time_slot(self):
+        """The time slot of the gathered data is displayed for HAR files without javacores (issue #588)"""
+        self.runMainWithParams(self.har_only_args)
+        with open("tmp/index.html") as report_file:
+            report_html = report_file.read()
+        self.assertIn("from data between", report_html)
+        self.assertIn("<b>2025-01-03 11:07:47</b>", report_html)
+        self.assertIn("<b>2025-01-03 11:07:52</b>", report_html)
+
     def test_process_verbose_gc_only(self):
         """Test processing verbose GC files without javacores"""
         self.runMainWithParams(self.verbosegc_only_args)
+
+    def test_verbose_gc_only_displays_time_slot(self):
+        """The time slot of the gathered data is displayed for verbose GC without javacores (issue #588)"""
+        self.runMainWithParams(self.verbosegc_only_args)
+        with open("tmp/index.html") as report_file:
+            report_html = report_file.read()
+        self.assertIn("from data between", report_html)
 
     def test_process_verbosegclog(self):
         """Test processing verbose GC files with 'log' extension"""

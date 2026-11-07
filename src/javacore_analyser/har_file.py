@@ -4,6 +4,8 @@
 #
 import json
 import os
+from datetime import datetime
+from typing import Optional, Tuple
 
 from haralyzer import HarParser
 
@@ -32,6 +34,27 @@ class HarFile:
         self.path = path
         with open(path, 'r', encoding='utf-8') as file:
             self.har = HarParser(json.load(file, strict=False))
+
+    def get_time_range(self) -> Optional[Tuple[datetime, datetime]]:
+        """
+        Get the time slot covered by the HTTP calls in this HAR file.
+
+        Time zone information is dropped so that the result can be compared with the (naive) timestamps
+        coming from other data sources.
+
+        Returns:
+            A (first call start time, last call start time) tuple or None if the file contains no calls
+        """
+        start_times = []
+        for page in self.har.pages:
+            for entry in page.entries:
+                try:
+                    start_times.append(entry.startTime.replace(tzinfo=None))
+                except (AttributeError, TypeError, ValueError):
+                    continue
+        if not start_times:
+            return None
+        return min(start_times), max(start_times)
 
     def get_xml(self, doc):
         """
