@@ -1,6 +1,5 @@
 py7zr
 lxml
-pyana
 importlib-resources
 waitress # Production WSGI server
 flask # WSGI server for development the code
@@ -22,7 +21,6 @@ twine>=7.0.0
 
 #Requiremnets for machine learning
 xgboost
-pandas
 scikit-learn
 
 #Property-based testing / fuzzing
