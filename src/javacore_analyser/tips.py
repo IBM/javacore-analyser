@@ -24,7 +24,7 @@ class TipType(Enum):
 # List of the tips on which run the tool
 TIPS_LIST = ["DifferentIssuesTip", "ExcludedJavacoresTip", "InvalidAccumulatedCpuTimeTip", "TooFewJavacoresTip",
              "OOMEGenerationTip", "BlockingThreadsTip", "HighCpuUsageTip", "LongGcPauseTip",
-             "SystemExitInMainThreadTip", "PermanentlyBlockedThreadsTip",
+             "HighGcOverheadTip", "SystemExitInMainThreadTip", "PermanentlyBlockedThreadsTip",
              "FailingHttpCallsTip", "LongHttpCallsTip", "LowCompRatioTip"]
 
 
@@ -394,6 +394,43 @@ class LongGcPauseTip:
             return [(TipType.TIP, msg)]
 
         return []  # No long pauses detected
+
+
+class HighGcOverheadTip:
+    # Generates a tip when GC is consuming an excessive fraction of elapsed time.
+    # GC overhead = total GC pause time / total elapsed time * 100.
+
+    # Percentage thresholds
+    THRESHOLD_WARNING = 5   # percent — GC is using a noticeable fraction of time
+    THRESHOLD_CRITICAL = 25  # percent — GC overhead is severe
+
+    CRITICAL_TIP = (
+        "GC overhead is {0:.1f}% of the elapsed time."
+        " The application is spending a very large portion of its execution time in garbage collection."
+        " Consider reviewing memory allocation patterns, increasing the heap size (-Xmx),"
+        " or investigating for memory leaks."
+    )
+
+    WARNING_TIP = (
+        "GC overhead is {0:.1f}% of the elapsed time."
+        " The application is spending a notable portion of its execution time in garbage collection."
+        " Consider reviewing heap sizing (-Xmx) and memory usage."
+    )
+
+    @staticmethod
+    def generate(javacore_set):
+        overhead = javacore_set.gc_parser.gc_overhead_percent()
+
+        if overhead == 0.0:
+            return []  # No GC data or not computable
+
+        if overhead >= HighGcOverheadTip.THRESHOLD_CRITICAL:
+            return [(TipType.WARNING, HighGcOverheadTip.CRITICAL_TIP.format(overhead))]
+
+        if overhead >= HighGcOverheadTip.THRESHOLD_WARNING:
+            return [(TipType.TIP, HighGcOverheadTip.WARNING_TIP.format(overhead))]
+
+        return []
 
 
 class PermanentlyBlockedThreadsTip:
