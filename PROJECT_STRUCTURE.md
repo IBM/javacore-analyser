@@ -287,7 +287,6 @@ test/data/
 ### Core Dependencies
 - `py7zr` - Archive extraction
 - `lxml` - XML/XSL processing
-- `pyana` - Analysis utilities
 - `importlib-resources` - Resource loading
 - `tqdm` - Progress bars
 - `haralyzer` - HAR file parsing
@@ -295,7 +294,7 @@ test/data/
 ### Optional Dependencies
 - `flask`, `waitress` - Web interface
 - `ollama`, `Markdown` - Ollama LLM integration
-- `torch`, `transformers`, `pandas` - HuggingFace LLM integration
+- `torch`, `transformers` - HuggingFace LLM integration
 
 ## Build and Distribution
 
