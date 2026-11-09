@@ -96,6 +96,8 @@ You can type the following command to obtain the help:
 `javacore-analyser-batch --help` or `python -m javacore_analyser batch --help`
 
 #### Running web application:
+**NOTE:** The web application is provided as-is, without warranty of any kind.
+
 1. Repeat steps 1-3 from cmd application
 2. Execute the following command from cmd:  
   `javacore_analyser_web --port=5000 --reports-dir=/data/reports_dir`  
@@ -115,7 +117,9 @@ There is `--config_file` command line parameter which you can use if you want to
 file.
 
 ### Running container image
-There is a Docker/Podman container managed by one of projects developers. Use the following command 
+**NOTE:** The container image is provided as-is, without warranty of any kind.
+
+There is a Docker/Podman container managed by one of projects developers. Use the following command
 to start it:
 
 `podman run -it --rm --name javacore-analyser --mount type=bind,src="/local-reports-dir",target=/reports -p 5001:5000 ghcr.io/ibm/javacore-analyser:latest`
