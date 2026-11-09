@@ -7,14 +7,16 @@ import locale
 import logging
 import os
 import re
+import secrets
 import shutil
 import sys
 import tempfile
 import threading
 import time
+from functools import wraps
 from pathlib import Path
 
-from flask import Flask, render_template, request, send_from_directory, redirect
+from flask import Flask, render_template, request, send_from_directory, redirect, session, url_for, abort
 from waitress import serve
 
 import javacore_analyser.javacore_analyser_batch
@@ -29,7 +31,21 @@ To run the application from cmd type:
 flask --app javacore_analyser_web run
 """
 app = Flask(__name__, static_folder='data')
-reports_dir = 'reports' # This is default value. It will be changed in the constructor
+reports_dir = 'reports'  # This is default value. It will be changed in the constructor
+
+# Access token required to log in.  Set at startup via --token / config.ini [web_application] token.
+# If not configured, a random token is generated and printed to the console on each startup.
+_access_token: str = ""
+
+
+def _require_login(f):
+    """Decorator that redirects to /login when the session is not authenticated."""
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if not session.get("authenticated"):
+            return redirect(url_for("login"))
+        return f(*args, **kwargs)
+    return decorated
 
 
 # Assisted by watsonx Code Assistant
@@ -40,7 +56,26 @@ def create_temp_data_in_reports_dir(directory):
     os.mkdir(tmp_reports_dir)
 
 
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    error = None
+    if request.method == 'POST':
+        provided = request.form.get('token', '')
+        if secrets.compare_digest(provided, _access_token):
+            session['authenticated'] = True
+            return redirect(url_for('index'))
+        error = "Invalid token. Please try again."
+    return render_template('login.html', error=error)
+
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('login'))
+
+
 @app.route('/')
+@_require_login
 def index():
     reports = [{"name": Path(f).name, "date": time.ctime(os.path.getctime(f)), "timestamp": os.path.getctime(f)}
                for f in os.scandir(reports_dir) if f.is_dir() and Path(f).name is not TEMP_DIR]
@@ -50,12 +85,14 @@ def index():
 
 
 @app.route('/reports/<path:path>')
+@_require_login
 def dir_listing(path):
     return send_from_directory(reports_dir, path)
 
 
 @app.route('/zip/<path:path>')
-# Assisted by watsonx Code Assistant 
+@_require_login
+# Assisted by watsonx Code Assistant
 def compress(path):
     """
     Compress a directory and return the compressed file as an attachment.
@@ -81,6 +118,7 @@ def compress(path):
 
 
 @app.route('/delete/<path:path>')
+@_require_login
 def delete(path):
     # Checking if the report exists. This is to prevent attempt to delete any data by deleting any file outside
     # report dir if you prepare path variable.
@@ -97,6 +135,7 @@ def delete(path):
 # Assisted by WCA@IBM
 # Latest GenAI contribution: ibm/granite-20b-code-instruct-v2
 @app.route('/upload', methods=['POST'])
+@_require_login
 def upload_file():
 
     report_name = request.values.get("report_name") or ""
@@ -118,7 +157,12 @@ def upload_file():
         input_files = []
         # Iterate for each file in the files List, and Save them
         for file in files:
-            file_name = os.path.join(javacores_temp_dir_name, file.filename or "")
+            # Strip any directory components from the client-supplied filename to prevent
+            # path traversal (e.g. "../../../etc/passwd" or "/absolute/path").
+            safe_name = os.path.basename(file.filename or "")
+            if not safe_name:
+                raise Exception("Security exception: uploaded filename is empty or contains only path separators")
+            file_name = os.path.join(javacores_temp_dir_name, safe_name)
             file.save(file_name)
             input_files.append(file_name)
 
@@ -146,13 +190,30 @@ def main():
     port = Properties.get_instance().get_property("port", 5000)
     reports_directory = Properties.get_instance().get_property("reports_dir")
     ai = Properties.get_instance().get_property("use_ai", False)
+    token = Properties.get_instance().get_property("token", None)
 
-    run_web(debug, port, reports_directory, ai)
+    run_web(debug, port, reports_directory, ai, token)
 
 
-def run_web(debug=False, port=5000, reports_directory="reports", ai=False):
-    global reports_dir
+def run_web(debug=False, port=5000, reports_directory="reports", ai=False, token=None):
+    global reports_dir, _access_token
     reports_dir = os.path.abspath(reports_directory)
+
+    if token:
+        _access_token = str(token)
+        logging.info("Access token loaded from configuration.")
+    else:
+        _access_token = secrets.token_urlsafe(32)
+        logging.info("=" * 60)
+        logging.info("No access token configured. A random token has been generated for this session:")
+        logging.info("ACCESS TOKEN: " + _access_token)
+        logging.info("Provide this token on the login page, or set 'token' in [web_application] in config.ini.")
+        logging.info("=" * 60)
+
+    # Use a random secret key for Flask session signing on every startup.
+    # Sessions are invalidated when the server restarts, which is intentional.
+    app.secret_key = secrets.token_bytes(32)
+
     create_console_logging()
     logging.info("Javacore analyser")
     logging.info("Python version: " + sys.version)

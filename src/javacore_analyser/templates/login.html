@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<!--
+# Copyright IBM Corp. 2025
+# SPDX-License-Identifier: Apache-2.0
+-->
+<html lang="en">
+  <head>
+    <title>Javacore Analyser – Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
+    <style>
+      .login-box {
+        max-width: 400px;
+        margin: 80px auto;
+        padding: 24px;
+        border: 1px solid #ccc;
+      }
+      .login-box label { display: block; margin-bottom: 6px; }
+      .login-box input[type=password] { width: 100%; box-sizing: border-box; padding: 6px; }
+      .login-box input[type=submit] { margin-top: 12px; padding: 6px 18px; }
+      .error { color: #c00; margin-top: 8px; }
+    </style>
+  </head>
+  <body>
+    <div class="login-box">
+      <h1>Javacore Analyser</h1>
+      <h2>Login</h2>
+      <form method="post" action="{{ url_for('login') }}">
+        <label for="token">Access token:</label>
+        <input type="password" id="token" name="token" autofocus required>
+        <input type="submit" value="Log in">
+        {% if error %}
+        <p class="error">{{ error }}</p>
+        {% endif %}
+      </form>
+    </div>
+  </body>
+</html>
