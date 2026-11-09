@@ -139,8 +139,7 @@ fi
 # ---------------------------------------------------------------------------
 if should_run 3; then
   echo "=== [3/9] Building distribution packages ==="
-  echo "build==1.6.1 --hash=sha256:ecd351a4be9d35a9eaaba244a7687143c9c7d4aea6ac964e7e7ddab20cbcf4e7" \
-    | pip install --quiet --require-hashes -r /dev/stdin
+  pip install --quiet --require-hashes -r requirements-release.txt
   python -m build
   echo "Build complete. Artifacts in dist/:"
   ls dist/
@@ -223,8 +222,7 @@ fi
 # ---------------------------------------------------------------------------
 if should_run 6; then
   echo "=== [6/9] Generating Sigstore provenance attestations ==="
-  echo "sigstore==4.5.0 --hash=sha256:f045b207f2e12605cf775ec38e89c5eda625d71ffa7830477db65e47ec2bc8b2" \
-    | pip install --quiet --require-hashes -r /dev/stdin
+  pip install --quiet --require-hashes -r requirements-release.txt
   ATTESTED=0
   for artifact in dist/javacore_analyser-*.whl dist/javacore_analyser-*.tar.gz; do
     [[ -f "$artifact" ]] || continue
@@ -248,8 +246,7 @@ if should_run 7; then
   echo "=== [7/9] Uploading to PyPI ==="
   # Use __token__ as the username and your PyPI API token as the password when prompted.
   # Upload only the wheel, sdist and GPG signatures — PyPI rejects .sigstore.json files.
-  echo "twine==7.0.0 --hash=sha256:b854164df26db268af05f49aa5c0344b10e27a494343ff05b1e0bad3b135f5a7" \
-    | pip install --quiet --require-hashes -r /dev/stdin
+  pip install --quiet --require-hashes -r requirements-release.txt
   twine upload dist/javacore_analyser-*.whl dist/javacore_analyser-*.tar.gz dist/javacore_analyser-*.asc
   echo ""
 fi
