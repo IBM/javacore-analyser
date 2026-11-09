@@ -157,7 +157,12 @@ def upload_file():
         input_files = []
         # Iterate for each file in the files List, and Save them
         for file in files:
-            file_name = os.path.join(javacores_temp_dir_name, file.filename or "")
+            # Strip any directory components from the client-supplied filename to prevent
+            # path traversal (e.g. "../../../etc/passwd" or "/absolute/path").
+            safe_name = os.path.basename(file.filename or "")
+            if not safe_name:
+                raise Exception("Security exception: uploaded filename is empty or contains only path separators")
+            file_name = os.path.join(javacores_temp_dir_name, safe_name)
             file.save(file_name)
             input_files.append(file_name)
 

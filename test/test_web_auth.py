@@ -144,6 +144,62 @@ class TestWebAuth(unittest.TestCase):
         finally:
             javacore_analyser_web._access_token = original
 
+    # ------------------------------------------------------------------
+    # Upload path-traversal (CWE-22 fix)
+    # ------------------------------------------------------------------
+    def _upload(self, filename, content=b"data"):
+        """POST to /upload as an authenticated client with a single file."""
+        self._login()
+        from io import BytesIO
+        return self.client.post(
+            "/upload",
+            data={
+                "report_name": "test_report",
+                "files": (BytesIO(content), filename),
+            },
+            content_type="multipart/form-data",
+            follow_redirects=False,
+        )
+
+    def test_upload_traversal_dotdot_rejected(self):
+        resp = self._upload("../../etc/passwd")
+        # Must not be a 2xx success that wrote the file
+        self.assertNotEqual(resp.status_code // 100, 2,
+                            "Path traversal filename must not succeed")
+
+    def test_upload_absolute_path_rejected(self):
+        resp = self._upload("/etc/passwd")
+        self.assertNotEqual(resp.status_code // 100, 2,
+                            "Absolute path filename must not succeed")
+
+    def test_upload_separator_only_rejected(self):
+        """A filename of '/' or '../../' has an empty basename and must be rejected."""
+        resp = self._upload("/")
+        self.assertNotEqual(resp.status_code // 100, 2,
+                            "Separator-only filename must not succeed")
+
+    def test_upload_normal_filename_accepted(self):
+        """A safe filename should be accepted (processing may fail for other reasons,
+        but the path-traversal guard must not block it)."""
+        import unittest.mock as mock
+        with mock.patch(
+            "javacore_analyser.javacore_analyser_batch.process_javacores_and_generate_report_data"
+        ):
+            resp = self._upload("javacore.20220606.114458.32888.0001.txt", b"content")
+        # 302 redirect to the report page means the file was accepted and processing started
+        self.assertEqual(resp.status_code, 302)
+
+    def test_upload_traversal_does_not_write_outside_reports_dir(self):
+        """Confirm no file is created outside the reports directory."""
+        import tempfile, os
+        # Use a filename that would escape to the system temp dir
+        target = os.path.join(tempfile.gettempdir(), "traversal_test_canary.txt")
+        if os.path.exists(target):
+            os.remove(target)
+        self._upload("../../../tmp/traversal_test_canary.txt", b"canary")
+        self.assertFalse(os.path.exists(target),
+                         "Path traversal must not write files outside the reports directory")
+
 
 if __name__ == '__main__':
     unittest.main()
