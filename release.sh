@@ -27,7 +27,7 @@ Usage: $0 <VERSION> [--from STEP] [--help]
 Steps:
   1  Verify preconditions (branch = main, clean working tree)
   2  Create and push git tag VERSION
-  3  Build distribution packages (python -m build)
+  3  Delete old dist/ directory and build distribution packages (python -m build)
   4  Install built package in a temporary venv and run tests
   5  Sign dist artifacts with GPG (creates .asc detached signatures)
   6  Generate Sigstore provenance attestations (creates .sigstore bundles)
@@ -139,6 +139,8 @@ fi
 # ---------------------------------------------------------------------------
 if should_run 3; then
   echo "=== [3/9] Building distribution packages ==="
+  echo "Removing old dist/ directory ..."
+  rm -rf dist
   pip install --quiet --require-hashes -r requirements-release.txt
   python -m build
   echo "Build complete. Artifacts in dist/:"
