@@ -21,12 +21,18 @@ class TestWebAuth(unittest.TestCase):
         javacore_analyser_web._access_token = "test-token-abc"
         javacore_analyser_web.app.secret_key = b"test-secret-key"
         javacore_analyser_web.app.config["TESTING"] = True
+        # Keep TESTING=True for routing but let Flask convert unhandled exceptions into
+        # 500 responses so tests can assert on status codes rather than catching exceptions.
+        javacore_analyser_web.app.config["PROPAGATE_EXCEPTIONS"] = False
         self.client = javacore_analyser_web.app.test_client()
         # Create the temp staging directory that upload_file() expects to exist
         os.makedirs(os.path.join(self.reports_tmp.name, TEMP_DIR), exist_ok=True)
 
     def tearDown(self):
         self.reports_tmp.cleanup()
+        # Restore propagation default so other test modules are not affected
+        javacore_analyser_web.app.config["PROPAGATE_EXCEPTIONS"] = True
+
 
     # ------------------------------------------------------------------
     # Helper
