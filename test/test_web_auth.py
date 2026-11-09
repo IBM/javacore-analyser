@@ -14,6 +14,7 @@ class TestWebAuth(unittest.TestCase):
 
     def setUp(self):
         """Configure the Flask test client with a fixed token and a temporary reports directory."""
+        from javacore_analyser.constants import TEMP_DIR
         self.reports_tmp = tempfile.TemporaryDirectory()
         # Set global state the same way run_web() does, but without starting a server.
         javacore_analyser_web.reports_dir = self.reports_tmp.name
@@ -21,6 +22,8 @@ class TestWebAuth(unittest.TestCase):
         javacore_analyser_web.app.secret_key = b"test-secret-key"
         javacore_analyser_web.app.config["TESTING"] = True
         self.client = javacore_analyser_web.app.test_client()
+        # Create the temp staging directory that upload_file() expects to exist
+        os.makedirs(os.path.join(self.reports_tmp.name, TEMP_DIR), exist_ok=True)
 
     def tearDown(self):
         self.reports_tmp.cleanup()
