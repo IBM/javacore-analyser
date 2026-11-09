@@ -1,5 +1,15 @@
 # Changelog
 
+## [4.0.6] - 2026-11-09
+## What's Changed
+#602 removed pyana dependency by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/603
+* #604 Remove pandas by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/605
+* #608 Unathenticated user access by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/609
+
+
+**Full Changelog**: https://github.com/IBM/javacore-analyser/compare/4.0.5...4.0.6
+
+
 ## [4.0.5] - 2026-10-30
 ## What's Changed
 * #470 Bash build fails for tests by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/471
