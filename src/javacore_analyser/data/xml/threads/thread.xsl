@@ -12,13 +12,12 @@
     <xsl:template match="/index/doc/Thread/all_snapshot_collection/snapshot_collection[thread_hash='{id}']">
         <html height="100%">
             <head>
+                <title>Thread Detail - Javacore Analyser Report</title>
+                <link rel="stylesheet" href="../data/carbon/ibm-plex.css"/>
+                <link rel="stylesheet" href="../data/carbon/carbon.min.css"/>
                 <link rel="stylesheet" href="../data/style.css"/>
-                <link rel="stylesheet" href="../data/jquery/jq.css" />
-                <link rel="stylesheet" href="../data/jquery/theme.blue.css" />
-                <link rel="stylesheet" href="../data/jquery/theme.default.min.css" />
+                <script type="text/javascript" src="../data/theme.js"> _ </script>
                 <script type="text/javascript" src="../data/jquery/jquery.min.js"> _ </script>
-                <script type="text/javascript" src="../data/jquery/jquery.tablesorter.min.js"> _ </script>
-                <script type="text/javascript" src="../data/jquery/jquery.tablesorter.widgets.min.js"> _ </script>
                 <script type="text/javascript" src="../data/jquery/chart.umd.min.js"> _ </script>
                 <script type="text/javascript" src="../data/jquery/chartjs-adapter-date-fns.bundle.min.js"> _ </script>
                 <script type="text/javascript" src="../data/jquery/hammer.min.js"> _ </script>
@@ -28,16 +27,26 @@
                 <script type="text/javascript" src="../data/jquery/search.js"> _ </script>
             </head>
             <body id="doc_body" height="100%">
-                <div class="searchbar">
-                    <input id="search-input" type="search" />
-                    <button data-search="search" id="search-button">Search</button>
-                    <button data-search="next">Next</button>
-                    <button data-search="prev">Prev</button>
-                    <button data-search="clear">✖</button>
-                    <span id="search-counter" class="search-counter"></span>
-                </div>
+                <header class="cds--header" role="banner">
+                    <a class="cds--header__name" href="../index.html">
+                        <span class="cds--header__name--prefix">IBM</span>&#160;Javacore Analyser
+                    </a>
+                    <div class="cds--header__global">
+                        <div class="cds--search cds--search--sm cds--search--light" role="search" aria-label="Search">
+                            <input id="search-input" class="cds--search-input" type="search" placeholder="Search…" aria-label="Search" />
+                            <button data-search="search" id="search-button" class="cds--search-button" aria-label="Search">
+                                <svg class="cds--search-magnifier" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16" fill="currentColor"><path d="M15.14 13.73L11 9.58A5.88 5.88 0 0 0 7 0a6 6 0 1 0 4.36 10.08l4.05 4.09a1 1 0 0 0 1.41 0 1 1 0 0 0-.68-1.44zM7 10a4 4 0 1 1 4-4 4 4 0 0 1-4 4z"/></svg>
+                            </button>
+                            <button data-search="clear" class="cds--search-close" aria-label="Clear search">✖</button>
+                        </div>
+                        <button data-search="prev" class="cds--btn cds--btn--ghost cds--btn--sm cds--header__action" aria-label="Previous result"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M11 2v12L4 8z"/></svg></button>
+                        <button data-search="next" class="cds--btn cds--btn--ghost cds--btn--sm cds--header__action" aria-label="Next result"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M5 2v12l7-6z"/></svg></button>
+                        <span id="search-counter" class="search-counter"><xsl:text> </xsl:text></span>
+                        <button type="button" data-theme-toggle="" class="theme-toggle">Theme</button>
+                    </div>
+                </header>
+                <main class="cds--content" id="main-content">
                 <div class="content">
-                    <p class="right"><a href="../index.html"> Back to Main page </a></p>
                     <h2>
                         Wait Report for thread: <b><xsl:value-of select="thread_name"/></b>
                         <br/>
@@ -58,14 +67,16 @@
                                     <li>Click on a legend item to show or hide that data series.</li>
                                 </ul>
                             </details>
-                            <div class="chart-container" height="25%" style="overflow-x:auto;">
-                                <canvas id="myChart" height="300" width="1400"
+                            <div class="cds--tile chart-tile">
+                                <canvas id="myChart"
                                         title="Draw a rectangle to zoom in. Use the Reset zoom button to return to the full view."></canvas>
                             </div>
                         </xsl:otherwise>
                     </xsl:choose>
                     <div id="all_threads">
-                        <table id="all_threads_table_thread_xsl">
+                    <div class="cds--data-table-container">
+                    <div class="cds--data-table-content">
+                        <table id="all_threads_table_thread_xsl" class="cds--data-table cds--data-table--zebra">
                             <thead>
                                 <tr>
                                     <th>Timestamp</th>
@@ -74,7 +85,7 @@
                                     <th>% CPU usage</th>
                                     <th class='sixty'>Stack trace</th>
                                     <th>State</th>
-                                    <th>Blocking</th>
+                                    <th class="ten">Blocking</th>
                                     <xsl:choose>
                                         <xsl:when test="$use_ml='True'">
                                             <th>Classification</th>
@@ -187,7 +198,7 @@
                                             </td>
                                         </xsl:when>
                                         <xsl:when test="state='B'">
-                                            <td class="blocked">
+                                            <td><span class="ml-badge state-blocked">
                                                 <a target="_blank">
                                                     <xsl:attribute name="href">
                                                         <xsl:value-of select="concat('thread_', blocked_by/@thread_hash, '.html')"/>
@@ -197,7 +208,7 @@
                                                     </xsl:attribute>
                                                     Blocked by <xsl:value-of select="blocked_by/@thread_id"/>
                                                 </a>
-                                            </td>
+                                            </span></td>
                                         </xsl:when>
                                         <xsl:otherwise>
                                             <td><xsl:value-of select="state"/></td>
@@ -250,9 +261,12 @@
                             </xsl:for-each>
                         </table>
                     </div>
+                    </div>
+                    </div>
                 </div>
+                </main>
             </body>
-            <script>loadChart();</script>
+            <script>loadChart();initColumnResize();</script>
             <script type="text/javascript" src="../data/expand.js"> _ <!-- underscore character is required to prevent converting to <script /> which does not work --> </script>
         </html>
         <xsl:call-template name="expand_it"/>
