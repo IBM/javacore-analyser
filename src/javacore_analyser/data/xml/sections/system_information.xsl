@@ -8,23 +8,17 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
     <xsl:template name="system_information">
-        <div class="cds--accordion__item" id="accordion-system-info">
-            <button type="button" class="cds--accordion__heading"
-                    aria-expanded="false" aria-controls="content-system-info"
-                    onclick="this.closest('.cds--accordion__item').classList.toggle('cds--accordion__item--active'); this.setAttribute('aria-expanded', this.closest('.cds--accordion__item').classList.contains('cds--accordion__item--active')?'true':'false');">
-                <svg class="cds--accordion__arrow" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M11 8L6 13 4.6 11.6 8.2 8 4.6 4.4 6 3z"/></svg>
-                <span class="cds--accordion__title">System Information</span>
-            </button>
-            <div class="cds--accordion__wrapper"><div id="content-system-info" class="cds--accordion__content">
+        <h3><a id="toggle_system_properties"
+               href="javascript:expand_it(system_properties, toggle_system_properties)"
+               class="expandit">System Information</a></h3>
+        <div id="system_properties" style="display:none;">
         <!--    <xsl:if test="doc/system_info/@ai_overview != ''">
                 <h4>AI Overview:</h4>
                     <xsl:value-of select="doc/system_info/@ai_overview" disable-output-escaping="yes"/>
             </xsl:if>
         -->
             <h4>Basic JVM Configuration</h4>
-            <div class="cds--data-table-container">
-            <div class="cds--data-table-content">
-            <table id="sys_info_table" class="cds--data-table cds--data-table--zebra">
+            <table id="sys_info_table" class="tablesorter">
                 <thead>
                     <tr>
                         <th class="ten">Property</th>
@@ -82,12 +76,8 @@
                     </tr>
                 </tbody>
             </table>
-            </div>
-            </div>
             <h4>Java Arguments</h4>
-            <div class="cds--data-table-container">
-            <div class="cds--data-table-content">
-            <table id="java_arguments_table" class="cds--data-table cds--data-table--zebra">
+            <table id="java_arguments_table" class="tablesorter">
                 <thead><th>Argument</th></thead>
                 <tbody>
                     <xsl:for-each select="doc/system_info/jvm_info/user_args_list/user_arg ">
@@ -95,10 +85,6 @@
                     </xsl:for-each>
                 </tbody>
             </table>
-            </div>
-            </div>
-            </div>
-            </div>
         </div>
     </xsl:template>
 

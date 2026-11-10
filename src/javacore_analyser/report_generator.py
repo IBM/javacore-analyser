@@ -104,17 +104,12 @@ class ReportGenerator:
         if os.path.exists(directory):
             shutil.rmtree(directory)
         os.mkdir(directory)
-        # The template references assets relative to the report root (data/...). The placeholders are written to a
-        # sub-directory, so the paths must go one level up, otherwise the stylesheets are not found.
-        with open(placeholder_file, encoding="utf-8") as f:
-            placeholder_content = f.read().replace('href="data/', 'href="../data/').replace('src="data/', 'src="../data/')
         for element in tqdm(collection, desc="Generating placeholder htmls", unit=" file"):
             if element.is_interesting() or not Properties.get_instance().skip_boring():
                 filename = file_prefix + "_" + element.get_id() + ".html"
                 if filename.startswith("_"):
                     filename = filename[1:]
-                with open(os.path.join(directory, filename), "w", encoding="utf-8") as f:
-                    f.write(placeholder_content)
+                shutil.copy2(placeholder_file, os.path.join(directory, filename))
         logging.info("Finished generating placeholder htmls")
 
     def _generate_htmls_for_threads(self, temp_dir_name: str):
@@ -430,7 +425,7 @@ class ReportGenerator:
                                 section_title=plugin.get_display_name(),
                                 description=plugin.get_description(),
                             )
-                            full_html = section_header + html_content + '\n    </div></div>\n</div>\n'
+                            full_html = section_header + html_content + '\n</div>\n'
                             plugins_body += plugin_entry_template.format(
                                 plugin_display_name=plugin.get_display_name(),
                                 full_html=full_html,
