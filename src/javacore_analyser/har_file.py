@@ -57,13 +57,7 @@ class HarFile:
         har_file_node.setAttribute("hostname", hostname)
         
         try:
-            b = self.har.browser
-            if isinstance(b, dict):
-                name = b.get("name", "")
-                version = b.get("version", "")
-                browser = f"{name} {version}".strip() if name or version else "unknown"
-            else:
-                browser = str(b)
+            browser = str(self.har.browser)
         except (IndexError, AttributeError, KeyError):
             browser = "unknown"
         har_file_node.setAttribute("browser", browser)
