@@ -20,6 +20,7 @@ from lxml.etree import XMLSyntaxError
 from tqdm import tqdm
 
 from javacore_analyser.constants import DATE_FORMAT
+from javacore_analyser.java_thread import Thread
 from javacore_analyser.properties import Properties
 
 
@@ -98,6 +99,17 @@ class ReportGenerator:
     # Private helpers
     # ------------------------------------------------------------------
 
+    @staticmethod
+    def _should_generate_drilldown(element):
+        """Whether to generate a drill-down page for a thread or javacore.
+
+        The current thread always gets a page, even if it is boring, because the
+        Input Files section links to it (issue #407).
+        """
+        if element.is_interesting() or not Properties.get_instance().skip_boring():
+            return True
+        return isinstance(element, Thread) and element.is_current_thread()
+
     def _generate_placeholder_htmls(self, directory, collection, file_prefix):
         placeholder_file = os.path.join(self.output_dir, "data", "html", "processing_data.html")
         logging.info(f"Generating placeholder htmls in {directory}")
@@ -105,7 +117,7 @@ class ReportGenerator:
             shutil.rmtree(directory)
         os.mkdir(directory)
         for element in tqdm(collection, desc="Generating placeholder htmls", unit=" file"):
-            if element.is_interesting() or not Properties.get_instance().skip_boring():
+            if self._should_generate_drilldown(element):
                 filename = file_prefix + "_" + element.get_id() + ".html"
                 if filename.startswith("_"):
                     filename = filename[1:]
@@ -151,7 +163,7 @@ class ReportGenerator:
                 filename = output_file_prefix + "_" + str(element_id) + extension
                 if filename.startswith("_"):
                     filename = filename[1:]
-                if element.is_interesting() or not Properties.get_instance().skip_boring():
+                if self._should_generate_drilldown(element):
                     file = os.path.join(tmp_dir, filename)
                     logging.debug("Writing file " + file)
                     with open(file, "w") as f:

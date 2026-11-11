@@ -26,6 +26,10 @@ class Thread(AbstractSnapshotCollection):
         if self.has_tall_stacks(): return True
         return False
 
+    def is_current_thread(self) -> bool:
+        """True if this thread was the current thread in at least one javacore."""
+        return any(snapshot.is_current_thread for snapshot in self.thread_snapshots)
+
     def get_hash(self):
         id_str = self.name + str(self.id)
         hashcode = abs(hash(id_str))

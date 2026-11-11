@@ -43,7 +43,7 @@ def get_thread_link(javacore_set, thread_name):
     for thread in javacore_set.threads.snapshot_collections:
         if thread.name == thread_name:
             skip_boring = Properties.get_instance().skip_boring()
-            has_drill_down = thread.is_interesting() or not skip_boring
+            has_drill_down = thread.is_interesting() or not skip_boring or thread.is_current_thread()
             if has_drill_down:
                 thread_hash = thread.get_hash()
                 return f'<a href="threads/thread_{thread_hash}.html">{thread_name}</a>'
