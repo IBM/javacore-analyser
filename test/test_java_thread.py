@@ -141,6 +141,21 @@ class TestJavaThread(unittest.TestCase):
         thread_snapshot.stack_trace = stack_trace
         self.assertTrue(thread.is_interesting(), "This thread has a tall stack, so should be interesting")
 
+    def test_is_current_thread(self):
+        """A thread is current if any of its snapshots is the current thread."""
+        thread = Thread()
+        self.assertFalse(thread.is_current_thread(), "A thread with no snapshots is not current")
+
+        snapshot = ThreadSnapshot()
+        snapshot.is_current_thread = False
+        thread.thread_snapshots.append(snapshot)
+        self.assertFalse(thread.is_current_thread(),
+                         "A thread whose snapshots are not current is not current")
+
+        snapshot.is_current_thread = True
+        self.assertTrue(thread.is_current_thread(),
+                        "A thread with a current snapshot is current")
+
     def test_has_tall_stacks(self):
         thread = Thread()
         thread_snapshot = ThreadSnapshot()

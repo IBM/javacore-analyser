@@ -48,6 +48,8 @@ class TestJavacoreAnalyser(unittest.TestCase):
         self.threadnameswithquotes = ["javacore_analyser", "test/data/quotationMarks", "tmp"]
         self.encoding = ["javacore_analyser", "test/data/encoding/javacore.20220606.114458.32888.0001.txt", "tmp"]
         self.no_current_thread = ["javacore_analyser", "test/data/javacores/javacore.20220606.114458.32888.0001.txt", "tmp"]
+        self.current_thread_sample = ["javacore_analyser",
+                                      "test/data/javacores/javacore.20220606.114502.32888.0002.txt", "tmp"]
         self.ml = ["javacore_analyser", "test/data/archives/javacores.7z", "tmp", "--use_ml=true"]
         self.ai_default_llm = ["javacore_analyser", "test/data/archives/javacores.7z", "tmp", "--use_ai=true"]
         self.ollama = ["javacore_analyser", "test/data/archives/javacores.7z", "tmp", "--use_ai=true",
@@ -89,6 +91,32 @@ class TestJavacoreAnalyser(unittest.TestCase):
         with open("tmp/index.html") as report_file:
             report_html = report_file.read()
         self.assertIn("no current thread", report_html)
+
+    def test_current_thread_drilldown_page_exists(self):
+        """Issue #407: clicking the current thread link must not result in a 404.
+
+        With skip_boring=true (default), a drill-down page is generated for the
+        current thread even if the thread is otherwise boring.
+        """
+        self.runMainWithParams(self.current_thread_sample)
+
+        # Re-parse in this process so the (per-process randomized) thread hash
+        # matches the one used while generating the report.
+        javacore_set = javacore_analyser_batch.generate_javecore_set_data([self.current_thread_sample[1]])
+        current_thread_hash = None
+        for jc in javacore_set.javacores:
+            if jc.current_thread and jc.current_thread.thread:
+                current_thread_hash = jc.current_thread.thread.get_hash()
+        self.assertIsNotNone(current_thread_hash, "sample javacore should have a current thread")
+
+        drilldown = os.path.join("tmp", "threads", f"thread_{current_thread_hash}.html")
+        self.assertTrue(os.path.exists(drilldown),
+                        f"drill-down page for current thread was not generated: {drilldown}")
+
+        with open("tmp/index.html") as report_file:
+            report_html = report_file.read()
+        self.assertIn(f"threads/thread_{current_thread_hash}.html", report_html,
+                      "index.html must link to the current thread's drill-down page")
 
     def test_unknown_encoding(self):
         self.runMainWithParams(self.encoding)
