@@ -6,7 +6,7 @@
 import unittest
 from xml.dom.minidom import Element, parseString
 
-from javacore_analyser.verbose_gc import GcCollection, DURATION, COMP_RATIO
+from javacore_analyser.verbose_gc import GcCollection, DURATION, COMP_RATIO, GC_TYPE
 
 
 class TestGcCollection(unittest.TestCase):
@@ -56,5 +56,11 @@ class TestGcCollection(unittest.TestCase):
         duration = element.getAttribute(DURATION)
         self.assertEqual(duration, "100", "Wrong " + DURATION + " value")
         self.assertTrue(element.hasAttribute(COMP_RATIO), "Missing " + COMP_RATIO + " attribute")
+        self.assertTrue(element.hasAttribute(GC_TYPE), "Missing " + GC_TYPE + " attribute")
+
+    def test_get_xml_gc_type(self):
+        self.gc_collection.gc_type = "global"
+        element = self.gc_collection.get_xml(self.doc)
+        self.assertEqual(element.getAttribute(GC_TYPE), "global", "Wrong " + GC_TYPE + " value")
 
 
