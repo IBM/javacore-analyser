@@ -271,7 +271,7 @@ class ExcludedJavacoresTip:
 class BlockingThreadsTip:
     # Generates the tip that one or more threads are blocking many another threads
 
-    BLOCKING_THREADS_TEXT = """a thread {0} is blocking on average {1:.1f} another threads per javacore.
+    BLOCKING_THREADS_TEXT = """A thread {0} is blocking on average {1:.1f} another threads per javacore.
     This lock might cause performance degradation."""
 
     MAX_BLOCKING_THREADS_NO = 5

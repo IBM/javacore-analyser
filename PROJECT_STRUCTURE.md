@@ -142,6 +142,7 @@ data/xml/
 - `data/html/` - Error and processing templates
 - `data/prompts/` - LLM prompt templates
 - `data/style.css`, `data/style.js`, `data/expand.js` - Report styling
+- `data/theme.js` - Light / dark / device theme switcher (persisted in `localStorage`)
 
 ## Test Structure (`test/`)
 
