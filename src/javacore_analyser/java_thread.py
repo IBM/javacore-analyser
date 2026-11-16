@@ -30,6 +30,14 @@ class Thread(AbstractSnapshotCollection):
         """True if this thread was the current thread in at least one javacore."""
         return any(snapshot.is_current_thread for snapshot in self.thread_snapshots)
 
+    def has_drill_down(self) -> bool:
+        """Whether a drill-down page is generated (and linked) for this thread.
+
+        The current thread always gets a page, even if it is boring, because the
+        Input Files section links to it (issue #407).
+        """
+        return self.is_interesting() or not Properties.get_instance().skip_boring() or self.is_current_thread()
+
     def get_hash(self):
         id_str = self.name + str(self.id)
         hashcode = abs(hash(id_str))
@@ -38,8 +46,7 @@ class Thread(AbstractSnapshotCollection):
     def get_xml(self, doc):
         thread_node = super().get_xml(doc)
 
-        thread_node.setAttribute("has_drill_down",
-                                 str(self.is_interesting() or not Properties.get_instance().skip_boring()))
+        thread_node.setAttribute("has_drill_down", str(self.has_drill_down()))
 
         # thread ID
         id_node = doc.createElement("thread_id")
