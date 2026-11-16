@@ -7,7 +7,6 @@ import os
 import re
 from enum import Enum
 
-from javacore_analyser.properties import Properties
 from javacore_analyser.har_file import HttpCall
 
 # This is a module containing list of the tips.
@@ -42,9 +41,7 @@ def get_thread_link(javacore_set, thread_name):
     # Find the thread by name
     for thread in javacore_set.threads.snapshot_collections:
         if thread.name == thread_name:
-            skip_boring = Properties.get_instance().skip_boring()
-            has_drill_down = thread.is_interesting() or not skip_boring
-            if has_drill_down:
+            if thread.has_drill_down():
                 thread_hash = thread.get_hash()
                 return f'<a href="threads/thread_{thread_hash}.html">{thread_name}</a>'
             break
