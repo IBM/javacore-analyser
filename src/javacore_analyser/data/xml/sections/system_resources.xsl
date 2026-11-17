@@ -72,6 +72,9 @@
                                     <li><strong>GC Pause Time</strong>
                                         is the duration of each garbage collection pause in milliseconds,
                                         indicating how long the application was stopped during garbage collection.
+                                        The pause time is shown as a separate series for each garbage collection type
+                                        (for example, <em>scavenge</em> for nursery collections and <em>global</em> for full collections),
+                                        and the type is also displayed in the tooltip.
                                     </li>
                                     <li><strong>Nursery Usage</strong>
                                         shows the free memory in the nursery (young generation) space before and after each garbage collection,
