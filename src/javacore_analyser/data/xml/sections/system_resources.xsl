@@ -105,6 +105,9 @@
                                             <li><strong>GC Pause Time</strong>
                                                 is the duration of each garbage collection pause in milliseconds,
                                                 indicating how long the application was stopped during garbage collection.
+                                                The pause time is shown as a separate series for each garbage collection type
+                                                (for example, <em>scavenge</em> for nursery collections and <em>global</em> for full collections),
+                                                and the type is also displayed in the tooltip.
                                             </li>
                                             <li><strong>Nursery Usage</strong>
                                                 shows the free memory in the nursery (young generation) space before and after each garbage collection,
@@ -127,6 +130,11 @@
                                                 calculated as the percentage of used heap memory that was freed by the collection.
                                                 A high value indicates an efficient collection that recovered a large fraction of live objects;
                                                 a low or declining comp ratio over time is a sign of memory pressure.
+                                            </li>
+                                            <li><strong>% Time in GC</strong>
+                                                is the cumulative GC overhead at each collection point:
+                                                the total GC pause time so far divided by the total elapsed time so far, expressed as a percentage.
+                                                A rising trend indicates the application is spending an increasing fraction of its time in garbage collection.
                                             </li>
                                         </ul>
                                         <p><strong>Chart interactions:</strong></p>

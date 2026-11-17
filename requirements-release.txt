@@ -369,9 +369,9 @@ docutils==0.23 \
     --hash=sha256:25d013af9bf23bc1c7b2b093dff4208166c53a94786c9e447808335ef1185fea \
     --hash=sha256:746f5060322511280a1e50eb76846ed6bf2342984b2ac04dc42caa1a8d78799e
     # via readme-renderer
-email-validator==2.3.0 \
-    --hash=sha256:80f13f623413e6b197ae73bb10bf4eb0908faf509ad8362c5edeb0be7fd450b4 \
-    --hash=sha256:9fc05c37f2f6cf439ff414f8fc46d917929974a82244c20eb10231ba60c54426
+email-validator==2.4.0 \
+    --hash=sha256:4454e41c4e1c6b6caee34a1dc71d5e736791562be8fd179b02e298f796522684 \
+    --hash=sha256:be487bc50bc3bd832a98515a55a15649d9bec06d954fa178663190714b6c4ee1
     # via pydantic
 id==1.6.1 \
     --hash=sha256:d0732d624fb46fd4e7bc4e5152f00214450953b9e772c182c1c22964def1a069 \
@@ -415,9 +415,9 @@ lazy-importer==0.1.0 ; python_full_version < '3.12' and platform_machine != 'ppc
     --hash=sha256:b2e296716ce015c0cd80e57b940e52727c5b934b34b8656d5ce06bdd0ee5fbdd \
     --hash=sha256:bd93fab7bef18e842eea02b839410954d37889140dc64ca4d9680aec6880c739
     # via importlib-metadata
-markdown-it-py==4.2.0 \
-    --hash=sha256:04a21681d6fbb623de53f6f364d352309d4094dd4194040a10fd51833e418d49 \
-    --hash=sha256:9f7ebbcd14fe59494226453aed97c1070d83f8d24b6fc3a3bcf9a38092641c4a
+markdown-it-py==4.3.0 \
+    --hash=sha256:7aa1511a46c39138de78d9eba92ce47e63124d8003fc98b3a351909e04239efa \
+    --hash=sha256:91a58fa5b72c71a40cf7177250fd767480d7a2bb3ac426ccfb76fb90305fdaaa
     # via rich
 mdurl==0.1.2 \
     --hash=sha256:84008a41e51615a49fc9966191ff91509e3c40b939176e643fd50a5c2196b8f8 \
@@ -703,9 +703,9 @@ sigstore==4.5.1 \
     --hash=sha256:02e000197b34980f1d382741d6f83c2fecbcef7debf7304f36a5253f3c892cd9 \
     --hash=sha256:14accda8a7d4ef47cb25b4903829fb10f011048c261a5937724a43d073c4f34d
     # via -r requirements-release.in
-sigstore-models==0.0.6 \
-    --hash=sha256:5201a68f4d7d0f8bec1e2f4378eb646b084c52609a4e31db8c385095fff68b2e \
-    --hash=sha256:c766c09470c2a7e8a4a333c893f07e2001c56a3ff1757b1a246119f53169a849
+sigstore-models==0.0.7 \
+    --hash=sha256:9f3b909d0c9ab388f839b3a7dbfaab79c66aa8b479a2d95838a2bdad88c49651 \
+    --hash=sha256:a2906ac1ecac5a96e642a30e89112f591f26a29f596a42eb554aa55cc48be8d5
     # via sigstore
 sigstore-rekor-types==0.0.18 \
     --hash=sha256:19aef25433218ebf9975a1e8b523cc84aaf3cd395ad39a30523b083ea7917ec5 \

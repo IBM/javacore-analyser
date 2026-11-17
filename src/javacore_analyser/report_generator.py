@@ -20,7 +20,6 @@ from lxml.etree import XMLSyntaxError
 from tqdm import tqdm
 
 from javacore_analyser.constants import DATE_FORMAT
-from javacore_analyser.properties import Properties
 
 
 class FileResolver(etree.Resolver):
@@ -109,7 +108,7 @@ class ReportGenerator:
         with open(placeholder_file, encoding="utf-8") as f:
             placeholder_content = f.read().replace('href="data/', 'href="../data/').replace('src="data/', 'src="../data/')
         for element in tqdm(collection, desc="Generating placeholder htmls", unit=" file"):
-            if element.is_interesting() or not Properties.get_instance().skip_boring():
+            if element.has_drill_down():
                 filename = file_prefix + "_" + element.get_id() + ".html"
                 if filename.startswith("_"):
                     filename = filename[1:]
@@ -156,13 +155,42 @@ class ReportGenerator:
                 filename = output_file_prefix + "_" + str(element_id) + extension
                 if filename.startswith("_"):
                     filename = filename[1:]
-                if element.is_interesting() or not Properties.get_instance().skip_boring():
+                if element.has_drill_down():
                     file = os.path.join(tmp_dir, filename)
                     logging.debug("Writing file " + file)
                     with open(file, "w") as f:
                         f.write(file_content.format(id=element_id))
                 else:
                     logging.debug("Skipping boring file: " + filename)
+
+    def _get_data_time_range(self) -> tuple[Optional[datetime], Optional[datetime]]:
+        """
+        Returns the time slot of the gathered data.
+
+        If javacores are present, the time slot is defined by the first and the last javacore. Otherwise it is
+        calculated from the verbose GC collections and the HTTP calls from HAR files.
+
+        Returns:
+            A (start, end) tuple. Both values are None if no time information is available.
+        """
+        javacore_set = self.javacore_set
+        if 'javacores' in javacore_set.data_types and len(javacore_set.javacores) > 0:
+            return javacore_set.javacores[0].datetime, javacore_set.javacores[-1].datetime
+
+        starts: list[datetime] = []
+        ends: list[datetime] = []
+        collects = javacore_set.gc_parser.get_collects()
+        if len(collects) > 0:
+            starts.append(collects[0].get_start_time())
+            ends.append(collects[-1].get_start_time())
+        for har in javacore_set.har_files:
+            har_range = har.get_time_range()
+            if har_range is not None:
+                starts.append(har_range[0])
+                ends.append(har_range[1])
+        if not starts:
+            return None, None
+        return min(starts), max(ends)
 
     # Assisted by WCA@IBM
     # Latest GenAI contribution: ibm/granite-8b-code-instruct
@@ -200,19 +228,20 @@ class ReportGenerator:
         generation_time_node.appendChild(doc.createTextNode(str(datetime.now().strftime(DATE_FORMAT))))
         doc_node.setAttribute("use_ml", str(javacore_set.use_ml))
 
-        # Only include javacore-specific data if javacores are present
-        if 'javacores' in javacore_set.data_types and len(javacore_set.javacores) > 0:
+        # Time slot of the gathered data. Javacores define it if present, otherwise verbose GC and HAR files are used.
+        data_start, data_end = self._get_data_time_range()
+        if data_start is not None and data_end is not None:
             generation_javacores_node = doc.createElement("javacores_generation_time")
             report_info_node.appendChild(generation_javacores_node)
             generation_javacores_node_starting_time = doc.createElement("starting_time")
             generation_javacores_node.appendChild(generation_javacores_node_starting_time)
-            generation_javacores_node_starting_time.appendChild(
-                doc.createTextNode(str(javacore_set.javacores[0].datetime.strftime(DATE_FORMAT))))
+            generation_javacores_node_starting_time.appendChild(doc.createTextNode(data_start.strftime(DATE_FORMAT)))
             generation_javacores_node_end_time = doc.createElement("end_time")
             generation_javacores_node.appendChild(generation_javacores_node_end_time)
-            generation_javacores_node_end_time.appendChild(
-                doc.createTextNode(str(javacore_set.javacores[-1].datetime.strftime(DATE_FORMAT))))
+            generation_javacores_node_end_time.appendChild(doc.createTextNode(data_end.strftime(DATE_FORMAT)))
 
+        # Only include javacore-specific data if javacores are present
+        if 'javacores' in javacore_set.data_types and len(javacore_set.javacores) > 0:
             javacore_list_node = doc.createElement("javacore_list")
             report_info_node.appendChild(javacore_list_node)
             for jc in javacore_set.javacores:

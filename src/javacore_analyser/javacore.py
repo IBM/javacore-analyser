@@ -92,6 +92,10 @@ class Javacore:
     def is_interesting(self):  # method is to be overloaded in subclasses, ignore the static warning
         return True
 
+    def has_drill_down(self) -> bool:
+        """A drill-down page is always generated for a javacore."""
+        return True
+
     def get_cpu_percentage(self):
         if self.__total_cpu == -1:
             self.__calculate_total_cpu_and_load()

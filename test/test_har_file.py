@@ -43,6 +43,14 @@ class TestHarFile(unittest.TestCase):
         self.assertEqual(http_call_node.attributes["timing_wait"].nodeValue, "500")
         self.assertEqual(http_call_node.attributes["timing_receive"].nodeValue, "0")
 
+    def test_get_time_range(self):
+        start, end = self.har_file.get_time_range()
+        self.assertEqual(start.strftime("%Y-%m-%d %H:%M:%S"), "2025-01-03 11:07:47")
+        self.assertEqual(end.strftime("%Y-%m-%d %H:%M:%S"), "2025-01-03 11:07:52")
+
+    def test_get_time_range_no_pages(self):
+        self.assertIsNone(HarFile("test/data/empty_pages.har").get_time_range())
+
     def test_har_file_with_no_valid_pages(self):
         """Test that HAR files with no valid pages are handled gracefully (issue #271)"""
         empty_har_path = "test/data/empty_pages.har"
