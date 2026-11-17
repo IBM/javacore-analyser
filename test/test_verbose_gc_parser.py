@@ -77,6 +77,15 @@ class TestVerboseGcParser(unittest.TestCase):
         times = [c.get_start_time() for c in collects]
         self.assertEqual(times, sorted(times), "GC collections are not sorted by start time")
 
+    def test_gc_type_parsed(self):
+        """GC type (scavenge/global) must be read from the verbose GC log (Ref #589)."""
+        parser = VerboseGcParser()
+        parser.add_file("test/data/verboseGc/verbosegc.230420.33424.txt.001")
+        parser.parse_files()
+        gc_types = {c.gc_type for c in parser.get_collects()}
+        self.assertIn("scavenge", gc_types, "Scavenge GC type not parsed")
+        self.assertIn("global", gc_types, "Global GC type not parsed")
+        self.assertNotIn("", gc_types, "Some collections have no GC type")
     def test_gc_overhead_percent_no_collects(self):
         """Returns 0.0 when no collections are available."""
         parser = VerboseGcParser()

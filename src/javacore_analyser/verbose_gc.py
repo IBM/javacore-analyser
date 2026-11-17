@@ -37,6 +37,7 @@ TENURE_FREE_BEFORE = "tenure-free-before"
 TENURE_FREE_AFTER = "tenure-free-after"
 TENURE_TOTAL = "tenure-total"
 COMP_RATIO = "comp-ratio"
+GC_TYPE = "gc-type"
 
 
 class VerboseGcParser:
@@ -143,6 +144,7 @@ class GcCollection:
         self.tenure_free_before = "0"
         self.tenure_free_after = "0"
         self.tenure_total = "0"
+        self.gc_type = ""
         self.start_time_str = ""
         self.__start_time = None
         self.duration = 0.0
@@ -174,6 +176,7 @@ class GcCollection:
     def get_xml(self, doc):
         element = doc.createElement(GC_COLLECTION)
         element.setAttribute(TIMESTAMP, self.start_time_str)
+        element.setAttribute(GC_TYPE, self.gc_type)
         element.setAttribute(DURATION, str(self.duration))
         element.setAttribute(FREE_BEFORE, self.free_before)
         element.setAttribute(FREE_AFTER, self.free_after)
@@ -264,6 +267,7 @@ class VerboseGcFile:
                     start_tag = child_element
                     collect = GcCollection()
                     collect.start_time_str = start_tag.getAttribute(TIMESTAMP)
+                    collect.gc_type = start_tag.getAttribute(TYPE)
                     mem_info = start_tag.getElementsByTagName(MEM_INFO)[0]
                     collect.free_before = mem_info.getAttribute(FREE)
                     nursery_mem = self.__get_mem_by_type(mem_info, NURSERY)
@@ -286,6 +290,8 @@ class VerboseGcFile:
                         if child_element.tagName == GC_END:
                             end_tag = child_element
                             collect.duration = float(end_tag.getAttribute(DURATION))
+                            if not collect.gc_type:
+                                collect.gc_type = end_tag.getAttribute(TYPE)
                             mem_info = end_tag.getElementsByTagName(MEM_INFO)[0]
                             collect.free_after = mem_info.getAttribute(FREE)
                             nursery_mem = self.__get_mem_by_type(mem_info, NURSERY)
