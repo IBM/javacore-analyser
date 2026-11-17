@@ -1,5 +1,15 @@
 # Changelog
 
+## [4.0.6] - 2026-11-09
+## What's Changed
+#602 removed pyana dependency by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/603
+* #604 Remove pandas by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/605
+* #608 Unathenticated user access by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/609
+
+
+[4.0.6]: https://github.com/IBM/javacore-analyser/compare/4.0.5...4.0.6
+
+
 ## [4.0.5] - 2026-10-30
 ## What's Changed
 * #470 Bash build fails for tests by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/471
@@ -21,7 +31,7 @@
 * #478 Move intelligent tips to the top by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/514
 
 
-**Full Changelog**: https://github.com/IBM/javacore-analyser/compare/4.0.3...4.0.5
+[4.0.5]: https://github.com/IBM/javacore-analyser/compare/4.0.3...4.0.5
 
 
 
@@ -33,7 +43,7 @@
 * #465 improve display of embedded help by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/466
 * Revert "#454 Migrate to XSL 2.0" by @PiotrAniola82 in https://github.com/IBM/javacore-analyser/pull/489
 
-**Full Changelog**: https://github.com/IBM/javacore-analyser/compare/4.0.3...4.0.4
+[4.0.4]: https://github.com/IBM/javacore-analyser/compare/4.0.3...4.0.4
 
 
 ## [4.0.3] - 2026-09-22
@@ -51,7 +61,7 @@
 ## New Contributors
 * @Hashim1999164 made their first contribution in https://github.com/IBM/javacore-analyser/pull/403
 
-**Full Changelog**: https://github.com/IBM/javacore-analyser/compare/4.0.1...4.0.3
+[4.0.3]: https://github.com/IBM/javacore-analyser/compare/4.0.1...4.0.3
 
 ## [4.0.1] - 2026-09-08
 ## What's Changed
@@ -80,7 +90,7 @@
 * #396 Change cursor type for legend items by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/400
 
 
-**Full Changelog**: https://github.com/IBM/javacore-analyser/compare/4.0...4.0.1
+[4.0.1]: https://github.com/IBM/javacore-analyser/compare/4.0...4.0.1
 
 
 

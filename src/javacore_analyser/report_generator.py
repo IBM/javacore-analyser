@@ -20,7 +20,6 @@ from lxml.etree import XMLSyntaxError
 from tqdm import tqdm
 
 from javacore_analyser.constants import DATE_FORMAT
-from javacore_analyser.properties import Properties
 
 
 class FileResolver(etree.Resolver):
@@ -105,7 +104,7 @@ class ReportGenerator:
             shutil.rmtree(directory)
         os.mkdir(directory)
         for element in tqdm(collection, desc="Generating placeholder htmls", unit=" file"):
-            if element.is_interesting() or not Properties.get_instance().skip_boring():
+            if element.has_drill_down():
                 filename = file_prefix + "_" + element.get_id() + ".html"
                 if filename.startswith("_"):
                     filename = filename[1:]
@@ -151,7 +150,7 @@ class ReportGenerator:
                 filename = output_file_prefix + "_" + str(element_id) + extension
                 if filename.startswith("_"):
                     filename = filename[1:]
-                if element.is_interesting() or not Properties.get_instance().skip_boring():
+                if element.has_drill_down():
                     file = os.path.join(tmp_dir, filename)
                     logging.debug("Writing file " + file)
                     with open(file, "w") as f:

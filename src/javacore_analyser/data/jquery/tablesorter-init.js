@@ -123,7 +123,9 @@ $(function(){
         ],
         sortInitialOrder: 'asc',
         headers : {
-            0 : { sortInitialOrder: 'asc'  }
+            0 : { sortInitialOrder: 'asc'  },
+            4 : { sortInitialOrder: 'desc' },
+            5 : { sortInitialOrder: 'desc' }
         },
         usNumberFormat : false,
         sortReset : true,
