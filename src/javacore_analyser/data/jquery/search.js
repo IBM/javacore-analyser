@@ -19,8 +19,8 @@ $(function() {
   const $prevBtn = $("button[data-search='prev']");
   // next button
   const $nextBtn = $("button[data-search='next']");
-  // the context where to search
-  const $content = $(".content");
+  // the context where to search — matches the <main id="main-content"> in report.xsl
+  const $content = $("#main-content");
   // jQuery object to save <mark> elements
   let $results;
   // the class that will be appended to the current focused element
@@ -123,6 +123,15 @@ $(function() {
           separateWordSearch: true,
           done: function() {
             $results = $content.find("mark");
+            // Open any Carbon accordion item that contains a match
+            $results.each(function() {
+              $(this).parents('.cds--accordion__item').each(function() {
+                if (!$(this).hasClass('cds--accordion__item--active')) {
+                  $(this).addClass('cds--accordion__item--active');
+                  $(this).find('.cds--accordion__heading').attr('aria-expanded', 'true');
+                }
+              });
+            });
             currentIndex = 0;
             jumpTo();
           }

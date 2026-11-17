@@ -241,9 +241,9 @@ class TestJavacoreAnalyser(unittest.TestCase):
         self.runMainWithParams(self.har_only_args)
         with open("tmp/index.html") as report_file:
             report_html = report_file.read()
-        self.assertIn("from data between", report_html)
-        self.assertIn("<b>2025-01-03 11:07:47</b>", report_html)
-        self.assertIn("<b>2025-01-03 11:07:52</b>", report_html)
+        self.assertIn("Data between", report_html)
+        self.assertIn("<strong>2025-01-03 11:07:47</strong>", report_html)
+        self.assertIn("<strong>2025-01-03 11:07:52</strong>", report_html)
 
     def test_process_verbose_gc_only(self):
         """Test processing verbose GC files without javacores"""
@@ -254,7 +254,7 @@ class TestJavacoreAnalyser(unittest.TestCase):
         self.runMainWithParams(self.verbosegc_only_args)
         with open("tmp/index.html") as report_file:
             report_html = report_file.read()
-        self.assertIn("from data between", report_html)
+        self.assertIn("Data between", report_html)
 
     def test_process_verbosegclog(self):
         """Test processing verbose GC files with 'log' extension"""
