@@ -313,18 +313,19 @@ const loadChartGC = function() {
   const gcCollections = [];
   gcCollectionElements.forEach(function(element) {
     gcCollections.push({
-      startTime:          element.getAttribute('timestamp'),
-      duration:           element.getAttribute('durationms'),
-      freeBefore:         element.getAttribute('free-before'),
-      freeAfter:          element.getAttribute('free-after'),
-      freed:              element.getAttribute('freed'),
-      nurseryFreeBefore:  element.getAttribute('nursery-free-before'),
-      nurseryFreeAfter:   element.getAttribute('nursery-free-after'),
-      nurseryTotal:       element.getAttribute('nursery-total'),
-      tenureFreeBefore:   element.getAttribute('tenure-free-before'),
-      tenureFreeAfter:    element.getAttribute('tenure-free-after'),
-      tenureTotal:        element.getAttribute('tenure-total'),
-      compRatio:          element.getAttribute('comp-ratio'),
+      startTime:                    element.getAttribute('timestamp'),
+      duration:                     element.getAttribute('durationms'),
+      freeBefore:                   element.getAttribute('free-before'),
+      freeAfter:                    element.getAttribute('free-after'),
+      freed:                        element.getAttribute('freed'),
+      nurseryFreeBefore:            element.getAttribute('nursery-free-before'),
+      nurseryFreeAfter:             element.getAttribute('nursery-free-after'),
+      nurseryTotal:                 element.getAttribute('nursery-total'),
+      tenureFreeBefore:             element.getAttribute('tenure-free-before'),
+      tenureFreeAfter:              element.getAttribute('tenure-free-after'),
+      tenureTotal:                  element.getAttribute('tenure-total'),
+      compRatio:                    element.getAttribute('comp-ratio'),
+      cumulativeGcOverheadPercent:  element.getAttribute('cumulative-gc-overhead-percent'),
     });
   });
 
@@ -332,24 +333,28 @@ const loadChartGC = function() {
   const HEAP_SIZE = parseHeapSizeFromTable() || estimateHeapSizeFromGC(gcCollections);
 
   // Build chart datasets
-  const inputData       = [];
-  const totalHeap       = [];
-  const pauseTimeData   = [];
-  const nurseryUsageData = [];
-  const tenureUsageData  = [];
-  const nurseryTotalData = [];
-  const tenureTotalData  = [];
-  const compRatioData   = [];
-  const labels          = [];
+  const inputData              = [];
+  const totalHeap              = [];
+  const pauseTimeData          = [];
+  const nurseryUsageData       = [];
+  const tenureUsageData        = [];
+  const nurseryTotalData       = [];
+  const tenureTotalData        = [];
+  const compRatioData          = [];
+  const gcOverheadData         = [];
+  const labels                 = [];
 
   console.log(`Processing ${gcCollections.length} GC collections`);
   console.log(`HEAP_SIZE: ${HEAP_SIZE} bytes (${HEAP_SIZE / MB_SIZE} MB)`);
 
   gcCollections.forEach(function(element) {
-    const durationMs   = Number(element['duration']);
-    const gcStartTime  = new Date(element['startTime']).valueOf();
-    const nurseryTotal = Number(element['nurseryTotal']);
-    const tenureTotal  = Number(element['tenureTotal']);
+    const durationMs             = Number(element['duration']);
+    const gcStartTime            = new Date(element['startTime']).valueOf();
+    const nurseryTotal           = Number(element['nurseryTotal']);
+    const tenureTotal            = Number(element['tenureTotal']);
+    const cumulativeGcOverhead   = element['cumulativeGcOverheadPercent'] !== null
+                                     ? Number(element['cumulativeGcOverheadPercent'])
+                                     : null;
 
     // Data point: state before GC
     inputData.push((HEAP_SIZE - Number(element['freeBefore'])) / MB_SIZE);
@@ -361,6 +366,7 @@ const loadChartGC = function() {
     labels.push(gcStartTime);
     pauseTimeData.push(durationMs);
     compRatioData.push(Number(element['compRatio']));
+    gcOverheadData.push(cumulativeGcOverhead);
 
     // Data point: state after GC
     inputData.push((HEAP_SIZE - Number(element['freeAfter'])) / MB_SIZE);
@@ -371,6 +377,7 @@ const loadChartGC = function() {
     tenureTotalData.push(tenureTotal > 0  ? tenureTotal  / MB_SIZE : null);
     pauseTimeData.push(null);
     compRatioData.push(null);
+    gcOverheadData.push(null);
     const gcEndTime = new Date(element['startTime']);
     gcEndTime.setMilliseconds(gcEndTime.getMilliseconds() + durationMs);
     labels.push(gcEndTime.valueOf());
@@ -464,6 +471,16 @@ const loadChartGC = function() {
           borderWidth: 1,
           borderColor: 'rgba(128,0,128,1)',
           backgroundColor: 'rgba(128,0,128,0.3)',
+          pointRadius: 1.5,
+          yAxisID: 'yCompRatio',
+          hidden: true,
+        },
+        {
+          label: '% Time in GC',
+          data: gcOverheadData,
+          borderWidth: 2,
+          borderColor: 'rgba(220,50,47,1)',
+          backgroundColor: 'rgba(220,50,47,0.2)',
           pointRadius: 1.5,
           yAxisID: 'yCompRatio',
           hidden: true,

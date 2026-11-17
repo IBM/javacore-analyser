@@ -95,6 +95,11 @@
                                         A high value indicates an efficient collection that recovered a large fraction of live objects;
                                         a low or declining comp ratio over time is a sign of memory pressure.
                                     </li>
+                                    <li><strong>% Time in GC</strong>
+                                        is the cumulative GC overhead at each collection point:
+                                        the total GC pause time so far divided by the total elapsed time so far, expressed as a percentage.
+                                        A rising trend indicates the application is spending an increasing fraction of its time in garbage collection.
+                                    </li>
                                 </ul>
                                 <p><strong>Chart interactions:</strong></p>
                                 <ul>
