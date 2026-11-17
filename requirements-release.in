@@ -1,0 +1,12 @@
+#
+# Source file for the tools used by release.sh (build, sigstore, twine).
+#
+# To regenerate requirements-release.txt with pinned hashes for the full dependency tree
+# (required by `pip install --require-hashes`), run from the project root:
+#
+#   uv pip compile --generate-hashes --universal --python-version 3.11 \
+#     requirements-release.in -o requirements-release.txt
+#
+build==1.6.1
+sigstore==4.5.0
+twine==7.0.0

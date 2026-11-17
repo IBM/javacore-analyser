@@ -78,3 +78,5 @@ def add_web_args(parser):
     parser.add_argument("--debug", help="Debug mode. Use only for development")
     parser.add_argument("--port", help="Port to run application")
     parser.add_argument("--reports-dir", help="Directory where app reports are stored")
+    parser.add_argument("--token", help="Access token required to log in to the web UI. "
+                                        "If not set, a random token is generated and printed at startup.")
