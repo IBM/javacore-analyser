@@ -724,9 +724,9 @@ securesystemslib==1.6.0 \
     --hash=sha256:1c1aa00f058f4851f038d409c8ca4a727db854a91f07ec3a0fa047bb93e43e0e \
     --hash=sha256:b16e07c32bb41174c2ee2fb18f478ebe0d52e0e7c1fb085ce89c990452a35977
     # via tuf
-sigstore==4.5.1 \
-    --hash=sha256:02e000197b34980f1d382741d6f83c2fecbcef7debf7304f36a5253f3c892cd9 \
-    --hash=sha256:14accda8a7d4ef47cb25b4903829fb10f011048c261a5937724a43d073c4f34d
+sigstore==4.6.0 \
+    --hash=sha256:dc9a7bd0e35ee381a6f70281f520f858d12b34a997c023f7dec835c0095a5067 \
+    --hash=sha256:df10bc2b87b821df0922405377305b875894e6ce6007175b3eddb3bcc9b23cfa
     # via -r requirements-release.in
 sigstore-models==0.0.8 \
     --hash=sha256:1635bd52e70a1e2b365222313d536e9c317b46cf809faf0bf9ff1a6d3fa82e53 \
