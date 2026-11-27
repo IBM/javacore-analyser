@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 import os
+import shutil
 import tempfile
 import unittest
 
@@ -101,6 +102,82 @@ class TestWebAuth(unittest.TestCase):
         self._login()
         resp = self.client.get("/")
         self.assertEqual(resp.status_code, 200)
+
+    # ------------------------------------------------------------------
+    # Path traversal protection for /zip and /delete
+    # ------------------------------------------------------------------
+    def _create_outside_secret(self):
+        """Create a file beside the reports dir (in its parent) that must never be exposed."""
+        parent = os.path.dirname(os.path.realpath(self.reports_tmp.name))
+        secret = os.path.join(parent, "secret-%s.txt" % os.path.basename(self.reports_tmp.name))
+        with open(secret, "w") as f:
+            f.write("TOP-SECRET")
+        self.addCleanup(os.remove, secret)
+        return secret
+
+    def test_zip_valid_report_returns_archive(self):
+        report = os.path.join(self.reports_tmp.name, "my_report")
+        os.makedirs(report)
+        with open(os.path.join(report, "index.html"), "w") as f:
+            f.write("<html/>")
+        self._login()
+        resp = self.client.get("/zip/my_report")
+        self.assertEqual(resp.status_code, 200)
+        self.assertTrue(resp.data.startswith(b"PK"))
+        resp.close()
+
+    def test_zip_path_traversal_is_rejected(self):
+        self._create_outside_secret()
+        self._login()
+        for path in ["..", "%2e%2e", "../", "my_report/..", "../../etc", "%2e%2e/%2e%2e"]:
+            resp = self.client.get("/zip/" + path)
+            self.assertIn(resp.status_code, (301, 308, 404), path)
+            self.assertNotIn(b"TOP-SECRET", resp.data, path)
+            self.assertFalse(resp.data.startswith(b"PK"), path)
+
+    def test_zip_reports_dir_itself_is_rejected(self):
+        self._login()
+        self.assertEqual(self.client.get("/zip/.").status_code, 404)
+
+    def test_zip_symlink_escaping_reports_dir_is_rejected(self):
+        outside = tempfile.TemporaryDirectory()
+        self.addCleanup(outside.cleanup)
+        with open(os.path.join(outside.name, "secret.txt"), "w") as f:
+            f.write("TOP-SECRET")
+        os.symlink(outside.name, os.path.join(self.reports_tmp.name, "link"))
+        self._login()
+        resp = self.client.get("/zip/link")
+        self.assertEqual(resp.status_code, 404)
+
+    def test_zip_nonexistent_report_returns_404(self):
+        self._login()
+        self.assertEqual(self.client.get("/zip/does_not_exist").status_code, 404)
+
+    def test_delete_path_traversal_is_rejected(self):
+        secret = self._create_outside_secret()
+        parent = os.path.dirname(secret)
+        self._login()
+        for path in ["..", "%2e%2e", "../" + os.path.basename(parent)]:
+            resp = self.client.get("/delete/" + path)
+            self.assertNotEqual(resp.status_code, 302, path)
+        self.assertTrue(os.path.exists(secret))
+
+    def test_delete_sibling_directory_with_same_prefix_is_rejected(self):
+        sibling = self.reports_tmp.name + "_evil"
+        os.makedirs(sibling)
+        self.addCleanup(shutil.rmtree, sibling, True)
+        self._login()
+        resp = self.client.get("/delete/../" + os.path.basename(sibling))
+        self.assertEqual(resp.status_code, 503)
+        self.assertTrue(os.path.isdir(sibling))
+
+    def test_delete_valid_report(self):
+        report = os.path.join(self.reports_tmp.name, "my_report")
+        os.makedirs(report)
+        self._login()
+        resp = self.client.get("/delete/my_report")
+        self.assertEqual(resp.status_code, 302)
+        self.assertFalse(os.path.exists(report))
 
     # ------------------------------------------------------------------
     # Logout clears the session

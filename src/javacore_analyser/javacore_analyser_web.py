@@ -48,6 +48,28 @@ def _require_login(f):
     return decorated
 
 
+def _resolve_report_dir(path: str) -> str | None:
+    """
+    Resolve a user-supplied report path to an existing directory located strictly inside reports_dir.
+
+    Symlinks and '..' segments are resolved before the containment check.
+
+    Args:
+        path (str): Report path supplied by the user.
+
+    Returns:
+        str | None: The resolved absolute directory path, or None if the path is not a directory strictly
+        contained in reports_dir.
+    """
+    if not path or "\0" in path:
+        return None
+    base = os.path.realpath(reports_dir)
+    full = os.path.realpath(os.path.join(base, path))
+    if full == base or os.path.commonpath([full, base]) != base or not os.path.isdir(full):
+        return None
+    return full
+
+
 # Assisted by watsonx Code Assistant
 def create_temp_data_in_reports_dir(directory):
     tmp_reports_dir = os.path.join(directory, TEMP_DIR)
@@ -103,12 +125,17 @@ def compress(path):
     Returns:
         send_from_directory: The compressed file as an attachment.
     """
+    report_location = _resolve_report_dir(path)
+    if report_location is None:
+        logging.error("Invalid report path requested for zip: " + path)
+        abort(404)
+
     temp_zip_dir = tempfile.TemporaryDirectory()
     try:
         temp_zip_dir_name = temp_zip_dir.name
-        zip_filename = path + ".zip"
-        report_location = os.path.join(reports_dir, path)
-        shutil.make_archive(os.path.join(temp_zip_dir_name, path), 'zip', report_location)
+        archive_name = os.path.basename(report_location)
+        zip_filename = archive_name + ".zip"
+        shutil.make_archive(os.path.join(temp_zip_dir_name, archive_name), 'zip', report_location)
         logging.debug("Generated zip file location:" + os.path.join(temp_zip_dir_name, zip_filename))
         logging.debug("Temp zip dir name: " + temp_zip_dir_name)
         logging.debug("Zip filename: " + zip_filename)
@@ -123,9 +150,9 @@ def delete(path):
     # Checking if the report exists. This is to prevent attempt to delete any data by deleting any file outside
     # report dir if you prepare path variable.
     # reports_list = os.listdir(reports_dir)
-    report_location = os.path.normpath(os.path.join(reports_dir, path))
-    if not report_location.startswith(reports_dir):
-        logging.error("Deleted report in report list. Not deleting")
+    report_location = _resolve_report_dir(path)
+    if report_location is None:
+        logging.error("Report not found in reports directory. Not deleting")
         return "Cannot delete the report.", 503
     shutil.rmtree(report_location)
 
