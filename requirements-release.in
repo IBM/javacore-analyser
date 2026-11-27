@@ -8,5 +8,5 @@
 #     requirements-release.in -o requirements-release.txt
 #
 build==1.6.1
-sigstore==4.5.0
+sigstore==4.6.0
 twine==7.0.0
