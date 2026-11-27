@@ -1,5 +1,23 @@
 # Changelog
 
+## [4.0.7] - 2026-11-27
+## What's Changed
+* #93 Default descending sort for HTTP call Duration and Size by @ShrillHarrier in https://github.com/IBM/javacore-analyser/pull/626
+* #407 Clicking current thread link fails with error 404 by @mangeshraut712 in https://github.com/IBM/javacore-analyser/pull/622
+* #580 Add precentage of the time in GC to verbose GC chart by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/581
+* #589 Display GC type in the chart. by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/590
+* #588 Display time slot when the report was generated for har file and verbose gc by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/591
+* #649 Prevent tar symlink path traversal during archive extraction by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/650
+* #657 Fixed path traversal for web application by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/658
+
+## New Contributors
+* @ShrillHarrier made their first contribution in https://github.com/IBM/javacore-analyser/pull/626
+* @mangeshraut712 made their first contribution in https://github.com/IBM/javacore-analyser/pull/622
+
+**Full Changelog**: https://github.com/IBM/javacore-analyser/compare/4.0.6...4.0.7
+
+
+
 ## [4.0.6] - 2026-11-09
 ## What's Changed
 #602 removed pyana dependency by @kkazmierczyk in https://github.com/IBM/javacore-analyser/pull/603
