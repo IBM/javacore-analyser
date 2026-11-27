@@ -29,10 +29,34 @@ SUPPORTED_ARCHIVES_FORMATS = {"zip", "tar", "gz", "tgz", "bz2", "lzma", "7z"}
 
 
 def _is_safe_path(base_path, file_path):
-    """Validate that file_path is within base_path to prevent path traversal."""
-    abs_base = os.path.abspath(base_path)
-    abs_file = os.path.abspath(os.path.join(base_path, file_path))
-    return abs_file.startswith(abs_base)
+    """Validate that file_path is within base_path to prevent path traversal.
+
+    Symbolic links are resolved, and containment is checked per path component
+    (so /a/reports does not accept /a/reports_evil).
+    """
+    real_base = os.path.realpath(base_path)
+    real_file = os.path.realpath(os.path.join(base_path, file_path))
+    try:
+        return os.path.commonpath([real_base, real_file]) == real_base
+    except ValueError:  # e.g. different drives on Windows
+        return False
+
+
+def _validate_tar_members(archive_file: tarfile.TarFile, output_path):
+    """Reject tar members that could write outside output_path (links escaping it, device files)."""
+    for member in archive_file.getmembers():
+        if member.isdev():
+            raise Exception(f"Unsafe special file detected in archive: {member.name}")
+        if member.issym():
+            # Symlink target is relative to the directory containing the link.
+            target = os.path.join(os.path.dirname(member.name), member.linkname)
+        elif member.islnk():
+            # Hardlink target is relative to the archive root.
+            target = member.linkname
+        else:
+            continue
+        if not _is_safe_path(output_path, target):
+            raise Exception(f"Unsafe link detected in archive: {member.name} -> {member.linkname}")
 
 
 def _safe_extract(archive_file, output_path, member_names):
@@ -40,6 +64,17 @@ def _safe_extract(archive_file, output_path, member_names):
     for member in member_names:
         if not _is_safe_path(output_path, member):
             raise Exception(f"Unsafe path detected in archive: {member}")
+    if isinstance(archive_file, tarfile.TarFile):
+        _validate_tar_members(archive_file, output_path)
+        if hasattr(tarfile, "data_filter"):
+            archive_file.extractall(path=output_path, filter="data")
+        else:
+            # No extraction filter available in this Python version: links cannot be validated reliably.
+            for member in archive_file.getmembers():
+                if member.issym() or member.islnk():
+                    raise Exception(f"Links are not supported in archives on this Python version: {member.name}")
+            archive_file.extractall(path=output_path)
+        return
     archive_file.extractall(path=output_path)
 
 

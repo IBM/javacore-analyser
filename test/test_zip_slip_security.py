@@ -7,6 +7,7 @@ import logging
 import os.path
 import platform
 import shutil
+import tarfile
 import tempfile
 import unittest
 import zipfile
@@ -286,5 +287,53 @@ class TestZipSlipSecurity(unittest.TestCase):
             with self.subTest(pattern=pattern):
                 result = javacore_analyser_batch._is_safe_path(base_path, pattern)
                 self.assertTrue(result, f"Pattern '{pattern}' should be allowed")
+
+    # ========== Tar symlink / prefix tests ==========
+
+    def test_is_safe_path_sibling_prefix_directory(self):
+        """A sibling directory sharing the base path prefix must be rejected."""
+        base_path = os.path.join(self.test_dir, "reports")
+        os.makedirs(base_path)
+        self.assertFalse(javacore_analyser_batch._is_safe_path(base_path, "../reports_evil/file.txt"))
+
+    @unittest.skipIf(platform.system() == "Windows", "Symlinks require privileges on Windows")
+    def test_extract_archive_tar_symlink_escape(self):
+        """A tar with a symlink pointing outside the output directory, then a write through it, is rejected."""
+        outside_dir = os.path.join(self.test_dir, "outside")
+        os.makedirs(outside_dir)
+        payload = os.path.join(self.test_dir, "payload.txt")
+        with open(payload, "w") as f:
+            f.write("payload")
+
+        evil_tar = os.path.join(self.test_dir, "evil.tar")
+        with tarfile.open(evil_tar, "w") as t:
+            link = tarfile.TarInfo("pwn")
+            link.type = tarfile.SYMTYPE
+            link.linkname = outside_dir
+            t.addfile(link)
+            t.add(payload, arcname="pwn/ESCAPE_PROOF.txt")
+
+        output_dir = os.path.join(self.test_dir, "output")
+        os.makedirs(output_dir)
+
+        with self.assertRaises(Exception) as context:
+            javacore_analyser_batch.extract_archive(evil_tar, output_dir)
+
+        self.assertIn("Unsafe link detected", str(context.exception))
+        self.assertFalse(os.path.exists(os.path.join(outside_dir, "ESCAPE_PROOF.txt")))
+
+    def test_extract_archive_legitimate_tar_still_works(self):
+        """A legitimate tar archive is extracted."""
+        src = os.path.join(self.test_dir, "javacore.20220606.114458.32888.0001.txt")
+        with open(src, "w") as f:
+            f.write("javacore content")
+        good_tar = os.path.join(self.test_dir, "good.tar")
+        with tarfile.open(good_tar, "w") as t:
+            t.add(src, arcname="subdir/javacore.20220606.114458.32888.0001.txt")
+
+        output_dir = os.path.join(self.test_dir, "output")
+        os.makedirs(output_dir)
+        javacore_analyser_batch.extract_archive(good_tar, output_dir)
+        self.assertTrue(os.path.exists(os.path.join(output_dir, "subdir", "javacore.20220606.114458.32888.0001.txt")))
 
 # Made with Bob
