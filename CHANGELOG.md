@@ -14,7 +14,7 @@
 * @ShrillHarrier made their first contribution in https://github.com/IBM/javacore-analyser/pull/626
 * @mangeshraut712 made their first contribution in https://github.com/IBM/javacore-analyser/pull/622
 
-**Full Changelog**: https://github.com/IBM/javacore-analyser/compare/4.0.6...4.0.7
+[4.0.7]: https://github.com/IBM/javacore-analyser/compare/4.0.6...4.0.7
 
 
 
