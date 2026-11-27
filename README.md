@@ -96,7 +96,7 @@ You can type the following command to obtain the help:
 `javacore-analyser-batch --help` or `python -m javacore_analyser batch --help`
 
 #### Running web application:
-**NOTE:** The web application is provided as-is, without warranty of any kind.
+**NOTE:** The web application is provided "AS IS" and we do not provide any fixes, including security fixes.
 
 1. Repeat steps 1-3 from cmd application
 2. Execute the following command from cmd:  
@@ -117,7 +117,7 @@ There is `--config_file` command line parameter which you can use if you want to
 file.
 
 ### Running container image
-**NOTE:** The container image is provided as-is, without warranty of any kind.
+**NOTE:** The container image is provided "AS IS" and we do not provide any fixes, including security fixes.
 
 There is a Docker/Podman container managed by one of projects developers. Use the following command
 to start it:
