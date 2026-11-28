@@ -721,9 +721,9 @@ sigstore==4.6.0 \
     --hash=sha256:dc9a7bd0e35ee381a6f70281f520f858d12b34a997c023f7dec835c0095a5067 \
     --hash=sha256:df10bc2b87b821df0922405377305b875894e6ce6007175b3eddb3bcc9b23cfa
     # via -r requirements-release.in
-sigstore-models==0.0.6 \
-    --hash=sha256:5201a68f4d7d0f8bec1e2f4378eb646b084c52609a4e31db8c385095fff68b2e \
-    --hash=sha256:c766c09470c2a7e8a4a333c893f07e2001c56a3ff1757b1a246119f53169a849
+sigstore-models==0.0.8 \
+    --hash=sha256:1635bd52e70a1e2b365222313d536e9c317b46cf809faf0bf9ff1a6d3fa82e53 \
+    --hash=sha256:ad465236b3620797dd41afb0f50b883392a5b684d8c667b4d32745fa170e6387
     # via sigstore
 sigstore-rekor-types==0.0.18 \
     --hash=sha256:19aef25433218ebf9975a1e8b523cc84aaf3cd395ad39a30523b083ea7917ec5 \
